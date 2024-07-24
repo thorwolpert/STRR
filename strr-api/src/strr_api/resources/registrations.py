@@ -713,7 +713,7 @@ def get_registration_ltsa(registration_id):
         if not registration:
             return error_response(HTTPStatus.NOT_FOUND, "Registration not found")
 
-        records = LtsaService.fetch_ltsa_records_for_registration(registration_id)
+        records = LtsaService.get_registration_ltsa_records(registration_id)
         return (
             jsonify([LTSARecord.from_db(record).model_dump(mode="json") for record in records]),
             HTTPStatus.OK,
