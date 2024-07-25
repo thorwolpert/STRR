@@ -756,7 +756,7 @@ def get_registration_auto_approval(registration_id):
         if not registration:
             return error_response(HTTPStatus.NOT_FOUND, "Registration not found")
 
-        records = ApprovalService.fetch_approval_records_for_registration(registration_id)
+        records = ApprovalService.get_approval_records_for_registration(registration_id)
         return (
             jsonify([AutoApprovalRecord.from_db(record).model_dump(mode="json") for record in records]),
             HTTPStatus.OK,

@@ -92,3 +92,27 @@ def test_get_application_ltsa(session, client, jwt):
         rv = client.get(f"/applications/{application.id}/ltsa", headers=headers)
 
         assert HTTPStatus.OK == rv.status_code
+
+
+def test_get_application_auto_approval_unauthorized(session, client, jwt):
+    headers = create_header(jwt, [PUBLIC_USER], "Account-Id")
+    headers["Account-Id"] = ACCOUNT_ID
+    rv = client.get("/applications/1/auto-approval-records", headers=headers)
+    assert HTTPStatus.UNAUTHORIZED == rv.status_code
+
+
+def test_get_application_auto_approval_invalid_application(session, client, jwt):
+    headers = create_header(jwt, [STAFF_ROLE], "Account-Id")
+    rv = client.get("/applications/100/auto-approval-records", headers=headers)
+    assert HTTPStatus.NOT_FOUND == rv.status_code
+
+
+def test_get_application_auto_approval(session, client, jwt):
+    with open(CREATE_REGISTRATION_REQUEST) as f:
+        json_data = json.load(f)
+        application = Application(type="registration", application_json=json_data)
+        application.save()
+        headers = create_header(jwt, [STAFF_ROLE], "Account-Id")
+        rv = client.get(f"/applications/{application.id}/auto-approval-records", headers=headers)
+
+        assert HTTPStatus.OK == rv.status_code

@@ -44,7 +44,7 @@ from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
 
 from strr_api.common.auth import jwt
-from strr_api.enums.enum import Role
+from strr_api.enums.enum import ErrorMessage, Role
 from strr_api.exceptions import (
     AuthException,
     ExternalServiceException,
@@ -54,9 +54,9 @@ from strr_api.exceptions import (
 )
 from strr_api.models.dataclass import ApplicationSearch
 from strr_api.requests import RegistrationRequest
-from strr_api.responses import LTSARecord
+from strr_api.responses import AutoApprovalRecord, LTSARecord
 from strr_api.schemas.utils import validate
-from strr_api.services import ApplicationService, LtsaService, strr_pay
+from strr_api.services import ApplicationService, ApprovalService, LtsaService, strr_pay
 from strr_api.validators.RegistrationRequestValidator import validate_registration_request
 
 logger = logging.getLogger("api")
@@ -149,7 +149,7 @@ def get_applications():
         return exception_response(service_exception)
 
 
-@bp.route("/<application_id>/updatePayment", methods=("PUT",))
+@bp.route("/<application_id>/update-payment", methods=("PUT",))
 @swag_from({"security": [{"Bearer": []}]})
 @cross_origin(origin="*")
 @jwt.requires_auth
@@ -231,12 +231,52 @@ def get_application_ltsa(application_id):
     try:
         application = ApplicationService.get_application(application_id)
         if not application:
-            return error_response(HTTPStatus.NOT_FOUND, "Application not found")
+            return error_response(HTTPStatus.NOT_FOUND, ErrorMessage.APPLICATION_NOT_FOUND.value)
 
         records = LtsaService.get_application_ltsa_records(application_id=application_id)
         return (
             jsonify([LTSARecord.from_db(record).model_dump(mode="json") for record in records]),
             HTTPStatus.OK,
         )
-    except AuthException as auth_exception:
-        return exception_response(auth_exception)
+    except Exception as exception:
+        return exception_response(exception)
+
+
+@bp.route("/<application_id>/auto-approval-records", methods=("GET",))
+@swag_from({"security": [{"Bearer": []}]})
+@cross_origin(origin="*")
+@jwt.requires_auth
+@jwt.has_one_of_roles([Role.STAFF.value])
+def get_application_auto_approval_records(application_id):
+    """
+    Get application auto approval records
+    ---
+    tags:
+      - examiner
+    parameters:
+      - in: path
+        name: application_id
+        type: integer
+        required: true
+        description: Application Id
+    responses:
+      200:
+        description:
+      401:
+        description:
+      403:
+        description:
+    """
+
+    try:
+        application = ApplicationService.get_application(application_id)
+        if not application:
+            return error_response(HTTPStatus.NOT_FOUND, ErrorMessage.APPLICATION_NOT_FOUND.value)
+
+        records = ApprovalService.get_approval_records_for_application(application_id)
+        return (
+            jsonify([AutoApprovalRecord.from_db(record).model_dump(mode="json") for record in records]),
+            HTTPStatus.OK,
+        )
+    except Exception as exception:
+        return exception_response(exception)
