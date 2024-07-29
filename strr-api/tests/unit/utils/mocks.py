@@ -194,6 +194,8 @@ def fake_registration(*args, **kwargs):
         status=RegistrationStatus.APPROVED,
         submission_date="2021-01-01T00:00:00Z",
         updated_date="2021-01-01T00:00:00Z",
+        start_date="2024-07-29T00:00:00Z",
+        end_date="2025-07-29T00:00:00Z",
         eligibility=Eligibility(
             id=1,
             registration_id=1,

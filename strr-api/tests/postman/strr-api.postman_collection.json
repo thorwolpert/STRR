@@ -77,7 +77,7 @@
 									"var jsonData = pm.response.json();",
 									"",
 									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(200);",			
 									"});"
 								],
 								"type": "text/javascript",
@@ -207,6 +207,75 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Approve Registration",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "exec": [
+					"var jsonData = pm.response.json();",
+					"",
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.response.to.have.status(200);",
+					"});",
+					"",
+					"pm.test(\"Response contains startDate and endDate\", function () {",
+					"    pm.expect(jsonData).to.have.property('startDate');",
+					"    pm.expect(jsonData).to.have.property('endDate');",
+					"});",
+					"",
+					"pm.test(\"startDate is valid ISO 8601 format\", function () {",
+					"    pm.expect(jsonData.startDate).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$/);",
+					"});",
+					"",
+					"pm.test(\"endDate is valid ISO 8601 format\", function () {",
+					"    pm.expect(jsonData.endDate).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$/);",
+					"});",
+					"",
+					"pm.test(\"endDate is 365 days after startDate\", function () {",
+					"    var start = new Date(jsonData.startDate);",
+					"    var end = new Date(jsonData.endDate);",
+					"    var diffTime = Math.abs(end - start);",
+					"    var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); ",
+					"    pm.expect(diffDays).to.equal(365);",
+					"});",
+					"",
+					"pm.test(\"Registration status is APPROVED\", function () {",
+					"    pm.expect(jsonData.status).to.equal('APPROVED');",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"request": {
+			  "auth": {
+				"type": "bearer",
+				"bearer": [
+				  {
+					"key": "token",
+					"value": "{{staff_token}}",
+					"type": "string"
+				  }
+				]
+			  },
+			  "method": "POST",
+			  "header": [],
+			  "url": {
+				"raw": "{{api_url}}/registrations/{{registration_id}}/approve",
+				"host": [
+				  "{{api_url}}"
+				],
+				"path": [
+				  "registrations",
+				  "{{registration_id}}",
+				  "approve"
+				]
+			  }
+			},
+			"response": []
 		},
 		{
 			"name": "/account/me",

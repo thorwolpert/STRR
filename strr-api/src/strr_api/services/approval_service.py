@@ -291,6 +291,8 @@ class ApprovalService:
         application.status = Application.Status.APPROVED
         application.save()
         registration.status = RegistrationStatus.APPROVED
+        registration.start_date = datetime.now(timezone.utc)
+        registration.end_date = registration.start_date + Registration.DEFAULT_REGISTRATION_RENEWAL_PERIOD
         registration.save()
         EventRecordsService.save_event_record(
             EventRecordType.MANUALLY_APPROVED,
