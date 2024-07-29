@@ -38,9 +38,6 @@
       >
         {{ tRegistrationStatus('download') }}
       </p>
-      <p class="cursor-pointer">
-        {{ tRegistrationStatus('renewal') }}
-      </p>
     </div>
   </div>
 </template>
