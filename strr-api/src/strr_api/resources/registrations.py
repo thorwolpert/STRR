@@ -54,7 +54,7 @@ from strr_api.exceptions import (
     error_response,
     exception_response,
 )
-from strr_api.models import User
+from strr_api.models import User, Application
 from strr_api.requests import RegistrationRequest
 from strr_api.responses import AutoApprovalRecord, Document, EventRecord, Invoice, LTSARecord, Pagination, Registration
 from strr_api.schemas.utils import validate
@@ -577,8 +577,11 @@ def mark_registration_invoice_paid(registration_id, invoice_id):
 
         invoice = strr_pay.update_invoice_payment_status(jwt, registration, invoice)
         if invoice.payment_status_code == PaymentStatus.COMPLETED:
-            approval = ApprovalService.process_auto_approval(token, registration)
-            ApprovalService.save_approval_record(registration.id, approval)
+            # Redundant code, this is a breaking change as currently data
+            # is not being inserted into application table
+            application = Application.get_by_registration_id(registration.id)
+            approval = ApprovalService.process_auto_approval(token, application)
+            ApprovalService.save_approval_record_by_registration(registration.id, approval)
 
         return jsonify(Invoice.from_db(invoice).model_dump(mode="json")), HTTPStatus.OK
     except ValidationException as auth_exception:

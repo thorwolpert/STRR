@@ -45,7 +45,7 @@ from weasyprint import HTML
 
 from strr_api.common.utils import compare_addresses
 from strr_api.enums.enum import EventRecordType, OwnershipType, RegistrationStatus
-from strr_api.models import AutoApprovalRecord, Certificate, DSSOrganization, Registration
+from strr_api.models import Application, AutoApprovalRecord, Certificate, DSSOrganization, Registration
 from strr_api.responses.AutoApprovalResponse import AutoApproval
 from strr_api.responses.LTSAResponse import LtsaResponse
 from strr_api.services import AuthService, EventRecordsService, LtsaService
@@ -88,8 +88,9 @@ class ApprovalService:
         return False
 
     @classmethod
-    def process_auto_approval(cls, token, registration: Registration):
+    def process_auto_approval(cls, token, application: Application):
         """Process approval logic and produce output JSON to store in the DB and providing to FE"""
+        registration = application.registration
         pid = registration.rental_property.parcel_identifier
         owner_name = (
             registration.rental_property.property_manager.primary_contact.firstname
@@ -124,6 +125,8 @@ class ApprovalService:
         try:
             if renting:
                 auto_approval.renting = True
+                application.status = Application.Status.UNDER_REVIEW
+                application.save()
                 registration.status = RegistrationStatus.UNDER_REVIEW
                 registration.save()
                 EventRecordsService.save_event_record(
@@ -138,6 +141,8 @@ class ApprovalService:
                 auto_approval.renting = False
                 if other_service_provider:
                     auto_approval.service_provider = True
+                    application.status = Application.Status.UNDER_REVIEW
+                    application.save()
                     registration.status = RegistrationStatus.UNDER_REVIEW
                     registration.save()
                     EventRecordsService.save_event_record(
@@ -155,6 +160,8 @@ class ApprovalService:
                     auto_approval.pr_exempt = False
                     if not compare_addresses(registration.rental_property.address, bcsc_address):
                         auto_approval.address_match = False
+                        application.status = Application.Status.UNDER_REVIEW
+                        application.save()
                         registration.status = RegistrationStatus.UNDER_REVIEW
                         registration.save()
                         EventRecordsService.save_event_record(
@@ -176,6 +183,8 @@ class ApprovalService:
                                 auto_approval.business_license_required_provided = True
                             else:
                                 auto_approval.business_license_required_not_provided = True
+                                application.status = Application.Status.UNDER_REVIEW
+                                application.save()
                                 registration.status = RegistrationStatus.UNDER_REVIEW
                                 registration.save()
                                 EventRecordsService.save_event_record(
@@ -199,6 +208,8 @@ class ApprovalService:
                             owner_title_match = False
                         if owner_title_match:
                             auto_approval.title_check = True
+                            application.status = Application.Status.PROVISIONAL
+                            application.save()
                             registration.status = RegistrationStatus.PROVISIONAL
                             registration.save()
                             EventRecordsService.save_event_record(
@@ -210,6 +221,8 @@ class ApprovalService:
                             )
                         else:
                             auto_approval.title_check = False
+                            application.status = Application.Status.UNDER_REVIEW
+                            application.save()
                             registration.status = RegistrationStatus.UNDER_REVIEW
                             registration.save()
                             EventRecordsService.save_event_record(
@@ -226,6 +239,8 @@ class ApprovalService:
                     organization = DSSOrganization.lookup_by_geocode(longitude, latitude)
                     if organization["is_principal_residence_required"]:
                         auto_approval.pr_exempt = False
+                        application.status = Application.Status.UNDER_REVIEW
+                        application.save()
                         registration.status = RegistrationStatus.UNDER_REVIEW
                         registration.save()
                         EventRecordsService.save_event_record(
@@ -237,6 +252,8 @@ class ApprovalService:
                         )
                     else:
                         auto_approval.pr_exempt = True
+                        application.status = Application.Status.APPROVED
+                        application.save()
                         registration.status = RegistrationStatus.APPROVED
                         registration.save()
                         EventRecordsService.save_event_record(
@@ -254,9 +271,16 @@ class ApprovalService:
             return auto_approval
 
     @classmethod
-    def save_approval_record(cls, registration_id, approval: AutoApproval):
-        """Saves approval record."""
+    def save_approval_record_by_registration(cls, registration_id, approval: AutoApproval):
+        """Saves approval record with registration_id."""
         record = AutoApprovalRecord(registration_id=registration_id, record=approval.model_dump(mode="json"))
+        record.save()
+        return record
+
+    @classmethod
+    def save_approval_record_by_application(cls, application_id, approval: AutoApproval):
+        """Saves approval record with application_id."""
+        record = AutoApprovalRecord(application_id=application_id, record=approval.model_dump(mode="json"))
         record.save()
         return record
 
@@ -273,6 +297,11 @@ class ApprovalService:
     @classmethod
     def process_manual_approval(cls, registration: Registration):
         """Manually approve a given registration."""
+        # When application <-> registration is changed to reflect many-to-one, we need to
+        # iterate through applications and then save each one of them.
+        application = Application.get_by_registration_id(registration_id=registration.id)
+        application.status = Application.Status.APPROVED
+        application.save()
         registration.status = RegistrationStatus.APPROVED
         registration.save()
         EventRecordsService.save_event_record(
@@ -285,7 +314,10 @@ class ApprovalService:
 
     @classmethod
     def process_manual_denial(cls, registration: Registration):
-        """Manually approve a given registration."""
+        """Manually deny a given registration."""
+        application = Application.get_by_registration_id(registration_id=registration.id)
+        application.status = Application.Status.REJECTED
+        application.save()
         registration.status = RegistrationStatus.DENIED
         registration.save()
         EventRecordsService.save_event_record(
