@@ -104,7 +104,7 @@ class Registration(db.Model):
 
     # start_date is nullable as it will take effect when the correct status is set
     start_date = db.Column(db.DateTime, nullable=True)
-    end_date = db.Column(db.DateTime, nullable=True)
+    expiry_date = db.Column(db.DateTime, nullable=True)
 
     user = relationship("User", back_populates="registrations")
     rental_property = relationship("RentalProperty", back_populates="registrations")
