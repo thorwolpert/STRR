@@ -576,12 +576,6 @@ def mark_registration_invoice_paid(registration_id, invoice_id):
             return error_response(HTTPStatus.NOT_FOUND, "Invoice not found")
 
         invoice = strr_pay.update_invoice_payment_status(jwt, registration, invoice)
-        if invoice.payment_status_code == PaymentStatus.COMPLETED:
-            # Redundant code, this is a breaking change as currently data
-            # is not being inserted into application table
-            application = Application.get_by_registration_id(registration.id)
-            approval = ApprovalService.process_auto_approval(token, application)
-            ApprovalService.save_approval_record_by_registration(registration.id, approval)
 
         return jsonify(Invoice.from_db(invoice).model_dump(mode="json")), HTTPStatus.OK
     except ValidationException as auth_exception:
