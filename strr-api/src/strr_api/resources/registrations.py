@@ -566,7 +566,6 @@ def mark_registration_invoice_paid(registration_id, invoice_id):
     """
 
     try:
-        token = jwt.get_token_auth_header()
         registration = RegistrationService.get_registration(g.jwt_oidc_token_info, registration_id)
         if not registration:
             raise AuthException()
