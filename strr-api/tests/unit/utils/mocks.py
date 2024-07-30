@@ -1,9 +1,11 @@
+import json
 import os
 
 from strr_api.enums.enum import OwnershipType, PaymentStatus, PropertyType, RegistrationStatus
 from strr_api.exceptions import ExternalServiceException
 from strr_api.models import (
     Address,
+    Application,
     Contact,
     Document,
     Eligibility,
@@ -13,6 +15,8 @@ from strr_api.models import (
     RentalProperty,
     User,
 )
+
+from ..resources.test_registration_applications import CREATE_REGISTRATION_REQUEST
 
 
 def mock_json_file(filename):
@@ -104,6 +108,16 @@ def fake_registration_pending(*args, **kwargs):
             ),
         ),
     )
+
+
+def fake_application(*args, **kwargs):
+    with open(CREATE_REGISTRATION_REQUEST) as f:
+        json_data = json.load(f)
+        return Application(
+            id=1,
+            application_json=json_data,
+            type="registration",
+        )
 
 
 def fake_registration(*args, **kwargs):
