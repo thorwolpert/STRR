@@ -112,7 +112,7 @@ def fake_registration_pending(*args, **kwargs):
     )
 
 
-def fake_application(ownership_type, is_principal_residence, specified_service_provider):
+def fake_application(ownership_type="rent", is_principal_residence=True, specified_service_provider=None):
     json_data = {
         "selectedAccount": {"sbc_account_id": 3299},
         "registration": {
