@@ -54,7 +54,7 @@ from strr_api.exceptions import (
     error_response,
     exception_response,
 )
-from strr_api.models import User, Application
+from strr_api.models import Application, User
 from strr_api.requests import RegistrationRequest
 from strr_api.responses import AutoApprovalRecord, Document, EventRecord, Invoice, LTSARecord, Pagination, Registration
 from strr_api.schemas.utils import validate

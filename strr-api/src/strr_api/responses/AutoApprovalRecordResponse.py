@@ -3,6 +3,7 @@ AutoApprovalRecord response object.
 """
 from datetime import datetime
 from typing import Optional
+
 from pydantic import BaseModel
 
 from strr_api import models
