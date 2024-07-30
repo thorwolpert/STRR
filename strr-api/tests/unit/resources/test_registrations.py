@@ -314,6 +314,7 @@ def test_get_registration_ltsa_403(client):
 
 @patch("strr_api.services.registration_service.RegistrationService.get_registration", new=fake_registration_pending)
 @patch("strr_api.models.Application.get_by_registration_id", new=fake_application)
+@patch("strr_api.models.Application.save", new=no_op)
 @patch("strr_api.models.rental.Registration.save", new=no_op)
 @patch("strr_api.models.user.User.find_by_jwt_token", new=fake_examiner_from_token)
 @patch("flask_jwt_oidc.JwtManager.get_token_auth_header", new=fake_get_token_auth_header)
@@ -338,6 +339,7 @@ def test_post_registration_approve_403(client):
 
 @patch("strr_api.services.registration_service.RegistrationService.get_registration", new=fake_registration)
 @patch("strr_api.models.Application.get_by_registration_id", new=fake_application)
+@patch("strr_api.models.Application.save", new=no_op)
 @patch("strr_api.models.rental.Registration.save", new=no_op)
 @patch("strr_api.models.user.User.find_by_jwt_token", new=fake_examiner_from_token)
 @patch("flask_jwt_oidc.JwtManager.get_token_auth_header", new=fake_get_token_auth_header)
