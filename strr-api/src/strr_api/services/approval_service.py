@@ -45,7 +45,8 @@ from weasyprint import HTML
 
 from strr_api.common.utils import compare_addresses
 from strr_api.enums.enum import EventRecordType, OwnershipType, RegistrationStatus
-from strr_api.models import AutoApprovalRecord, Certificate, DSSOrganization, Registration
+from strr_api.models import Address, Application, AutoApprovalRecord, Certificate, DSSOrganization, Registration
+from strr_api.requests import RegistrationRequest
 from strr_api.responses.AutoApprovalResponse import AutoApproval
 from strr_api.responses.LTSAResponse import LtsaResponse
 from strr_api.services import AuthService, EventRecordsService, LtsaService
@@ -88,35 +89,31 @@ class ApprovalService:
         return False
 
     @classmethod
-    def process_auto_approval(cls, token, registration: Registration):
+    def process_auto_approval(cls, token, application: Application):
         """Process approval logic and produce output JSON to store in the DB and providing to FE"""
-        pid = registration.rental_property.parcel_identifier
-        owner_name = (
-            registration.rental_property.property_manager.primary_contact.firstname
-            + " "
-            + registration.rental_property.property_manager.primary_contact.lastname
-        )
+        application_json = application.application_json
+        registration_request = RegistrationRequest(**application_json)
+        registration = registration_request.registration
+        selected_account = registration_request.selectedAccount
+        pid = registration.unitDetails.parcelIdentifier
+        owner_name = registration.primaryContact.name.firstName + " " + registration.primaryContact.name.lastName
         address = (
-            registration.rental_property.address.street_address
-            + (
-                " " + registration.rental_property.address.street_address_additional
-                if registration.rental_property.address.street_address_additional
-                else ""
-            )
+            registration.unitAddress.address
+            + (" " + registration.unitAddress.addressLineTwo if registration.unitAddress.addressLineTwo else "")
             + ", "
-            + registration.rental_property.address.city
+            + registration.unitAddress.city
             + ", "
-            + registration.rental_property.address.province
+            + registration.unitAddress.province
         )
 
-        renting = registration.rental_property.ownership_type == OwnershipType.RENT
+        renting = registration.unitDetails.ownershipType == OwnershipType.RENT
         other_service_provider = (
-            registration.eligibility.specified_service_provider is not None
-            and registration.eligibility.specified_service_provider != "n/a"
+            registration.principalResidence.specifiedServiceProvider is not None
+            and registration.principalResidence.specifiedServiceProvider != "n/a"
         )
-        pr_exempt = not registration.eligibility.is_principal_residence
-        bl_provided = registration.rental_property.local_business_licence is not None
-        bcsc_address = AuthService.get_sbc_accounts_mailing_address(token, registration.sbc_account_id)
+        pr_exempt = not registration.principalResidence.isPrincipalResidence
+        bl_provided = registration.unitDetails.businessLicense is not None
+        bcsc_address = AuthService.get_sbc_accounts_mailing_address(token, selected_account.sbc_account_id)
 
         # Status setting just temporary for visibility
         auto_approval = AutoApproval()
@@ -124,28 +121,28 @@ class ApprovalService:
         try:
             if renting:
                 auto_approval.renting = True
-                registration.status = RegistrationStatus.UNDER_REVIEW
-                registration.save()
+                application.status = Application.Status.UNDER_REVIEW
+                application.save()
                 EventRecordsService.save_event_record(
                     EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
                     EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
                     False,
-                    registration.user_id,
-                    registration.id,
+                    application.submitter_id,
+                    None,
                 )
                 return auto_approval
             else:
                 auto_approval.renting = False
                 if other_service_provider:
                     auto_approval.service_provider = True
-                    registration.status = RegistrationStatus.UNDER_REVIEW
-                    registration.save()
+                    application.status = Application.Status.UNDER_REVIEW
+                    application.save()
                     EventRecordsService.save_event_record(
                         EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
                         EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
                         False,
-                        registration.user_id,
-                        registration.id,
+                        application.submitter_id,
+                        None,
                     )
                     return auto_approval
                 else:
@@ -153,16 +150,24 @@ class ApprovalService:
 
                 if not pr_exempt:
                     auto_approval.pr_exempt = False
-                    if not compare_addresses(registration.rental_property.address, bcsc_address):
+                    rental_address = Address(
+                        street_address=registration.unitAddress.address,
+                        street_address_additional=registration.unitAddress.addressLineTwo,
+                        city=registration.unitAddress.city,
+                        province=registration.unitAddress.province,
+                        postal_code=registration.unitAddress.postalCode,
+                        country=registration.unitAddress.country,
+                    )
+                    if not compare_addresses(rental_address, bcsc_address):
                         auto_approval.address_match = False
-                        registration.status = RegistrationStatus.UNDER_REVIEW
-                        registration.save()
+                        application.status = Application.Status.UNDER_REVIEW
+                        application.save()
                         EventRecordsService.save_event_record(
                             EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
                             EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
                             False,
-                            registration.user_id,
-                            registration.id,
+                            application.submitter_id,
+                            None,
                         )
                         return auto_approval
                     else:
@@ -176,14 +181,14 @@ class ApprovalService:
                                 auto_approval.business_license_required_provided = True
                             else:
                                 auto_approval.business_license_required_not_provided = True
-                                registration.status = RegistrationStatus.UNDER_REVIEW
-                                registration.save()
+                                application.status = Application.Status.UNDER_REVIEW
+                                application.save()
                                 EventRecordsService.save_event_record(
                                     EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
                                     EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
                                     False,
-                                    registration.user_id,
-                                    registration.id,
+                                    application.submitter_id,
+                                    None,
                                 )
                                 return auto_approval
                         else:
@@ -199,25 +204,25 @@ class ApprovalService:
                             owner_title_match = False
                         if owner_title_match:
                             auto_approval.title_check = True
-                            registration.status = RegistrationStatus.PROVISIONAL
-                            registration.save()
+                            application.status = Application.Status.PROVISIONAL
+                            application.save()
                             EventRecordsService.save_event_record(
                                 EventRecordType.AUTO_APPROVAL_PROVISIONAL,
                                 EventRecordType.AUTO_APPROVAL_PROVISIONAL.value,
                                 False,
-                                registration.user_id,
-                                registration.id,
+                                application.submitter_id,
+                                None,
                             )
                         else:
                             auto_approval.title_check = False
-                            registration.status = RegistrationStatus.UNDER_REVIEW
-                            registration.save()
+                            application.status = Application.Status.UNDER_REVIEW
+                            application.save()
                             EventRecordsService.save_event_record(
                                 EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
                                 EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
                                 False,
-                                registration.user_id,
-                                registration.id,
+                                application.submitter_id,
+                                None,
                             )
                         return auto_approval
                 else:
@@ -226,25 +231,25 @@ class ApprovalService:
                     organization = DSSOrganization.lookup_by_geocode(longitude, latitude)
                     if organization["is_principal_residence_required"]:
                         auto_approval.pr_exempt = False
-                        registration.status = RegistrationStatus.UNDER_REVIEW
-                        registration.save()
+                        application.status = Application.Status.UNDER_REVIEW
+                        application.save()
                         EventRecordsService.save_event_record(
                             EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
                             EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
                             False,
-                            registration.user_id,
-                            registration.id,
+                            application.submitter_id,
+                            None,
                         )
                     else:
                         auto_approval.pr_exempt = True
-                        registration.status = RegistrationStatus.APPROVED
-                        registration.save()
+                        application.status = Application.Status.APPROVED
+                        application.save()
                         EventRecordsService.save_event_record(
                             EventRecordType.AUTO_APPROVAL_APPROVED,
                             EventRecordType.AUTO_APPROVAL_APPROVED.value,
                             False,
-                            registration.user_id,
-                            registration.id,
+                            application.submitter_id,
+                            None,
                         )
                         cls.generate_registration_certificate(registration)
                     return auto_approval
@@ -254,9 +259,16 @@ class ApprovalService:
             return auto_approval
 
     @classmethod
-    def save_approval_record(cls, registration_id, approval: AutoApproval):
-        """Saves approval record."""
+    def save_approval_record_by_registration(cls, registration_id, approval: AutoApproval):
+        """Saves approval record with registration_id."""
         record = AutoApprovalRecord(registration_id=registration_id, record=approval.model_dump(mode="json"))
+        record.save()
+        return record
+
+    @classmethod
+    def save_approval_record_by_application(cls, application_id, approval: AutoApproval):
+        """Saves approval record with application_id."""
+        record = AutoApprovalRecord(application_id=application_id, record=approval.model_dump(mode="json"))
         record.save()
         return record
 
@@ -273,6 +285,11 @@ class ApprovalService:
     @classmethod
     def process_manual_approval(cls, registration: Registration):
         """Manually approve a given registration."""
+        # When application <-> registration is changed to reflect many-to-one, we need to
+        # iterate through applications and then save each one of them.
+        application = Application.get_by_registration_id(registration_id=registration.id)
+        application.status = Application.Status.APPROVED
+        application.save()
         registration.status = RegistrationStatus.APPROVED
         registration.save()
         EventRecordsService.save_event_record(
@@ -285,7 +302,10 @@ class ApprovalService:
 
     @classmethod
     def process_manual_denial(cls, registration: Registration):
-        """Manually approve a given registration."""
+        """Manually deny a given registration."""
+        application = Application.get_by_registration_id(registration_id=registration.id)
+        application.status = Application.Status.REJECTED
+        application.save()
         registration.status = RegistrationStatus.DENIED
         registration.save()
         EventRecordsService.save_event_record(
