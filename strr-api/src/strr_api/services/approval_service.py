@@ -44,12 +44,12 @@ from flask import current_app, render_template
 from weasyprint import HTML
 
 from strr_api.common.utils import compare_addresses
-from strr_api.enums.enum import EventRecordType, OwnershipType, RegistrationStatus
-from strr_api.models import Address, Application, AutoApprovalRecord, Certificate, DSSOrganization, Registration
+from strr_api.enums.enum import OwnershipType, RegistrationStatus
+from strr_api.models import Address, Application, AutoApprovalRecord, Certificate, DSSOrganization, Events, Registration
 from strr_api.requests import RegistrationRequest
 from strr_api.responses.AutoApprovalResponse import AutoApproval
 from strr_api.responses.LTSAResponse import LtsaResponse
-from strr_api.services import AuthService, EventRecordsService, LtsaService
+from strr_api.services import AuthService, EventsService, LtsaService
 from strr_api.services.geocoder_service import GeoCoderService
 
 
@@ -123,12 +123,11 @@ class ApprovalService:
                 auto_approval.renting = True
                 application.status = Application.Status.UNDER_REVIEW
                 application.save()
-                EventRecordsService.save_event_record(
-                    EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
-                    EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
-                    False,
-                    application.submitter_id,
-                    None,
+                EventsService.save_event(
+                    event_type=Events.EventType.APPLICATION,
+                    event_name=Events.EventName.AUTO_APPROVAL_FULL_REVIEW,
+                    application_id=application.id,
+                    visible_to_applicant=False,
                 )
                 return auto_approval
             else:
@@ -137,12 +136,11 @@ class ApprovalService:
                     auto_approval.service_provider = True
                     application.status = Application.Status.UNDER_REVIEW
                     application.save()
-                    EventRecordsService.save_event_record(
-                        EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
-                        EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
-                        False,
-                        application.submitter_id,
-                        None,
+                    EventsService.save_event(
+                        event_type=Events.EventType.APPLICATION,
+                        event_name=Events.EventName.AUTO_APPROVAL_FULL_REVIEW,
+                        application_id=application.id,
+                        visible_to_applicant=False,
                     )
                     return auto_approval
                 else:
@@ -162,12 +160,11 @@ class ApprovalService:
                         auto_approval.address_match = False
                         application.status = Application.Status.UNDER_REVIEW
                         application.save()
-                        EventRecordsService.save_event_record(
-                            EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
-                            EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
-                            False,
-                            application.submitter_id,
-                            None,
+                        EventsService.save_event(
+                            event_type=Events.EventType.APPLICATION,
+                            event_name=Events.EventName.AUTO_APPROVAL_FULL_REVIEW,
+                            application_id=application.id,
+                            visible_to_applicant=False,
                         )
                         return auto_approval
                     else:
@@ -183,12 +180,11 @@ class ApprovalService:
                                 auto_approval.business_license_required_not_provided = True
                                 application.status = Application.Status.UNDER_REVIEW
                                 application.save()
-                                EventRecordsService.save_event_record(
-                                    EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
-                                    EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
-                                    False,
-                                    application.submitter_id,
-                                    None,
+                                EventsService.save_event(
+                                    event_type=Events.EventType.APPLICATION,
+                                    event_name=Events.EventName.AUTO_APPROVAL_FULL_REVIEW,
+                                    application_id=application.id,
+                                    visible_to_applicant=False,
                                 )
                                 return auto_approval
                         else:
@@ -196,7 +192,7 @@ class ApprovalService:
 
                         if pid:
                             ltsa_data = LtsaService.get_title_details_from_pid(pid)
-                            ltsa_response = LtsaService.build_ltsa_response(registration.id, ltsa_data)
+                            ltsa_response = LtsaService.build_ltsa_response(application.id, ltsa_data)
                             owner_title_match = cls.check_full_name_exists_in_ownership_groups(
                                 ltsa_response, owner_name
                             )
@@ -206,23 +202,21 @@ class ApprovalService:
                             auto_approval.title_check = True
                             application.status = Application.Status.PROVISIONAL
                             application.save()
-                            EventRecordsService.save_event_record(
-                                EventRecordType.AUTO_APPROVAL_PROVISIONAL,
-                                EventRecordType.AUTO_APPROVAL_PROVISIONAL.value,
-                                False,
-                                application.submitter_id,
-                                None,
+                            EventsService.save_event(
+                                event_type=Events.EventType.APPLICATION,
+                                event_name=Events.EventName.AUTO_APPROVAL_PROVISIONAL,
+                                application_id=application.id,
+                                visible_to_applicant=False,
                             )
                         else:
                             auto_approval.title_check = False
                             application.status = Application.Status.UNDER_REVIEW
                             application.save()
-                            EventRecordsService.save_event_record(
-                                EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
-                                EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
-                                False,
-                                application.submitter_id,
-                                None,
+                            EventsService.save_event(
+                                event_type=Events.EventType.APPLICATION,
+                                event_name=Events.EventName.AUTO_APPROVAL_FULL_REVIEW,
+                                application_id=application.id,
+                                visible_to_applicant=False,
                             )
                         return auto_approval
                 else:
@@ -233,37 +227,27 @@ class ApprovalService:
                         auto_approval.pr_exempt = False
                         application.status = Application.Status.UNDER_REVIEW
                         application.save()
-                        EventRecordsService.save_event_record(
-                            EventRecordType.AUTO_APPROVAL_FULL_REVIEW,
-                            EventRecordType.AUTO_APPROVAL_FULL_REVIEW.value,
-                            False,
-                            application.submitter_id,
-                            None,
+                        EventsService.save_event(
+                            event_type=Events.EventType.APPLICATION,
+                            event_name=Events.EventName.AUTO_APPROVAL_FULL_REVIEW,
+                            application_id=application.id,
+                            visible_to_applicant=False,
                         )
                     else:
                         auto_approval.pr_exempt = True
                         application.status = Application.Status.APPROVED
                         application.save()
-                        EventRecordsService.save_event_record(
-                            EventRecordType.AUTO_APPROVAL_APPROVED,
-                            EventRecordType.AUTO_APPROVAL_APPROVED.value,
-                            False,
-                            application.submitter_id,
-                            None,
+                        EventsService.save_event(
+                            event_type=Events.EventType.APPLICATION,
+                            event_name=Events.EventName.AUTO_APPROVAL_APPROVED,
+                            application_id=application.id,
+                            visible_to_applicant=False,
                         )
-                        cls.generate_registration_certificate(registration)
                     return auto_approval
         except Exception as default_exception:  # noqa: B902; log error
             current_app.logger.error("Error in auto approval process:" + repr(default_exception))
             current_app.logger.error(auto_approval)
             return auto_approval
-
-    @classmethod
-    def save_approval_record_by_registration(cls, registration_id, approval: AutoApproval):
-        """Saves approval record with registration_id."""
-        record = AutoApprovalRecord(registration_id=registration_id, record=approval.model_dump(mode="json"))
-        record.save()
-        return record
 
     @classmethod
     def save_approval_record_by_application(cls, application_id, approval: AutoApproval):
@@ -273,50 +257,9 @@ class ApprovalService:
         return record
 
     @classmethod
-    def get_approval_records_for_registration(cls, registration_id):
-        """Get approval records for a given registration by id."""
-        return AutoApprovalRecord.get_registration_auto_approval_records(registration_id=registration_id)
-
-    @classmethod
     def get_approval_records_for_application(cls, application_id):
         """Get approval records for a given application by id."""
         return AutoApprovalRecord.get_application_auto_approval_records(application_id=application_id)
-
-    @classmethod
-    def process_manual_approval(cls, registration: Registration):
-        """Manually approve a given registration."""
-        # When application <-> registration is changed to reflect many-to-one, we need to
-        # iterate through applications and then save each one of them.
-        application = Application.get_by_registration_id(registration_id=registration.id)
-        application.status = Application.Status.APPROVED
-        application.save()
-        registration.status = RegistrationStatus.APPROVED
-        registration.start_date = datetime.now(timezone.utc)
-        registration.expiry_date = registration.start_date + Registration.DEFAULT_REGISTRATION_RENEWAL_PERIOD
-        registration.save()
-        EventRecordsService.save_event_record(
-            EventRecordType.MANUALLY_APPROVED,
-            EventRecordType.MANUALLY_APPROVED.value,
-            False,
-            registration.user_id,
-            registration.id,
-        )
-
-    @classmethod
-    def process_manual_denial(cls, registration: Registration):
-        """Manually deny a given registration."""
-        application = Application.get_by_registration_id(registration_id=registration.id)
-        application.status = Application.Status.REJECTED
-        application.save()
-        registration.status = RegistrationStatus.DENIED
-        registration.save()
-        EventRecordsService.save_event_record(
-            EventRecordType.MANUALLY_DENIED,
-            EventRecordType.MANUALLY_DENIED.value,
-            False,
-            registration.user_id,
-            registration.id,
-        )
 
     @classmethod
     def generate_registration_certificate(cls, registration: Registration):
@@ -356,12 +299,10 @@ class ApprovalService:
         registration.status = RegistrationStatus.ISSUED
         registration.save()
 
-        EventRecordsService.save_event_record(
-            EventRecordType.CERTIFICATE_ISSUED,
-            EventRecordType.CERTIFICATE_ISSUED.value,
-            False,
-            registration.user_id,
-            registration.id,
+        EventsService.save_event(
+            event_type=Events.EventType.REGISTRATION,
+            event_name=Events.EventName.CERTIFICATE_ISSUED,
+            registration_id=registration.id,
         )
 
         return certificate

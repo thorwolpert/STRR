@@ -31,23 +31,47 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-"""Tests to assure the ltsa service."""
-import json
 
-import pytest
+# pylint: disable=C0121
 
-from strr_api.services import LtsaService
-from tests.unit.utils.mocks import mock_json_file
-
-MOCK_LTSA_RESPONSE = mock_json_file("ltsa_title_order")
+"""Events Service."""
+from strr_api.models import Events
 
 
-@pytest.mark.skip(reason="Skipping until auto approval is rewritten")
-def test_build_ltsa_response():
-    """Assure the lat and log are extracted as expected."""
+class EventsService:
+    """Service to interact with the event model."""
 
-    with open(MOCK_LTSA_RESPONSE) as f:
-        data = json.load(f)
+    @classmethod
+    def save_event(
+        cls,
+        event_type: str,
+        event_name: str,
+        details: str = None,
+        visible_to_applicant: bool = False,
+        user_id: int = None,
+        registration_id: int = None,
+        application_id: int = None,
+    ):  # pylint: disable=R0913
+        """Saves STRR event."""
 
-    response = LtsaService.build_ltsa_response(1, data)
-    assert response.titleStatus == "REGISTERED"
+        event = Events(
+            user_id=user_id,
+            event_type=event_type,
+            event_name=event_name,
+            details=details,
+            visible_to_applicant=visible_to_applicant,
+            application_id=application_id,
+            registration_id=registration_id,
+        )
+        event.save()
+        return event
+
+    @classmethod
+    def fetch_registration_events(cls, registration_id: int, applicant_visible_events_only: bool = True):
+        """Get events for a given registration."""
+        return Events.fetch_registration_events(registration_id, applicant_visible_events_only)
+
+    @classmethod
+    def fetch_application_events(cls, application_id: int, applicant_visible_events_only: bool = True):
+        """Get events for a given application id."""
+        return Events.fetch_application_events(application_id, applicant_visible_events_only)

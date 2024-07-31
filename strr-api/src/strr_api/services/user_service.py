@@ -31,23 +31,18 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-"""Tests to assure the ltsa service."""
-import json
+# pylint: disable=R0913
+# pylint: disable=E1102
+"""Manages user model interactions."""
 
-import pytest
-
-from strr_api.services import LtsaService
-from tests.unit.utils.mocks import mock_json_file
-
-MOCK_LTSA_RESPONSE = mock_json_file("ltsa_title_order")
+from strr_api.models import User
 
 
-@pytest.mark.skip(reason="Skipping until auto approval is rewritten")
-def test_build_ltsa_response():
-    """Assure the lat and log are extracted as expected."""
+class UserService:
+    """Service to save and load user details."""
 
-    with open(MOCK_LTSA_RESPONSE) as f:
-        data = json.load(f)
-
-    response = LtsaService.build_ltsa_response(1, data)
-    assert response.titleStatus == "REGISTERED"
+    @classmethod
+    def get_or_create_user_by_jwt(cls, token) -> User:
+        """Get or create user matching the token"""
+        user = User.get_or_create_user_by_jwt(token)
+        return user
