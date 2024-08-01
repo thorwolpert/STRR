@@ -1,5 +1,6 @@
 <template>
   <div
+    data-cy="status-card"
     :class="
       `
         ${single ? 'flex-1': ''}
