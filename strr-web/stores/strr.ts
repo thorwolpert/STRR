@@ -293,9 +293,6 @@ const secondaryContactAPI: ContactAPII = {
 }
 
 export const formDataForAPI: CreateAccountFormAPII = {
-  // selectedAccount: {
-  //   sbc_account_id: ''
-  // },
   registration: {
     primaryContact: primaryContactAPI,
     secondaryContact: secondaryContactAPI,
