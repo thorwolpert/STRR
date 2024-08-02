@@ -1,6 +1,6 @@
 <template>
   <div data-cy="contact-information" class="relative h-full">
-    <div :class="`mb-[${addSecondaryContact ? '32px' : '132px'}] bg-white rounded-[4px]`">
+    <div :class="`mb-[${hasSecondaryContact ? '32px' : '132px'}] bg-white rounded-[4px]`">
       <div class="bg-bcGovColor-gray2 rounded-t-[4px]">
         <p class="px-[40px] py-[15px] font-bold">
           {{ t('create-account.contact.subtitle') }}
@@ -49,7 +49,7 @@
         />
       </UForm>
     </div>
-    <div v-if="!addSecondaryContact" class="desktop:mb-[180px] mobile:mb-[32px] mt-[32px] mobile:w-full mobile:p-[8px]">
+    <div v-if="!hasSecondaryContact" class="desktop:mb-[180px] mobile:mb-[32px] mt-[32px] mobile:w-full mobile:p-[8px]">
       <BcrosButtonsPrimary
         :action="toggleAddSecondary"
         :text="t('create-account.contact.add-secondary')"
@@ -123,13 +123,13 @@ const monthError = ref('')
 
 const {
   fullName,
-  addSecondaryContact,
+  hasSecondaryContact,
   toggleAddSecondary,
   isComplete,
   secondFormIsComplete
 } = defineProps<{
   fullName: string,
-  addSecondaryContact: boolean,
+  hasSecondaryContact: boolean,
   toggleAddSecondary:() => void,
   isComplete: boolean,
   secondFormIsComplete: boolean

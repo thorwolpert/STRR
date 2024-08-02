@@ -22,9 +22,11 @@
       "rejected": "REJECTED",
       "provisional": "PROVISIONAL",
       "underReview": "UNDER REVIEW",
+      "moreInfoNeeded": "MORE INFO NEEDED",
       "denied": "DENIED",
       "issued": "ISSUED",
-      "pending": "APPLIED"
+      "pending": "APPLIED",
+      "submitted": "SUBMITTED"
     }
   },
   "tos": {

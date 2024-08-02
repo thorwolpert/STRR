@@ -24,7 +24,7 @@
                 :id="id.toString()"
                 ref="contactForm"
                 :full-name="userFullName"
-                :add-secondary-contact="addSecondaryContact"
+                :add-secondary-contact="hasSecondaryContact"
                 :toggle-add-secondary="toggleAddSecondary"
                 :is-complete="activeStep.step.complete"
                 :second-form-is-complete="activeStep.step.complete"
@@ -38,7 +38,7 @@
             </div>
             <div v-if="activeStepIndex === 3" :key="activeStepIndex">
               <BcrosFormSectionReviewForm
-                :secondary-contact="addSecondaryContact"
+                :secondary-contact="hasSecondaryContact"
                 :is-complete="steps[activeStepIndex].step.complete"
               />
             </div>
@@ -66,7 +66,7 @@
 import steps from '../../page-data/create-account/steps'
 import { FormPageI } from '~/interfaces/form/form-page-i'
 
-const addSecondaryContact: Ref<boolean> = ref(false)
+const hasSecondaryContact: Ref<boolean> = ref(false)
 const activeStepIndex: Ref<number> = ref(0)
 const activeStep: Ref<FormPageI> = ref(steps[activeStepIndex.value])
 const tPrincipalResidence = (translationKey: string) => t(`create-account.principal-residence.${translationKey}`)
@@ -89,13 +89,12 @@ onMounted(() => {
 
 const t = useNuxtApp().$i18n.t
 const {
-  currentAccount,
   userFullName,
   userFirstName,
   userLastName
 } = useBcrosAccount()
 
-const toggleAddSecondary = () => { addSecondaryContact.value = !addSecondaryContact.value }
+const toggleAddSecondary = () => { hasSecondaryContact.value = !hasSecondaryContact.value }
 
 const propertyToApiType = (type: string | undefined): string => {
   const tPropertyForm = (translationKey: string) => t(`create-account.property-form.${translationKey}`)
@@ -131,8 +130,7 @@ const submit = () => {
     ? submitCreateAccountForm(
       userFirstName,
       userLastName,
-      currentAccount.id,
-      addSecondaryContact.value,
+      hasSecondaryContact.value,
       propertyToApiType(formState.propertyDetails.propertyType),
       ownershipToApiType(formState.propertyDetails.ownershipType)
     )
