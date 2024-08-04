@@ -29,11 +29,11 @@
     </div>
     <div :class="`transition-all ${folded ? 'h-[0px] overflow-hidden p-[0px]': 'px-[15px] pb-[10px] '}`">
       <div class="py-[10px] border-b-[1px] border-bcGovGray-300 flex flex-row justify-between">
-        <p>{{ t("fee-widget.filing-fee") }}</p>
+        <p>{{ t("fee-widget.registrationFee") }}</p>
         <p>{{ fee?.filingFees ? `$${fee.filingFees.toFixed(2)}`: '-' }}</p>
       </div>
       <div class="py-[10px] border-b-[1px] border-bcGovGray-300 flex flex-row justify-between">
-        <p>{{ t("fee-widget.registration-fee") }}</p>
+        <p>{{ t("fee-widget.serviceFee") }}</p>
         <p>{{ fee?.serviceFees ? `$${fee.serviceFees.toFixed(2)}`: '-' }}</p>
       </div>
       <div class="py-[10px] text-[14px] font-bold flex-row flex justify-between items-end" aria-label="null">

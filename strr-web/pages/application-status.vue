@@ -7,7 +7,7 @@
     />
     <div>
       <div class="px-[8px] flex flex-row justify-between">
-        <BcrosTypographyH2 :text="tRegistrationStatus('my-app')" class-name="mobile:pt-[0px]" />
+        <BcrosTypographyH2 :text="tRegistrationStatus('myRegApplication')" class-name="mobile:pt-[0px]" />
         <BcrosButtonsPrimary
           :text="tRegistrationStatus('create')"
           :action="() => navigateTo('/create-account')"
@@ -88,7 +88,7 @@ definePageMeta({
   layout: 'wide-gutters'
 })
 
-const tRegistrationStatus = (translationKey: string) => useTranslation().t(`registration-status.${translationKey}`)
+const tRegistrationStatus = (translationKey: string) => useTranslation().t(`registrationStatus.${translationKey}`)
 
 const { getApplications } = useApplications()
 const { getChipFlavour } = useChipFlavour()

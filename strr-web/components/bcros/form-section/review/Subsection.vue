@@ -27,7 +27,7 @@
           />
           <BcrosFormSectionReviewItem
             :title="tContact('faxNumberReview')"
-            :content="state?.faxNumber === '' ? '-': state.faxNumber"
+            :content="state?.faxNumber ?? '-'"
           />
         </div>
         <div class="flex flex-row justify-between w-full mobile:flex-col">

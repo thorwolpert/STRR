@@ -67,7 +67,7 @@
       </div>
       <BcrosAlertsMessage :flavour="AlertsFlavourE.INFO">
         <p>
-          <b>{{ t('create-account.contact-form.bold-warning') }}</b>
+          <b>{{ t('create-account.contact-form.boldWarning') }}</b>
           {{ t('create-account.contact-form.warning') }}
         </p>
       </BcrosAlertsMessage>

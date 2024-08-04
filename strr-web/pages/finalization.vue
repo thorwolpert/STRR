@@ -16,7 +16,7 @@
           </p>
         </div>
         <BcrosFormSection
-          :title="t('create-account.contact.your-name')"
+          :title="t('create-account.contact.yourName')"
           :divider="true"
           class-name="mobile:mb-[20px]"
         >
@@ -33,7 +33,7 @@
           :state="formState"
         >
           <BcrosFormSection
-            :title="tFinalization('account-name')"
+            :title="tFinalization('accountName')"
             class-name="mb-[-30px] mobile:mb-[30px]"
           >
             <UFormGroup
@@ -43,13 +43,13 @@
             >
               <UInput
                 v-model="formState.name"
-                :placeholder="tFinalization('account-name')"
+                :placeholder="tFinalization('accountName')"
                 aria-label="account name"
               />
             </UFormGroup>
           </BcrosFormSection>
           <BcrosFormSection
-            :title="tFinalization('contact-details')"
+            :title="tFinalization('contactDetails')"
           >
             <div class="flex flex-row mobile:flex-col">
               <UFormGroup

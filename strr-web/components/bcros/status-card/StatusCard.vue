@@ -43,7 +43,7 @@
 import { AlertsFlavourE } from '#imports'
 
 const t = useNuxtApp().$i18n.t
-const tRegistrationStatus = (translationKey: string) => t(`registration-status.${translationKey}`)
+const tRegistrationStatus = (translationKey: string) => t(`registrationStatus.${translationKey}`)
 
 const { getCertificate } = useRegistrations()
 
@@ -54,7 +54,7 @@ const downloadCertificate = async (id: string) => {
   const url = window.URL.createObjectURL(blob)
   link.href = url
   link.target = '_blank'
-  link.download = `${tRegistrationStatus('strr-certificate')}.pdf`
+  link.download = `${tRegistrationStatus('strrCertificate')}.pdf`
   document.body.appendChild(link)
   link.click()
   URL.revokeObjectURL(link.href)

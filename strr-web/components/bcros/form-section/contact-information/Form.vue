@@ -6,7 +6,7 @@
           {{ t('create-account.contact.subtitle') }}
         </p>
       </div>
-      <BcrosFormSection :title="t('create-account.contact.your-name')" :divider="true">
+      <BcrosFormSection :title="t('create-account.contact.yourName')" :divider="true">
         <div class="mb-[16px] text-[14px] leading-[22px]">
           {{ fullName }}
         </div>
@@ -52,7 +52,7 @@
     <div v-if="!hasSecondaryContact" class="desktop:mb-[180px] mobile:mb-[32px] mt-[32px] mobile:w-full mobile:p-[8px]">
       <BcrosButtonsPrimary
         :action="toggleAddSecondary"
-        :text="t('create-account.contact.add-secondary')"
+        :text="t('create-account.contact.addSecondaryContact')"
         variant="outline"
         icon=""
         class-name="mobile:w-full mobile:mx-[0px]"
@@ -62,7 +62,7 @@
       <div class="mb-[180px] bg-white rounded-[4px]">
         <div class="bg-bcGovColor-gray2 rounded-t-[4px] flex flex-row justify-between items-center">
           <p class="px-[40px] py-[15px] font-bold">
-            {{ t('create-account.contact.subtitle-two') }}
+            {{ t('create-account.contact.secondaryContactInfo') }}
           </p>
           <div
             class="flex flex-row mr-[20px] w-[117px] h-[36px] items-center justify-center text-[16px] text-blue-500"

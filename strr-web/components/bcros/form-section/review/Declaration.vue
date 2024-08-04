@@ -1,16 +1,16 @@
 <template>
   <div data-cy="declaration">
     <p class="mb-[4px]">
-      {{ tReview('declaration-part-one') }}
+      {{ tReview('declarationPartOne') }}
     </p>
     <p class="pl-[12px] mb-[4px]">
-      a. {{ tReview('declaration-a') }}
+      a. {{ tReview('declarationA') }}
     </p>
     <p class="pl-[12px] mb-[4px]">
-      b. {{ tReview('declaration-a') }}
+      b. {{ tReview('declarationB') }}
     </p>
     <p>
-      {{ tReview('declaration-part-two') }}
+      {{ tReview('declarationPartTwo') }}
     </p>
   </div>
 </template>
