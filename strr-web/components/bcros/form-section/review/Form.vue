@@ -170,7 +170,7 @@ const { secondaryContact, isComplete } = defineProps<{ secondaryContact: boolean
 
 const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' })
 
-const tReview = (translationKey: string) => t(`create-account.review.${translationKey}`)
-const tPrincipal = (translationKey: string) => t(`create-account.principalResidence.${translationKey}`)
+const tReview = (translationKey: string) => t(`createAccount.review.${translationKey}`)
+const tPrincipal = (translationKey: string) => t(`createAccount.principalResidence.${translationKey}`)
 
 </script>

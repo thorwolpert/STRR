@@ -232,7 +232,7 @@ const route = useRoute()
 const t = useNuxtApp().$i18n.t
 const tRegistrationStatus = (translationKey: string) => t(`registrationStatus.${translationKey}`)
 const tApplicationDetails = (translationKey: string) => t(`applicationDetails.${translationKey}`)
-const tPropertyForm = (translationKey: string) => t(`create-account.property-form.${translationKey}`)
+const tPropertyForm = (translationKey: string) => t(`createAccount.propertyForm.${translationKey}`)
 const { isExaminer } = useBcrosKeycloak()
 const { getChipFlavour } = useChipFlavour()
 

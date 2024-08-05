@@ -60,7 +60,7 @@
 <script setup lang="ts">
 
 const t = useNuxtApp().$i18n.t
-const tContact = (translationKey: string) => t(`create-account.contact-form.${translationKey}`)
+const tContact = (translationKey: string) => t(`createAccount.contactForm.${translationKey}`)
 
 const { state, primary } = defineProps<{
   state: PrimaryContactInformationI | SecondaryContactInformationI

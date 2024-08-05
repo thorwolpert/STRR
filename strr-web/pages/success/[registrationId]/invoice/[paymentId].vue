@@ -53,7 +53,7 @@
 const route = useRoute()
 const fetchedRegistration = ref()
 const t = useNuxtApp().$i18n.t
-const tApplicationConfirm = (translationKey: string) => t(`create-account.application-confirm.${translationKey}`)
+const tApplicationConfirm = (translationKey: string) => t(`createAccount.applicationConfirm.${translationKey}`)
 
 const { goToAccountInfo } = useBcrosNavigate()
 const { getRegistration } = useRegistrations()

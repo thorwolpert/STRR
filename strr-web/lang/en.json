@@ -138,22 +138,22 @@
     "renewal": "Renewal",
     "strrCertificate": "Short Term Rental Registry Certificate"
   },
-  "fee-widget": {
+  "feeWidget": {
     "summary": "Fee Summary",
     "registrationFee": "STR Registration Fee",
     "serviceFee": "STR Service Fee",
     "total": "Total Fees",
     "cad": "CAD"
   },
-  "create-account": {
+  "createAccount": {
     "title": "Short-Term Rental Registration",
-    "step-title": {
+    "stepTitle": {
       "contact": "Contact Information",
       "property": "Property Details",
       "eligibility": "Principal Residence",
       "review": "Review and Confirm"
     },
-    "application-confirm": {
+    "applicationConfirm": {
       "submitted": "Application Submitted",
       "altTextConfirm": "Confirmation check mark",
       "submittedForProperty": "Short term registry application submitted for the following property:",
@@ -178,7 +178,7 @@
       "useMailing": "Use my mailing address for the rental property address",
       "addPlatform": "Add another platform"
     },
-    "contact-form": {
+    "contactForm": {
       "fullName": "Full Name",
       "firstName": "First Name",
       "middleName": "Middle Name",
@@ -210,7 +210,7 @@
       "businessNumberReview": "Business Number",
       "cra": "CRA Identifier"
     },
-    "property-form": {
+    "propertyForm": {
       "subtitle": "Rental Unit Information",
       "nickname": "Nickname (Optional)",
       "parcelIdentifier": "Parcel Identifier (Optional)",
@@ -243,7 +243,7 @@
       "docRequirements": "View Documentation Requirements",
       "docDetails": "Documentation Details",
       "fileUpload": "File Upload",
-      "upload-multiple": "Upload one or more supporting documents",
+      "uploadMultiple": "Upload one or more supporting documents",
       "supporting": "Supporting Documents",
       "fileRequirements": "File must be a .pdf, .jpg, .doc, or .png. Maximum file size 50 MB.",
       "declaration": "Declaration",
@@ -291,7 +291,7 @@
       "declaration": "Declaration",
       "proof": "Proof of Principal Residence",
       "listing": "Internet Listings",
-      "confirm": "I confirm that the information contained in the application for registration is accurate and true. I understand that, if I have provided inaccurate or false information, I may be the subject of enforcement action under Part 4 of the Short-Term Rental Accommodations Act. Enforcement action may include being ordered to pay an administrative penalty."
+      "confirm": "I confirm that the information contained in the application for registration is accurate and true. I understand that, if I have provided inaccurate or false information, I may be the subject of enforcement action under Part 4 of the Short-Term Rental Accommodations Act. Enforcement action may include being ordered to pay an administrative penalty."
     },
     "details": {
       "title": "Step 2 - Add Your Short Term Rental Property Details",

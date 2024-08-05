@@ -18,6 +18,6 @@
 <script setup lang="ts">
 const t = useNuxtApp().$i18n.t
 
-const tReview = (translationKey: string) => t(`create-account.review.${translationKey}`)
+const tReview = (translationKey: string) => t(`createAccount.review.${translationKey}`)
 
 </script>

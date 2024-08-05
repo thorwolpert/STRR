@@ -12,11 +12,11 @@
       <div class="desktop:mb-[132px] mobile:mb-[40px] pb-[32px] bg-white rounded-[4px] padding-[40px]">
         <div class="bg-bcGovColor-gray2 rounded-t-[4px]">
           <p class="px-[40px] mobile:px-[8px] py-[15px] font-bold">
-            {{ t('create-account.contact.subtitle') }}
+            {{ t('createAccount.contact.subtitle') }}
           </p>
         </div>
         <BcrosFormSection
-          :title="t('create-account.contact.yourName')"
+          :title="t('createAccount.contact.yourName')"
           :divider="true"
           class-name="mobile:mb-[20px]"
         >
@@ -24,7 +24,7 @@
             {{ userFullName }}
           </div>
           <div ref="testRef" class="mb-[16px] text-[14px] leading-[22px]">
-            {{ t('create-account.contact.disclaimer') }}
+            {{ t('createAccount.contact.disclaimer') }}
           </div>
         </BcrosFormSection>
         <UForm

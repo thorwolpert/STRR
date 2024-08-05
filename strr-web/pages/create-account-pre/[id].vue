@@ -5,7 +5,7 @@
         <div class="grow pr-[24px] mobile:pr-[0px]">
           <div class="mobile:px-[8px]">
             <BcrosTypographyH1
-              :text="t('create-account.title')"
+              :text="t('createAccount.title')"
               data-cy="accountPageTitle"
               class-name="mobile:pb-[20px]"
             />
@@ -71,7 +71,7 @@ import { FormPageI } from '~/interfaces/form/form-page-i'
 const hasSecondaryContact: Ref<boolean> = ref(false)
 const activeStepIndex: Ref<number> = ref(0)
 const activeStep: Ref<FormPageI> = ref(steps[activeStepIndex.value])
-const tPrincipalResidence = (translationKey: string) => t(`create-account.principalResidence.${translationKey}`)
+const tPrincipalResidence = (translationKey: string) => t(`createAccount.principalResidence.${translationKey}`)
 const contactForm = ref()
 const fee = ref<string>()
 const headerUpdateKey = ref(0)
@@ -97,7 +97,7 @@ const toggleAddSecondary = () => {
 }
 
 const propertyToApiType = (type: string | undefined): string => {
-  const tPropertyForm = (translationKey: string) => t(`create-account.property-form.${translationKey}`)
+  const tPropertyForm = (translationKey: string) => t(`createAccount.propertyForm.${translationKey}`)
   for (const key in propertyTypeMap) {
     const propertyKey = propertyTypeMap[key as keyof PropertyTypeMapI]
     if (type && tPropertyForm(propertyKey) === type) {
@@ -109,11 +109,11 @@ const propertyToApiType = (type: string | undefined): string => {
 
 const ownershipToApiType = (type: string | undefined): string => {
   switch (type) {
-    case t('create-account.property-form.rent'):
+    case t('createAccount.propertyForm.rent'):
       return 'RENT'
-    case t('create-account.property-form.own'):
+    case t('createAccount.propertyForm.own'):
       return 'OWN'
-    case t('create-account.property-form.other'):
+    case t('createAccount.propertyForm.other'):
       return 'CO_OWN'
   }
   return ''

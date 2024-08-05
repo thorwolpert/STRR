@@ -92,7 +92,7 @@
             :title="tPrincipalResidence('fileUpload')"
           >
             <p class="mb-[16px]">
-              {{ tPrincipalResidence('upload-multiple') }}
+              {{ tPrincipalResidence('uploadMultiple') }}
             </p>
             <div class="flex flex-row items-center">
               <img class="mr-[4px]" src="/icons/create-account/attach.svg" alt="Paperclip icon">
@@ -153,7 +153,7 @@
 
 <script setup lang="ts">
 const t = useNuxtApp().$i18n.t
-const tPrincipalResidence = (translationKey: string) => t(`create-account.principalResidence.${translationKey}`)
+const tPrincipalResidence = (translationKey: string) => t(`createAccount.principalResidence.${translationKey}`)
 
 const reasonError = ref()
 const otherReasonError = ref()
@@ -210,7 +210,7 @@ const primaryResidenceRadioOptions = [{
 }]
 
 const exemptionReasons: string[] = [
-  tPrincipalResidence('exempt-community'),
+  tPrincipalResidence('exemptCommunity'),
   tPrincipalResidence('eligible'),
   tPrincipalResidence('farm'),
   tPrincipalResidence('other')
@@ -222,7 +222,7 @@ const otherExemptionReasons: string[] = [
   tPrincipalResidence('exchange'),
   tPrincipalResidence('lodge'),
   tPrincipalResidence('institution'),
-  tPrincipalResidence('strata-guest')
+  tPrincipalResidence('strataGuest')
 ]
 
 </script>
