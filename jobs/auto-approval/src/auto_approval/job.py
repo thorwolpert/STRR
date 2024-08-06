@@ -14,10 +14,14 @@
 """Auto Approval Job."""
 import logging
 import os
+from datetime import datetime, timedelta, timezone
 
 import sentry_sdk
 from flask import Flask
 from sentry_sdk.integrations.logging import LoggingIntegration
+from strr_api.models.application import Application
+from strr_api.models.user import User
+from strr_api.services import ApprovalService
 
 from auto_approval.config import CONFIGURATION
 from auto_approval.utils.logging import setup_logging
@@ -51,13 +55,41 @@ def register_shellcontext(app):
     app.shell_context_processor(shell_context)
 
 
+def create_jwt_token_from_user(user: User) -> dict:
+    """Create a JWT token dict from a User object."""
+    JWT_OIDC_USERNAME = os.getenv("JWT_OIDC_USERNAME", "username")
+    JWT_OIDC_FIRSTNAME = os.getenv("JWT_OIDC_FIRSTNAME", "firstname")
+    JWT_OIDC_LASTNAME = os.getenv("JWT_OIDC_LASTNAME", "lastname")
+
+    token = {
+        "sub": user.sub,
+        "iss": user.iss,
+        "idp_userid": user.idp_userid,
+        "loginSource": user.login_source,
+        JWT_OIDC_USERNAME: user.username,
+        JWT_OIDC_FIRSTNAME: user.firstname,
+        JWT_OIDC_LASTNAME: user.lastname,
+    }
+
+    return token
+
 
 def run():
     """Applies auto approval logic against STRR applications and updates the application status."""
     application = create_app()
     with application.app_context():
         try:
-            print("Running auto approval job")
+            one_hour_ago = datetime.now(timezone.utc) - timedelta(hours=1)
+            applications = Application.query.filter(
+                Application.application_date <= one_hour_ago,
+                Application.status == Application.Status.SUBMITTED,
+            ).all()
 
+            for application in applications:
+                submitter = application.submitter
+                token = create_jwt_token_from_user(user=submitter)
+                ApprovalService.process_auto_approval(
+                    token=token, application=application
+                )
         except Exception as err:
             application.logger.error(err)
