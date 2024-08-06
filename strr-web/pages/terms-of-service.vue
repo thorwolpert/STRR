@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BcrosTypographyH1 :text="tTos('tos-title')" />
+    <BcrosTypographyH1 :text="tTos('tosTitle')" />
     <div class="bg-white flex flex-col pb-[20px]">
       <div class="px-[20px] py-[25px]">
         <!-- eslint-disable-next-line -->

@@ -15,14 +15,12 @@
         icon="i-mdi-chevron-left"
         :trailing="false"
         variant="outline"
-        alt="previous"
         :class-name="`${isFirstStep ? 'hidden': ''} mr-[20px] mobile:mr-[8px]`"
       />
       <BcrosButtonsPrimary
-        :text="isLastStep ? t('general.submit-and-pay') : t('general.next')"
+        :text="isLastStep ? t('general.submitAndPay') : t('general.next')"
         :action="isLastStep ? submit : setNextStep"
         :icon="isLastStep ? '': 'i-mdi-chevron-right'"
-        :alt="isLastStep ? '': 'next icon'"
         :trailing="true"
       />
     </div>
