@@ -58,7 +58,6 @@ from strr_api.models import (
     db,
 )
 from strr_api.services.events_service import EventsService
-from strr_api.services.gcp_storage_service import GCPStorageService
 from strr_api.utils.user_context import UserContext, user_context
 
 
@@ -129,6 +128,21 @@ class RegistrationService:
         db.session.flush()
         db.session.refresh(property_manager)
 
+        eligibility = Eligibility(
+            is_principal_residence=registration_request.principalResidence.isPrincipalResidence,
+            agreed_to_rental_act=registration_request.principalResidence.agreedToRentalAct,
+            non_principal_option=registration_request.principalResidence.nonPrincipalOption,
+            specified_service_provider=registration_request.principalResidence.specifiedServiceProvider,
+            agreed_to_submit=registration_request.principalResidence.agreedToSubmit,
+        )
+
+        documents = []
+        for doc in registration_request.documents:
+            document = Document(file_name=doc.fileName, file_type=doc.fileType, path=doc.fileKey)
+            documents.append(document)
+        if documents:
+            eligibility.documents = documents
+
         start_date = datetime.utcnow()
         registration_number = RegistrationService._get_registration_number()
         registration = Registration(
@@ -155,13 +169,7 @@ class RegistrationService:
                 ownership_type=registration_request.unitDetails.ownershipType,
                 rental_platforms=[RentalPlatform(url=listing.url) for listing in registration_request.listingDetails],
             ),
-            eligibility=Eligibility(
-                is_principal_residence=registration_request.principalResidence.isPrincipalResidence,
-                agreed_to_rental_act=registration_request.principalResidence.agreedToRentalAct,
-                non_principal_option=registration_request.principalResidence.nonPrincipalOption,
-                specified_service_provider=registration_request.principalResidence.specifiedServiceProvider,
-                agreed_to_submit=registration_request.principalResidence.agreedToSubmit,
-            ),
+            eligibility=eligibility,
         )
         registration.save()
         return registration
@@ -257,54 +265,6 @@ class RegistrationService:
         if not user.is_examiner():
             query = query.filter_by(user_id=user.id)
         return query.one_or_none()
-
-    @classmethod
-    def save_registration_document(cls, eligibility_id, file_name, file_type, file_contents):
-        """Save STRR uploaded document to database."""
-
-        blob_name = GCPStorageService.upload_registration_document(file_type, file_contents)
-        path = blob_name
-
-        registration_document = Document(
-            eligibility_id=eligibility_id,
-            file_name=file_name,
-            file_type=file_type,
-            path=path,
-        )
-        db.session.add(registration_document)
-        db.session.commit()
-        db.session.refresh(registration_document)
-        return registration_document
-
-    @classmethod
-    def get_registration_documents(cls, registration_id):
-        """Get registration documents by registration id."""
-        return (
-            Document.query.join(Eligibility, Eligibility.id == Document.eligibility_id)
-            .filter(Eligibility.registration_id == registration_id)
-            .all()
-        )
-
-    @classmethod
-    def get_registration_document(cls, registration_id, document_id):
-        """Get registration document by id."""
-        return (
-            Document.query.join(Eligibility, Eligibility.id == Document.eligibility_id)
-            .filter(Eligibility.registration_id == registration_id)
-            .filter(Document.id == document_id)
-            .one_or_none()
-        )
-
-    @classmethod
-    def delete_registration_document(cls, registration_id, document_id):
-        """Delete registration document by id."""
-        document = RegistrationService.get_registration_document(registration_id, document_id)
-        if not document:
-            return False
-        GCPStorageService.delete_registration_document(document.path)
-        db.session.delete(document)
-        db.session.commit()
-        return True
 
     @classmethod
     @user_context
