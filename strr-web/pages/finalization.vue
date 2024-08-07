@@ -89,7 +89,7 @@
           class="w-full desktop:my-[32px] flex justify-end mobile:px-[8px] mobile:justify-center desktop:pr-[32px]"
         >
           <BcrosButtonsPrimary
-            :text="tFinalization('create')"
+            :label="tFinalization('create')"
             :action="() => validateAndSubmit()"
             icon="i-mdi-chevron-right"
             :trailing="true"

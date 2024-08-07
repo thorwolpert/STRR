@@ -52,7 +52,7 @@
     <div v-if="!hasSecondaryContact" class="desktop:mb-[180px] mobile:mb-[32px] mt-[32px] mobile:w-full mobile:p-[8px]">
       <BcrosButtonsPrimary
         :action="toggleAddSecondary"
-        :text="t('createAccount.contact.addSecondaryContact')"
+        :label="t('createAccount.contact.addSecondaryContact')"
         variant="outline"
         icon=""
         class-name="mobile:w-full mobile:mx-[0px]"

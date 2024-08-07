@@ -9,7 +9,7 @@
       <div class="px-[8px] flex flex-row justify-between">
         <BcrosTypographyH2 :text="tRegistrationStatus('myRegApplication')" class-name="mobile:pt-[0px]" />
         <BcrosButtonsPrimary
-          :text="tRegistrationStatus('create')"
+          :label="tRegistrationStatus('create')"
           :action="() => navigateTo('/create-account')"
           icon="i-mdi-plus"
           class-name="mobile:hidden"
@@ -73,7 +73,7 @@
     </div>
     <div class="w-full h-[120px] bg-white desktop:hidden flex justify-center items-center p-[8px]">
       <BcrosButtonsPrimary
-        :text="tRegistrationStatus('create')"
+        :label="tRegistrationStatus('create')"
         :action="() => navigateTo('/create-account')"
         icon="i-mdi-plus"
       />

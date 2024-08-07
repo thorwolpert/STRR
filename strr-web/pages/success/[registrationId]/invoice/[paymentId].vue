@@ -40,7 +40,7 @@
         {{ tApplicationConfirm('haveAnotherProperty') }}
       </p>
       <BcrosButtonsPrimary
-        :text="tApplicationConfirm('startNewApplication')"
+        :label="tApplicationConfirm('startNewApplication')"
         :action="() => navigateTo('/create-account')"
         class-name="font-bold"
       />

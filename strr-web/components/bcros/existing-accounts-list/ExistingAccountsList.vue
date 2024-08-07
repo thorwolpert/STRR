@@ -37,7 +37,6 @@
             :action="() => chooseButtonAction(account)"
             icon="i-mdi-chevron-right"
             :label="useAccountButton"
-            :text="useAccountButton"
             :trailing="true"
             class-name="mobile:grow"
           />
@@ -50,7 +49,6 @@
       :action="createButtonAction"
       icon="i-mdi-chevron-right"
       :label="createAccountButtonText"
-      :text="createAccountButtonText"
       :trailing="true"
       variant="outline"
       class-name="mobile:grow px-[8px]"
