@@ -11,3 +11,8 @@ if __name__ == "__main__":
         func=run, trigger=IntervalTrigger(hours=1), next_run_time=datetime.now()
     )
     scheduler.start()
+    try:
+        while scheduler.running:
+            pass
+    except (KeyboardInterrupt, SystemExit):
+        scheduler.shutdown()
