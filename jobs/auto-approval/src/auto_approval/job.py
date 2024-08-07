@@ -41,6 +41,9 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
     if app.config.get("SENTRY_DSN", None):
         sentry_sdk.init(dsn=app.config.get("SENTRY_DSN"), integrations=[SENTRY_LOGGING])
     register_shellcontext(app)
+    app.logger.info(
+        f"AUTO_APPROVAL_MIN_APPLICATION_SUBMITTED_MINUTES={str(app.config.get("AUTO_APPROVAL_MIN_APPLICATION_SUBMITTED_MINUTES"))}"
+    )
     return app
 
 
@@ -65,9 +68,13 @@ def run():
     app = create_app()
     with app.app_context():
         try:
-            one_hour_ago = datetime.now(timezone.utc) - timedelta(hours=1)
+            time_delta_ago = datetime.now(timezone.utc) - timedelta(
+                minutes=app.config.get(
+                    "AUTO_APPROVAL_MIN_APPLICATION_SUBMITTED_MINUTES"
+                )
+            )
             applications = Application.query.filter(
-                Application.application_date <= one_hour_ago,
+                Application.application_date <= time_delta_ago,
                 Application.status == Application.Status.SUBMITTED,
             ).all()
             for application in applications:
