@@ -33,15 +33,14 @@
             :application-id="application.header.id.toString()"
             :flavour="getChipFlavour(application.header.status)"
             :status="application.header.status"
-            :single="!(applications && applications?.length > 1)"
+            :is-single="!(applications && applications?.length > 1)"
             :registration-number="application.header?.registrationId?.toString() ?? ''"
           >
-            <div class="mb-[24px]">
+            <div>
               <p class="font-bold">
                 {{
-                  application.registration.unitAddress.nickname
-                    ? application.registration.unitAddress.nickname
-                    : application.registration.unitAddress.address
+                  application.registration.unitAddress.nickname ||
+                    application.registration.unitAddress.address
                 }}
               </p>
               <p>
