@@ -14,11 +14,14 @@
 """Auto Approval Job."""
 import logging
 import os
+import time
 from datetime import datetime, timedelta, timezone
 
 import sentry_sdk
 from flask import Flask
+from pg8000.dbapi import ProgrammingError
 from sentry_sdk.integrations.logging import LoggingIntegration
+from sqlalchemy.exc import SQLAlchemyError
 from strr_api.models import db
 from strr_api.models.application import Application
 from strr_api.services import ApprovalService, AuthService
@@ -57,31 +60,44 @@ def register_shellcontext(app):
     app.shell_context_processor(shell_context)
 
 
-def get_bearer_token():
-    """Create a service account bearer token."""
+def get_submitted_applications(app):
+    """Retrieve submitted applications for processing."""
+    time_delta = timedelta(
+        minutes=app.config.get("AUTO_APPROVAL_MIN_APPLICATION_SUBMITTED_MINUTES")
+    )
+    cutoff_time = datetime.now(timezone.utc) - time_delta
+    return Application.query.filter(
+        Application.application_date <= cutoff_time,
+        Application.status == Application.Status.SUBMITTED,
+    ).all()
+
+
+def process_applications(app, applications):
+    """Process auto-approval for submitted applications."""
     token = AuthService.get_service_client_token()
-    return token
+    for application in applications:
+        app.logger.info(f"Auto processing application {str(application.id)}")
+        ApprovalService.process_auto_approval(token=token, application=application)
 
 
-def run():
-    """Applies auto approval logic against STRR applications and updates the application status."""
+def run(max_attempts=5, max_delay=240):
+    """Run the auto-approval job with retries."""
     app = create_app()
-    with app.app_context():
-        try:
-            time_delta_ago = datetime.now(timezone.utc) - timedelta(
-                minutes=app.config.get(
-                    "AUTO_APPROVAL_MIN_APPLICATION_SUBMITTED_MINUTES"
-                )
-            )
-            applications = Application.query.filter(
-                Application.application_date <= time_delta_ago,
-                Application.status == Application.Status.SUBMITTED,
-            ).all()
-            for application in applications:
-                token = get_bearer_token()
-                app.logger.info(f"Auto processing application {str(application.id)}")
-                ApprovalService.process_auto_approval(
-                    token=token, application=application
-                )
-        except Exception as err:
-            app.logger.error(err)
+    for attempt in range(max_attempts):
+        with app.app_context():
+            try:
+                applications = get_submitted_applications(app)
+                process_applications(app, applications)
+                return
+            except (SQLAlchemyError, ProgrammingError) as e:
+                if attempt < max_attempts - 1:
+                    delay = min(max_delay, (2**attempt))
+                    app.logger.warning(
+                        f"Database error. Retrying in {delay}s. Error: {str(e)}"
+                    )
+                    time.sleep(delay)
+                else:
+                    app.logger.error(f"Max attempts reached. Job failed: {str(e)}")
+            except Exception as err:
+                app.logger.error(f"Unexpected error: {str(err)}")
+                break

@@ -63,7 +63,7 @@ class _Config(object):  # pylint: disable=too-few-public-methods
         os.getenv("AUTO_APPROVAL_MIN_APPLICATION_SUBMITTED_MINUTES") or "60"
     )
     AUTO_APPROVAL_JOB_INTERVAL_MINUTES = int(
-        os.getenv("AUTO_APPROVAL_JOB_INTERVAL_MINUTES") or "2"
+        os.getenv("AUTO_APPROVAL_JOB_INTERVAL_MINUTES") or "5"
     )
 
     DB_USER = os.getenv("DATABASE_USERNAME", "")
