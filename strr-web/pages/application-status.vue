@@ -9,7 +9,7 @@
       <div class="px-[8px] flex flex-row justify-between">
         <BcrosTypographyH2 :text="tRegistrationStatus('myRegApplication')" class-name="mobile:pt-[0px]" />
         <BcrosButtonsPrimary
-          :text="tRegistrationStatus('create')"
+          :label="tRegistrationStatus('create')"
           :action="() => navigateTo('/create-account')"
           icon="i-mdi-plus"
           class-name="mobile:hidden"
@@ -33,15 +33,14 @@
             :application-id="application.header.id.toString()"
             :flavour="getChipFlavour(application.header.status)"
             :status="application.header.status"
-            :single="!(applications && applications?.length > 1)"
+            :is-single="!(applications && applications?.length > 1)"
             :registration-number="application.header?.registrationId?.toString() ?? ''"
           >
-            <div class="mb-[24px]">
+            <div>
               <p class="font-bold">
                 {{
-                  application.registration.unitAddress.nickname
-                    ? application.registration.unitAddress.nickname
-                    : application.registration.unitAddress.address
+                  application.registration.unitAddress.nickname ||
+                    application.registration.unitAddress.address
                 }}
               </p>
               <p>
@@ -73,7 +72,7 @@
     </div>
     <div class="w-full h-[120px] bg-white desktop:hidden flex justify-center items-center p-[8px]">
       <BcrosButtonsPrimary
-        :text="tRegistrationStatus('create')"
+        :label="tRegistrationStatus('create')"
         :action="() => navigateTo('/create-account')"
         icon="i-mdi-plus"
       />

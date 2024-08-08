@@ -37,7 +37,7 @@
       </div>
       <BcrosButtonsPrimary
         :action="addPlatform"
-        :text="t('createAccount.contact.addPlatform')"
+        :label="t('createAccount.contact.addPlatform')"
         variant="outline"
         icon=""
         class-name="mb-[40px] mobile:mb-[20px] mobile:w-full mobile:mx-[0px]"

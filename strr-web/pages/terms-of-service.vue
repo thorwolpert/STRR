@@ -8,11 +8,11 @@
       </div>
       <div class="flex flex-row justify-center">
         <BcrosButtonsPrimary
-          :text="tTos('accept')"
+          :label="tTos('accept')"
           :action="() => acceptTos(true, tos?.versionId)"
         />
         <BcrosButtonsPrimary
-          :text="tTos('decline')"
+          :label="tTos('decline')"
           :action="() => acceptTos(false)"
           variant="outline"
           class-name="ml-[4px]"
