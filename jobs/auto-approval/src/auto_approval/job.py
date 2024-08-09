@@ -63,7 +63,7 @@ def get_submitted_applications(app):
     cutoff_time = datetime.now(timezone.utc) - time_delta
     return Application.query.filter(
         Application.application_date <= cutoff_time,
-        Application.status == Application.Status.SUBMITTED,
+        Application.status == Application.Status.PAID,
     ).all()
 
 
