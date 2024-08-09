@@ -14,7 +14,6 @@
 """Auto Approval Job."""
 import logging
 import os
-import time
 from datetime import datetime, timedelta, timezone
 
 import sentry_sdk
@@ -37,16 +36,12 @@ SENTRY_LOGGING = LoggingIntegration(event_level=logging.ERROR)  # send errors as
 def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
-    app_config = CONFIGURATION[run_mode]
-    app.config.from_object(app_config)
+    app.config.from_object(CONFIGURATION[run_mode])
     db.init_app(app)
     # Configure Sentry
     if app.config.get("SENTRY_DSN", None):
         sentry_sdk.init(dsn=app.config.get("SENTRY_DSN"), integrations=[SENTRY_LOGGING])
     register_shellcontext(app)
-    app.logger.info(
-        f"AUTO_APPROVAL_MIN_APPLICATION_SUBMITTED_MINUTES={str(app.config.get("AUTO_APPROVAL_MIN_APPLICATION_SUBMITTED_MINUTES"))}"
-    )
     return app
 
 
@@ -63,7 +58,7 @@ def register_shellcontext(app):
 def get_submitted_applications(app):
     """Retrieve submitted applications for processing."""
     time_delta = timedelta(
-        minutes=app.config.get("AUTO_APPROVAL_MIN_APPLICATION_SUBMITTED_MINUTES")
+        minutes=app.config.get("AUTO_APPROVAL_APPLICATION_PROCESSING_DELAY")
     )
     cutoff_time = datetime.now(timezone.utc) - time_delta
     return Application.query.filter(
@@ -80,24 +75,14 @@ def process_applications(app, applications):
         ApprovalService.process_auto_approval(token=token, application=application)
 
 
-def run(max_attempts=5, max_delay=240):
-    """Run the auto-approval job with retries."""
+def run():
+    """Run the auto-approval job."""
     app = create_app()
-    for attempt in range(max_attempts):
-        with app.app_context():
-            try:
-                applications = get_submitted_applications(app)
-                process_applications(app, applications)
-                return
-            except (SQLAlchemyError, ProgrammingError) as e:
-                if attempt < max_attempts - 1:
-                    delay = min(max_delay, (2**attempt))
-                    app.logger.warning(
-                        f"Database error. Retrying in {delay}s. Error: {str(e)}"
-                    )
-                    time.sleep(delay)
-                else:
-                    app.logger.error(f"Max attempts reached. Job failed: {str(e)}")
-            except Exception as err:
-                app.logger.error(f"Unexpected error: {str(err)}")
-                break
+    with app.app_context():
+        try:
+            applications = get_submitted_applications(app)
+            process_applications(app, applications)
+        except (SQLAlchemyError, ProgrammingError) as e:
+            app.logger.error(f"Database error: {str(e)}")
+        except Exception as err:
+            app.logger.error(f"Unexpected error: {str(err)}")
