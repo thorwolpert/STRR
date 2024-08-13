@@ -13,7 +13,7 @@
     "lint:fix": "eslint --cache --ext '.ts,.vue' . --max-warnings 0 --fix",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "test": "vitest run",
+    "test": "vitest run --coverage && cp ./coverage/cobertura-coverage.xml ./coverage.xml",
     "test:cov": "vitest run --coverage && cp ./coverage/cobertura-coverage.xml ./coverage.xml",
     "start": "nuxt start"
   },
