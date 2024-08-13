@@ -48,13 +48,50 @@ class _Config(object):  # pylint: disable=too-few-public-methods
 
     SENTRY_DSN = os.getenv("SENTRY_DSN", "")
 
-    AUTH_SVC_URL = os.getenv("AUTH_SVC_URL")
+    # SVC
+    KEYCLOAK_AUTH_TOKEN_URL = os.getenv("KEYCLOAK_AUTH_TOKEN_URL")
+    STRR_SERVICE_ACCOUNT_CLIENT_ID = os.getenv("STRR_SERVICE_ACCOUNT_CLIENT_ID")
+    STRR_SERVICE_ACCOUNT_SECRET = os.getenv("STRR_SERVICE_ACCOUNT_SECRET")
 
+    # AUTH API
+    AUTH_SVC_URL = os.getenv("AUTH_SVC_URL")
+    if not AUTH_SVC_URL:
+        AUTH_SVC_URL = os.getenv("AUTH_API_URL", "") + os.getenv("AUTH_API_VERSION", "")
+
+    # AUTO APPROVAL JOB
+    AUTO_APPROVAL_APPLICATION_PROCESSING_DELAY = int(
+        os.getenv("AUTO_APPROVAL_APPLICATION_PROCESSING_DELAY") or "60"
+    )
+
+    # GEOCODER
+    GEOCODER_SVC_URL = os.getenv("GEOCODER_API_URL", "")
+    GEOCODER_SVC_AUTH_KEY = os.getenv("GEOCODER_API_AUTH_KEY", "")
+
+    # JWT_OIDC Settings
+    JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv("JWT_OIDC_WELL_KNOWN_CONFIG")
+    JWT_OIDC_ALGORITHMS = os.getenv("JWT_OIDC_ALGORITHMS")
+    JWT_OIDC_JWKS_URI = os.getenv("JWT_OIDC_JWKS_URI")
+    JWT_OIDC_ISSUER = os.getenv("JWT_OIDC_ISSUER")
+    JWT_OIDC_AUDIENCE = os.getenv("JWT_OIDC_AUDIENCE")
+    JWT_OIDC_CLIENT_SECRET = os.getenv("JWT_OIDC_CLIENT_SECRET")
+    JWT_OIDC_CACHING_ENABLED = os.getenv("JWT_OIDC_CACHING_ENABLED")
+    JWT_OIDC_TOKEN_URL = os.getenv("JWT_OIDC_TOKEN_URL")
+    JWT_OIDC_JWKS_CACHE_TIMEOUT = int(os.getenv("JWT_OIDC_JWKS_CACHE_TIMEOUT"))
+    JWT_OIDC_USERNAME = os.getenv("JWT_OIDC_USERNAME", "username")
+    JWT_OIDC_FIRSTNAME = os.getenv("JWT_OIDC_FIRSTNAME", "firstname")
+    JWT_OIDC_LASTNAME = os.getenv("JWT_OIDC_LASTNAME", "lastname")
+
+    # LTSA
+    LTSA_SVC_URL = os.getenv("LTSA_API_URL", "") + os.getenv("LTSA_API_VERSION", "")
+    LTSA_SVC_AUTH_KEY = os.getenv("LTSA_API_KEY_STRR", "")
+
+    # DATABASE
     DB_USER = os.getenv("DATABASE_USERNAME", "")
     DB_PASSWORD = os.getenv("DATABASE_PASSWORD", "")
     DB_NAME = os.getenv("DATABASE_NAME", "")
     DB_HOST = os.getenv("DATABASE_HOST", "")
     DB_PORT = int(os.getenv("DATABASE_PORT", "5432"))  # POSTGRESQL
+
     # POSTGRESQL
     if DB_UNIX_SOCKET := os.getenv("DATABASE_UNIX_SOCKET", None):
         SQLALCHEMY_DATABASE_URI = f"postgresql+pg8000://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}?unix_sock={DB_UNIX_SOCKET}/.s.PGSQL.5432"

@@ -92,7 +92,11 @@ def app_context(app):
 @patch("strr_api.models.DSSOrganization.lookup_by_geocode")
 @patch("strr_api.services.LtsaService.get_title_details_from_pid")
 @patch("strr_api.services.LtsaService.build_ltsa_response")
+@patch("strr_api.services.RegistrationService.create_registration")
+@patch("strr_api.services.RegistrationService.generate_registration_certificate")
 def test_process_auto_approval(
+    mock_generate_certificate,
+    mock_create_registration,
     mock_build_ltsa,
     mock_get_title,
     mock_lookup_geocode,
@@ -134,7 +138,6 @@ def test_process_auto_approval(
             country="Canada",
         )
         expected_status = Application.Status.UNDER_REVIEW
-
     approval_record = ApprovalService.process_auto_approval(token=sample_token, application=application)
 
     assert approval_record is not None

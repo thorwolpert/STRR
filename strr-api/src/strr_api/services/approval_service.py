@@ -40,12 +40,12 @@
 from flask import current_app
 
 from strr_api.common.utils import compare_addresses
-from strr_api.enums.enum import OwnershipType
+from strr_api.enums.enum import OwnershipType, RegistrationStatus
 from strr_api.models import Address, Application, AutoApprovalRecord, DSSOrganization, Events
 from strr_api.requests import RegistrationRequest
 from strr_api.responses.AutoApprovalResponse import AutoApproval
 from strr_api.responses.LTSAResponse import LtsaResponse
-from strr_api.services import AuthService, EventsService, LtsaService
+from strr_api.services import AuthService, EventsService, LtsaService, RegistrationService
 from strr_api.services.geocoder_service import GeoCoderService
 
 
@@ -110,7 +110,6 @@ class ApprovalService:
         pr_exempt = not registration.principalResidence.isPrincipalResidence
         bl_provided = registration.unitDetails.businessLicense is not None
         bcsc_address = AuthService.get_sbc_accounts_mailing_address(token, selected_account.sbc_account_id)
-
         # Status setting just temporary for visibility
         auto_approval = AutoApproval()
 
@@ -204,6 +203,16 @@ class ApprovalService:
                                 application_id=application.id,
                                 visible_to_applicant=False,
                             )
+                            registration = RegistrationService.create_registration(
+                                application.submitter_id, application.payment_account, registration_request.registration
+                            )
+                            EventsService.save_event(
+                                event_type=Events.EventType.REGISTRATION,
+                                event_name=Events.EventName.REGISTRATION_CREATED,
+                                application_id=application.id,
+                                registration_id=registration.id,
+                                visible_to_applicant=False,
+                            )
                         else:
                             auto_approval.title_check = False
                             application.status = Application.Status.UNDER_REVIEW
@@ -237,6 +246,26 @@ class ApprovalService:
                             event_type=Events.EventType.APPLICATION,
                             event_name=Events.EventName.AUTO_APPROVAL_APPROVED,
                             application_id=application.id,
+                            visible_to_applicant=False,
+                        )
+                        registration = RegistrationService.create_registration(
+                            application.submitter_id, application.payment_account, registration_request.registration
+                        )
+                        registration.status = RegistrationStatus.APPROVED
+                        registration.save()
+                        EventsService.save_event(
+                            event_type=Events.EventType.REGISTRATION,
+                            event_name=Events.EventName.REGISTRATION_CREATED,
+                            application_id=application.id,
+                            registration_id=registration.id,
+                            visible_to_applicant=False,
+                        )
+                        RegistrationService.generate_registration_certificate(registration=registration)
+                        EventsService.save_event(
+                            event_type=Events.EventType.REGISTRATION,
+                            event_name=Events.EventName.CERTIFICATE_ISSUED,
+                            application_id=application.id,
+                            registration_id=registration.id,
                             visible_to_applicant=False,
                         )
                     return auto_approval

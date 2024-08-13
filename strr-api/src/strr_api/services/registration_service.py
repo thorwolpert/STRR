@@ -271,7 +271,9 @@ class RegistrationService:
     def generate_registration_certificate(cls, registration: Registration, **kwargs):
         """Generate registration PDF certificate."""
         usr_context: UserContext = kwargs["user_context"]
-        user = User.get_or_create_user_by_jwt(usr_context.token_info)
+        user = None
+        if usr_context and usr_context.token_info != {}:
+            user = User.get_or_create_user_by_jwt(usr_context.token_info)
         issued_date = datetime.now(timezone.utc)
         data = {
             "registration_number": f"{registration.registration_number}",
@@ -289,7 +291,7 @@ class RegistrationService:
         certificate = Certificate(
             registration_id=registration.id,
             issued_date=issued_date,
-            issuer_id=user.id,
+            issuer_id=user.id if user else None,
             certificate=pdf_binary,
         )
 
