@@ -2712,7 +2712,7 @@ sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
 name = "strr-api"
-version = "0.0.3"
+version = "0.0.4"
 description = ""
 optional = false
 python-versions = "^3.11"
@@ -2748,7 +2748,7 @@ weasyprint = "^62.3"
 type = "git"
 url = "https://github.com/shaangill025/STRR.git"
 reference = "fix_22511"
-resolved_reference = "65d1e3a132d2a7c0af3ba10ccb3e1a7f98f9961c"
+resolved_reference = "764af90f3f09fd47eeeb243d68398948bdee4b1b"
 subdirectory = "strr-api"
 
 [[package]]
@@ -2986,4 +2986,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12.2"
-content-hash = "c81dd86c9ac2970c1f9a35b2dabc3a2ea613aae29ec3815bbc4f1a834fe90ee8"
+content-hash = "ada09be263708ef3c21fe8a05bebfc36d4b041fe52a44f964fb6af07b970ad01"

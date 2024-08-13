@@ -85,7 +85,7 @@ class ApprovalService:
         return False
 
     @classmethod
-    def process_auto_approval(cls, token_dict, application: Application):
+    def process_auto_approval(cls, token, application: Application):
         """Process approval logic and produce output JSON to store in the DB and providing to FE"""
         application_json = application.application_json
         registration_request = RegistrationRequest(**application_json)
@@ -102,8 +102,6 @@ class ApprovalService:
             + registration.unitAddress.province
         )
 
-        token = token_dict["token"]
-        token_info = token_dict["token_info"]
         renting = registration.unitDetails.ownershipType == OwnershipType.RENT
         other_service_provider = (
             registration.principalResidence.specifiedServiceProvider is not None
@@ -263,7 +261,7 @@ class ApprovalService:
                             visible_to_applicant=False,
                         )
                         RegistrationService.generate_registration_certificate(
-                            registration=registration, token_info=token_info
+                            registration=registration
                         )
                         EventsService.save_event(
                             event_type=Events.EventType.REGISTRATION,

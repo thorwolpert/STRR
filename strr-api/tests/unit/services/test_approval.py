@@ -138,8 +138,7 @@ def test_process_auto_approval(
             country="Canada",
         )
         expected_status = Application.Status.UNDER_REVIEW
-    token_dict = {"token": sample_token, "token_info": {}}
-    approval_record = ApprovalService.process_auto_approval(token_dict=token_dict, application=application)
+    approval_record = ApprovalService.process_auto_approval(token=sample_token, application=application)
 
     assert approval_record is not None
     assert application.status == expected_status
