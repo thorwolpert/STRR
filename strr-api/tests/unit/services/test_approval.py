@@ -95,6 +95,8 @@ def app_context(app):
 @patch("strr_api.services.RegistrationService.create_registration")
 @patch("strr_api.services.RegistrationService.generate_registration_certificate")
 def test_process_auto_approval(
+    mock_generate_certificate,
+    mock_create_registration,
     mock_build_ltsa,
     mock_get_title,
     mock_lookup_geocode,
