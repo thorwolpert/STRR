@@ -197,6 +197,14 @@ class ApprovalService:
                             owner_title_match = False
                         if owner_title_match:
                             auto_approval.title_check = True
+                            application.status = Application.Status.PROVISIONAL
+                            application.save()
+                            EventsService.save_event(
+                                event_type=Events.EventType.APPLICATION,
+                                event_name=Events.EventName.AUTO_APPROVAL_PROVISIONAL,
+                                application_id=application.id,
+                                visible_to_applicant=False,
+                            )
                             registration = RegistrationService.create_registration(
                                 application.submitter_id, application.payment_account, registration_request.registration
                             )
@@ -205,14 +213,6 @@ class ApprovalService:
                                 event_name=Events.EventName.REGISTRATION_CREATED,
                                 application_id=application.id,
                                 registration_id=registration.id,
-                                visible_to_applicant=False,
-                            )
-                            application.status = Application.Status.PROVISIONAL
-                            application.save()
-                            EventsService.save_event(
-                                event_type=Events.EventType.APPLICATION,
-                                event_name=Events.EventName.AUTO_APPROVAL_PROVISIONAL,
-                                application_id=application.id,
                                 visible_to_applicant=False,
                             )
                         else:
