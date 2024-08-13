@@ -581,7 +581,6 @@ def get_payment_receipt(application_id):
     """
 
     try:
-        # Check whether user is authorized to access the application.
         application = ApplicationService.get_application(application_id=application_id)
         if not application:
             raise AuthException()
@@ -591,5 +590,59 @@ def get_payment_receipt(application_id):
         return strr_pay.get_payment_receipt(jwt, application)
     except AuthException as auth_exception:
         return exception_response(auth_exception)
+    except ExternalServiceException as external_exception:
+        return exception_response(external_exception)
+
+
+@bp.route("/search", methods=("GET",))
+@swag_from({"security": [{"Bearer": []}]})
+@cross_origin(origin="*")
+@jwt.requires_auth
+@jwt.has_one_of_roles([Role.STAFF.value])
+def search_applications():
+    """
+    Search Applications.
+    ---
+    tags:
+      - examiner
+    parameters:
+      - in: query
+        name: status
+        enum: [SUBMITTED, PAID, APPROVED, ADDITIONAL_INFO_REQUESTED, UNDER_REVIEW, PROVISIONAL, REJECTED]
+        description: Application Status Filter.
+      - in: query
+        name: search
+        type: string
+        minLength: 3
+        description: Search text.
+      - in: query
+        name: page
+        type: integer
+        default: 1
+      - in: query
+        name: limit
+        type: integer
+        default: 50
+    responses:
+      200:
+        description:
+      401:
+        description:
+    """
+
+    try:
+        UserService.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
+        search_text = request.args.get("text", None)
+        status = request.args.get("status", None)
+        page = request.args.get("page", 1)
+        limit = request.args.get("limit", 50)
+
+        if search_text and len(search_text) < 3:
+            return error_response(HTTPStatus.BAD_REQUEST, "Search term must be at least 3 characters long.")
+
+        filter_criteria = ApplicationSearch(status=status, page=int(page), limit=int(limit), search_text=search_text)
+
+        application_list = ApplicationService.search_applications(filter_criteria=filter_criteria)
+        return jsonify(application_list), HTTPStatus.OK
     except ExternalServiceException as external_exception:
         return exception_response(external_exception)
