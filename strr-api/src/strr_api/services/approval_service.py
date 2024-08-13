@@ -260,9 +260,7 @@ class ApprovalService:
                             registration_id=registration.id,
                             visible_to_applicant=False,
                         )
-                        RegistrationService.generate_registration_certificate(
-                            registration=registration
-                        )
+                        RegistrationService.generate_registration_certificate(registration=registration)
                         EventsService.save_event(
                             event_type=Events.EventType.REGISTRATION,
                             event_name=Events.EventName.CERTIFICATE_ISSUED,
