@@ -40,12 +40,12 @@
 from flask import current_app
 
 from strr_api.common.utils import compare_addresses
-from strr_api.enums.enum import OwnershipType
+from strr_api.enums.enum import OwnershipType, RegistrationStatus
 from strr_api.models import Address, Application, AutoApprovalRecord, DSSOrganization, Events
 from strr_api.requests import RegistrationRequest
 from strr_api.responses.AutoApprovalResponse import AutoApproval
 from strr_api.responses.LTSAResponse import LtsaResponse
-from strr_api.services import AuthService, EventsService, LtsaService
+from strr_api.services import AuthService, EventsService, LtsaService, RegistrationService
 from strr_api.services.geocoder_service import GeoCoderService
 
 
@@ -85,7 +85,7 @@ class ApprovalService:
         return False
 
     @classmethod
-    def process_auto_approval(cls, token, application: Application):
+    def process_auto_approval(cls, token_dict, application: Application):
         """Process approval logic and produce output JSON to store in the DB and providing to FE"""
         application_json = application.application_json
         registration_request = RegistrationRequest(**application_json)
@@ -102,6 +102,8 @@ class ApprovalService:
             + registration.unitAddress.province
         )
 
+        token = token_dict["token"]
+        token_info = token_dict["token_info"]
         renting = registration.unitDetails.ownershipType == OwnershipType.RENT
         other_service_provider = (
             registration.principalResidence.specifiedServiceProvider is not None
@@ -110,7 +112,6 @@ class ApprovalService:
         pr_exempt = not registration.principalResidence.isPrincipalResidence
         bl_provided = registration.unitDetails.businessLicense is not None
         bcsc_address = AuthService.get_sbc_accounts_mailing_address(token, selected_account.sbc_account_id)
-
         # Status setting just temporary for visibility
         auto_approval = AutoApproval()
 
@@ -196,6 +197,16 @@ class ApprovalService:
                             owner_title_match = False
                         if owner_title_match:
                             auto_approval.title_check = True
+                            registration = RegistrationService.create_registration(
+                                application.submitter_id, application.payment_account, registration_request.registration
+                            )
+                            EventsService.save_event(
+                                event_type=Events.EventType.REGISTRATION,
+                                event_name=Events.EventName.REGISTRATION_CREATED,
+                                application_id=application.id,
+                                registration_id=registration.id,
+                                visible_to_applicant=False,
+                            )
                             application.status = Application.Status.PROVISIONAL
                             application.save()
                             EventsService.save_event(
@@ -237,6 +248,28 @@ class ApprovalService:
                             event_type=Events.EventType.APPLICATION,
                             event_name=Events.EventName.AUTO_APPROVAL_APPROVED,
                             application_id=application.id,
+                            visible_to_applicant=False,
+                        )
+                        registration = RegistrationService.create_registration(
+                            application.submitter_id, application.payment_account, registration_request.registration
+                        )
+                        registration.status = RegistrationStatus.APPROVED
+                        registration.save()
+                        EventsService.save_event(
+                            event_type=Events.EventType.REGISTRATION,
+                            event_name=Events.EventName.REGISTRATION_CREATED,
+                            application_id=application.id,
+                            registration_id=registration.id,
+                            visible_to_applicant=False,
+                        )
+                        RegistrationService.generate_registration_certificate(
+                            registration=registration, token_info=token_info
+                        )
+                        EventsService.save_event(
+                            event_type=Events.EventType.REGISTRATION,
+                            event_name=Events.EventName.CERTIFICATE_ISSUED,
+                            application_id=application.id,
+                            registration_id=registration.id,
                             visible_to_applicant=False,
                         )
                     return auto_approval

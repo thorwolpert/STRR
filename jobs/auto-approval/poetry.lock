@@ -1089,13 +1089,13 @@ testing = ["pytest"]
 
 [[package]]
 name = "google-resumable-media"
-version = "2.7.1"
+version = "2.7.2"
 description = "Utilities for Google Media Downloads and Resumable Uploads"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-resumable-media-2.7.1.tar.gz", hash = "sha256:eae451a7b2e2cdbaaa0fd2eb00cc8a1ee5e95e16b55597359cbc3d27d7d90e33"},
-    {file = "google_resumable_media-2.7.1-py2.py3-none-any.whl", hash = "sha256:103ebc4ba331ab1bfdac0250f8033627a2cd7cde09e7ccff9181e31ba4315b2c"},
+    {file = "google_resumable_media-2.7.2-py2.py3-none-any.whl", hash = "sha256:3ce7551e9fe6d99e9a126101d2536612bb73486721951e9562fee0f90c6ababa"},
+    {file = "google_resumable_media-2.7.2.tar.gz", hash = "sha256:5280aed4629f2b60b847b0d42f9857fd4935c11af266744df33d8074cae92fe0"},
 ]
 
 [package.dependencies]
@@ -2746,9 +2746,9 @@ weasyprint = "^62.3"
 
 [package.source]
 type = "git"
-url = "https://github.com/bcgov/STRR.git"
-reference = "main"
-resolved_reference = "c22be472e3443e3f3cd062b7f8704c0c52a6c9c0"
+url = "https://github.com/shaangill025/STRR.git"
+reference = "fix_22511"
+resolved_reference = "65d1e3a132d2a7c0af3ba10ccb3e1a7f98f9961c"
 subdirectory = "strr-api"
 
 [[package]]
@@ -2986,4 +2986,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12.2"
-content-hash = "b557ea6273a649a9f4e5036ed95b18c2c9dd43ace4fbde5f70578b3eb41bd2e4"
+content-hash = "c81dd86c9ac2970c1f9a35b2dabc3a2ea613aae29ec3815bbc4f1a834fe90ee8"

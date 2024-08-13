@@ -26,6 +26,7 @@ from strr_api.models.application import Application
 from strr_api.services import ApprovalService, AuthService
 
 from auto_approval.config import CONFIGURATION
+from auto_approval.utils.jwt_decoder import decode_token
 from auto_approval.utils.logging import setup_logging
 
 setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), "logging.conf"))
@@ -70,9 +71,13 @@ def get_submitted_applications(app):
 def process_applications(app, applications):
     """Process auto-approval for submitted applications."""
     token = AuthService.get_service_client_token()
+    token_info = decode_token(token)
+    token_dict = {"token": token, "token_info": token_info}
     for application in applications:
         app.logger.info(f"Auto processing application {str(application.id)}")
-        ApprovalService.process_auto_approval(token=token, application=application)
+        ApprovalService.process_auto_approval(
+            token_dict=token_dict, application=application
+        )
 
 
 def run():

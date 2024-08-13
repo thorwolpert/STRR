@@ -63,6 +63,29 @@ class _Config(object):  # pylint: disable=too-few-public-methods
         os.getenv("AUTO_APPROVAL_APPLICATION_PROCESSING_DELAY") or "60"
     )
 
+    # GEOCODER
+    GEOCODER_SVC_URL = os.getenv("GEOCODER_API_URL", "")
+    GEOCODER_SVC_AUTH_KEY = os.getenv("GEOCODER_API_AUTH_KEY", "")
+
+    # JWT_OIDC Settings
+    JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv("JWT_OIDC_WELL_KNOWN_CONFIG")
+    JWT_OIDC_ALGORITHMS = os.getenv("JWT_OIDC_ALGORITHMS")
+    JWT_OIDC_JWKS_URI = os.getenv("JWT_OIDC_JWKS_URI")
+    JWT_OIDC_ISSUER = os.getenv("JWT_OIDC_ISSUER")
+    JWT_OIDC_AUDIENCE = os.getenv("JWT_OIDC_AUDIENCE")
+    JWT_OIDC_CLIENT_SECRET = os.getenv("JWT_OIDC_CLIENT_SECRET")
+    JWT_OIDC_CACHING_ENABLED = os.getenv("JWT_OIDC_CACHING_ENABLED")
+    JWT_OIDC_TOKEN_URL = os.getenv("JWT_OIDC_TOKEN_URL")
+    JWT_OIDC_JWKS_CACHE_TIMEOUT = int(os.getenv("JWT_OIDC_JWKS_CACHE_TIMEOUT"))
+    JWT_OIDC_USERNAME = os.getenv("JWT_OIDC_USERNAME", "username")
+    JWT_OIDC_FIRSTNAME = os.getenv("JWT_OIDC_FIRSTNAME", "firstname")
+    JWT_OIDC_LASTNAME = os.getenv("JWT_OIDC_LASTNAME", "lastname")
+
+    # LTSA
+    LTSA_SVC_URL = os.getenv("LTSA_API_URL", "") + os.getenv("LTSA_API_VERSION", "")
+    LTSA_SVC_AUTH_KEY = os.getenv("LTSA_API_KEY_STRR", "")
+
+    # DATABASE
     DB_USER = os.getenv("DATABASE_USERNAME", "")
     DB_PASSWORD = os.getenv("DATABASE_PASSWORD", "")
     DB_NAME = os.getenv("DATABASE_NAME", "")
