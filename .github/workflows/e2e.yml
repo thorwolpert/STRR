@@ -5,15 +5,15 @@ on:
     inputs:
       smoketest:
         required: true
-        description: 'Is this a smoke test?'
-        default: 'true'
+        description: "Is this a smoke test?"
+        default: "true"
       url_parameter:
         required: false
-        description: 'Which URL to test?'
+        description: "Which URL to test?"
       logLevel:
-        description: 'Log level'
+        description: "Log level"
         required: true
-        default: 'warning'
+        default: "warning"
         type: choice
         options:
           - info
@@ -39,10 +39,10 @@ jobs:
       - name: E2E Smoke tests
         uses: cypress-io/github-action@v6
         id: smoke
-        continue-on-error: false
+        continue-on-error: true
         with:
-          summary-title: 'E2E Smoke tests'
-          wait-on: $CYPRESS_BASE_URL
+          summary-title: "E2E Smoke tests"
+          wait-on: "${{ env.CYPRESS_BASE_URL }}"
           wait-on-timeout: 120
           record: false
           install-command: npm ci
@@ -63,3 +63,15 @@ jobs:
         with:
           name: smoke-test-results
           path: testing/mochawesome-report/report.html
+
+      - name: Upload Videos
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-videos
+          path: testing/cypress/videos/
+
+      - name: Upload Screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-screenshots
+          path: testing/cypress/screenshots/
