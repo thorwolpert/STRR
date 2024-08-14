@@ -22,6 +22,7 @@ on:
 env:
   CYPRESS_users: ${{ secrets.CYPRESS_USERS }}
   CYPRESS_BASE_URL: ${{ inputs.url_parameter || secrets.CYPRESS_BASEURL }}
+  CYPRESS_host: ${{ inputs.url_parameter || secrets.CYPRESS_BASEURL }}
   CYPRESS_ENVIRONMENT: ${{ github.base_ref }}
   CYPRESS_authurls: ${{ secrets.CYPRESS_AUTHURLS }}
   CYPRESS_creditcard: ${{ secrets.CYPRESS_CREDITCARD }}
