@@ -1,6 +1,5 @@
 import axios from 'axios'
-import { ApplicationStatusE } from '#imports'
-import { ApplicationI } from '~/interfaces/application-i'
+import { ApplicationI, ApplicationStatusE } from '#imports'
 
 export const useApplications = () => {
   const apiURL = useRuntimeConfig().public.strrApiURL
@@ -14,6 +13,16 @@ export const useApplications = () => {
     [ApplicationStatusE.REJECTED]: 4,
     [ApplicationStatusE.APPROVED]: 3,
     [ApplicationStatusE.SUBMITTED]: 2
+  }
+
+  /**
+   * Retrieves STR Application by Id.
+   *
+   * @param {string} id - The Id of the application to retrieve.
+   */
+  const getApplication = async (id: string): Promise<ApplicationI> => {
+    const { data } = await axiosInstance.get(`${apiURL}/applications/${id}`)
+    return data
   }
 
   /**
@@ -73,9 +82,15 @@ export const useApplications = () => {
       console.error(error)
     }
   }
+  const getApplicationHistory = async (id: string): Promise<ApplicationHistoryEventI[]> => {
+    const { data } = await axiosInstance.get(`${apiURL}/applications/${id}/events`)
+    return data
+  }
 
   return {
+    getApplication,
     getApplications,
-    createApplication
+    createApplication,
+    getApplicationHistory
   }
 }
