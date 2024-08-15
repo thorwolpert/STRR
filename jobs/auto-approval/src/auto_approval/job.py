@@ -23,7 +23,6 @@ from flask import Flask
 from pg8000.dbapi import ProgrammingError
 from sentry_sdk.integrations.logging import LoggingIntegration
 from sqlalchemy.exc import SQLAlchemyError
-from strr_api.enums.enum import RegistrationStatus
 from strr_api.models import db
 from strr_api.models.application import Application
 from strr_api.services import ApprovalService, AuthService
@@ -75,12 +74,12 @@ def process_applications(app, applications):
     token = AuthService.get_service_client_token()
     for application in applications:
         app.logger.info(f"Auto processing application {str(application.id)}")
-        registration_status, registration_id = ApprovalService.process_auto_approval(
+        application_status, registration_id = ApprovalService.process_auto_approval(
             token=token, application=application
         )
         if (
-            registration_status
-            and registration_status == RegistrationStatus.APPROVED
+            application_status
+            and application_status == Application.Status.APPROVED
             and registration_id
         ):
             url = (
