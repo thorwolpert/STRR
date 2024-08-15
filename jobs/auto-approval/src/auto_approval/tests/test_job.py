@@ -7,7 +7,6 @@ from auto_approval.job import (create_app, get_submitted_applications,
 
 
 class TestAutoApprovalJob(unittest.TestCase):
-
     @patch("auto_approval.job.get_submitted_applications")
     @patch("auto_approval.job.process_applications")
     def test_run_handles_no_eligible_applications(
@@ -121,6 +120,10 @@ class TestAutoApprovalJob(unittest.TestCase):
         mock_applications = [mock_application1, mock_application2]
         mock_token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         mock_auth_service.get_service_client_token.return_value = mock_token
+        mock_approval_service.process_auto_approval.return_value = (
+            "APPROVED",
+            "12345",
+        )
 
         process_applications(mock_app, mock_applications)
 

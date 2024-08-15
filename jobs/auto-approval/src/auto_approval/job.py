@@ -15,12 +15,15 @@
 import logging
 import os
 from datetime import datetime, timedelta, timezone
+from http import HTTPStatus
 
+import requests
 import sentry_sdk
 from flask import Flask
 from pg8000.dbapi import ProgrammingError
 from sentry_sdk.integrations.logging import LoggingIntegration
 from sqlalchemy.exc import SQLAlchemyError
+from strr_api.enums.enum import RegistrationStatus
 from strr_api.models import db
 from strr_api.models.application import Application
 from strr_api.services import ApprovalService, AuthService
@@ -72,7 +75,32 @@ def process_applications(app, applications):
     token = AuthService.get_service_client_token()
     for application in applications:
         app.logger.info(f"Auto processing application {str(application.id)}")
-        ApprovalService.process_auto_approval(token=token, application=application)
+        registration_status, registration_id = ApprovalService.process_auto_approval(
+            token=token, application=application
+        )
+        if (
+            registration_status
+            and registration_status == RegistrationStatus.APPROVED
+            and registration_id
+        ):
+            url = (
+                f"{app.config.get('STRR_API_URL')}"
+                f"/registrations/{registration_id}"
+                f"/certificate"
+            )
+            headers = {
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+            }
+            try:
+                response = requests.post(url, headers=headers)
+                if response.status_code != HTTPStatus.CREATED:
+                    app.logger.error(
+                        f"Unexpected response error: Status Code: {response.status_code}, "
+                        f"URL: {url}"
+                    )
+            except requests.RequestException as e:
+                app.logger.error(f"Request failed: {str(e)}")
 
 
 def run():

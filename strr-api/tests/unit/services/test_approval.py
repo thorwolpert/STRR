@@ -83,6 +83,7 @@ def app_context(app):
         (OwnershipType.OWN, True, "some_provider", Application.Status.UNDER_REVIEW),
         (OwnershipType.OWN, True, None, Application.Status.PROVISIONAL),
         (OwnershipType.OWN, False, None, Application.Status.APPROVED),
+        (OwnershipType.OWN, True, None, Application.Status.APPROVED),
     ],
 )
 @patch("strr_api.services.EventsService.save_event", new=no_op)
@@ -93,9 +94,7 @@ def app_context(app):
 @patch("strr_api.services.LtsaService.get_title_details_from_pid")
 @patch("strr_api.services.LtsaService.build_ltsa_response")
 @patch("strr_api.services.RegistrationService.create_registration")
-@patch("strr_api.services.RegistrationService.generate_registration_certificate")
 def test_process_auto_approval(
-    mock_generate_certificate,
     mock_create_registration,
     mock_build_ltsa,
     mock_get_title,
@@ -138,21 +137,13 @@ def test_process_auto_approval(
             country="Canada",
         )
         expected_status = Application.Status.UNDER_REVIEW
-    approval_record = ApprovalService.process_auto_approval(token=sample_token, application=application)
 
-    assert approval_record is not None
+    registration_status, _ = ApprovalService.process_auto_approval(token=sample_token, application=application)
+
     assert application.status == expected_status
 
-    if ownership_type == OwnershipType.RENT:
-        assert approval_record.renting
-    elif specified_service_provider:
-        assert approval_record.service_provider
-    elif ownership_type == OwnershipType.OWN and is_principal_residence:
-        if expected_status == Application.Status.PROVISIONAL:
-            assert approval_record.title_check
-            assert approval_record.address_match
-            assert approval_record.business_license_not_required_not_provided
-        else:
-            assert not approval_record.address_match
-    elif not is_principal_residence:
-        assert approval_record.pr_exempt
+    if expected_status == Application.Status.PROVISIONAL:
+        assert registration_status == "provisional"
+
+    if expected_status == Application.Status.APPROVED and is_principal_residence:
+        assert registration_status == "approved"

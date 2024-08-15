@@ -262,7 +262,7 @@ class RegistrationService:
         """Get registration by id for current user. Examiners are exempted from user_id check."""
         user = User.get_or_create_user_by_jwt(jwt_oidc_token_info)
         query = Registration.query.filter_by(id=registration_id)
-        if not user.is_examiner():
+        if not user.is_examiner() and not user.is_system():
             query = query.filter_by(user_id=user.id)
         return query.one_or_none()
 

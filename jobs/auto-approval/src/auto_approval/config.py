@@ -67,6 +67,9 @@ class _Config(object):  # pylint: disable=too-few-public-methods
     GEOCODER_SVC_URL = os.getenv("GEOCODER_API_URL", "")
     GEOCODER_SVC_AUTH_KEY = os.getenv("GEOCODER_API_AUTH_KEY", "")
 
+    # STRR
+    STRR_API_URL = os.getenv("STRR_API_URL")
+
     # JWT_OIDC Settings
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv("JWT_OIDC_WELL_KNOWN_CONFIG")
     JWT_OIDC_ALGORITHMS = os.getenv("JWT_OIDC_ALGORITHMS")
