@@ -16,37 +16,6 @@ export const useApplications = () => {
   }
 
   /**
-   * Retrieves STR Application by Id.
-   *
-   * @param {string} id - The Id of the application to retrieve.
-   */
-  const getApplication = async (id: string): Promise<ApplicationI> => {
-    const { data } = await axiosInstance.get(`${apiURL}/applications/${id}`)
-    return data
-  }
-
-  /**
-   * Get all STR Applications from the API and sorts them by status and city.
-   * If no applications are found, the user is redirected to the create account page.
-   */
-  const getApplications = async () => {
-    const response = await axiosInstance.get<PaginatedApplicationsI>(`${apiURL}/applications`)
-
-    if (response.data.total === 0) {
-      navigateTo('/create-account')
-    }
-
-    return response.data.applications
-      .sort(
-        (a: ApplicationI, b: ApplicationI) =>
-          applicationStatusPriority[a.header.status] ?? 1 - applicationStatusPriority[b.header.status] ?? 1
-      )
-      .sort((a: ApplicationI, b: ApplicationI) =>
-        a.registration.unitAddress.city.localeCompare(b.registration.unitAddress.city)
-      )
-  }
-
-  /**
    * Create a new STR Application and redirect user to the payment page.
    */
   const createApplication = async (
@@ -82,15 +51,63 @@ export const useApplications = () => {
       console.error(error)
     }
   }
+
+  /**
+   * Retrieves STR Application by Id.
+   *
+   * @param {string} id - The Id of the application to retrieve.
+   */
+  const getApplication = async (id: string): Promise<ApplicationI> => {
+    const { data } = await axiosInstance.get(`${apiURL}/applications/${id}`)
+    return data
+  }
+
+  /**
+   * Get all STR Applications from the API and sorts them by status and city.
+   * If no applications are found, the user is redirected to the create account page.
+   */
+  const getApplications = async () => {
+    const response = await axiosInstance.get<PaginatedApplicationsI>(`${apiURL}/applications`)
+
+    if (response.data.total === 0) {
+      navigateTo('/create-account')
+    }
+
+    return response.data.applications
+      .sort(
+        (a: ApplicationI, b: ApplicationI) =>
+          applicationStatusPriority[a.header.status] ?? 1 - applicationStatusPriority[b.header.status] ?? 1
+      )
+      .sort((a: ApplicationI, b: ApplicationI) =>
+        a.registration.unitAddress.city.localeCompare(b.registration.unitAddress.city)
+      )
+  }
+
   const getApplicationHistory = async (id: string): Promise<ApplicationHistoryEventI[]> => {
     const { data } = await axiosInstance.get(`${apiURL}/applications/${id}/events`)
     return data
+  }
+
+  // TODO: this will be replaced with documents data from GET /applications call
+  const getDocumentsForApplication = async (id: string): Promise<ApplicationI[]> => {
+    const res = await axiosInstance.get(`${apiURL}/applications/${id}/documents`)
+    return res.data
+  }
+
+  const getFile = async (id: string, documentId: string): Promise<Blob> => {
+    const response = await axiosInstance.get(
+      `${apiURL}/applications/${id}/documents/${documentId}/file`,
+      { responseType: 'blob' }
+    )
+    return response.data
   }
 
   return {
     getApplication,
     getApplications,
     createApplication,
-    getApplicationHistory
+    getApplicationHistory,
+    getDocumentsForApplication,
+    getFile
   }
 }

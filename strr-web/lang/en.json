@@ -75,6 +75,8 @@
   },
   "applicationDetails": {
     "registration": "REGISTRATION",
+    "applicationTitle": "APPLICATION",
+    "applicationStatus": "Application Status",
     "registrationStatus": "Registration Status",
     "status": "Status",
     "unitInfo": "Rental Unit Information",
@@ -101,7 +103,8 @@
     "DENIED": "Denied",
     "ISSUED": "Issued",
     "UNDER_REVIEW": "Under Review",
-    "PROVISIONAL": "Provisional"
+    "PROVISIONAL": "Provisional",
+    "SUBMITTED": "Submitted"
   },
   "banner": {
     "approve": "Approve",

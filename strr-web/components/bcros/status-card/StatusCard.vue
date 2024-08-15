@@ -2,19 +2,19 @@
   <div
     data-cy="status-card"
     :class="`${isSingle ? 'flex-1': ''}`"
-    class="w-full mb-[42px] mobile:mb-[24px] justify-between flex-col
+    class="w-full mb-[42px] mobile:mb-6 justify-between flex-col
     bg-white px-[30px] mobile:px-[8px] py-[22px]
       border-[2px] border-bcGovColor-hairlinesOnWhite"
   >
     <div class="flex justify-between">
-      <BcrosChip :flavour="flavour" class="mobile:hidden mb-[24px]" />
+      <BcrosChip :flavour="flavour" class="mobile:hidden mb-6" />
       <p class="font-bold">
         {{ registrationNumber }}
       </p>
     </div>
     <div class="flex w-full justify-between mb-5">
       <slot />
-      <BcrosChip :flavour="flavour" class="desktop:hidden mb-[24px]" />
+      <BcrosChip :flavour="flavour" class="desktop:hidden mb-6" />
     </div>
     <div class="flex flex-row text-bcGovColor-activeBlue justify-start">
       <BcrosButtonsPrimary
