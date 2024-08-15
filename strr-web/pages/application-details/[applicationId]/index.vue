@@ -209,7 +209,6 @@
 <script setup lang="ts">
 import FilingHistory from '~/components/FilingHistory.vue'
 import { propertyTypeMap } from '~/utils/propertyTypeMap'
-import { formatLongDate, formatTimeString } from '~/utils/format-helper'
 
 const route = useRoute()
 const { t } = useTranslation()
