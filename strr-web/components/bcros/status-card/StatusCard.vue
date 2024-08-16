@@ -8,7 +8,13 @@
   >
     <div class="flex justify-between">
       <BcrosChip :flavour="flavour" class="mobile:hidden mb-6" />
-      <p class="font-bold">
+      <a
+        v-if="isApproved"
+        @click="navigateTo(`/registration-details/${registrationId}`, { open: { target: '_blank' } })"
+      >
+        {{ registrationNumber }}
+      </a>
+      <p v-else class="font-bold">
         {{ registrationNumber }}
       </p>
     </div>
@@ -26,7 +32,7 @@
 
       <BcrosButtonsPrimary
         v-if="isCertificateIssued"
-        :action="() => downloadCertificate(applicationId.toString())"
+        :action="() => downloadCertificate(registrationId.toString())"
         :label="tRegistrationStatus('download')"
         class-name="px-4 py-1 mobile:grow-0"
         variant="ghost"
@@ -36,12 +42,13 @@
 </template>
 
 <script setup lang="ts">
-import { AlertsFlavourE, RegistrationStatusE, ApplicationStatusE } from '#imports'
+import { RegistrationStatusE, ApplicationStatusE } from '#imports'
 
 const { t } = useTranslation()
 const tRegistrationStatus = (translationKey: string) => t(`registrationStatus.${translationKey}`)
 
 const { getCertificate } = useRegistrations()
+const { getChipFlavour } = useChipFlavour()
 
 const downloadCertificate = async (id: string) => {
   const file = await getCertificate(id)
@@ -56,22 +63,18 @@ const downloadCertificate = async (id: string) => {
 }
 
 const {
-  isSingle,
-  applicationId,
-  flavour,
-  registrationNumber,
-  status
+  applicationHeader,
+  isSingle
 } = defineProps<{
+  applicationHeader: ApplicationHeaderI,
   isSingle: boolean,
-  applicationId: string,
-  flavour: {
-    text: string,
-    alert: AlertsFlavourE
-  },
-  status: RegistrationStatusE | ApplicationStatusE,
-  registrationNumber?: string
 }>()
 
-const isCertificateIssued: boolean = status === RegistrationStatusE.ISSUED
+const { registrationId, registrationNumber, status, registrationStatus } = applicationHeader
+const applicationId = applicationHeader.id.toString()
+const flavour = getChipFlavour(status)
+
+const isCertificateIssued: boolean = registrationStatus === RegistrationStatusE.ACTIVE
+const isApproved: boolean = status === ApplicationStatusE.APPROVED
 
 </script>

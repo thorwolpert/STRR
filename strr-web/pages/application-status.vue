@@ -29,11 +29,8 @@
         >
           <BcrosStatusCard
             v-if="application"
-            :application-id="application.header.id.toString()"
-            :flavour="getChipFlavour(application.header.status)"
-            :status="application.header.status"
+            :application-header="application.header"
             :is-single="!(applications && applications?.length > 1)"
-            :registration-number="application.header?.registrationId?.toString() ?? application.header.id.toString()"
             :class="{'mr-6': (index + 1) % 3 !== 0}"
           >
             <div>
@@ -90,7 +87,6 @@ definePageMeta({
 const tRegistrationStatus = (translationKey: string) => useTranslation().t(`registrationStatus.${translationKey}`)
 
 const { getApplications } = useApplications()
-const { getChipFlavour } = useChipFlavour()
 const applications = ref<(ApplicationI | undefined)[]>()
 applications.value = await getApplications()
 const applicationsCount = applications.value?.length || 0

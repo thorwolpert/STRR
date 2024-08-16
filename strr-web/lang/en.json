@@ -18,6 +18,7 @@
     "location": "Location",
     "approved": "Approved",
     "statusChip": {
+      "active": "ACTIVE",
       "approved": "APPROVED",
       "rejected": "REJECTED",
       "provisional": "PROVISIONAL",
@@ -98,6 +99,7 @@
     "autoApprovalLogic": "Auto-Approval Logic",
     "autoApprovalDetails": "View Auto-Approval Details",
     "filing": "Filing History",
+    "ACTIVE": "Active",
     "PENDING": "Pending",
     "APPROVED": "Approved",
     "MORE_INFO_NEEDED": "Provisional",

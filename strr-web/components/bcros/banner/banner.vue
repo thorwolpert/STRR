@@ -60,7 +60,10 @@
 
 <script setup lang="ts">
 
-const { hideButtons = true } = defineProps<{ hideButtons?: boolean }>()
+const { hideButtons = true } = defineProps<{
+  hideButtons?: boolean,
+  applicationId: string
+}>()
 const { t } = useTranslation()
 const tBanner = (text: string) => t(`banner.${text}`)
 const {
@@ -68,8 +71,5 @@ const {
 } = useRegistrations()
 
 const { approveApplication, rejectApplication } = useApplications()
-
-const route = useRoute()
-const applicationId = route.params.applicationId.toString()
 
 </script>

@@ -1,7 +1,10 @@
 <template>
   <div>
     <div>
-      <BcrosBanner hide-buttons>
+      <BcrosBanner
+        hide-buttons
+        :application-id="applicationId"
+      >
         <div class="flex items-center m:justify-between">
           <BcrosTypographyH1
             :text="
@@ -55,13 +58,12 @@ const tAutoApproval = (translationKey: string) => t(`autoApproval.${translationK
 const automaticRows = ref<{ [key: string]: string }[]>([])
 const provisionalRows = ref<{ [key: string]: string }[]>([])
 
-const { applicationId } = route.params
-
 const { getRegistration, getAutoApproval } = useRegistrations()
 
-const application = await getRegistration(applicationId.toString())
+const applicationId = route.params.id.toString()
 
-const data: AutoApprovalDataI[] = await getAutoApproval(applicationId.toString()) || {} as AutoApprovalDataI[]
+const application = await getRegistration(applicationId)
+const data: AutoApprovalDataI[] = await getAutoApproval(applicationId) || {} as AutoApprovalDataI[]
 
 const buildAutomaticRows = (rowsData: AutoApprovalDataI[]) => {
   if (rowsData[0].record.renting !== null) {

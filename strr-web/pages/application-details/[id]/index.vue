@@ -1,6 +1,9 @@
 <template>
   <div data-test-id="application-details">
-    <BcrosBanner :hide-buttons="!isExaminer">
+    <BcrosBanner
+      :hide-buttons="!isExaminer"
+      :application-id="applicationId"
+    >
       <div class="flex items-center m:mb-2 m:justify-between">
         <BcrosTypographyH1
           :text="
@@ -221,7 +224,7 @@ const { getChipFlavour } = useChipFlavour()
 
 const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' })
 
-const applicationId = route.params.applicationId.toString()
+const applicationId = route.params.id.toString()
 
 const {
   getApplication,

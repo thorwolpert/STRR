@@ -2,6 +2,7 @@
 import { it, expect } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { createI18n } from 'vue-i18n'
+import { mockApplicationApproved } from '../../utils/test-utils/mockedApplication'
 import { BcrosStatusCard } from '#components'
 
 const i18n = createI18n({
@@ -9,38 +10,30 @@ const i18n = createI18n({
 })
 
 it('can mount status card component', async () => {
-  const { getChipFlavour } = useChipFlavour()
-  const flavour = getChipFlavour('APPROVED')
-  const applicationId = '1'
-  const registrationNumber = 'BCH-example'
+  const applicationHeader: ApplicationHeaderI = mockApplicationApproved.header
+
   const addressSection = await mountSuspended(BcrosStatusCard,
     {
       global: { plugins: [i18n] },
       props: {
         isSingle: true,
-        applicationId,
-        flavour,
-        registrationNumber
+        applicationHeader
       }
     })
   expect(addressSection.find('[data-cy="status-card"]').exists()).toBe(true)
   expect(addressSection.classes()).toContain('flex-1')
-  expect(addressSection.text()).toContain(registrationNumber)
+  expect(addressSection.text()).toContain(applicationHeader.registrationNumber)
 })
 
 it('can mount one of many status card components', async () => {
-  const { getChipFlavour } = useChipFlavour()
-  const flavour = getChipFlavour('APPROVED')
-  const applicationId = '1'
-  const registrationNumber = 'BCH-example'
+  const applicationHeader: ApplicationHeaderI = mockApplicationApproved.header
+
   const addressSection = await mountSuspended(BcrosStatusCard,
     {
       global: { plugins: [i18n] },
       props: {
-        single: false,
-        applicationId,
-        flavour,
-        registrationNumber
+        isSingle: false,
+        applicationHeader
       }
     })
   expect(addressSection.find('[data-cy="status-card"]').exists()).toBe(true)

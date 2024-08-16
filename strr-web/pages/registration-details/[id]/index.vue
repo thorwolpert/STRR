@@ -1,7 +1,10 @@
 <template>
-  <div data-test-id="registration-details">
-    <BcrosBanner :hide-buttons="!isExaminer">
-      <div class="flex items-center m:mb-2 m:justify-between">
+  <div data-test-id="reg-details">
+    <BcrosBanner
+      :hide-buttons="!isExaminer"
+      :application-id="registrationId"
+    >
+      <div data-test-id="reg-details-header" class="flex items-center m:mb-2 m:justify-between">
         <BcrosTypographyH1
           :text="
             `${application?.unitAddress.nickname ?? ''} ${tApplicationDetails('registration')}
@@ -233,7 +236,7 @@ const { getChipFlavour } = useChipFlavour()
 
 const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' })
 
-const registrationId = route.params.registrationId.toString()
+const registrationId = route.params.id.toString()
 
 const downloadEventTypes = ['CERTIFICATE_ISSUED']
 
@@ -279,7 +282,6 @@ const downloadItem = async (id: string, fileId: string, fileName: string) => {
   link.click()
   URL.revokeObjectURL(link.href)
 }
-
 const [application, documents, history] = await Promise.all([
   getRegistration(registrationId),
   getDocumentsForRegistration(registrationId),
