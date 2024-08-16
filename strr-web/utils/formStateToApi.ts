@@ -12,24 +12,18 @@ export const formStateToApi = (
     const dataContact: ContactAPII | undefined = primary
       ? formData.registration.primaryContact
       : formData.registration.secondaryContact
-    if (!dataContact) { return }
-    const stateContact = primary
-      ? formState.primaryContact
-      : formState.secondaryContact
-    dataContact.name = {
-      firstName:
-        primary
-          ? firstName.toString()
-          : formState.secondaryContact?.firstName
-            ? formState.secondaryContact?.firstName
-            : '-',
-      lastName:
-        primary
-          ? lastName.toString()
-          : formState.secondaryContact?.lastName
-            ? formState.secondaryContact?.lastName
-            : '-'
+
+    if (!dataContact) {
+      return
     }
+
+    const stateContact = primary ? formState.primaryContact : formState.secondaryContact
+
+    dataContact.name = {
+      firstName: primary ? firstName.toString() : formState.secondaryContact?.firstName ?? '-',
+      lastName: primary ? lastName.toString() : formState.secondaryContact?.lastName ?? '-'
+    }
+
     dataContact.socialInsuranceNumber = stateContact.socialInsuranceNumber ?? ''
     dataContact.businessNumber = stateContact.businessNumber ?? ''
     dataContact.dateOfBirth = `${stateContact.birthYear}-${stateContact.birthMonth}-${stateContact.birthDay}`
@@ -52,49 +46,60 @@ export const formStateToApi = (
     return dataContact
   }
 
+  const setListingDetails = () => {
+    formData.registration.listingDetails =
+      formState.propertyDetails.listingDetails[0].url !== '' ? formState.propertyDetails.listingDetails : []
+  }
+
+  const setUnitAddress = () => {
+    formData.registration.unitAddress = {
+      address: formState.propertyDetails.address ?? '',
+      addressLineTwo: formState.propertyDetails.addressLineTwo,
+      city: formState.propertyDetails.city ?? '',
+      postalCode: formState.propertyDetails.postalCode ?? '',
+      province: formState.propertyDetails.province ?? '',
+      country: formState.propertyDetails.country ?? '',
+      nickname: formState.propertyDetails.nickname ?? ''
+    }
+  }
+
+  const setUnitDetails = () => {
+    formData.registration.unitDetails = {
+      parcelIdentifier: formState.propertyDetails.parcelIdentifier,
+      propertyType,
+      ownershipType,
+      businessLicense: formState.propertyDetails.businessLicense
+    }
+  }
+
+  const setPrincipalResidence = () => {
+    const { isPrincipal, declaration, agreeToSubmit, reason, otherReason } = formState.principal
+
+    formData.registration.principalResidence = {
+      isPrincipalResidence: isPrincipal ?? false,
+      agreedToRentalAct: declaration,
+      agreedToSubmit: agreeToSubmit,
+      ...(isPrincipal
+        ? {}
+        : {
+            nonPrincipalOption: reason ?? 'n/a',
+            specifiedServiceProvider: otherReason ?? 'n/a'
+          })
+    }
+  }
+
   formData.registration.primaryContact = transformContactData(true)
+
   if (hasSecondaryContact) {
     formData.registration.secondaryContact = transformContactData(false)
   } else {
     delete formData.registration.secondaryContact
   }
-  if (formState.propertyDetails.listingDetails[0].url !== '') {
-    formData.registration.listingDetails = formState.propertyDetails.listingDetails
-  } else {
-    formData.registration.listingDetails = []
-  }
-  formData.registration.unitAddress = {
-    address: formState.propertyDetails.address ?? '',
-    addressLineTwo: formState.propertyDetails.addressLineTwo,
-    city: formState.propertyDetails.city ?? '',
-    postalCode: formState.propertyDetails.postalCode ?? '',
-    province: formState.propertyDetails.province ?? '',
-    country: formState.propertyDetails.country ?? '',
-    nickname: formState.propertyDetails.nickname ?? ''
-  }
-  formData.registration.unitDetails = {
-    parcelIdentifier: formState.propertyDetails.parcelIdentifier,
-    propertyType,
-    ownershipType,
-    businessLicense: formState.propertyDetails.businessLicense
-  }
-  if (formState.principal.isPrincipal) {
-    formData.registration.principalResidence = {
-      isPrincipalResidence: formState.principal.isPrincipal ?? false,
-      agreedToRentalAct: formState.principal.declaration,
-      agreedToSubmit: formState.principal.agreeToSubmit
-    }
-    delete formState.principal.reason
-    delete formState.principal.otherReason
-  } else {
-    formData.registration.principalResidence = {
-      isPrincipalResidence: formState.principal.isPrincipal ?? false,
-      agreedToRentalAct: formState.principal.declaration,
-      nonPrincipalOption: formState.principal.reason ?? 'n/a',
-      specifiedServiceProvider: formState.principal.otherReason ?? 'n/a',
-      agreedToSubmit: formState.principal.agreeToSubmit
-    }
-  }
+
+  setListingDetails()
+  setUnitAddress()
+  setUnitDetails()
+  setPrincipalResidence()
 
   return formData
 }

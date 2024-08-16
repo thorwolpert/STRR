@@ -138,8 +138,8 @@ export interface SecondaryContactInformationI extends ContactInformationI {
 
 export interface PrincipalResidenceI {
   isPrincipal: boolean | undefined;
-  reason?: string | undefined;
-  otherReason?: string | undefined;
+  reason?: string;
+  otherReason?: string;
   declaration: boolean;
   agreeToSubmit: boolean;
 }

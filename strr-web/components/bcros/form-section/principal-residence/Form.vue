@@ -22,6 +22,7 @@
             class="text-bcGovColor-activeBlue underline"
             target="_blank"
             href="https://www2.gov.bc.ca/gov/content/housing-tenancy/short-term-rentals/straa-definitions#PRdef"
+            rel="noopener"
           >
             {{ tPrincipalResidence('provincialRulesLink') }}
           </a>

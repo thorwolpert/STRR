@@ -5,7 +5,6 @@ import { CreateAccountFormStateI, formStateToApi } from '#imports'
 it('begins with empty address', () => {
   const firstName = 'first'
   const lastName = 'last'
-  const selectedAccountId = '1'
   const hasSecondaryContact = true
   const propertyType = 'propertyType'
   const ownershipType = 'ownershipType'
@@ -80,7 +79,6 @@ it('begins with empty address', () => {
     createAccountState,
     firstName,
     lastName,
-    selectedAccountId,
     hasSecondaryContact,
     propertyType,
     ownershipType

@@ -158,6 +158,7 @@
               class="mobile:mx-2"
               :href="`/application-details/${registrationId}/ltsa`"
               target="_blank"
+              rel="noopener"
             >
               {{ tApplicationDetails('ltsaDetails') }}
             </a>
@@ -170,6 +171,7 @@
               class="mobile:mx-2"
               :href="`/application-details/${registrationId}/auto-approval`"
               target="_blank"
+              rel="noopener"
             >
               {{ tApplicationDetails('autoApprovalDetails') }}
             </a>
