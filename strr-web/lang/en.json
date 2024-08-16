@@ -26,7 +26,8 @@
       "denied": "DENIED",
       "issued": "ISSUED",
       "pending": "APPLIED",
-      "submitted": "SUBMITTED"
+      "submitted": "SUBMITTED",
+      "paid": "PAID"
     }
   },
   "tos": {
@@ -104,7 +105,9 @@
     "ISSUED": "Issued",
     "UNDER_REVIEW": "Under Review",
     "PROVISIONAL": "Provisional",
-    "SUBMITTED": "Submitted"
+    "SUBMITTED": "Submitted",
+    "PAID": "Paid",
+    "REJECTED": "Rejected"
   },
   "banner": {
     "approve": "Approve",

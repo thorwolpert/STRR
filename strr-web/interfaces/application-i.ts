@@ -29,9 +29,10 @@ interface ListingDetailsI {
   url: string
 }
 
-interface ApplicationDetailsI {
-  listingDetails: ListingDetailsI[],
+export interface ApplicationDetailsI {
+  listingDetails: ListingDetailsI[]
   primaryContact: ContactI
+  secondaryContact?: ContactI
   principalResidence: PrincipalResidenceI
   unitAddress: RegistrationAddressI
   unitDetails: {

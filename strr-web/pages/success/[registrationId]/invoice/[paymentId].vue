@@ -3,7 +3,7 @@
     <BcrosTypographyH1
       :text="tApplicationConfirm('submitted')"
       data-cy="accountPageTitle"
-      class-name="mobile:pb-[20px] mobile:mx-2 pb-[32px]"
+      class-name="mobile:pb-5 mobile:mx-2 pb-8"
     />
     <div class="bg-white py-[22px] px-[30px] flex flex-row mobile:px-2 mobile:[py-16px] mobile:flex-col">
       <img
@@ -17,8 +17,8 @@
         </p>
         <p class="mb-6 font-bold">
           {{
-            fetchedRegistration && fetchedRegistration?.unitAddress
-              ? fetchedRegistration.unitAddress.address
+            (fetchedApplication && fetchedApplication?.registration?.unitAddress)
+              ? fetchedApplication.registration.unitAddress.address
               : '-' }}
         </p>
         <p class="mobile:mb-6">
@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="mobile:mx-2">
-      <BcrosTypographyH2 :text="tApplicationConfirm('links')" class="mt-[32px] text-[18px] mb-6" />
+      <BcrosTypographyH2 :text="tApplicationConfirm('links')" class="mt-8 text-[18px] mb-6" />
       <p class="mb-6">
         <!-- eslint-disable-next-line max-len -->
         <a @click="navigateTo('/application-status')">{{ tApplicationConfirm('status') }}</a> {{ tApplicationConfirm('dashboard') }}
@@ -47,17 +47,17 @@
 <script setup lang="ts">
 
 const route = useRoute()
-const fetchedRegistration = ref()
+const fetchedApplication = ref()
 const { t } = useTranslation()
 const tApplicationConfirm = (translationKey: string) => t(`createAccount.applicationConfirm.${translationKey}`)
 
-const { getRegistration } = useRegistrations()
+const { getApplication } = useApplications()
 const { createInvoiceRecord } = useFees()
 
 const { registrationId, paymentId } = route.params
 
 onMounted(async () => {
-  fetchedRegistration.value = await getRegistration(registrationId.toString())
+  fetchedApplication.value = await getApplication(registrationId.toString())
   createInvoiceRecord(paymentId.toString(), registrationId.toString())
 })
 

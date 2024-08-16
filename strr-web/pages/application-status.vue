@@ -18,18 +18,14 @@
           class-name="mobile:hidden"
         />
       </div>
-      <div class="flex flex-row mobile:flex-col flex-wrap desktop:justify-between">
+      <div class="flex flex-row mobile:flex-col flex-wrap">
         <div
-          v-for="application in applications"
+          v-for="(application, index) in applications"
           :key="application?.header.id"
-          :class="`
-            ${
-            applications && applications?.length > 1
-              ? 'desktop:w-[calc(33%-24px)]'
-              : 'desktop:w-full flex-grow flex-1'
-          }
-            flex flex-row mobile:flex-col
-          `"
+          :class="[
+            (applications && applications?.length > 1) ? 'desktop:w-[calc(33.33%)]' : 'desktop:w-full flex-grow flex-1',
+            'flex flex-row mobile:flex-col'
+          ]"
         >
           <BcrosStatusCard
             v-if="application"
@@ -37,7 +33,8 @@
             :flavour="getChipFlavour(application.header.status)"
             :status="application.header.status"
             :is-single="!(applications && applications?.length > 1)"
-            :registration-number="application.header?.registrationId?.toString() ?? ''"
+            :registration-number="application.header?.registrationId?.toString() ?? application.header.id.toString()"
+            :class="{'mr-6': (index + 1) % 3 !== 0}"
           >
             <div>
               <p class="font-bold">

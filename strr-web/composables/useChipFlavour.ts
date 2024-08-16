@@ -39,6 +39,11 @@ export const useChipFlavour = () => {
           alert: AlertsFlavourE.APPLIED,
           text: tRegistryDashboardStatus('submitted')
         }
+      case 'PAID':
+        return {
+          alert: AlertsFlavourE.APPLIED,
+          text: tRegistryDashboardStatus('paid')
+        }
       default:
         return {
           alert: AlertsFlavourE.MESSAGE,

@@ -95,11 +95,44 @@ export const useApplications = () => {
   }
 
   const getFile = async (id: string, documentId: string): Promise<Blob> => {
-    const response = await axiosInstance.get(
-      `${apiURL}/applications/${id}/documents/${documentId}/file`,
-      { responseType: 'blob' }
-    )
+    const response = await axiosInstance.get(`${apiURL}/applications/${id}/documents/${documentId}/file`, {
+      responseType: 'blob'
+    })
     return response.data
+  }
+
+  /**
+   * Approve an Application by setting its status to APPROVED.
+   * @param id - The id of the Application to approve.
+   */
+  const approveApplication = async (id: string) => {
+    try {
+      await updateApplicationStatus(id, ApplicationStatusE.APPROVED)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  /**
+   * Reject an application by setting its status to REJECTED.
+   * @param id - The id of the Application to reject.
+   */
+  const rejectApplication = async (id: string) => {
+    try {
+      await updateApplicationStatus(id, ApplicationStatusE.REJECTED)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  /**
+   * Update the status of an application.
+   * @param id - The id of the Application.
+   * @param status - The status to set for the Application.
+   */
+  const updateApplicationStatus = async (id: string, status: ApplicationStatusE) => {
+    await axiosInstance.put(`${apiURL}/applications/${id}/status`, { status: `${status}` })
+    window.location.reload()
   }
 
   return {
@@ -108,6 +141,8 @@ export const useApplications = () => {
     createApplication,
     getApplicationHistory,
     getDocumentsForApplication,
-    getFile
+    getFile,
+    approveApplication,
+    rejectApplication
   }
 }
