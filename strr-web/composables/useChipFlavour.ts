@@ -4,6 +4,11 @@ export const useChipFlavour = () => {
 
   const getChipFlavour = (status: string): StatusChipFlavoursI['flavour'] => {
     switch (status) {
+      case 'ACTIVE':
+        return {
+          text: tRegistryDashboardStatus('active'),
+          alert: AlertsFlavourE.SUCCESS
+        }
       case 'DENIED':
         return {
           text: tRegistryDashboardStatus('denied'),
@@ -38,6 +43,11 @@ export const useChipFlavour = () => {
         return {
           alert: AlertsFlavourE.APPLIED,
           text: tRegistryDashboardStatus('submitted')
+        }
+      case 'PAID':
+        return {
+          alert: AlertsFlavourE.APPLIED,
+          text: tRegistryDashboardStatus('paid')
         }
       default:
         return {

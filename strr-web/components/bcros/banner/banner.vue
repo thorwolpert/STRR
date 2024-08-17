@@ -16,19 +16,19 @@
         <div class="mobile:hidden">
           <BcrosButtonsPrimary
             :label="tBanner('approve')"
-            :action="() => approveRegistration(applicationId.toString())"
+            :action="() => approveApplication(applicationId)"
             variant="outline"
             class-name="ml-[16px]"
           />
           <BcrosButtonsPrimary
             :label="tBanner('reject')"
-            :action="() => denyRegistration(applicationId.toString())"
+            :action="() => rejectApplication(applicationId)"
             variant="outline"
             class-name="ml-[16px]"
           />
           <BcrosButtonsPrimary
             :label="tBanner('issue')"
-            :action="() => issueRegistration(applicationId.toString())"
+            :action="() => issueRegistration(applicationId)"
             variant="outline"
             class-name="ml-[16px]"
           />
@@ -36,19 +36,19 @@
         <div class="desktop:hidden flex">
           <a
             class="mr-[16px] py-[10px]"
-            :on-click="() => approveRegistration(applicationId.toString())"
+            :on-click="() => approveApplication(applicationId)"
           >
             {{ tBanner('approve') }}
           </a>
           <a
             class="mr-[16px] py-[10px]"
-            :on-click="() => denyRegistration(applicationId.toString())"
+            :on-click="() => rejectApplication(applicationId)"
           >
             {{ tBanner('reject') }}
           </a>
           <a
             class="mr-[16px] py-[10px]"
-            :on-click="() => issueRegistration(applicationId.toString())"
+            :on-click="() => issueRegistration(applicationId)"
           >
             {{ tBanner('issue') }}
           </a>
@@ -60,15 +60,16 @@
 
 <script setup lang="ts">
 
-const { hideButtons = true } = defineProps<{ hideButtons?: boolean }>()
+const { hideButtons = true } = defineProps<{
+  hideButtons?: boolean,
+  applicationId: string
+}>()
 const { t } = useTranslation()
 const tBanner = (text: string) => t(`banner.${text}`)
 const {
-  issueRegistration,
-  approveRegistration,
-  denyRegistration
+  issueRegistration
 } = useRegistrations()
-const route = useRoute()
-const { applicationId } = route.params
+
+const { approveApplication, rejectApplication } = useApplications()
 
 </script>

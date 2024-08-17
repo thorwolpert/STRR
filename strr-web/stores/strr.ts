@@ -45,7 +45,7 @@ export const submitCreateAccountForm = (
     })
 }
 
-const numbersRegex = /^[0-9]+$/
+const numbersRegex = /^\d+$/
 // matches chars 123456789 ()
 const phoneRegex = /^[0-9*#+() -]+$/
 const httpRegex = /^(https?:\/\/)([\w-]+(\.[\w-]+)+\.?(:\d+)?(\/.*)?)$/i

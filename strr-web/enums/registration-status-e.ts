@@ -1,4 +1,5 @@
 export enum RegistrationStatusE {
+  ACTIVE = 'ACTIVE',
   SUBMITTED = 'SUBMITTED',
   PENDING = 'PENDING',
   UNDER_REVIEW = 'UNDER_REVIEW',

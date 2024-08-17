@@ -1,26 +1,29 @@
 <template>
-  <div>
-    <BcrosBanner :hide-buttons="!isExaminer">
-      <div class="flex items-center m:mb-[8px] m:justify-between">
+  <div data-test-id="reg-details">
+    <BcrosBanner
+      :hide-buttons="!isExaminer"
+      :application-id="registrationId"
+    >
+      <div data-test-id="reg-details-header" class="flex items-center m:mb-2 m:justify-between">
         <BcrosTypographyH1
           :text="
             `${application?.unitAddress.nickname ?? ''} ${tApplicationDetails('registration')}
-            #${application?.registration_number ?? '-'}`
+              #${application?.registration_number ?? '-'}`
           "
-          class-name="mobile:text-[24px]"
+          class-name="mobile:text-6"
           no-spacing
         />
-        <BcrosChip v-if="flavour" :flavour="flavour" class="ml-[16px]">
+        <BcrosChip v-if="flavour" :flavour="flavour" class="ml-4">
           {{ flavour.text }}
         </BcrosChip>
       </div>
     </BcrosBanner>
     <div class="mt-[104px]">
-      <div>
-        <p class="font-bold mb-[24px] mobile:mx-[8px]">
+      <div data-test-id="registration-status">
+        <p class="font-bold mb-6 mobile:mx-2">
           {{ tApplicationDetails('registrationStatus') }}
         </p>
-        <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
+        <div class="bg-white py-[22px] px-[30px] mobile:px-2">
           <div class="flex flex-row justify-between w-full mobile:flex-col">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('status')">
               <p>{{ tApplicationDetails(application?.status ?? '-' ) }}</p>
@@ -28,12 +31,12 @@
           </div>
         </div>
       </div>
-      <div class="mt-[40px]">
-        <p class="font-bold mb-[24px] mobile:mx-[8px]">
+      <div class="mt-10">
+        <p class="font-bold mb-6 mobile:mx-2">
           {{ tApplicationDetails('unitInfo') }}
         </p>
-        <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
-          <div class="flex flex-row justify-between w-full mobile:flex-col desktop:mb-[24px]">
+        <div class="bg-white py-[22px] px-[30px] mobile:px-2">
+          <div class="flex flex-row justify-between w-full mobile:flex-col desktop:mb-6">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('nickname')">
               <p>{{ application?.unitAddress.nickname ?? '-' }}</p>
             </BcrosFormSectionReviewItem>
@@ -51,42 +54,31 @@
                 {{ application?.unitAddress.addressLineTwo }}
               </p>
               <p>
-                {{
-                  `
-                ${application?.unitAddress.city ?? '-'}
-                ${application?.unitAddress.province ?? '-'}
-                ${application?.unitAddress.postalCode ?? '-'}
-                `
-                }}
+                {{ application?.unitAddress.city || '-' }}
+                {{ application?.unitAddress.province || '-' }}
+                {{ application?.unitAddress.postalCode || '-' }}
               </p>
               <p>
-                {{
-                  `
-                ${application?.unitAddress.country
-                ? regionNamesInEnglish.of(application?.unitAddress.country)
-                  : '-'}
-                `
-                }}
+                {{ application?.unitAddress.country ? regionNamesInEnglish.of(application?.unitAddress.country) : '-' }}
               </p>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem :title="tApplicationDetails('propertyType')">
               <p>
-                {{
-                  application?.unitDetails.propertyType
-                    ? tPropertyForm(propertyTypeMap[application?.unitDetails.propertyType as keyof PropertyTypeMapI])
-                    : '-'
+                {{ application?.unitDetails.propertyType
+                  ? tPropertyForm(propertyTypeMap[application?.unitDetails.propertyType as keyof PropertyTypeMapI])
+                  : '-'
                 }}
               </p>
             </BcrosFormSectionReviewItem>
             <div class="flex-1" />
           </div>
         </div>
-        <div class="mt-[40px] relative overflow-x-scroll">
-          <p class="font-bold mb-[24px] mobile:mx-[8px]">
+        <div class="mt-10 relative overflow-x-scroll">
+          <p class="font-bold mb-6 mobile:mx-2">
             {{ tApplicationDetails('primaryContact') }}
           </p>
           <div class="d:hidden">
-            <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
+            <div class="bg-white py-[22px] px-[30px] mobile:px-2">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('name')">
                 <p>{{ (application ? getContactRows(application?.primaryContact): [])[0].name }}</p>
               </BcrosFormSectionReviewItem>
@@ -101,16 +93,16 @@
               </BcrosFormSectionReviewItem>
             </div>
           </div>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-[8px] m:hidden overflow-x-scroll w-[150%]">
+          <div class="bg-white py-[22px] px-[30px] mobile:px-2 m:hidden overflow-x-scroll w-[150%]">
             <UTable :rows="application ? getContactRows(application?.primaryContact): []" />
           </div>
         </div>
-        <div v-if="application && application?.secondaryContact" class="mt-[40px] relative overflow-x-scroll">
-          <p class="font-bold mb-[24px] mobile:mx-[8px]">
+        <div v-if="application && application?.secondaryContact" class="mt-10 relative overflow-x-scroll">
+          <p class="font-bold mb-6 mobile:mx-2">
             {{ tApplicationDetails('secondaryContact') }}
           </p>
           <div class="d:hidden">
-            <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
+            <div class="bg-white py-[22px] px-[30px] mobile:px-2">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('name')">
                 <p>{{ (application ? getContactRows(application?.secondaryContact): [])[0].name }}</p>
               </BcrosFormSectionReviewItem>
@@ -125,15 +117,15 @@
               </BcrosFormSectionReviewItem>
             </div>
           </div>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-[8px] m:hidden overflow-x-scroll w-[150%]">
+          <div class="bg-white py-[22px] px-[30px] mobile:px-2 m:hidden overflow-x-scroll w-[150%]">
             <UTable :rows="getContactRows(application?.secondaryContact)" />
           </div>
         </div>
-        <div v-if="documents.length" class="mt-[40px]">
-          <p class="font-bold mb-[24px] mobile:mx-[8px]">
+        <div v-if="documents.length" class="mt-10">
+          <p class="font-bold mb-6 mobile:mx-2">
             {{ tApplicationDetails('documents') }}
           </p>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
+          <div class="bg-white py-[22px] px-[30px] mobile:px-2">
             <div class="flex flex-row justify-between w-full mobile:flex-col">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
                 <div v-for="(supportingDocument) in documents" :key="supportingDocument.file_name">
@@ -142,7 +134,7 @@
                     role="button"
                     @click.prevent="
                       downloadItem(
-                        applicationId.toString(),
+                        registrationId,
                         supportingDocument.document_id.toString(),
                         supportingDocument.file_name
                       )
@@ -160,50 +152,55 @@
             </div>
           </div>
         </div>
-        <div v-if="isExaminer" class="mt-[40px]">
-          <p class="font-bold mb-[24px] mobile:mx-[8px]">
-            {{ tApplicationDetails('ltsaInfo') }}
-          </p>
-          <a
-            class="mobile:mx-[8px]"
-            @click="() => navigateTo(`/application-details/${applicationId}/ltsa`, { open: { target: '_blank' } })"
-          >
-            {{ tApplicationDetails('ltsaDetails') }}
-          </a>
-        </div>
-        <div v-if="isExaminer" class="mt-[40px]">
-          <p class="font-bold mb-[24px] mobile:mx-[8px]">
-            {{ tApplicationDetails('autoApprovalLogic') }}
-          </p>
-          <a
-            class="mobile:mx-[8px]"
-            @click="
-              () =>
-                navigateTo(`/application-details/${applicationId}/auto-approval`, { open: { target: '_blank' } })
-            "
-          >
-            {{ tApplicationDetails('autoApprovalDetails') }}
-          </a>
-        </div>
-        <div class="mt-[40px]">
-          <p class="font-bold mb-[24px] mobile:mx-[8px]">
+        <template v-if="isExaminer">
+          <div class="mt-10">
+            <p class="font-bold mb-6 mobile:mx-2">
+              {{ tApplicationDetails('ltsaInfo') }}
+            </p>
+            <a
+              class="mobile:mx-2"
+              :href="`/application-details/${registrationId}/ltsa`"
+              target="_blank"
+              rel="noopener"
+            >
+              {{ tApplicationDetails('ltsaDetails') }}
+            </a>
+          </div>
+          <div class="mt-10">
+            <p class="font-bold mb-6 mobile:mx-2">
+              {{ tApplicationDetails('autoApprovalLogic') }}
+            </p>
+            <a
+              class="mobile:mx-2"
+              :href="`/application-details/${registrationId}/auto-approval`"
+              target="_blank"
+              rel="noopener"
+            >
+              {{ tApplicationDetails('autoApprovalDetails') }}
+            </a>
+          </div>
+        </template>
+
+        <div class="mt-10">
+          <p class="font-bold mb-6 mobile:mx-2">
             {{ tApplicationDetails('filing') }}
           </p>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
+
+          <div class="bg-white py-[22px] px-[30px] mobile:px-2">
             <div class="flex flex-col justify-between w-full">
               <div
                 v-for="(event, index) in history.reverse()"
                 :key="event.created_date"
-                :class="`flex flex-row ${index === history.length - 1 ? '': 'mb-[24px]'}`"
+                :class="`flex flex-row ${index === history.length - 1 ? '': 'mb-6'}`"
               >
                 <div>
-                  <p class="text-bcGovColor-midGray mr-[16px]">
-                    {{ formatDate(new Date(event.created_date)) }}
+                  <p class="text-bcGovColor-midGray mr-4">
+                    {{ formatLongDate(new Date(event.created_date)) }}
                   </p>
                 </div>
                 <div>
                   <p class="text-bcGovColor-midGray">
-                    {{ formatTime(new Date(`${event.created_date}Z`)) }}
+                    {{ formatTimeString(new Date(`${event.created_date}Z`)) }}
                   </p>
                   <p class="font-bold">
                     {{ event.message }}
@@ -211,7 +208,7 @@
                   <a
                     v-if="downloadEventTypes.includes(event.event_type)"
                     class="no-underline"
-                    @click="() => getDownloadAction(event.event_type, applicationId.toString())"
+                    @click="() => getDownloadAction(event.event_type, registrationId)"
                   >
                     {{ getDownloadText(event.event_type) }}
                   </a>
@@ -227,9 +224,10 @@
 
 <script setup lang="ts">
 import { propertyTypeMap } from '~/utils/propertyTypeMap'
+import { formatLongDate, formatTimeString } from '~/utils/format-helper'
 
 const route = useRoute()
-const { t } = useTranslation()
+const t = useNuxtApp().$i18n.t
 const tRegistrationStatus = (translationKey: string) => t(`registrationStatus.${translationKey}`)
 const tApplicationDetails = (translationKey: string) => t(`applicationDetails.${translationKey}`)
 const tPropertyForm = (translationKey: string) => t(`createAccount.propertyForm.${translationKey}`)
@@ -238,16 +236,9 @@ const { getChipFlavour } = useChipFlavour()
 
 const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' })
 
-const { applicationId } = route.params
+const registrationId = route.params.id.toString()
 
 const downloadEventTypes = ['CERTIFICATE_ISSUED']
-
-const formatDate = (date: Date) => {
-  const day = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-  return day
-}
-
-const formatTime = (date: Date): string => date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
 
 const {
   getRegistration,
@@ -291,38 +282,39 @@ const downloadItem = async (id: string, fileId: string, fileName: string) => {
   link.click()
   URL.revokeObjectURL(link.href)
 }
-
-const application = await getRegistration(applicationId.toString())
-const documents = await getDocumentsForRegistration(applicationId.toString())
-const history = await getRegistrationHistory(applicationId.toString())
+const [application, documents, history] = await Promise.all([
+  getRegistration(registrationId),
+  getDocumentsForRegistration(registrationId),
+  getRegistrationHistory(registrationId)
+])
 
 const flavour = application ? getChipFlavour(application.status) : null
 
 const getContactRows = (contactBlock: ContactI) => [{
   name: `
-    ${contactBlock.name.firstName}
-    ${contactBlock.name.middleName
-      ? ` ${contactBlock.name.middleName} `
-      : ' '
-    }
-     ${contactBlock.name.lastName}
-  `,
+      ${contactBlock.name.firstName}
+      ${contactBlock.name.middleName
+        ? ` ${contactBlock.name.middleName} `
+        : ' '
+      }
+       ${contactBlock.name.lastName}
+    `,
   address: `
-    ${contactBlock.mailingAddress.address} 
-    ${contactBlock.mailingAddress.addressLineTwo} 
-    ${contactBlock.mailingAddress.city} 
-    ${contactBlock.mailingAddress.province} 
-    ${contactBlock.mailingAddress.postalCode}
-  `,
+      ${contactBlock.mailingAddress.address} 
+      ${contactBlock.mailingAddress.addressLineTwo} 
+      ${contactBlock.mailingAddress.city} 
+      ${contactBlock.mailingAddress.province} 
+      ${contactBlock.mailingAddress.postalCode}
+    `,
   'Email Address': contactBlock.details.emailAddress,
   'Phone Number':
-    `
-      ${contactBlock.details.phoneNumber}
-      ${contactBlock.details.extension
-        ? contactBlock.details.extension
-        : ''
-      }
-    `,
+      `
+        ${contactBlock.details.phoneNumber}
+        ${contactBlock.details.extension
+          ? contactBlock.details.extension
+          : ''
+        }
+      `,
   SIN: contactBlock.socialInsuranceNumber,
   'BN (GST)': contactBlock.businessNumber
 }]

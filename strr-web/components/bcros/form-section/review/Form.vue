@@ -83,6 +83,7 @@
                   :href="listing.url"
                   target="_blank"
                   class="my-[4px]"
+                  rel="noopener"
                 >
                   {{ listing.url }}
                 </a>

@@ -18,26 +18,20 @@
           class-name="mobile:hidden"
         />
       </div>
-      <div class="flex flex-row mobile:flex-col flex-wrap desktop:justify-between">
+      <div class="flex flex-row mobile:flex-col flex-wrap">
         <div
-          v-for="application in applications"
+          v-for="(application, index) in applications"
           :key="application?.header.id"
-          :class="`
-            ${
-            applications && applications?.length > 1
-              ? 'desktop:w-[calc(33%-24px)]'
-              : 'desktop:w-full flex-grow flex-1'
-          }
-            flex flex-row mobile:flex-col
-          `"
+          :class="[
+            (applications && applications?.length > 1) ? 'desktop:w-[calc(33.33%)]' : 'desktop:w-full flex-grow flex-1',
+            'flex flex-row mobile:flex-col'
+          ]"
         >
           <BcrosStatusCard
             v-if="application"
-            :application-id="application.header.id.toString()"
-            :flavour="getChipFlavour(application.header.status)"
-            :status="application.header.status"
+            :application-header="application.header"
             :is-single="!(applications && applications?.length > 1)"
-            :registration-number="application.header?.registrationId?.toString() ?? ''"
+            :class="{'mr-6': (index + 1) % 3 !== 0}"
           >
             <div>
               <p class="font-bold">
@@ -93,7 +87,6 @@ definePageMeta({
 const tRegistrationStatus = (translationKey: string) => useTranslation().t(`registrationStatus.${translationKey}`)
 
 const { getApplications } = useApplications()
-const { getChipFlavour } = useChipFlavour()
 const applications = ref<(ApplicationI | undefined)[]>()
 applications.value = await getApplications()
 const applicationsCount = applications.value?.length || 0

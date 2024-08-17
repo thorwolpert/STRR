@@ -18,6 +18,7 @@
     "location": "Location",
     "approved": "Approved",
     "statusChip": {
+      "active": "ACTIVE",
       "approved": "APPROVED",
       "rejected": "REJECTED",
       "provisional": "PROVISIONAL",
@@ -26,7 +27,8 @@
       "denied": "DENIED",
       "issued": "ISSUED",
       "pending": "APPLIED",
-      "submitted": "SUBMITTED"
+      "submitted": "SUBMITTED",
+      "paid": "PAID"
     }
   },
   "tos": {
@@ -75,6 +77,8 @@
   },
   "applicationDetails": {
     "registration": "REGISTRATION",
+    "applicationTitle": "APPLICATION",
+    "applicationStatus": "Application Status",
     "registrationStatus": "Registration Status",
     "status": "Status",
     "unitInfo": "Rental Unit Information",
@@ -95,13 +99,17 @@
     "autoApprovalLogic": "Auto-Approval Logic",
     "autoApprovalDetails": "View Auto-Approval Details",
     "filing": "Filing History",
+    "ACTIVE": "Active",
     "PENDING": "Pending",
     "APPROVED": "Approved",
     "MORE_INFO_NEEDED": "Provisional",
     "DENIED": "Denied",
     "ISSUED": "Issued",
     "UNDER_REVIEW": "Under Review",
-    "PROVISIONAL": "Provisional"
+    "PROVISIONAL": "Provisional",
+    "SUBMITTED": "Submitted",
+    "PAID": "Paid",
+    "REJECTED": "Rejected"
   },
   "banner": {
     "approve": "Approve",

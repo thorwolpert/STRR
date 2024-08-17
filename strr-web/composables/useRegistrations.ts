@@ -52,7 +52,7 @@ export const useRegistrations = () => {
       .then(res => res.data)
 
   const getRegistrationHistory = (id: string): Promise<RegistrationHistoryEventI[]> =>
-    axiosInstance.get(`${apiURL}/registrations/${id}/history`)
+    axiosInstance.get(`${apiURL}/registrations/${id}/events`)
       .then(res => res.data)
 
   const approveRegistration = (id: string): Promise<any> =>

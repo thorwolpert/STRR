@@ -1,7 +1,5 @@
-import { AccountStatusE } from '~/enums/account-status-e'
-import { ApplicationStatusE } from '~/enums/application-status-e'
-
-interface ApplicationHeaderI {
+import { RegistrationStatusE, ApplicationStatusE } from '#imports'
+export interface ApplicationHeaderI {
   applicationDateTime: string
   decisionDate: string | null
   id: number
@@ -13,7 +11,7 @@ interface ApplicationHeaderI {
   registrationId: number
   registrationNumber: string
   registrationStartDate: string
-  registrationStatus: AccountStatusE
+  registrationStatus: RegistrationStatusE
   reviewer: {
     displayName: string
     username: string
@@ -29,9 +27,10 @@ interface ListingDetailsI {
   url: string
 }
 
-interface ApplicationDetailsI {
-  listingDetails: ListingDetailsI[],
+export interface ApplicationDetailsI {
+  listingDetails: ListingDetailsI[]
   primaryContact: ContactI
+  secondaryContact?: ContactI
   principalResidence: PrincipalResidenceI
   unitAddress: RegistrationAddressI
   unitDetails: {

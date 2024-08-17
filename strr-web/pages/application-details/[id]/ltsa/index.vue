@@ -1,7 +1,10 @@
 <template>
   <div>
     <div>
-      <BcrosBanner hide-buttons>
+      <BcrosBanner
+        hide-buttons
+        :application-id="applicationId"
+      >
         <div class="flex items-center m:justify-between">
           <BcrosTypographyH1
             :text="
@@ -130,11 +133,11 @@ const tRegistrationStatus = (translationKey: string) => t(`registrationStatus.${
 const tApplicationDetails = (translationKey: string) => t(`applicationDetails.${translationKey}`)
 const tLtsa = (translationKey: string) => t(`ltsa.${translationKey}`)
 
-const { applicationId } = route.params
+const applicationId = route.params.id.toString()
 
 const { getRegistration, getLtsa } = useRegistrations()
 
-const application = await getRegistration(applicationId.toString())
+const application = await getRegistration(applicationId)
 
 const formatDate = (date: Date) => date.toLocaleDateString('en-US')
 
@@ -162,7 +165,7 @@ const getFlavour = (status: string, invoices: RegistrationI['invoices']):
 
 const flavour = application ? getFlavour(application.status, application.invoices) : null
 
-const data: LtsaDataI[] = await getLtsa(applicationId.toString()) || {} as LtsaDataI[]
+const data: LtsaDataI[] = await getLtsa(applicationId) || {} as LtsaDataI[]
 
 const ownerRows = data.length > 0
   ? [{
