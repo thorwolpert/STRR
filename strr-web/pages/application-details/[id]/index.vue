@@ -1,10 +1,12 @@
 <template>
   <div data-test-id="application-details">
     <BcrosBanner
+      ref="bannerRef"
       :hide-buttons="!isExaminer"
       :application-id="applicationId"
+      class="mobile:h-auto"
     >
-      <div class="flex items-center m:mb-2 m:justify-between">
+      <div class="flex desktop:items-center m:mb-2 m:justify-between">
         <BcrosTypographyH1
           :text="
             `${applicationDetails?.unitAddress.nickname ?? ''} ${tApplicationDetails('applicationTitle')}
@@ -13,17 +15,17 @@
           class-name="mobile:text-6"
           no-spacing
         />
-        <BcrosChip v-if="flavour" :flavour="flavour" class="ml-[16px]">
+        <BcrosChip v-if="flavour" :flavour="flavour" class="ml-[16px] mobile:mt-4">
           {{ flavour.text }}
         </BcrosChip>
       </div>
     </BcrosBanner>
-    <div class="mt-[104px]">
+    <div ref="contentRef" class="mt-[104px]">
       <div data-test-id="application-status">
-        <p class="font-bold mb-6 mobile:mx-2">
+        <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
           {{ tApplicationDetails('applicationStatus') }}
         </p>
-        <div class="bg-white py-[22px] px-[30px] mobile:px-2">
+        <div class="bg-white py-[22px] px-[30px] mobile:px-5">
           <div class="flex flex-row justify-between w-full mobile:flex-col">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('status')">
               <p>{{ tApplicationDetails(application?.header.status ?? '-' ) }}</p>
@@ -32,10 +34,10 @@
         </div>
       </div>
       <div class="mt-10">
-        <p class="font-bold mb-6 mobile:mx-2">
+        <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
           {{ tApplicationDetails('unitInfo') }}
         </p>
-        <div class="bg-white py-[22px] px-[30px] mobile:px-2">
+        <div class="bg-white py-[22px] px-[30px] mobile:px-5">
           <div class="flex flex-row justify-between w-full mobile:flex-col desktop:mb-6">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('nickname')">
               <p>{{ applicationDetails?.unitAddress.nickname ?? '-' }}</p>
@@ -78,11 +80,11 @@
           </div>
         </div>
         <div class="mt-10 relative overflow-x-scroll">
-          <p class="font-bold mb-6 mobile:mx-2">
+          <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
             {{ tApplicationDetails('primaryContact') }}
           </p>
           <div class="d:hidden">
-            <div class="bg-white py-[22px] px-[30px] mobile:px-2">
+            <div class="bg-white py-[22px] px-[30px] mobile:px-5">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('name')">
                 <p>{{ (applicationDetails ? getContactRows(applicationDetails?.primaryContact): [])[0].name }}</p>
               </BcrosFormSectionReviewItem>
@@ -105,16 +107,16 @@
               </BcrosFormSectionReviewItem>
             </div>
           </div>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-2 m:hidden overflow-x-scroll w-[150%]">
+          <div class="bg-white py-[22px] px-[30px] mobile:px-5 m:hidden overflow-x-scroll w-[150%]">
             <UTable :rows="applicationDetails ? getContactRows(applicationDetails?.primaryContact): []" />
           </div>
         </div>
         <div v-if="applicationDetails && applicationDetails?.secondaryContact" class="mt-10 relative overflow-x-scroll">
-          <p class="font-bold mb-6 mobile:mx-2">
+          <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
             {{ tApplicationDetails('secondaryContact') }}
           </p>
           <div class="d:hidden">
-            <div class="bg-white py-[22px] px-[30px] mobile:px-2">
+            <div class="bg-white py-[22px] px-[30px] mobile:px-5">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('name')">
                 <p>{{ (applicationDetails ? getContactRows(applicationDetails?.secondaryContact): [])[0].name }}</p>
               </BcrosFormSectionReviewItem>
@@ -137,15 +139,15 @@
               </BcrosFormSectionReviewItem>
             </div>
           </div>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-2 m:hidden overflow-x-scroll w-[150%]">
+          <div class="bg-white py-[22px] px-[30px] mobile:px-5 m:hidden overflow-x-scroll w-[150%]">
             <UTable :rows="getContactRows(applicationDetails?.secondaryContact)" />
           </div>
         </div>
         <div v-if="documents.length" class="mt-10">
-          <p class="font-bold mb-6 mobile:mx-2">
+          <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
             {{ tApplicationDetails('documents') }}
           </p>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-2">
+          <div class="bg-white py-[22px] px-[30px] mobile:px-5">
             <div class="flex flex-row justify-between w-full mobile:flex-col">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
                 <div v-for="(supportingDocument) in documents" :key="supportingDocument.file_name">
@@ -174,7 +176,7 @@
         </div>
         <template v-if="isExaminer">
           <div class="mt-10">
-            <p class="font-bold mb-6 mobile:mx-2">
+            <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
               {{ tApplicationDetails('ltsaInfo') }}
             </p>
             <a
@@ -212,6 +214,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUpdated, onUnmounted, nextTick } from 'vue'
 import FilingHistory from '~/components/FilingHistory.vue'
 import { propertyTypeMap } from '~/utils/propertyTypeMap'
 
@@ -283,4 +286,37 @@ const getContactRows = (contactBlock: ContactI) => [{
   SIN: contactBlock.socialInsuranceNumber,
   'BN (GST)': contactBlock.businessNumber
 }]
+
+const bannerRef = ref(null)
+const contentRef = ref(null)
+const isMobile = ref(false)
+
+const updatePadding = async () => {
+  await nextTick()
+  if (bannerRef.value && contentRef.value) {
+    const mobileBreakpoint = 440
+    isMobile.value = window.innerWidth < mobileBreakpoint
+
+    if (isMobile.value) {
+      const bannerElement = bannerRef.value.$el || bannerRef.value
+      const bannerHeight = bannerElement.offsetHeight / 2
+      contentRef.value.style.paddingTop = `${bannerHeight}px`
+    } else {
+      contentRef.value.style.paddingTop = ''
+    }
+  }
+}
+
+onMounted(async () => {
+  await updatePadding()
+  window.addEventListener('resize', updatePadding)
+})
+
+onUpdated(async () => {
+  await updatePadding()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updatePadding)
+})
 </script>
