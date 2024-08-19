@@ -7,15 +7,6 @@ export const useApplications = () => {
   const { handlePaymentRedirect } = useFees()
 
   /**
-   * Default sorting order for applications
-   */
-  const applicationStatusPriority: any = {
-    [ApplicationStatusE.REJECTED]: 4,
-    [ApplicationStatusE.APPROVED]: 3,
-    [ApplicationStatusE.SUBMITTED]: 2
-  }
-
-  /**
    * Create a new STR Application and redirect user to the payment page.
    */
   const createApplication = async (
@@ -66,21 +57,31 @@ export const useApplications = () => {
    * Get all STR Applications from the API and sorts them by status and city.
    * If no applications are found, the user is redirected to the create account page.
    */
-  const getApplications = async () => {
-    const response = await axiosInstance.get<PaginatedApplicationsI>(`${apiURL}/applications`)
+  const getApplications = async (): Promise<PaginatedApplicationsI> => {
+    const { data } = await axiosInstance.get<PaginatedApplicationsI>(`${apiURL}/applications`)
+    return data
+  }
 
-    if (response.data.total === 0) {
-      navigateTo('/create-account')
-    }
+  const getPaginatedApplications = async (paginationObject: SearchApplicationsI): Promise<PaginatedApplicationsI> => {
+    // remove all empty params before constructing a query params
+    const params = Object.entries(paginationObject).reduce((acc, [key, value]) => {
+      if (value !== '') {
+        acc[key as keyof SearchApplicationsI] = value
+      }
+      return acc
+    }, {} as Partial<SearchApplicationsI>)
 
-    return response.data.applications
-      .sort(
-        (a: ApplicationI, b: ApplicationI) =>
-          applicationStatusPriority[a.header.status] ?? 1 - applicationStatusPriority[b.header.status] ?? 1
-      )
-      .sort((a: ApplicationI, b: ApplicationI) =>
-        a.registration.unitAddress.city.localeCompare(b.registration.unitAddress.city)
-      )
+    const queryParams = new URLSearchParams(params as Record<string, string>)
+
+    const { data } = await axiosInstance.get<PaginatedApplicationsI>(`${apiURL}/applications/search?${queryParams}`)
+    return data
+  }
+
+  const getApplicationsByStatus = async (applicationStatus: ApplicationStatusE): Promise<PaginatedApplicationsI> => {
+    const { data } = await axiosInstance.get<PaginatedApplicationsI>(`${apiURL}/applications/search`, {
+      params: { status: applicationStatus }
+    })
+    return data
   }
 
   const getApplicationHistory = async (id: string): Promise<ApplicationHistoryEventI[]> => {
@@ -138,6 +139,8 @@ export const useApplications = () => {
   return {
     getApplication,
     getApplications,
+    getApplicationsByStatus,
+    getPaginatedApplications,
     createApplication,
     getApplicationHistory,
     getDocumentsForApplication,

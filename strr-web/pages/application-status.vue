@@ -84,10 +84,32 @@ definePageMeta({
   layout: 'wide-no-space'
 })
 
+/**
+ * Default sorting order for applications
+ */
+const applicationStatusPriority: any = {
+  [ApplicationStatusE.REJECTED]: 4,
+  [ApplicationStatusE.APPROVED]: 3,
+  [ApplicationStatusE.SUBMITTED]: 2
+}
+
 const tRegistrationStatus = (translationKey: string) => useTranslation().t(`registrationStatus.${translationKey}`)
 
 const { getApplications } = useApplications()
 const applications = ref<(ApplicationI | undefined)[]>()
-applications.value = await getApplications()
+const res = await getApplications()
+
+if (res.total === 0) {
+  navigateTo('/create-account')
+}
+
+applications.value = res.applications
+  .sort(
+    (a: ApplicationI, b: ApplicationI) =>
+      applicationStatusPriority[a.header.status] ?? 1 - applicationStatusPriority[b.header.status] ?? 1
+  )
+  .sort((a: ApplicationI, b: ApplicationI) =>
+    a.registration.unitAddress.city.localeCompare(b.registration.unitAddress.city)
+  )
 const applicationsCount = applications.value?.length || 0
 </script>

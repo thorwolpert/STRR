@@ -216,7 +216,7 @@
       "socialInsuranceNumberOptional": "Social Insurance Number (Optional)",
       "businessNumber": "Business (GST) Number (Optional)",
       "businessNumberReview": "Business Number",
-      "cra": "CRA Identifier"
+      "cra": "Canada Revenue Agency Identifier"
     },
     "propertyForm": {
       "subtitle": "Rental Unit Information",
