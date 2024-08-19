@@ -1,26 +1,27 @@
 <template>
   <div data-test-id="application-details">
     <BcrosBanner
-      ref="bannerRef"
       :hide-buttons="!isExaminer"
       :application-id="applicationId"
       class="mobile:h-auto"
     >
-      <div class="flex desktop:items-center m:mb-2 m:justify-between">
-        <BcrosTypographyH1
-          :text="
-            `${applicationDetails?.unitAddress.nickname ?? ''} ${tApplicationDetails('applicationTitle')}
-            #${application?.header.id ?? '-'}`
-          "
-          class-name="mobile:text-6"
-          no-spacing
-        />
-        <BcrosChip v-if="flavour" :flavour="flavour" class="ml-[16px] mobile:mt-4">
-          {{ flavour.text }}
-        </BcrosChip>
+      <div class="flex m:mb-2 m:justify-between">
+        <div class="mobile:grid mobile:grid-cols-10 flex desktop:items-center">
+          <BcrosTypographyH1
+            :text="
+              `${applicationDetails?.unitAddress.nickname ?? ''} ${tApplicationDetails('applicationTitle')}
+              #${application?.header.id ?? '-'}`
+            "
+            class-name="mobile:text-6 mobile:col-span-7"
+            no-spacing
+          />
+          <BcrosChip v-if="flavour" :flavour="flavour" class="ml-[16px] mobile:mt-4 mobile:col-span-3">
+            {{ flavour.text }}
+          </BcrosChip>
+        </div>
       </div>
     </BcrosBanner>
-    <div ref="contentRef" class="mt-[104px]">
+    <div class="mt-[104px] mobile:pt-[70px]">
       <div data-test-id="application-status">
         <p class="font-bold mb-6 mobile:mx-2 text-xl">
           {{ tApplicationDetails('applicationStatus') }}
@@ -214,7 +215,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUpdated, onUnmounted, nextTick } from 'vue'
 import FilingHistory from '~/components/FilingHistory.vue'
 import { propertyTypeMap } from '~/utils/propertyTypeMap'
 
@@ -286,37 +286,4 @@ const getContactRows = (contactBlock: ContactI) => [{
   SIN: contactBlock.socialInsuranceNumber,
   'BN (GST)': contactBlock.businessNumber
 }]
-
-const bannerRef = ref(null)
-const contentRef = ref(null)
-const isMobile = ref(false)
-
-const updatePadding = async () => {
-  await nextTick()
-  if (bannerRef.value && contentRef.value) {
-    const mobileBreakpoint = 440
-    isMobile.value = window.innerWidth < mobileBreakpoint
-
-    if (isMobile.value) {
-      const bannerElement = bannerRef.value.$el || bannerRef.value
-      const bannerHeight = bannerElement.offsetHeight / 2
-      contentRef.value.style.paddingTop = `${bannerHeight}px`
-    } else {
-      contentRef.value.style.paddingTop = ''
-    }
-  }
-}
-
-onMounted(async () => {
-  await updatePadding()
-  window.addEventListener('resize', updatePadding)
-})
-
-onUpdated(async () => {
-  await updatePadding()
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updatePadding)
-})
 </script>
