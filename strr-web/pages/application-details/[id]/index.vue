@@ -22,7 +22,7 @@
     </BcrosBanner>
     <div ref="contentRef" class="mt-[104px]">
       <div data-test-id="application-status">
-        <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
+        <p class="font-bold mb-6 mobile:mx-2 text-xl">
           {{ tApplicationDetails('applicationStatus') }}
         </p>
         <div class="bg-white py-[22px] px-[30px] mobile:px-5">
@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="mt-10">
-        <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
+        <p class="font-bold mb-6 mobile:mx-2 text-xl">
           {{ tApplicationDetails('unitInfo') }}
         </p>
         <div class="bg-white py-[22px] px-[30px] mobile:px-5">
@@ -80,7 +80,7 @@
           </div>
         </div>
         <div class="mt-10 relative overflow-x-scroll">
-          <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
+          <p class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('primaryContact') }}
           </p>
           <div class="d:hidden">
@@ -112,7 +112,7 @@
           </div>
         </div>
         <div v-if="applicationDetails && applicationDetails?.secondaryContact" class="mt-10 relative overflow-x-scroll">
-          <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
+          <p class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('secondaryContact') }}
           </p>
           <div class="d:hidden">
@@ -144,7 +144,7 @@
           </div>
         </div>
         <div v-if="documents.length" class="mt-10">
-          <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
+          <p class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('documents') }}
           </p>
           <div class="bg-white py-[22px] px-[30px] mobile:px-5">
@@ -176,7 +176,7 @@
         </div>
         <template v-if="isExaminer">
           <div class="mt-10">
-            <p class="font-bold mb-6 mobile:mx-1.5 text-xl">
+            <p class="font-bold mb-6 mobile:mx-2 text-xl">
               {{ tApplicationDetails('ltsaInfo') }}
             </p>
             <a
