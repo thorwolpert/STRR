@@ -105,7 +105,7 @@ const buildProvisionalRows = (rowsData: AutoApprovalDataI[]) => {
 
   if (!licenseNull) {
     provisionalRows.value.push({
-      criteria: tAutoApproval('addrMatchQuestion'),
+      criteria: tAutoApproval('businessLicenseReq'),
       outcome: rowsData[0].record.business_license_required_provided
         ? tAutoApproval('requiredProvided')
         : rowsData[0].record.business_license_not_required_not_provided

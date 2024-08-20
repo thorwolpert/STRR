@@ -3,27 +3,30 @@
     <BcrosBanner
       :hide-buttons="!isExaminer"
       :application-id="applicationId"
+      class="mobile:h-auto"
     >
-      <div class="flex items-center m:mb-2 m:justify-between">
-        <BcrosTypographyH1
-          :text="
-            `${applicationDetails?.unitAddress.nickname ?? ''} ${tApplicationDetails('applicationTitle')}
-            #${application?.header.id ?? '-'}`
-          "
-          class-name="mobile:text-6"
-          no-spacing
-        />
-        <BcrosChip v-if="flavour" :flavour="flavour" class="ml-[16px]">
-          {{ flavour.text }}
-        </BcrosChip>
+      <div class="flex m:mb-2 m:justify-between">
+        <div class="mobile:grid mobile:grid-cols-10 flex desktop:items-center">
+          <BcrosTypographyH1
+            :text="
+              `${applicationDetails?.unitAddress.nickname ?? ''} ${tApplicationDetails('applicationTitle')}
+              #${application?.header.id ?? '-'}`
+            "
+            class-name="mobile:text-6 mobile:col-span-7"
+            no-spacing
+          />
+          <BcrosChip v-if="flavour" :flavour="flavour" class="ml-[16px] mobile:mt-4 mobile:col-span-3">
+            {{ flavour.text }}
+          </BcrosChip>
+        </div>
       </div>
     </BcrosBanner>
-    <div class="mt-[104px]">
+    <div class="mt-[104px] mobile:pt-[70px]">
       <div data-test-id="application-status">
-        <p class="font-bold mb-6 mobile:mx-2">
+        <p class="font-bold mb-6 mobile:mx-2 text-xl">
           {{ tApplicationDetails('applicationStatus') }}
         </p>
-        <div class="bg-white py-[22px] px-[30px] mobile:px-2">
+        <div class="bg-white py-[22px] px-[30px] mobile:px-5">
           <div class="flex flex-row justify-between w-full mobile:flex-col">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('status')">
               <p>{{ tApplicationDetails(application?.header.status ?? '-' ) }}</p>
@@ -32,10 +35,10 @@
         </div>
       </div>
       <div class="mt-10">
-        <p class="font-bold mb-6 mobile:mx-2">
+        <p class="font-bold mb-6 mobile:mx-2 text-xl">
           {{ tApplicationDetails('unitInfo') }}
         </p>
-        <div class="bg-white py-[22px] px-[30px] mobile:px-2">
+        <div class="bg-white py-[22px] px-[30px] mobile:px-5">
           <div class="flex flex-row justify-between w-full mobile:flex-col desktop:mb-6">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('nickname')">
               <p>{{ applicationDetails?.unitAddress.nickname ?? '-' }}</p>
@@ -78,11 +81,11 @@
           </div>
         </div>
         <div class="mt-10 relative overflow-x-scroll">
-          <p class="font-bold mb-6 mobile:mx-2">
+          <p class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('primaryContact') }}
           </p>
           <div class="d:hidden">
-            <div class="bg-white py-[22px] px-[30px] mobile:px-2">
+            <div class="bg-white py-[22px] px-[30px] mobile:px-5">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('name')">
                 <p>{{ (applicationDetails ? getContactRows(applicationDetails?.primaryContact): [])[0].name }}</p>
               </BcrosFormSectionReviewItem>
@@ -105,16 +108,16 @@
               </BcrosFormSectionReviewItem>
             </div>
           </div>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-2 m:hidden overflow-x-scroll w-[150%]">
+          <div class="bg-white py-[22px] px-[30px] mobile:px-5 m:hidden overflow-x-scroll w-[150%]">
             <UTable :rows="applicationDetails ? getContactRows(applicationDetails?.primaryContact): []" />
           </div>
         </div>
         <div v-if="applicationDetails && applicationDetails?.secondaryContact" class="mt-10 relative overflow-x-scroll">
-          <p class="font-bold mb-6 mobile:mx-2">
+          <p class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('secondaryContact') }}
           </p>
           <div class="d:hidden">
-            <div class="bg-white py-[22px] px-[30px] mobile:px-2">
+            <div class="bg-white py-[22px] px-[30px] mobile:px-5">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('name')">
                 <p>{{ (applicationDetails ? getContactRows(applicationDetails?.secondaryContact): [])[0].name }}</p>
               </BcrosFormSectionReviewItem>
@@ -137,15 +140,15 @@
               </BcrosFormSectionReviewItem>
             </div>
           </div>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-2 m:hidden overflow-x-scroll w-[150%]">
+          <div class="bg-white py-[22px] px-[30px] mobile:px-5 m:hidden overflow-x-scroll w-[150%]">
             <UTable :rows="getContactRows(applicationDetails?.secondaryContact)" />
           </div>
         </div>
         <div v-if="documents.length" class="mt-10">
-          <p class="font-bold mb-6 mobile:mx-2">
+          <p class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('documents') }}
           </p>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-2">
+          <div class="bg-white py-[22px] px-[30px] mobile:px-5">
             <div class="flex flex-row justify-between w-full mobile:flex-col">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
                 <div v-for="(supportingDocument) in documents" :key="supportingDocument.file_name">
@@ -174,7 +177,7 @@
         </div>
         <template v-if="isExaminer">
           <div class="mt-10">
-            <p class="font-bold mb-6 mobile:mx-2">
+            <p class="font-bold mb-6 mobile:mx-2 text-xl">
               {{ tApplicationDetails('ltsaInfo') }}
             </p>
             <a

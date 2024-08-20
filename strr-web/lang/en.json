@@ -65,6 +65,7 @@
     "notExempt": "Not PR Exempt",
     "lookupFailed": "Address Look Up Service Failed",
     "addrMatchQuestion": "Does the STR Address match the BC Services Account Address",
+    "businessLicenseReq": "Business License Requirement",
     "addrDoMatch": "Addresses match",
     "addrDoNotMatch": "Addresses do not match",
     "businessLicRequiredAndProvided": "Business License Required and Provided",
