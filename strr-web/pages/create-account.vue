@@ -197,6 +197,7 @@ const setNextStep = () => {
     activeStepIndex.value = nextStep
     activeStep.value = steps[activeStepIndex.value]
     steps[activeStepIndex.value - 1].step.complete = true
+    scrollToTop()
   }
 }
 
@@ -206,7 +207,12 @@ const setPreviousStep = () => {
     activeStepIndex.value = nextStep
     activeStep.value = steps[activeStepIndex.value]
     steps[activeStepIndex.value + 1].step.complete = true
+    scrollToTop()
   }
+}
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 definePageMeta({
