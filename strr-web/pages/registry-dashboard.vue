@@ -5,8 +5,15 @@
     <UTabs
       id="filter-applications-tabs"
       :items="filterOptions"
-      class="mb-[24px] w-[800px] tabs"
-      :ui="{ list: { tab: { active: 'bg-bcGovColor-nonClickable text-white' } } }"
+      class="mb-[24px] w-[630px] tabs"
+      :ui="{ list: {
+        height: 'h-15',
+        tab: { base: 'rounded-none',
+               active: 'bg-bcGovColor-nonClickable text-white',
+               inactive: 'bg-white text-bcGovColor-darkGray',
+               padding: 'py-6 px-0',
+               size: 'text-base'
+        } } }"
       @change="onTabChange"
     />
     <div class="bg-white">
@@ -97,7 +104,7 @@
             }}
           </span>
         </div>
-        <UPagination v-if="totalResults > 10 " v-model:model-value="page" :total="totalResults" />
+        <UPagination v-if="totalResults > 10 " v-model:model-value="currentPage" :total="totalResults" />
       </div>
     </div>
   </div>
@@ -105,7 +112,6 @@
 
 <script setup lang="ts">
 import { ApplicationI, ApplicationStatusE } from '#imports'
-import { PaginationI } from '~/interfaces/pagination-i'
 
 const { t } = useTranslation()
 const tRegistryDashboard = (translationKey: string) => t(`registryDashboard.${translationKey}`)
@@ -116,7 +122,7 @@ const { getApplications, getApplicationsByStatus, getPaginatedApplications } = u
 const statusFilter = ref<string>('')
 const limit = ref<number>(10)
 const offset = ref<number>(0)
-const page = ref<number>(1)
+const currentPage = ref<number>(1)
 const tableRows = ref<Record<string, string>[]>([])
 const totalResults = ref<number>(0)
 const loading = ref<boolean>(true)
@@ -125,6 +131,8 @@ const sortDesc = ref<boolean>(false)
 const sortBy = ref<string>('')
 const filterOptions = ref()
 const searchAppInput = ref<string>('')
+
+const DEFAULT_STATUS: ApplicationStatusE = ApplicationStatusE.UNDER_REVIEW
 
 const sort = ({ column, direction }: { column: string, direction: string }) => {
   sortBy.value = column.replace(' ', '_').toLocaleUpperCase()
@@ -143,7 +151,7 @@ const onTabChange = (index: number) => {
       break
     case 0:
     default:
-      statusFilter.value = ApplicationStatusE.UNDER_REVIEW
+      statusFilter.value = DEFAULT_STATUS
   }
 }
 
@@ -169,40 +177,15 @@ const updateFilterOptions = async () => {
 
 const navigateToDetails = (id: number) => navigateTo(`/application-details/${id.toString()}`)
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const addOrDeleteRefFromObject = (ref: Ref, key: keyof PaginationI, paginationObject: PaginationI) => {
-  if (ref.value) {
-    if (page.value !== 0) { page.value = 1 }
-    paginationObject[key] = ref.value
-  } else {
-    delete paginationObject[key]
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const addOrDeleteSearchRefFromObject = (ref: Ref, key: keyof PaginationI, paginationObject: PaginationI) => {
-  if (ref.value && ref.value.length >= 3) {
-    if (page.value !== 0) { page.value = 1 }
-    paginationObject[key] = `%${ref.value}%`
-  } else {
-    delete paginationObject[key]
-  }
-}
-
 const updateTableRows = async () => {
+  loading.value = true
+
   const paginationObject: SearchApplicationsI = {
     status: statusFilter.value as ApplicationStatusE,
-    search: searchAppInput.value,
+    text: searchAppInput.value,
     limit: 10,
-    page: 1
+    page: currentPage.value
   }
-
-  // TODO: cleanup after pagination fix
-
-  // addOrDeleteRefFromObject(statusFilter, 'filter_by_status', paginationObject)
-  // addOrDeleteRefFromObject(sortBy, 'sort_by', paginationObject)
-  // addOrDeleteRefFromObject(sortDesc, 'sort_desc', paginationObject)
-  // addOrDeleteSearchRefFromObject(search, 'search', paginationObject)
 
   const applications = await getPaginatedApplications(paginationObject)
   if (applications) {
@@ -236,25 +219,21 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
 }
 
 watch(statusFilter, () => updateTableRows())
-watch(limit, () => updateTableRows())
+// watch(limit, () => updateTableRows())
 watch(searchAppInput, () => {
-  // search with min of three characters
-  if (searchAppInput.value.length >= 3) {
+  // search with min of three characters, reset search when input is empty
+  if (searchAppInput.value.length >= 3 || searchAppInput.value.length === 0) {
     updateTableRows()
   }
 })
 
 const updateMaxPageResults = () => {
   const offsetPlusTen = offset.value + 10
-  if (totalResults.value >= offsetPlusTen) {
-    maxPageResults.value = offsetPlusTen
-  } else {
-    maxPageResults.value = totalResults.value
-  }
+  maxPageResults.value = Math.min(totalResults.value, offsetPlusTen)
 }
 
-watch(page, () => {
-  offset.value = (page.value - 1) * 10
+watch(currentPage, () => {
+  offset.value = (currentPage.value - 1) * 10
   updateTableRows()
 })
 
@@ -270,9 +249,10 @@ const columns = [
 ]
 
 onMounted(async () => {
+  statusFilter.value = DEFAULT_STATUS
+  await updateFilterOptions()
   await updateTableRows()
   selectedColumns.value = columns
-  updateFilterOptions()
 })
 
 definePageMeta({

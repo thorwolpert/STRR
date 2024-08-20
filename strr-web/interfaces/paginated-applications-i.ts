@@ -9,7 +9,7 @@ export interface PaginatedApplicationsI {
 
 export interface SearchApplicationsI {
   status: ApplicationStatusE,
-  search: String,
+  text: String,
   limit: number,
   page: number
 }
