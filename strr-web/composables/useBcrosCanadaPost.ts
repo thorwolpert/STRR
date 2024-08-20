@@ -37,7 +37,6 @@ export const useCanadaPostAddress = () => {
     const pca = (window as any).pca
     const key = config.public.addressCompleteKey
     if (!pca || !key) {
-      // eslint-disable-next-line no-console
       console.log('AddressComplete not initialized due to missing script and/or key')
       return
     }

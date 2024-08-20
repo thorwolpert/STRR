@@ -3,22 +3,31 @@
     <BcrosTypographyH1 text="My CEU STR Registry Dashboard" />
     <BcrosTypographyH2 text="Owners STR Registration Applications" />
     <UTabs
+      id="filter-applications-tabs"
       :items="filterOptions"
-      class="mb-[24px] w-[800px] tabs"
-      :ui="{ list: { tab: { active: 'bg-bcGovColor-nonClickable text-white' } } }"
+      class="mb-[24px] w-[630px] tabs"
+      :ui="{ list: {
+        height: 'h-15',
+        tab: { base: 'rounded-none',
+               active: 'bg-bcGovColor-nonClickable text-white',
+               inactive: 'bg-white text-bcGovColor-darkGray',
+               padding: 'py-6 px-0',
+               size: 'text-base'
+        } } }"
       @change="onTabChange"
     />
     <div class="bg-white">
       <div class="flex flex-row justify-between px-[16px] py-[14px]">
         <div>
           <UInput
-            v-model="search"
+            v-model="searchAppInput"
             icon="i-heroicons-magnifying-glass-20-solid"
             size="sm"
             color="white"
             :trailing="false"
             :placeholder="tRegistryDashboard('search')"
             class="w-[333px]"
+            data-test-id="search-applications-input"
           />
         </div>
         <div>
@@ -95,38 +104,34 @@
             }}
           </span>
         </div>
-        <UPagination v-if="totalResults > 10 " v-model:model-value="page" :total="totalResults" />
+        <UPagination v-if="totalResults > 10 " v-model:model-value="currentPage" :total="totalResults" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { PaginatedRegistrationsI } from '~/interfaces/paginated-registrations-i'
-import { PaginationI } from '~/interfaces/pagination-i'
+import { ApplicationI, ApplicationStatusE } from '#imports'
 
 const { t } = useTranslation()
 const tRegistryDashboard = (translationKey: string) => t(`registryDashboard.${translationKey}`)
 const { getChipFlavour } = useChipFlavour()
 
-const { getPaginatedRegistrations, getCountsByStatus } = useRegistrations()
+const { getApplications, getApplicationsByStatus, getPaginatedApplications } = useApplications()
+
 const statusFilter = ref<string>('')
-const limit = ref<number>(10)
 const offset = ref<number>(0)
-const page = ref<number>(1)
+const currentPage = ref<number>(1)
 const tableRows = ref<Record<string, string>[]>([])
 const totalResults = ref<number>(0)
 const loading = ref<boolean>(true)
 const maxPageResults = ref<number>(0)
-const statusCounts = ref<{
-  'APPROVED': number,
-  'UNDER_REVIEW': number,
-  'PROVISIONAL': number
-}>()
 const sortDesc = ref<boolean>(false)
 const sortBy = ref<string>('')
 const filterOptions = ref()
-const search = ref('')
+const searchAppInput = ref<string>('')
+
+const DEFAULT_STATUS: ApplicationStatusE = ApplicationStatusE.UNDER_REVIEW
 
 const sort = ({ column, direction }: { column: string, direction: string }) => {
   sortBy.value = column.replace(' ', '_').toLocaleUpperCase()
@@ -138,108 +143,96 @@ const sort = ({ column, direction }: { column: string, direction: string }) => {
 const onTabChange = (index: number) => {
   switch (index) {
     case 1:
-      statusFilter.value = 'UNDER_REVIEW'
+      statusFilter.value = ApplicationStatusE.PROVISIONAL
       break
     case 2:
-      statusFilter.value = 'PROVISIONAL'
-      break
-    default:
       statusFilter.value = ''
+      break
+    case 0:
+    default:
+      statusFilter.value = DEFAULT_STATUS
   }
 }
 
-const updateFilterOptions = () => {
+const updateFilterOptions = async () => {
+  const [applications, underReview, provisionalApproval] = await Promise.all([
+    getApplications(),
+    getApplicationsByStatus(ApplicationStatusE.UNDER_REVIEW),
+    getApplicationsByStatus(ApplicationStatusE.PROVISIONAL)
+  ])
+
   filterOptions.value = [
     {
-      label: `${tRegistryDashboard('all')} (${totalResults.value})`
+      label: `${tRegistryDashboard('fullReview')} (${underReview.total})`
     },
     {
-      label: `${tRegistryDashboard('fullReview')} (${statusCounts.value?.UNDER_REVIEW})`
+      label: `${tRegistryDashboard('provisionalApproval')} (${provisionalApproval.total})`
     },
     {
-      label: `${tRegistryDashboard('provisionalApproval')} (${statusCounts.value?.PROVISIONAL})`
+      label: `${tRegistryDashboard('all')} (${applications.total})`
     }
   ]
 }
 
-watch(statusCounts, () => {
-  updateFilterOptions()
-})
-
 const navigateToDetails = (id: number) => navigateTo(`/application-details/${id.toString()}`)
 
-const addOrDeleteRefFromObject = (ref: Ref, key: keyof PaginationI, paginationObject: PaginationI) => {
-  if (ref.value) {
-    if (page.value !== 0) { page.value = 1 }
-    paginationObject[key] = ref.value
-  } else {
-    delete paginationObject[key]
-  }
-}
-
-const addOrDeleteSearchRefFromObject = (ref: Ref, key: keyof PaginationI, paginationObject: PaginationI) => {
-  if (ref.value && ref.value.length >= 3) {
-    if (page.value !== 0) { page.value = 1 }
-    paginationObject[key] = `%${ref.value}%`
-  } else {
-    delete paginationObject[key]
-  }
-}
-
 const updateTableRows = async () => {
-  const paginationObject: PaginationI = {
-    limit: limit.value.toString(),
-    offset: offset.value.toString()
+  loading.value = true
+
+  const paginationObject: SearchApplicationsI = {
+    status: statusFilter.value as ApplicationStatusE,
+    text: searchAppInput.value,
+    limit: 10,
+    page: currentPage.value
   }
 
-  addOrDeleteRefFromObject(statusFilter, 'filter_by_status', paginationObject)
-  addOrDeleteRefFromObject(sortBy, 'sort_by', paginationObject)
-  addOrDeleteRefFromObject(sortDesc, 'sort_desc', paginationObject)
-  addOrDeleteSearchRefFromObject(search, 'search', paginationObject)
-
-  const registrations = await getPaginatedRegistrations(paginationObject)
-  if (registrations) {
-    totalResults.value = registrations.count
-    tableRows.value = registrationsToTableRows(registrations)
+  const applications = await getPaginatedApplications(paginationObject)
+  if (applications) {
+    totalResults.value = applications.total
+    tableRows.value = registrationsToTableRows(applications)
   }
+
   updateMaxPageResults()
   loading.value = false
 }
 
-const registrationsToTableRows = (registrations: PaginatedRegistrationsI): Record<string, string>[] => {
+const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<string, string>[] => {
   const rows: Record<string, string>[] = []
-  registrations.results.forEach((result: RegistrationI) => {
+  applications.applications.forEach((application: ApplicationI) => {
+    const { header, registration: { unitAddress, primaryContact } } = application
+
     rows.push({
-      registration: result.id.toString(),
-      location: result.unitAddress.city,
-      address: result.unitAddress.address,
+      registration: header.id.toString(),
+      location: unitAddress.city,
+      address: unitAddress.address,
       owner: `
-        ${result.primaryContact.name.firstName}
-        ${result.primaryContact.name.middleName ?? ''}
-        ${result.primaryContact.name.lastName}
+        ${primaryContact.name.firstName}
+        ${primaryContact.name.middleName ?? ''}
+        ${primaryContact.name.lastName}
       `,
-      status: result.status,
-      submissionDate: result.submissionDate
+      status: header.status,
+      submissionDate: header.applicationDateTime
     })
   })
   return rows
 }
 
 watch(statusFilter, () => updateTableRows())
-watch(limit, () => updateTableRows())
-watch(search, () => updateTableRows())
+// watch(limit, () => updateTableRows())
+watch(searchAppInput, () => {
+  // search with min of three characters, reset search when input is empty
+  if (searchAppInput.value.length >= 3 || searchAppInput.value.length === 0) {
+    updateTableRows()
+  }
+})
 
 const updateMaxPageResults = () => {
   const offsetPlusTen = offset.value + 10
-  if (totalResults.value >= offsetPlusTen) {
-    maxPageResults.value = offsetPlusTen
-  } else {
-    maxPageResults.value = totalResults.value
-  }
+  maxPageResults.value = Math.min(totalResults.value, offsetPlusTen)
 }
 
-watch(page, () => {
-  offset.value = (page.value - 1) * 10
+watch(currentPage, () => {
+  offset.value = (currentPage.value - 1) * 10
   updateTableRows()
 })
 
@@ -254,14 +247,11 @@ const columns = [
   { key: 'submission', label: tRegistryDashboard('submissionDate'), sortable: true }
 ]
 
-const updateStatusCounts = async () => {
-  statusCounts.value = await getCountsByStatus() as { APPROVED: number; UNDER_REVIEW: number; PROVISIONAL: number; }
-}
-
-onMounted(() => {
-  updateTableRows()
+onMounted(async () => {
+  statusFilter.value = DEFAULT_STATUS
+  await updateFilterOptions()
+  await updateTableRows()
   selectedColumns.value = columns
-  updateStatusCounts()
 })
 
 definePageMeta({
