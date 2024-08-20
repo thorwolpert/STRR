@@ -167,6 +167,12 @@ class ApplicationService:
             registration = RegistrationService.create_registration(
                 application.submitter_id, application.payment_account, registration_request.registration
             )
+            EventsService.save_event(
+                event_type=Events.EventType.REGISTRATION,
+                event_name=Events.EventName.REGISTRATION_CREATED,
+                application_id=application.id,
+                registration_id=registration.id,
+            )
             application.registration_id = registration.id
 
         if application.status in APPLICATION_TERMINAL_STATES:

@@ -136,6 +136,24 @@ export const useApplications = () => {
     window.location.reload()
   }
 
+  /**
+   * Get LTSA records application.
+   * @param id - The id of the Application.
+   */
+  const getLtsa = async (id: string): Promise<LtsaDataI[]> => {
+    const res = await axiosInstance.get(`${apiURL}/applications/${id}/ltsa`)
+    return res.data
+  }
+
+  /**
+   * Update the status of an application.
+   * @param id - The id of the Application.
+   */
+  const getAutoApproval = async (id: string): Promise<AutoApprovalDataI[]> => {
+    const res = await axiosInstance.get(`${apiURL}/applications/${id}/auto-approval-records`)
+    return res.data
+  }
+
   return {
     getApplication,
     getApplications,
@@ -146,6 +164,8 @@ export const useApplications = () => {
     getDocumentsForApplication,
     getFile,
     approveApplication,
-    rejectApplication
+    rejectApplication,
+    getLtsa,
+    getAutoApproval
   }
 }

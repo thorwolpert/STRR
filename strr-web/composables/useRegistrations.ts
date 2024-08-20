@@ -1,7 +1,5 @@
 import axios from 'axios'
 import { SbcCreationResponseE } from '~/enums/sbc-creation-response-e'
-import { AutoApprovalDataI } from '~/interfaces/auto-approval-data-i'
-import { LtsaDataI } from '~/interfaces/ltsa-data-i'
 import { PaginationI } from '~/interfaces/pagination-i'
 
 export const useRegistrations = () => {
@@ -36,14 +34,6 @@ export const useRegistrations = () => {
 
   const getRegistration = (id: string): Promise<RegistrationI> =>
     axiosInstance.get(`${apiURL}/registrations/${id}`)
-      .then(res => res.data)
-
-  const getLtsa = (id: string): Promise<LtsaDataI[] | void> =>
-    axiosInstance.get(`${apiURL}/registrations/${id}/ltsa`)
-      .then(res => res.data)
-
-  const getAutoApproval = (id: string): Promise<AutoApprovalDataI[] | void> =>
-    axiosInstance.get(`${apiURL}/registrations/${id}/auto_approval`)
       .then(res => res.data)
 
   const getDocumentsForRegistration = (id: string): Promise<DocumentI[]> =>
@@ -133,8 +123,6 @@ export const useRegistrations = () => {
     getPaginatedRegistrations,
     getRegistration,
     getRegistrationHistory,
-    getLtsa,
-    getAutoApproval,
     getCertificate
   }
 }
