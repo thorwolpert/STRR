@@ -120,7 +120,6 @@ const { getChipFlavour } = useChipFlavour()
 const { getApplications, getApplicationsByStatus, getPaginatedApplications } = useApplications()
 
 const statusFilter = ref<string>('')
-const limit = ref<number>(10)
 const offset = ref<number>(0)
 const currentPage = ref<number>(1)
 const tableRows = ref<Record<string, string>[]>([])
