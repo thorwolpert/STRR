@@ -3,7 +3,6 @@ import { SbcCreationResponseE } from '~/enums/sbc-creation-response-e'
 import { AutoApprovalDataI } from '~/interfaces/auto-approval-data-i'
 import { LtsaDataI } from '~/interfaces/ltsa-data-i'
 import { PaginationI } from '~/interfaces/pagination-i'
-import { RegistrationHistoryEventI } from '~/interfaces/registration-history-event-i'
 
 export const useRegistrations = () => {
   const apiURL = useRuntimeConfig().public.strrApiURL
@@ -35,7 +34,7 @@ export const useRegistrations = () => {
     axiosInstance.get(`${apiURL}/registrations/counts_by_status`)
       .then(res => res.data)
 
-  const getRegistration = (id: string): Promise<RegistrationI | void> =>
+  const getRegistration = (id: string): Promise<RegistrationI> =>
     axiosInstance.get(`${apiURL}/registrations/${id}`)
       .then(res => res.data)
 
@@ -51,7 +50,7 @@ export const useRegistrations = () => {
     axiosInstance.get(`${apiURL}/registrations/${id}/documents`)
       .then(res => res.data)
 
-  const getRegistrationHistory = (id: string): Promise<RegistrationHistoryEventI[]> =>
+  const getRegistrationHistory = (id: string): Promise<FilingHistoryEventI[]> =>
     axiosInstance.get(`${apiURL}/registrations/${id}/events`)
       .then(res => res.data)
 

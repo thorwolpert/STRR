@@ -84,7 +84,7 @@ export const useApplications = () => {
     return data
   }
 
-  const getApplicationHistory = async (id: string): Promise<ApplicationHistoryEventI[]> => {
+  const getApplicationHistory = async (id: string): Promise<FilingHistoryEventI[]> => {
     const { data } = await axiosInstance.get(`${apiURL}/applications/${id}/events`)
     return data
   }

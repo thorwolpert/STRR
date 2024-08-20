@@ -245,7 +245,7 @@ const downloadItem = async (id: string, fileId: string, fileName: string) => {
   URL.revokeObjectURL(link.href)
 }
 
-const [application, applicationHistory]: [ApplicationI, ApplicationHistoryEventI[]] = await Promise.all([
+const [application, applicationHistory]: [ApplicationI, FilingHistoryEventI[]] = await Promise.all([
   getApplication(applicationId),
   getApplicationHistory(applicationId)
 ])

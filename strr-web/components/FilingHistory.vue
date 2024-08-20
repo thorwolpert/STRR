@@ -3,7 +3,7 @@ import { formatLongDate, formatTimeString } from '~/utils/format-helper'
 
 const props = defineProps<{
   header: string,
-  history: ApplicationHistoryEventI[]
+  history: FilingHistoryEventI[]
 }>()
 
 const { header, history } = props
