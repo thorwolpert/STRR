@@ -190,27 +190,27 @@
             <div class="flex flex-col justify-between w-full">
               <div
                 v-for="(event, index) in history.reverse()"
-                :key="event.created_date"
+                :key="event.createdDate"
                 :class="`flex flex-row ${index === history.length - 1 ? '': 'mb-6'}`"
               >
                 <div>
                   <p class="text-bcGovColor-midGray mr-4">
-                    {{ formatLongDate(new Date(event.created_date)) }}
+                    {{ formatLongDate(new Date(event.createdDate)) }}
                   </p>
                 </div>
                 <div>
                   <p class="text-bcGovColor-midGray">
-                    {{ formatTimeString(new Date(`${event.created_date}Z`)) }}
+                    {{ formatTimeString(new Date(`${event.createdDate}Z`)) }}
                   </p>
                   <p class="font-bold">
                     {{ event.message }}
                   </p>
                   <a
-                    v-if="downloadEventTypes.includes(event.event_type)"
+                    v-if="downloadEventTypes.includes(event.eventType)"
                     class="no-underline"
-                    @click="() => getDownloadAction(event.event_type, registrationId)"
+                    @click="() => getDownloadAction(event.eventType, registrationId)"
                   >
-                    {{ getDownloadText(event.event_type) }}
+                    {{ getDownloadText(event.eventType) }}
                   </a>
                 </div>
               </div>
@@ -282,7 +282,7 @@ const downloadItem = async (id: string, fileId: string, fileName: string) => {
   link.click()
   URL.revokeObjectURL(link.href)
 }
-const [application, documents, history] = await Promise.all([
+const [application, documents, history]: [RegistrationI, DocumentI[], FilingHistoryEventI[]] = await Promise.all([
   getRegistration(registrationId),
   getDocumentsForRegistration(registrationId),
   getRegistrationHistory(registrationId)

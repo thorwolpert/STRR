@@ -1,4 +1,4 @@
-export interface ApplicationHistoryEventI {
+export interface FilingHistoryEventI {
   createdDate: string
   eventName: string
   eventType: string
