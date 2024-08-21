@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { ApplicationI, ApplicationStatusE } from '#imports'
+import { ApplicationHeaderI, ApplicationI, ApplicationStatusE } from '#imports'
+const fileAxiosInstance = addAxiosInterceptors(axios.create(), 'multipart/form-data')
 
 export const useApplications = () => {
   const apiURL = useRuntimeConfig().public.strrApiURL
@@ -26,14 +27,18 @@ export const useApplications = () => {
     )
 
     try {
-      const response = await axiosInstance.post(`${apiURL}/applications`, { ...formData })
-      const data = response?.data
+      const { data } = await axiosInstance.post(`${apiURL}/applications`, { ...formData })
 
       if (!data) {
         throw new Error('Invalid AUTH API response')
       }
 
-      const { header } = data
+      const header: ApplicationHeaderI = data.header
+
+      if (header.id && formState.supportingDocuments.length === 0) {
+        await uploadSupportingDocuments(header.id.toString())
+      }
+
       handlePaymentRedirect(header.paymentToken, header.id)
 
       return data
@@ -41,6 +46,14 @@ export const useApplications = () => {
       console.warn('Error creating account.')
       console.error(error)
     }
+  }
+
+  const uploadSupportingDocuments = async (applicationId: string) => {
+    const uploadDocuments = formState.supportingDocuments.map((file: File) =>
+      fileAxiosInstance.post<File>(`${apiURL}/applications/${applicationId}/documents`, { file })
+    )
+
+    await Promise.all(uploadDocuments)
   }
 
   /**

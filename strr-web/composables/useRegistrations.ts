@@ -6,6 +6,7 @@ export const useRegistrations = () => {
   const apiURL = useRuntimeConfig().public.strrApiURL
   const axiosInstance = addAxiosInterceptors(axios.create())
 
+  // TODO: possibly not needed anymore
   const getRegistrations = () => axiosInstance.get<PaginatedRegistrationsI>(`${apiURL}/registrations`)
     .then((res) => {
       if (res.data.count === 0) {
