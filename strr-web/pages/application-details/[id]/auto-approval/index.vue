@@ -8,7 +8,9 @@
         <div class="flex flex-col m:justify-between">
           <BcrosTypographyH1
             :text="
-              `${application?.unitAddress.nickname ?? ''} ${tApplicationDetails('registration')} #${applicationId}`
+              `${applicationDetails?.unitAddress.nickname ?? ''} ${tApplicationDetails(
+                'registration'
+              )} #${applicationId}`
             "
             class-name="mobile:text-[24px]"
             no-spacing
@@ -56,13 +58,13 @@ const tAutoApproval = (translationKey: string) => t(`autoApproval.${translationK
 const automaticRows = ref<{ [key: string]: string }[]>([])
 const provisionalRows = ref<{ [key: string]: string }[]>([])
 
-const { getRegistration } = useRegistrations()
-const { getAutoApproval } = useApplications()
+const { getAutoApproval, getApplication } = useApplications()
 
 const applicationId = route.params.id.toString()
 
-const application = await getRegistration(applicationId)
+const application = await getApplication(applicationId)
 const data: AutoApprovalDataI[] = await getAutoApproval(applicationId) || {} as AutoApprovalDataI[]
+const applicationDetails: ApplicationDetailsI = application.registration
 
 const buildAutomaticRows = (rowsData: AutoApprovalDataI[]) => {
   if (!rowsData.length || !rowsData[0].record) {
@@ -130,11 +132,19 @@ buildAutomaticRows(data)
 buildProvisionalRows(data)
 
 const headerLabel =
-  `${application.unitAddress.nickname}, ` +
-  `${application.unitAddress.address}` +
-  `${application.unitAddress.addressLineTwo ? ' ' + application.unitAddress.addressLineTwo : ''}, ` +
-  `${application.unitAddress.city} ` +
-  `${application.unitAddress.province} ` +
-  `${application.unitAddress.postalCode}`
+  `${
+    applicationDetails.unitAddress.nickname
+      ? applicationDetails.unitAddress.nickname + ','
+      : ''
+  }` +
+  `${applicationDetails.unitAddress.address}` +
+  `${
+    applicationDetails.unitAddress.addressLineTwo
+      ? ' ' + applicationDetails.unitAddress.addressLineTwo
+      : ''
+  }, ` +
+  `${applicationDetails.unitAddress.city} ` +
+  `${applicationDetails.unitAddress.province} ` +
+  `${applicationDetails.unitAddress.postalCode}`
 
 </script>
