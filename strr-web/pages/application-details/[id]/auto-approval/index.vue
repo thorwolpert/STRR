@@ -76,18 +76,18 @@ const buildAutomaticRows = (rowsData: AutoApprovalDataI[]) => {
       outcome: rowsData[0].record.renting ? tAutoApproval('yes') : tAutoApproval('no')
     })
   }
-  if (rowsData[0].record.service_provider !== null) {
+  if (rowsData[0].record.serviceProvider !== null) {
     automaticRows.value.push({
       criteria: tAutoApproval('accommodationSelected'),
-      outcome: rowsData[0].record.service_provider ? tAutoApproval('yes') : tAutoApproval('no')
+      outcome: rowsData[0].record.serviceProvider ? tAutoApproval('yes') : tAutoApproval('no')
     })
   }
-  if (rowsData[0].record.pr_exempt !== null) {
+  if (rowsData[0].record.prExempt !== null) {
     automaticRows.value.push({
       criteria: tAutoApproval('prExempt'),
-      outcome: rowsData[0].record.pr_exempt
+      outcome: rowsData[0].record.prExempt
         ? tAutoApproval('exempt')
-        : rowsData[0].record.pr_exempt === false
+        : rowsData[0].record.prExempt === false
           ? tAutoApproval('notExempt')
           : tAutoApproval('lookupFailed')
     })
@@ -98,32 +98,32 @@ const buildProvisionalRows = (rowsData: AutoApprovalDataI[]) => {
   if (!rowsData.length || !rowsData[0].record) {
     return
   }
-  if (rowsData[0].record.address_match !== null) {
+  if (rowsData[0].record.addressMatch !== null) {
     provisionalRows.value.push({
       criteria: tAutoApproval('addrMatchQuestion'),
-      outcome: rowsData[0].record.address_match ? tAutoApproval('addrDoMatch') : tAutoApproval('addrDoNotMatch')
+      outcome: rowsData[0].record.addressMatch ? tAutoApproval('addrDoMatch') : tAutoApproval('addrDoNotMatch')
     })
   }
 
   const licenseNull =
-    rowsData[0].record.business_license_required_provided === null &&
-    rowsData[0].record.business_license_required_not_provided === null &&
-    rowsData[0].record.business_license_not_required_not_provided === null
+    rowsData[0].record.businessLicenseRequiredProvided === null &&
+    rowsData[0].record.businessLicenseRequiredNotProvided === null &&
+    rowsData[0].record.businessLicenseNotRequiredNotProvided === null
 
   if (!licenseNull) {
     provisionalRows.value.push({
       criteria: tAutoApproval('businessLicenseReq'),
-      outcome: rowsData[0].record.business_license_required_provided
+      outcome: rowsData[0].record.businessLicenseRequiredProvided
         ? tAutoApproval('requiredProvided')
-        : rowsData[0].record.business_license_not_required_not_provided
+        : rowsData[0].record.businessLicenseNotRequiredNotProvided
           ? tAutoApproval('notRequiredNotProvided')
           : tAutoApproval('requiredNotProvided')
     })
   }
-  if (rowsData[0].record.title_check !== null) {
+  if (rowsData[0].record.titleCheck !== null) {
     provisionalRows.value.push({
       criteria: tAutoApproval('titleCheck'),
-      outcome: rowsData[0].record.title_check ? tAutoApproval('ltsaPassed') : tAutoApproval('ltsaNotPassed')
+      outcome: rowsData[0].record.titleCheck ? tAutoApproval('ltsaPassed') : tAutoApproval('ltsaNotPassed')
     })
   }
 }

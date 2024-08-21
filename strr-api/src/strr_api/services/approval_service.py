@@ -133,7 +133,7 @@ class ApprovalService:
             else:
                 auto_approval.renting = False
                 if other_service_provider:
-                    auto_approval.service_provider = True
+                    auto_approval.serviceProvider = True
                     application.status = Application.Status.UNDER_REVIEW
                     application.save()
                     EventsService.save_event(
@@ -145,10 +145,10 @@ class ApprovalService:
                     cls.save_approval_record_by_application(application.id, auto_approval)
                     return application.status, registration_ident
                 else:
-                    auto_approval.service_provider = False
+                    auto_approval.serviceProvider = False
 
                 if not pr_exempt:
-                    auto_approval.pr_exempt = False
+                    auto_approval.prExempt = False
                     rental_address = Address(
                         street_address=registration.unitAddress.address,
                         street_address_additional=registration.unitAddress.addressLineTwo,
@@ -158,7 +158,7 @@ class ApprovalService:
                         country=registration.unitAddress.country,
                     )
                     if not compare_addresses(rental_address, bcsc_address):
-                        auto_approval.address_match = False
+                        auto_approval.addressMatch = False
                         application.status = Application.Status.UNDER_REVIEW
                         application.save()
                         EventsService.save_event(
@@ -170,16 +170,16 @@ class ApprovalService:
                         cls.save_approval_record_by_application(application.id, auto_approval)
                         return application.status, registration_ident
                     else:
-                        auto_approval.address_match = True
+                        auto_approval.addressMatch = True
                         geocode_response = GeoCoderService.get_geocode_by_address(address)
                         longitude, latitude = cls.extract_longitude_and_latitude(geocode_response)
                         organization = DSSOrganization.lookup_by_geocode(longitude, latitude)
                         if organization["is_business_licence_required"]:
-                            auto_approval.business_license_required = True
+                            auto_approval.businessLicenseRequired = True
                             if bl_provided:
-                                auto_approval.business_license_required_provided = True
+                                auto_approval.businessLicenseRequiredProvided = True
                             else:
-                                auto_approval.business_license_required_not_provided = True
+                                auto_approval.businessLicenseRequiredNotProvided = True
                                 application.status = Application.Status.UNDER_REVIEW
                                 application.save()
                                 EventsService.save_event(
@@ -191,7 +191,7 @@ class ApprovalService:
                                 cls.save_approval_record_by_application(application.id, auto_approval)
                                 return application.status, registration_ident
                         else:
-                            auto_approval.business_license_not_required_not_provided = True
+                            auto_approval.businessLicenseNotRequiredNotProvided = True
 
                         if pid:
                             ltsa_data = LtsaService.get_title_details_from_pid(pid)
@@ -202,7 +202,7 @@ class ApprovalService:
                         else:
                             owner_title_match = False
                         if owner_title_match:
-                            auto_approval.title_check = True
+                            auto_approval.titleCheck = True
                             application.status = Application.Status.PROVISIONAL
                             application.save()
                             EventsService.save_event(
@@ -223,7 +223,7 @@ class ApprovalService:
                                 visible_to_applicant=False,
                             )
                         else:
-                            auto_approval.title_check = False
+                            auto_approval.titleCheck = False
                             application.status = Application.Status.UNDER_REVIEW
                             application.save()
                             EventsService.save_event(
@@ -239,7 +239,7 @@ class ApprovalService:
                     longitude, latitude = cls.extract_longitude_and_latitude(geocode_response)
                     organization = DSSOrganization.lookup_by_geocode(longitude, latitude)
                     if organization["is_principal_residence_required"]:
-                        auto_approval.pr_exempt = False
+                        auto_approval.prExempt = False
                         application.status = Application.Status.UNDER_REVIEW
                         application.save()
                         EventsService.save_event(
@@ -249,7 +249,7 @@ class ApprovalService:
                             visible_to_applicant=False,
                         )
                     else:
-                        auto_approval.pr_exempt = True
+                        auto_approval.prExempt = True
                         application.status = Application.Status.APPROVED
                         registration = RegistrationService.create_registration(
                             application.submitter_id, application.payment_account, registration_request.registration

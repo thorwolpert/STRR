@@ -5,14 +5,14 @@ export interface AutoApprovalDataI {
     creationDate: string,
     record: {
       renting?: boolean,
-      service_provider?: boolean,
-      pr_exempt?: boolean,
-      address_match?: boolean,
-      business_license_required?: boolean,
-      business_license_required_not_provided?: boolean,
-      business_license_required_provided?: boolean,
-      business_license_not_required_not_provided?: boolean,
-      title_check?: boolean
+      serviceProvider?: boolean,
+      prExempt?: boolean,
+      addressMatch?: boolean,
+      businessLicenseRequired?: boolean,
+      businessLicenseRequiredNotProvided?: boolean,
+      businessLicenseRequiredProvided?: boolean,
+      businessLicenseNotRequiredNotProvided?: boolean,
+      titleCheck?: boolean
     }
   }
 }
