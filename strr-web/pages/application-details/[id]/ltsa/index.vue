@@ -5,18 +5,19 @@
         hide-buttons
         :application-id="applicationId"
       >
-        <div class="flex items-center m:justify-between">
+        <div class="flex flex-col m:justify-between">
           <BcrosTypographyH1
             :text="
-              `${application?.unitAddress.nickname ?? ''} ${tApplicationDetails('registration')} #${applicationId}
-                `
+              `${applicationDetails?.unitAddress.nickname ?? ''} ${tApplicationDetails(
+                'registration'
+              )} #${applicationId}`
             "
             class-name="mobile:text-[24px]"
             no-spacing
           />
-          <BcrosChip v-if="flavour" :flavour="flavour" class="ml-[16px]">
-            {{ flavour.text }}
-          </BcrosChip>
+          <p class="flex-shrink-0">
+            {{ headerLabel }}
+          </p>
         </div>
       </BcrosBanner>
     </div>
@@ -70,8 +71,12 @@
               :title="tLtsa('parcel')"
             >
               <p>{{ `${tLtsa('parcel')}: ${data[0].record.ownershipGroups[0].jointTenancyIndication}` }}</p>
-              <p>{{ `${tLtsa('numerator')}: ${data[0].record.ownershipGroups[0].interestFractionNumerator}` }}</p>
-              <p>{{ `${tLtsa('denominator')}: ${data[0].record.ownershipGroups[0].interestFractionDenominator}` }}</p>
+              <p>
+                {{ `${tLtsa('numerator')}: ${data[0].record.ownershipGroups[0].interestFractionNumerator}` }}
+              </p>
+              <p>
+                {{ `${tLtsa('denominator')}: ${data[0].record.ownershipGroups[0].interestFractionDenominator}` }}
+              </p>
             </BcrosFormSectionReviewItem>
           </div>
         </div>
@@ -124,48 +129,21 @@
 </template>
 
 <script setup lang="ts">
-import { AlertsFlavourE } from '#imports'
 import { LtsaDataI } from '~/interfaces/ltsa-data-i'
 
 const route = useRoute()
 const { t } = useTranslation()
-const tRegistrationStatus = (translationKey: string) => t(`registrationStatus.${translationKey}`)
 const tApplicationDetails = (translationKey: string) => t(`applicationDetails.${translationKey}`)
 const tLtsa = (translationKey: string) => t(`ltsa.${translationKey}`)
 
 const applicationId = route.params.id.toString()
 
-const { getRegistration, getLtsa } = useRegistrations()
+const { getLtsa, getApplication } = useApplications()
 
-const application = await getRegistration(applicationId)
-
+const application = await getApplication(applicationId)
 const formatDate = (date: Date) => date.toLocaleDateString('en-US')
-
-const getFlavour = (status: string, invoices: RegistrationI['invoices']):
-  { alert: AlertsFlavourE, text: string } | undefined => {
-  if (invoices.length === 0) {
-    return {
-      text: tRegistrationStatus('applied'),
-      alert: AlertsFlavourE.APPLIED
-    }
-  }
-  if (invoices[0].payment_status_code === 'COMPLETED') {
-    return {
-      text: tRegistrationStatus('applied'),
-      alert: AlertsFlavourE.APPLIED
-    }
-  }
-  if (status === 'PENDING' && invoices[0].payment_status_code !== 'COMPLETED') {
-    return {
-      text: tRegistrationStatus('provisional'),
-      alert: AlertsFlavourE.WARNING
-    }
-  }
-}
-
-const flavour = application ? getFlavour(application.status, application.invoices) : null
-
 const data: LtsaDataI[] = await getLtsa(applicationId) || {} as LtsaDataI[]
+const applicationDetails: ApplicationDetailsI = application.registration
 
 const ownerRows = data.length > 0
   ? [{
@@ -183,5 +161,21 @@ const ownerRows = data.length > 0
       occupation: data[0].record.ownershipGroups[0].titleOwners[0].occupationDescription
     }]
   : []
+
+const headerLabel =
+  `${
+    applicationDetails.unitAddress.nickname
+      ? applicationDetails.unitAddress.nickname + ','
+      : ''
+  }` +
+  `${applicationDetails.unitAddress.address}` +
+  `${
+    applicationDetails.unitAddress.addressLineTwo
+      ? ' ' + applicationDetails.unitAddress.addressLineTwo
+      : ''
+  }, ` +
+  `${applicationDetails.unitAddress.city} ` +
+  `${applicationDetails.unitAddress.province} ` +
+  `${applicationDetails.unitAddress.postalCode}`
 
 </script>

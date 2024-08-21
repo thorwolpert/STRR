@@ -10,11 +10,11 @@ class AutoApproval(BaseModel):
     """Auto approval response object."""
 
     renting: Optional[bool] = None
-    service_provider: Optional[bool] = None
-    pr_exempt: Optional[bool] = None
-    address_match: Optional[bool] = None
-    business_license_required: Optional[bool] = None
-    business_license_required_not_provided: Optional[bool] = None
-    business_license_required_provided: Optional[bool] = None
-    business_license_not_required_not_provided: Optional[bool] = None
-    title_check: Optional[bool] = None
+    serviceProvider: Optional[bool] = None
+    prExempt: Optional[bool] = None
+    addressMatch: Optional[bool] = None
+    businessLicenseRequired: Optional[bool] = None
+    businessLicenseRequiredNotProvided: Optional[bool] = None
+    businessLicenseRequiredProvided: Optional[bool] = None
+    businessLicenseNotRequiredNotProvided: Optional[bool] = None
+    titleCheck: Optional[bool] = None

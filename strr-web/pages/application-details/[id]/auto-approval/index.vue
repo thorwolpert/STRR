@@ -5,17 +5,19 @@
         hide-buttons
         :application-id="applicationId"
       >
-        <div class="flex items-center m:justify-between">
+        <div class="flex flex-col m:justify-between">
           <BcrosTypographyH1
             :text="
-              `${application?.unitAddress.nickname ?? ''} ${tApplicationDetails('registration')} #${applicationId}`
+              `${applicationDetails?.unitAddress.nickname ?? ''} ${tApplicationDetails(
+                'registration'
+              )} #${applicationId}`
             "
             class-name="mobile:text-[24px]"
             no-spacing
           />
-          <BcrosChip v-if="flavour" :flavour="flavour" class="ml-[16px]">
-            {{ flavour.text }}
-          </BcrosChip>
+          <p class="flex-shrink-0">
+            {{ headerLabel }}
+          </p>
         </div>
       </BcrosBanner>
     </div>
@@ -47,43 +49,45 @@
 </template>
 
 <script setup lang="ts">
-import { AlertsFlavourE } from '#imports'
 import { AutoApprovalDataI } from '~/interfaces/auto-approval-data-i'
 
 const route = useRoute()
 const { t } = useTranslation()
-const tRegistrationStatus = (translationKey: string) => t(`registrationStatus.${translationKey}`)
 const tApplicationDetails = (translationKey: string) => t(`applicationDetails.${translationKey}`)
 const tAutoApproval = (translationKey: string) => t(`autoApproval.${translationKey}`)
 const automaticRows = ref<{ [key: string]: string }[]>([])
 const provisionalRows = ref<{ [key: string]: string }[]>([])
 
-const { getRegistration, getAutoApproval } = useRegistrations()
+const { getAutoApproval, getApplication } = useApplications()
 
 const applicationId = route.params.id.toString()
 
-const application = await getRegistration(applicationId)
+const application = await getApplication(applicationId)
 const data: AutoApprovalDataI[] = await getAutoApproval(applicationId) || {} as AutoApprovalDataI[]
+const applicationDetails: ApplicationDetailsI = application.registration
 
 const buildAutomaticRows = (rowsData: AutoApprovalDataI[]) => {
+  if (!rowsData.length || !rowsData[0].record) {
+    return
+  }
   if (rowsData[0].record.renting !== null) {
     automaticRows.value.push({
       criteria: tAutoApproval('renting'),
       outcome: rowsData[0].record.renting ? tAutoApproval('yes') : tAutoApproval('no')
     })
   }
-  if (rowsData[0].record.service_provider !== null) {
+  if (rowsData[0].record.serviceProvider !== null) {
     automaticRows.value.push({
       criteria: tAutoApproval('accommodationSelected'),
-      outcome: rowsData[0].record.service_provider ? tAutoApproval('yes') : tAutoApproval('no')
+      outcome: rowsData[0].record.serviceProvider ? tAutoApproval('yes') : tAutoApproval('no')
     })
   }
-  if (rowsData[0].record.pr_exempt !== null) {
+  if (rowsData[0].record.prExempt !== null) {
     automaticRows.value.push({
       criteria: tAutoApproval('prExempt'),
-      outcome: rowsData[0].record.pr_exempt
+      outcome: rowsData[0].record.prExempt
         ? tAutoApproval('exempt')
-        : rowsData[0].record.pr_exempt === false
+        : rowsData[0].record.prExempt === false
           ? tAutoApproval('notExempt')
           : tAutoApproval('lookupFailed')
     })
@@ -91,32 +95,35 @@ const buildAutomaticRows = (rowsData: AutoApprovalDataI[]) => {
 }
 
 const buildProvisionalRows = (rowsData: AutoApprovalDataI[]) => {
-  if (rowsData[0].record.address_match !== null) {
+  if (!rowsData.length || !rowsData[0].record) {
+    return
+  }
+  if (rowsData[0].record.addressMatch !== null) {
     provisionalRows.value.push({
       criteria: tAutoApproval('addrMatchQuestion'),
-      outcome: rowsData[0].record.address_match ? tAutoApproval('addrDoMatch') : tAutoApproval('addrDoNotMatch')
+      outcome: rowsData[0].record.addressMatch ? tAutoApproval('addrDoMatch') : tAutoApproval('addrDoNotMatch')
     })
   }
 
   const licenseNull =
-    rowsData[0].record.business_license_required_provided === null &&
-    rowsData[0].record.business_license_required_not_provided === null &&
-    rowsData[0].record.business_license_not_required_not_provided === null
+    rowsData[0].record.businessLicenseRequiredProvided === null &&
+    rowsData[0].record.businessLicenseRequiredNotProvided === null &&
+    rowsData[0].record.businessLicenseNotRequiredNotProvided === null
 
   if (!licenseNull) {
     provisionalRows.value.push({
       criteria: tAutoApproval('businessLicenseReq'),
-      outcome: rowsData[0].record.business_license_required_provided
+      outcome: rowsData[0].record.businessLicenseRequiredProvided
         ? tAutoApproval('requiredProvided')
-        : rowsData[0].record.business_license_not_required_not_provided
+        : rowsData[0].record.businessLicenseNotRequiredNotProvided
           ? tAutoApproval('notRequiredNotProvided')
           : tAutoApproval('requiredNotProvided')
     })
   }
-  if (rowsData[0].record.title_check !== null) {
+  if (rowsData[0].record.titleCheck !== null) {
     provisionalRows.value.push({
       criteria: tAutoApproval('titleCheck'),
-      outcome: rowsData[0].record.title_check ? tAutoApproval('ltsaPassed') : tAutoApproval('ltsaNotPassed')
+      outcome: rowsData[0].record.titleCheck ? tAutoApproval('ltsaPassed') : tAutoApproval('ltsaNotPassed')
     })
   }
 }
@@ -124,28 +131,20 @@ const buildProvisionalRows = (rowsData: AutoApprovalDataI[]) => {
 buildAutomaticRows(data)
 buildProvisionalRows(data)
 
-const getFlavour = (status: string, invoices: RegistrationI['invoices']):
-  { alert: AlertsFlavourE, text: string } | undefined => {
-  if (invoices.length === 0) {
-    return {
-      text: tRegistrationStatus('applied'),
-      alert: AlertsFlavourE.APPLIED
-    }
-  }
-  if (invoices[0].payment_status_code === 'COMPLETED') {
-    return {
-      text: tRegistrationStatus('applied'),
-      alert: AlertsFlavourE.APPLIED
-    }
-  }
-  if (status === 'PENDING' && invoices[0].payment_status_code !== 'COMPLETED') {
-    return {
-      text: tRegistrationStatus('provisional'),
-      alert: AlertsFlavourE.WARNING
-    }
-  }
-}
-
-const flavour = application ? getFlavour(application.status, application.invoices) : null
+const headerLabel =
+  `${
+    applicationDetails.unitAddress.nickname
+      ? applicationDetails.unitAddress.nickname + ','
+      : ''
+  }` +
+  `${applicationDetails.unitAddress.address}` +
+  `${
+    applicationDetails.unitAddress.addressLineTwo
+      ? ' ' + applicationDetails.unitAddress.addressLineTwo
+      : ''
+  }, ` +
+  `${applicationDetails.unitAddress.city} ` +
+  `${applicationDetails.unitAddress.province} ` +
+  `${applicationDetails.unitAddress.postalCode}`
 
 </script>
