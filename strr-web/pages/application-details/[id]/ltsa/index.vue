@@ -5,7 +5,7 @@
         hide-buttons
         :application-id="applicationId"
       >
-        <div class="flex flex-col items-center m:justify-between">
+        <div class="flex flex-col m:justify-between">
           <BcrosTypographyH1
             :text="
               `${application?.unitAddress.nickname ?? ''} ${tApplicationDetails('registration')} #${applicationId}
@@ -33,13 +33,13 @@
             <BcrosFormSectionReviewItem
               :title="tLtsa('tax')"
             >
-              <p>{{ data[0].record.record.taxAuthorities[0].authorityName }}</p>
+              <p>{{ data[0].record.taxAuthorities[0].authorityName }}</p>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem
               :title="tLtsa('date')"
               class="d:mt-[24px]"
             >
-              <p>{{ formatDate(new Date(data[0].record.record.tombstone.applicationReceivedDate)) }}</p>
+              <p>{{ formatDate(new Date(data[0].record.tombstone.applicationReceivedDate)) }}</p>
             </BcrosFormSectionReviewItem>
           </div>
           <div class="flex flex-col justify-between w-full mobile:flex-col mr-[40px]">
@@ -47,7 +47,7 @@
               :title="tLtsa('date')"
             >
               <p>
-                {{ data[0].record.record.descriptionsOfLand[0].fullLegalDescription }}
+                {{ data[0].record.descriptionsOfLand[0].fullLegalDescription }}
               </p>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem
@@ -55,26 +55,26 @@
               class="d:mt-[24px]"
             >
               <p>
-                {{ data[0].record.record.descriptionsOfLand[0].parcelIdentifier }}
+                {{ data[0].record.descriptionsOfLand[0].parcelIdentifier }}
               </p>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem
               :title="tLtsa('parcel')"
               class="d:mt-[24px]"
             >
-              <p>{{ data[0].record.record.record.descriptionsOfLand[0].parcelStatus }}</p>
+              <p>{{ data[0].record.descriptionsOfLand[0].parcelStatus }}</p>
             </BcrosFormSectionReviewItem>
           </div>
           <div class="flex flex-col justify-between w-full mobile:flex-col">
             <BcrosFormSectionReviewItem
               :title="tLtsa('parcel')"
             >
-              <p>{{ `${tLtsa('parcel')}: ${data[0].record.record.ownershipGroups[0].jointTenancyIndication}` }}</p>
+              <p>{{ `${tLtsa('parcel')}: ${data[0].record.ownershipGroups[0].jointTenancyIndication}` }}</p>
               <p>
-                {{ `${tLtsa('numerator')}: ${data[0].record.record.ownershipGroups[0].interestFractionNumerator}` }}
+                {{ `${tLtsa('numerator')}: ${data[0].record.ownershipGroups[0].interestFractionNumerator}` }}
               </p>
               <p>
-                {{ `${tLtsa('denominator')}: ${data[0].record.record.ownershipGroups[0].interestFractionDenominator}` }}
+                {{ `${tLtsa('denominator')}: ${data[0].record.ownershipGroups[0].interestFractionDenominator}` }}
               </p>
             </BcrosFormSectionReviewItem>
           </div>
@@ -143,23 +143,22 @@ const { getLtsa } = useApplications()
 const application = await getRegistration(applicationId)
 
 const formatDate = (date: Date) => date.toLocaleDateString('en-US')
-
 const data: LtsaDataI[] = await getLtsa(applicationId) || {} as LtsaDataI[]
 
 const ownerRows = data.length > 0
   ? [{
-      givenName: data[0].record.record.ownershipGroups[0].titleOwners[0].givenName,
-      lastName: data[0].record.record.ownershipGroups[0].titleOwners[0].lastNameOrCorpName1,
+      givenName: data[0].record.ownershipGroups[0].titleOwners[0].givenName,
+      lastName: data[0].record.ownershipGroups[0].titleOwners[0].lastNameOrCorpName1,
       address: `
-    ${data[0].record.record.ownershipGroups[0].titleOwners[0].address.addressLine1}
-    ${data[0].record.record.ownershipGroups[0].titleOwners[0].address.addressLine2
-      ? `${data[0].record.record.ownershipGroups[0].titleOwners[0].address.addressLine2} , `
+    ${data[0].record.ownershipGroups[0].titleOwners[0].address.addressLine1}
+    ${data[0].record.ownershipGroups[0].titleOwners[0].address.addressLine2
+      ? `${data[0].record.ownershipGroups[0].titleOwners[0].address.addressLine2} , `
       : ', '}
-    ${data[0].record.record.ownershipGroups[0].titleOwners[0].address.city}
-    ${data[0].record.record.ownershipGroups[0].titleOwners[0].address.country}
-    ${data[0].record.record.ownershipGroups[0].titleOwners[0].address.postalCode}
+    ${data[0].record.ownershipGroups[0].titleOwners[0].address.city}
+    ${data[0].record.ownershipGroups[0].titleOwners[0].address.country}
+    ${data[0].record.ownershipGroups[0].titleOwners[0].address.postalCode}
   `,
-      occupation: data[0].record.record.ownershipGroups[0].titleOwners[0].occupationDescription
+      occupation: data[0].record.ownershipGroups[0].titleOwners[0].occupationDescription
     }]
   : []
 
