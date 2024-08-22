@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ApplicationHeaderI, ApplicationI, ApplicationStatusE } from '#imports'
+import { ApplicationI, ApplicationStatusE } from '#imports'
 const fileAxiosInstance = addAxiosInterceptors(axios.create(), 'multipart/form-data')
 
 export const useApplications = () => {
@@ -27,19 +27,20 @@ export const useApplications = () => {
     )
 
     try {
-      const { data } = await axiosInstance.post(`${apiURL}/applications`, { ...formData })
+      if (formState.supportingDocuments.length) {
+        // upload all document and add its info to the application data
+        const documents: DocumentUploadI[] = await uploadSupportingDocuments()
+        formData.registration.documents = documents
+      }
+
+      const { data } = await axiosInstance.post(`${apiURL}/applications`, formData)
 
       if (!data) {
         throw new Error('Invalid AUTH API response')
       }
 
-      const header: ApplicationHeaderI = data.header
-
-      if (header.id && formState.supportingDocuments.length === 0) {
-        await uploadSupportingDocuments(header.id.toString())
-      }
-
-      handlePaymentRedirect(header.paymentToken, header.id)
+      const { paymentToken, id } = data.header
+      handlePaymentRedirect(paymentToken, id)
 
       return data
     } catch (error) {
@@ -48,12 +49,13 @@ export const useApplications = () => {
     }
   }
 
-  const uploadSupportingDocuments = async (applicationId: string) => {
+  const uploadSupportingDocuments = async (): Promise<DocumentUploadI[]> => {
     const uploadDocuments = formState.supportingDocuments.map((file: File) =>
-      fileAxiosInstance.post<File>(`${apiURL}/applications/${applicationId}/documents`, { file })
+      fileAxiosInstance.post<DocumentUploadI>(`${apiURL}/documents`, { file })
     )
 
-    await Promise.all(uploadDocuments)
+    const results = await Promise.all(uploadDocuments)
+    return results.map(res => res.data)
   }
 
   /**

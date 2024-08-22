@@ -151,25 +151,25 @@
           <div class="bg-white py-[22px] px-[30px] mobile:px-5">
             <div class="flex flex-row justify-between w-full mobile:flex-col">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
-                <div v-for="(supportingDocument) in documents" :key="supportingDocument.file_name">
-                  <a
-                    class="flex flex-row items-center cursor-pointer no-underline text-black"
-                    role="button"
-                    @click.prevent="
+                <div v-for="(supportingDocument) in documents" :key="supportingDocument.fileName">
+                  <UButton
+                    variant="link"
+                    class="px-0 underline"
+                    @click="
                       downloadItem(
                         applicationId,
-                        supportingDocument.document_id.toString(),
-                        supportingDocument.file_name
+                        supportingDocument.fileKey,
+                        supportingDocument.fileName
                       )
                     "
                   >
                     <img
-                      class="mr-[4px] h-[18px] w-[18px]"
+                      class="h-6"
                       src="/icons/create-account/attach_dark.svg"
                       alt="Attach icon"
                     >
-                    <p>{{ supportingDocument.file_name }}</p>
-                  </a>
+                    <span class="text-base">{{ supportingDocument.fileName }}</span>
+                  </UButton>
                 </div>
               </BcrosFormSectionReviewItem>
             </div>
@@ -252,9 +252,8 @@ const [application, applicationHistory]: [ApplicationI, FilingHistoryEventI[]] =
 
 const applicationDetails: ApplicationDetailsI = application.registration
 
-// TODO: integrate once API is done
-// const documents = getDocumentsForApplication(applicationId)
-const documents: any = []
+// Get Supporting Documents from the Application response
+const documents: DocumentUploadI[] = applicationDetails.documents || []
 
 const flavour = application ? getChipFlavour(application.header.status) : null
 
