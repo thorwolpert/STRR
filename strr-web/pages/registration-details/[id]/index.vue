@@ -278,11 +278,13 @@ const downloadDocument = async (supportingDocument: DocumentUploadI) => {
   URL.revokeObjectURL(link.href)
 }
 
-const [application, documents, history]: [RegistrationI, DocumentUploadI[], FilingHistoryEventI[]] = await Promise.all([
+const [application, history]: [RegistrationI, FilingHistoryEventI[]] = await Promise.all([
   getRegistration(registrationId),
-  getDocumentsForRegistration(registrationId),
   getRegistrationHistory(registrationId)
 ])
+
+// Get Supporting Documents from the Application response
+const documents: DocumentUploadI[] = application.documents || []
 
 const flavour = application ? getChipFlavour(application.status) : null
 
