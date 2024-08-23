@@ -38,7 +38,7 @@
         <p class="font-bold mb-6 mobile:mx-2 text-xl">
           {{ tApplicationDetails('unitInfo') }}
         </p>
-        <div class="bg-white py-[22px] px-[30px] mobile:px-5">
+        <div class="bg-white py-[22px] px-[30px] mobile:px-5" data-test-id="rental-unit-info">
           <div class="flex flex-row justify-between w-full mobile:flex-col desktop:mb-6">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('nickname')">
               <p>{{ applicationDetails?.unitAddress.nickname ?? '-' }}</p>
@@ -151,24 +151,18 @@
           <div class="bg-white py-[22px] px-[30px] mobile:px-5">
             <div class="flex flex-row justify-between w-full mobile:flex-col">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
-                <div v-for="(supportingDocument) in documents" :key="supportingDocument.fileName">
+                <div v-for="document in documents" :key="document.fileKey">
                   <UButton
-                    variant="link"
                     class="px-0 underline"
-                    @click="
-                      downloadItem(
-                        applicationId,
-                        supportingDocument.fileKey,
-                        supportingDocument.fileName
-                      )
-                    "
+                    variant="link"
+                    @click="downloadDocument(document)"
                   >
                     <img
                       class="h-6"
                       src="/icons/create-account/attach_dark.svg"
                       alt="Attach icon"
                     >
-                    <span class="text-base">{{ supportingDocument.fileName }}</span>
+                    <span class="text-base">{{ document.fileName }}</span>
                   </UButton>
                 </div>
               </BcrosFormSectionReviewItem>
@@ -232,18 +226,8 @@ const applicationId = route.params.id.toString()
 const {
   getApplication,
   getApplicationHistory,
-  getFile
+  getDocument
 } = useApplications()
-
-const downloadItem = async (id: string, fileId: string, fileName: string) => {
-  const file = await getFile(id, fileId)
-  const link = document.createElement('a')
-  link.href = URL.createObjectURL(file)
-  link.download = fileName
-  link.target = '_blank'
-  link.click()
-  URL.revokeObjectURL(link.href)
-}
 
 const [application, applicationHistory]: [ApplicationI, FilingHistoryEventI[]] = await Promise.all([
   getApplication(applicationId),
@@ -256,6 +240,17 @@ const applicationDetails: ApplicationDetailsI = application.registration
 const documents: DocumentUploadI[] = applicationDetails.documents || []
 
 const flavour = application ? getChipFlavour(application.header.status) : null
+
+const downloadDocument = async (supportingDocument: DocumentUploadI) => {
+  const file = await getDocument(applicationId, supportingDocument.fileKey)
+  const link = document.createElement('a')
+
+  link.href = URL.createObjectURL(file)
+  link.download = supportingDocument.fileName
+  link.click()
+
+  URL.revokeObjectURL(link.href)
+}
 
 const getContactRows = (contactBlock: ContactI) => [{
   name: `

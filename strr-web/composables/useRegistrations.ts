@@ -59,12 +59,19 @@ export const useRegistrations = () => {
     axiosInstance.post(`${apiURL}/registrations/${id}/deny`)
       .then(() => window.location.reload())
 
-  const getFile = (id: string, documentId: string): Promise<any> =>
-    axiosInstance.get(
-      `${apiURL}/registrations/${id}/documents/${documentId}/file`,
-      { responseType: 'blob' }
-    )
-      .then(res => res.data)
+  /**
+   * Get/Download Supporting Document file for Registration.
+   *
+   * @param {string} registrationId - The id of the registration to which the document belongs.
+   * @param {string} fileKey - The key of the document to be retrieved.
+   * @returns The file/document
+   */
+  const getDocument = async (registrationId: string, fileKey: string): Promise<Blob> => {
+    const { data } = await axiosInstance.get<Blob>(`${apiURL}/registrations/${registrationId}/documents/${fileKey}`, {
+      responseType: 'blob'
+    })
+    return data
+  }
 
   const getCertificate = (id: string): Promise<any> =>
     axiosInstance.get(
@@ -115,7 +122,7 @@ export const useRegistrations = () => {
       })
 
   return {
-    getFile,
+    getDocument,
     denyRegistration,
     approveRegistration,
     issueRegistration,

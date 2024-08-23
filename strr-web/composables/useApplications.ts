@@ -104,17 +104,18 @@ export const useApplications = () => {
     return data
   }
 
-  // TODO: this will be replaced with documents data from GET /applications call
-  const getDocumentsForApplication = async (id: string): Promise<ApplicationI[]> => {
-    const res = await axiosInstance.get(`${apiURL}/applications/${id}/documents`)
-    return res.data
-  }
-
-  const getFile = async (id: string, documentId: string): Promise<Blob> => {
-    const response = await axiosInstance.get(`${apiURL}/applications/${id}/documents/${documentId}/file`, {
+  /**
+   * Get/Download Supporting Document file for Application.
+   *
+   * @param {string} applicationId - The id of the application to which the document belongs.
+   * @param {string} fileKey - The key of the document to be retrieved.
+   * @returns The file/document
+   */
+  const getDocument = async (applicationId: string, fileKey: string): Promise<Blob> => {
+    const { data } = await axiosInstance.get<Blob>(`${apiURL}/applications/${applicationId}/documents/${fileKey}`, {
       responseType: 'blob'
     })
-    return response.data
+    return data
   }
 
   /**
@@ -176,8 +177,7 @@ export const useApplications = () => {
     getPaginatedApplications,
     createApplication,
     getApplicationHistory,
-    getDocumentsForApplication,
-    getFile,
+    getDocument,
     approveApplication,
     rejectApplication,
     getLtsa,
