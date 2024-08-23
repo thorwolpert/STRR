@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pytest
 from flask import g
 
+from strr_api.exceptions import ExternalServiceException
 from tests.unit.utils.mocks import (
     fake_document,
     fake_examiner_from_token,
@@ -90,7 +91,7 @@ def test_get_registration_file_by_id_404(mock_get_document, client):
 @patch("strr_api.services.document_service.DocumentService.get_registration_document_by_key")
 @patch(
     "strr_api.services.document_service.DocumentService.get_file_by_key",
-    side_effect=Exception("External service error"),
+    side_effect=ExternalServiceException("External service error"),
 )
 def test_get_registration_file_by_id_502(mock_get_file, mock_get_document, client):
     mock_document = fake_document()
