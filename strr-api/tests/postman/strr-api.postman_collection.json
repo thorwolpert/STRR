@@ -760,6 +760,36 @@
 					"response": []
 				},
 				{
+					"name": "Download registration document",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/registrations/{{registration_id}}/documents/{{file_key}}",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"registrations",
+								"{{registration_id}}",
+								"documents",
+								"{{file_key}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Registrations",
 					"request": {
 						"auth": {

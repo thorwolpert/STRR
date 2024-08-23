@@ -532,7 +532,7 @@ def get_document(application_id, file_key):
         if not application_documents:
             return error_response(ErrorMessage.DOCUMENT_NOT_FOUND.value, HTTPStatus.BAD_REQUEST)
         document = application_documents[0]
-        file_content = DocumentService.get_document_by_key(file_key)
+        file_content = DocumentService.get_file_by_key(file_key)
         return send_file(
             BytesIO(file_content),
             as_attachment=True,
