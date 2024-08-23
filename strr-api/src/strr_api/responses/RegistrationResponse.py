@@ -155,7 +155,7 @@ class Registration(BaseModel):
                 ),
                 mailingAddress=MailingAddress(
                     address=source.rental_property.property_manager.primary_contact.address.street_address,
-                    addressLineTwo=source.rental_property.property_manager.primary_contact.address.street_address_additional,
+                    addressLineTwo=source.rental_property.property_manager.primary_contact.address.street_address_additional,  # noqa: E501
                     city=source.rental_property.property_manager.primary_contact.address.city,
                     postalCode=source.rental_property.property_manager.primary_contact.address.postal_code,
                     province=source.rental_property.property_manager.primary_contact.address.province,
@@ -180,7 +180,7 @@ class Registration(BaseModel):
                 ),
                 mailingAddress=MailingAddress(
                     address=source.rental_property.property_manager.secondary_contact.address.street_address,
-                    addressLineTwo=source.rental_property.property_manager.secondary_contact.address.street_address_additional,
+                    addressLineTwo=source.rental_property.property_manager.secondary_contact.address.street_address_additional,  # noqa: E501
                     city=source.rental_property.property_manager.secondary_contact.address.city,
                     postalCode=source.rental_property.property_manager.secondary_contact.address.postal_code,
                     province=source.rental_property.property_manager.secondary_contact.address.province,
