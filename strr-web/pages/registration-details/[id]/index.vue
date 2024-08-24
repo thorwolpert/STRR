@@ -236,7 +236,6 @@ const downloadEventTypes = ['CERTIFICATE_ISSUED']
 
 const {
   getRegistration,
-  getDocumentsForRegistration,
   getRegistrationHistory,
   getDocument,
   getCertificate

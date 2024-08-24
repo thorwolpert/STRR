@@ -37,12 +37,6 @@ export const useRegistrations = () => {
     axiosInstance.get(`${apiURL}/registrations/${id}`)
       .then(res => res.data)
 
-  // TODO Remove this
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const getDocumentsForRegistration = (id: string): Promise<DocumentI[]> => {
-    return Promise.resolve([])
-  }
-
   const getRegistrationHistory = (id: string): Promise<FilingHistoryEventI[]> =>
     axiosInstance.get(`${apiURL}/registrations/${id}/events`)
       .then(res => res.data)
@@ -128,7 +122,6 @@ export const useRegistrations = () => {
     issueRegistration,
     getCountsByStatus,
     createSbcRegistration,
-    getDocumentsForRegistration,
     getRegistrations,
     getPaginatedRegistrations,
     getRegistration,
