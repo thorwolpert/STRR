@@ -37,6 +37,7 @@ export const useRegistrations = () => {
       .then(res => res.data)
 
   // TODO Remove this
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const getDocumentsForRegistration = (id: string): Promise<DocumentI[]> => {
     return Promise.resolve([])
   }
