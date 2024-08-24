@@ -27,7 +27,7 @@ export interface AccountI {
   accountStatus: AccountStatusE
   additionalLabel?: string
   label: string
-  type: UserSettingsTypeE.ACCOUNT
+  type: UserSettingsTypeE
   urlpath: string
   urlorigin: string
   address: string
