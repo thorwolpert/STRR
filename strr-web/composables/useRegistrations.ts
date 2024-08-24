@@ -36,9 +36,11 @@ export const useRegistrations = () => {
     axiosInstance.get(`${apiURL}/registrations/${id}`)
       .then(res => res.data)
 
-  const getDocumentsForRegistration = (id: string): Promise<DocumentI[]> =>
-    axiosInstance.get(`${apiURL}/registrations/${id}/documents`)
-      .then(res => res.data)
+  // TODO Remove this
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const getDocumentsForRegistration = (id: string): Promise<DocumentI[]> => {
+    return Promise.resolve([])
+  }
 
   const getRegistrationHistory = (id: string): Promise<FilingHistoryEventI[]> =>
     axiosInstance.get(`${apiURL}/registrations/${id}/events`)
