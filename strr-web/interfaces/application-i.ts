@@ -34,11 +34,12 @@ export interface ApplicationDetailsI {
   principalResidence: PrincipalResidenceI
   unitAddress: RegistrationAddressI
   unitDetails: {
-    parcelIdentifier?: string,
-    businessLicense?: string,
-    propertyType: string,
+    parcelIdentifier?: string
+    businessLicense?: string
+    propertyType: string
     ownershipType: string
   }
+  documents?: DocumentUploadI[]
 }
 
 export interface ApplicationI {
