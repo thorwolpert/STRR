@@ -1,0 +1,44 @@
+<script setup lang="ts">
+import steps from '../page-data/platform-application-steps'
+import { FormPageI } from '@/interfaces/form/form-page-i'
+
+const { t } = useTranslation()
+
+const headerUpdateKey = ref(0)
+const activeStepIndex: Ref<number> = ref(0)
+const activeStep: Ref<FormPageI> = ref(steps[activeStepIndex.value])
+
+const setActiveStep = (newStep: number) => {
+  activeStep.value.step.complete = true
+  activeStep.value = steps[newStep]
+  activeStepIndex.value = newStep
+}
+
+definePageMeta({
+  layout: 'wide'
+})
+</script>
+
+<template>
+  <div data-test-id="platform-application">
+    <BcrosTypographyH1 :text="t('platformApplication.header')" class-name="mobile:pb-[20px]" />
+
+    <BcrosStepper :key="headerUpdateKey" :active-step="activeStepIndex" :steps="steps" @change-step="setActiveStep" />
+    <div class="mt-8">
+      <div v-if="activeStepIndex === 0" :key="activeStepIndex">
+        [Step 1]
+      </div>
+      <div v-if="activeStepIndex === 1" :key="activeStepIndex">
+        [Step 2]
+      </div>
+      <div v-if="activeStepIndex === 2" :key="activeStepIndex">
+        [Step 3]
+      </div>
+      <div v-if="activeStepIndex === 3" :key="activeStepIndex">
+        [Step 4]
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped></style>
