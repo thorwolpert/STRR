@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ApplicationI, ApplicationStatusE } from '#imports'
+import { ApplicationI, ApplicationStatusE, RegistrationTypeE } from '#imports'
 const fileAxiosInstance = addAxiosInterceptors(axios.create(), 'multipart/form-data')
 
 export const useApplications = () => {
@@ -15,7 +15,8 @@ export const useApplications = () => {
     userLastName: string,
     hasSecondaryContact: boolean,
     propertyType: string,
-    ownershipType: string
+    ownershipType: string,
+    registrationType: RegistrationTypeE = RegistrationTypeE.HOST
   ) => {
     const formData: CreateAccountFormAPII = formStateToApi(
       formState,
@@ -27,6 +28,9 @@ export const useApplications = () => {
     )
 
     try {
+      // add registration type to payload
+      formData.registration.registrationType = registrationType
+
       if (formState.supportingDocuments.length) {
         // upload all document and add its info to the application data
         const documents: DocumentUploadI[] = await uploadSupportingDocuments()

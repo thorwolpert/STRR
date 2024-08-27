@@ -1,6 +1,7 @@
 import { AccountTypeE } from '~/enums/account-type-e'
 import { AccountStatusE } from '~/enums/account-status-e'
 import { UserSettingsTypeE } from '~/enums/user-settings-type-e'
+import { RegistrationTypeE } from '#imports'
 
 export interface DateOfBirthI {
   day: string
@@ -231,6 +232,7 @@ export interface CreateAccountFormAPII {
       ownershipType: string
     }
     listingDetails?: { url: string }[]
-    documents?: DocumentUploadI[]
+    documents?: DocumentUploadI[],
+    registrationType: RegistrationTypeE
   }
 }
