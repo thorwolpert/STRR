@@ -2,7 +2,7 @@
   <div data-test-id="create-account-page" class="relative h-full">
     <div class="w-full flex flex-col justify-between desktop:justify-center items-center">
       <div
-        class="shrink w-full flex flex-row mobile:flex-col mobile:justify-between justify-center"
+        class="shrink w-full flex flex-row mobile:flex-col mobile:justify-between justify-center max-w-[1360px] px-4"
       >
         <div class="grow pr-[24px] mobile:pr-[0px]">
           <div class="mobile:px-[8px]">
@@ -50,7 +50,7 @@
           </div>
         </div>
         <div class="shrink mobile:grow">
-          <BcrosFeeWidget :fee="fee" />
+          <FeeWidget :fee="fee" />
         </div>
       </div>
       <BcrosStepperFooter

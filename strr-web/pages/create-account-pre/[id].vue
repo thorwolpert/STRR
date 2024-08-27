@@ -49,7 +49,7 @@
           </div>
         </div>
         <div class="shrink mobile:grow">
-          <BcrosFeeWidget :fee="fee" />
+          <FeeWidget :fee="fee" />
         </div>
       </div>
       <BcrosStepperFooter
