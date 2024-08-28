@@ -2,9 +2,9 @@
   <div data-test-id="create-account-page" class="relative h-full">
     <div class="w-full flex flex-col justify-between desktop:justify-center items-center">
       <div
-        class="shrink w-full flex flex-row mobile:flex-col mobile:justify-between justify-center"
+        class="shrink w-full flex flex-row mobile:flex-col mobile:justify-between justify-center max-w-[1360px] px-4"
       >
-        <div class="grow pr-[24px] mobile:pr-[0px]">
+        <div class="grow mr-6 mobile:mr-0">
           <div class="mobile:px-[8px]">
             <BcrosTypographyH1
               :text="t('createAccount.title')"
@@ -50,7 +50,7 @@
           </div>
         </div>
         <div class="shrink mobile:grow">
-          <BcrosFeeWidget :fee="fee" />
+          <FeeWidget :fee="fee" />
         </div>
       </div>
       <BcrosStepperFooter
@@ -77,10 +77,10 @@ const contactForm = ref()
 const fee = ref<FeeI>()
 const headerUpdateKey = ref(0)
 
-const { getFeeAmount } = useFees()
+const { getHostApplicationFee } = useFees()
 
 const updateFees = async () => {
-  fee.value = await getFeeAmount()
+  fee.value = await getHostApplicationFee()
 }
 
 const { t } = useTranslation()
