@@ -113,7 +113,6 @@ def fake_registration_pending(*args, **kwargs):
 
 def fake_application(ownership_type="rent", is_principal_residence=True, specified_service_provider=None):
     json_data = {
-        "selectedAccount": {"sbc_account_id": 3299},
         "registration": {
             "primaryContact": {
                 "name": {"firstName": "The", "middleName": "First", "lastName": "Guy"},
@@ -179,10 +178,7 @@ def fake_application(ownership_type="rent", is_principal_residence=True, specifi
         },
     }
 
-    return Application(
-        application_json=json_data,
-        type="registration",
-    )
+    return Application(application_json=json_data, type="registration", payment_account="123")
 
 
 def fake_registration(*args, **kwargs):
