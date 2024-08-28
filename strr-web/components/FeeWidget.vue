@@ -57,7 +57,7 @@ const folded = ref(false)
 const isMobile = ref(false)
 
 const { fee } = defineProps<{
-  fee: FeeI
+  fee: FeeI | undefined
 }>()
 
 const toggleFolded = () => {

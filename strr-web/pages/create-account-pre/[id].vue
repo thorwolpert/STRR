@@ -79,10 +79,10 @@ const route = useRoute()
 
 const id = route.params.id
 
-const { getFeeAmount } = useFees()
+const { getHostApplicationFee } = useFees()
 
 const updateFees = async () => {
-  fee.value = await getFeeAmount()
+  fee.value = await getHostApplicationFee()
 }
 
 onMounted(() => {
