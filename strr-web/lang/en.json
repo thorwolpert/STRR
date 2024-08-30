@@ -253,6 +253,8 @@
       "docDetails": "Documentation Details",
       "fileUpload": "File Upload",
       "uploadMultiple": "Upload one or more supporting documents",
+      "chooseSupportDocs": "Choose Supporting Documents",
+      "removeSupportDoc": "Remove",
       "supporting": "Supporting Documents",
       "fileRequirements": "File must be a .pdf, .jpg, .doc, or .png. Maximum file size 50 MB.",
       "declaration": "Declaration",
