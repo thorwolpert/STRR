@@ -254,12 +254,26 @@ const otherExemptionReasons: string[] = [
 ]
 
 const formatFileName = (fileName: string) => {
-  if (fileName.length <= 25) {
-    return fileName
-  }
-  const extension = fileName.split('.').pop()
+  const extension = fileName.split('.').pop() || ''
   const nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'))
-  return `${nameWithoutExtension.substring(0, 21)}....${extension}`
+  const isSingleWord = !nameWithoutExtension.includes(' ')
+  if (isSingleWord && fileName.length <= 25) {
+    return fileName
+  } else if (isSingleWord && fileName.length > 25) {
+    return nameWithoutExtension.substring(0, 22) + '...'
+  } else {
+    let truncatedName = ''
+    const words = nameWithoutExtension.split(' ')
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i]
+      if (word.length > 24) {
+        truncatedName += (truncatedName ? ' ' : '') + word.substring(0, 21) + '...'
+      } else {
+        truncatedName += (truncatedName ? ' ' : '') + word
+      }
+    }
+    return truncatedName + (extension ? '.' + extension : '')
+  }
 }
 
 </script>
