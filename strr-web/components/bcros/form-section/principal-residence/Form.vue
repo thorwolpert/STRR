@@ -119,7 +119,7 @@
             <div
               v-for="(supportingDocument, index) in formState.supportingDocuments"
               :key="supportingDocument.name"
-              class="flex items-center justify-between p-3 bg-gray-100 rounded"
+              class="flex items-center justify-between p-3 mb-1 bg-gray-100 rounded"
             >
               <div class="flex flex-row items-center">
                 <img
@@ -127,12 +127,16 @@
                   src="/icons/create-account/attach_dark.svg"
                   alt="Attach icon"
                 >
-                <p class="desktop:hidden">
-                  {{ formatFileName(supportingDocument.name) }}
-                </p>
-                <p class="mobile:hidden">
-                  {{ supportingDocument.name }}
-                </p>
+                <div class="mobile:max-w-[210px] desktop:max-w-[700px] max-h-auto">
+                  <p
+                    :class="[
+                      'text-ellipsis overflow-hidden desktop:break-words',
+                      hasSpaces(supportingDocument.name) ? 'mobile:break-words' : 'mobile:whitespace-nowrap'
+                    ]"
+                  >
+                    {{ supportingDocument.name }}
+                  </p>
+                </div>
               </div>
               <button
                 class="text-blue-500 hover:text-blue-700 flex items-center"
@@ -253,41 +257,7 @@ const otherExemptionReasons: string[] = [
   tPrincipalResidence('strataGuest')
 ]
 
-const truncateName = (name: string, maxLength: number): string => {
-  return name.substring(0, maxLength) + '...'
-}
-
-const processFileNameWithSingleWord = (name: string) => {
-  if (name.length <= 25) {
-    return name
-  } else {
-    return truncateName(name, 22)
-  }
-}
-
-const processFileNameWithMultipleWords = (name: string, extension: string) => {
-  let truncatedName = ''
-  const words = name.split(' ')
-  for (const word of words) {
-    if (word.length > 24) {
-      truncatedName += (truncatedName ? ' ' : '') + truncateName(word, 21)
-    } else {
-      truncatedName += (truncatedName ? ' ' : '') + word
-    }
-  }
-  return truncatedName + (extension ? '.' + extension : '')
-}
-
-const formatFileName = (fileName: string) => {
-  const extension = fileName.split('.').pop() || ''
-  const nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'))
-  const isSingleWord = !nameWithoutExtension.includes(' ')
-  if (isSingleWord) {
-    return processFileNameWithSingleWord(nameWithoutExtension)
-  } else {
-    return processFileNameWithMultipleWords(nameWithoutExtension, extension)
-  }
-}
+const hasSpaces = (str: string) => /\s/.test(str)
 
 </script>
 
@@ -324,4 +294,4 @@ const formatFileName = (fileName: string) => {
   input[type="file"]:focus::before {
     content: attr(placeholder);
   }
-</style>
+  </style>
