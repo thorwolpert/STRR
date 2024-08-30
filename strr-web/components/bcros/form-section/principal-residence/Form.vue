@@ -253,26 +253,39 @@ const otherExemptionReasons: string[] = [
   tPrincipalResidence('strataGuest')
 ]
 
+const truncateName = (name: string, maxLength: number): string => {
+  return name.substring(0, maxLength) + '...'
+}
+
+const processFileNameWithSingleWord = (name: string) => {
+  if (name.length <= 25) {
+    return name
+  } else {
+    return truncateName(name, 22)
+  }
+}
+
+const processFileNameWithMultipleWords = (name: string, extension: string) => {
+  let truncatedName = ''
+  const words = name.split(' ')
+  for (const word of words) {
+    if (word.length > 24) {
+      truncatedName += (truncatedName ? ' ' : '') + truncateName(word, 21)
+    } else {
+      truncatedName += (truncatedName ? ' ' : '') + word
+    }
+  }
+  return truncatedName + (extension ? '.' + extension : '')
+}
+
 const formatFileName = (fileName: string) => {
   const extension = fileName.split('.').pop() || ''
   const nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'))
   const isSingleWord = !nameWithoutExtension.includes(' ')
-  if (isSingleWord && fileName.length <= 25) {
-    return fileName
-  } else if (isSingleWord && fileName.length > 25) {
-    return nameWithoutExtension.substring(0, 22) + '...'
+  if (isSingleWord) {
+    return processFileNameWithSingleWord(nameWithoutExtension)
   } else {
-    let truncatedName = ''
-    const words = nameWithoutExtension.split(' ')
-    for (let i = 0; i < words.length; i++) {
-      const word = words[i]
-      if (word.length > 24) {
-        truncatedName += (truncatedName ? ' ' : '') + word.substring(0, 21) + '...'
-      } else {
-        truncatedName += (truncatedName ? ' ' : '') + word
-      }
-    }
-    return truncatedName + (extension ? '.' + extension : '')
+    return processFileNameWithMultipleWords(nameWithoutExtension, extension)
   }
 }
 
