@@ -95,15 +95,20 @@
             <p class="mb-[16px]">
               {{ tPrincipalResidence('uploadMultiple') }}
             </p>
-            <div class="flex flex-row items-center">
-              <img class="mr-[4px]" src="/icons/create-account/attach.svg" alt="Paperclip icon">
+            <div class="flex flex-row items-center relative">
+              <img
+                class="mr-[4px] absolute left-3 top-1/2 transform -translate-y-1/2 z-10"
+                src="/icons/create-account/attach.svg"
+                alt="Paperclip icon"
+              >
               <UFormGroup :error="fileError">
                 <UInput
+                  :key="fileInputKey"
                   aria-label="Supporting document file upload"
                   accept=".pdf,.jpg,.png,.doc"
                   type="file"
-                  class="w-full"
-                  :placeholder="tPrincipalResidence('supporting')"
+                  class="w-full pl-10 cursor-pointer"
+                  :placeholder="tPrincipalResidence('chooseSupportDocs')"
                   @change="uploadFile"
                 />
               </UFormGroup>
@@ -111,12 +116,32 @@
             <p class="text-[12px] ml-[58px] mt-[4px] mb-[12px] text-bcGovColor-midGray">
               {{ tPrincipalResidence('fileRequirements') }}
             </p>
-            <div v-for="(supportingDocument, index) in formState.supportingDocuments" :key="supportingDocument.name">
+            <div
+              v-for="(supportingDocument, index) in formState.supportingDocuments"
+              :key="supportingDocument.name"
+              class="flex items-center justify-between p-3 bg-gray-100 rounded"
+            >
               <div class="flex flex-row items-center">
-                <img class="mr-[4px] h-[18px] w-[18px]" src="/icons/create-account/attach_dark.svg" alt="Attach icon">
-                <p>{{ supportingDocument.name }}</p>
-                <UIcon name="i-mdi-delete" class="h-[18px] w-[18px] ml-[4px]" @click="() => removeFile(index)" />
+                <img
+                  class="mr-[4px] h-[18px] w-[18px]"
+                  src="/icons/create-account/attach_dark.svg"
+                  alt="Attach icon"
+                >
+                <p class="desktop:hidden">
+                  {{ formatFileName(supportingDocument.name) }}
+                </p>
+                <p class="mobile:hidden">
+                  {{ supportingDocument.name }}
+                </p>
               </div>
+              <button
+                class="text-blue-500 hover:text-blue-700 flex items-center"
+                aria-label="Remove file"
+                @click="() => removeFile(index)"
+              >
+                <span class="mr-1">{{ tPrincipalResidence('removeSupportDoc') }}</span>
+                <UIcon name="i-mdi-close" class="h-[18px] w-[18px]" />
+              </button>
             </div>
           </BcrosFormSection>
         </div>
@@ -159,6 +184,7 @@ const tPrincipalResidence = (translationKey: string) => t(`createAccount.princip
 const reasonError = ref()
 const otherReasonError = ref()
 const fileError = ref()
+const fileInputKey = ref(0)
 
 const { isComplete } = defineProps<{ isComplete: boolean }>()
 
@@ -195,6 +221,7 @@ const uploadFile = (file: FileList) => {
   } else {
     fileError.value = null
     formState.supportingDocuments.push(file[0])
+    fileInputKey.value++
   }
 }
 
@@ -226,10 +253,48 @@ const otherExemptionReasons: string[] = [
   tPrincipalResidence('strataGuest')
 ]
 
+const formatFileName = (fileName: string) => {
+  if (fileName.length <= 25) {
+    return fileName
+  }
+  const extension = fileName.split('.').pop()
+  const nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'))
+  return `${nameWithoutExtension.substring(0, 21)}....${extension}`
+}
+
 </script>
 
 <style>
   #primary-residence-radio legend {
     font-weight: bold;
+  }
+  input[type="file"]::-webkit-file-upload-button {
+    display: none;
+  }
+  input[type="file"]::file-selector-button {
+    display: none;
+  }
+  input[type="file"] {
+    color: transparent;
+    position: relative;
+  }
+  input[type="file"]:hover {
+    cursor: pointer;
+  }
+  input[type="file"]::before {
+    content: attr(placeholder);
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #6B7280;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  input[type="file"]:focus::before {
+    content: attr(placeholder);
   }
 </style>
