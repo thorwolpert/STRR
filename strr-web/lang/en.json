@@ -184,7 +184,6 @@
       "yourName": "Your Name",
       "addSecondaryContact": "Add Another Contact",
       "remove": "Remove",
-      "useMailing": "Use my mailing address for the rental property address",
       "addPlatform": "Add another platform"
     },
     "contactForm": {
@@ -226,7 +225,6 @@
       "businessLicense": "Local Government Business License (Optional)",
       "propertyType": "Type of Property",
       "ownershipType": "Ownership Type",
-      "useMailing": "Use my mailing address for the rental property address",
       "rentalUnitDetails": "Rental Unit Details",
       "internetListingDetails": "Internet Listing Details",
       "rentalUnitAddress": "Rental Unit Address",
