@@ -37,6 +37,7 @@
     "decline": "Decline"
   },
   "ltsa": {
+    "ltsaDetails": "LTSA Details",
     "ltsaGeneralInfo": "LTSA General Information",
     "tax": "Tax Authority",
     "date": "Date",
@@ -47,7 +48,7 @@
     "joint": "Joint Tenancy",
     "numerator": "Interest Fraction Numerator",
     "denominator": "Interest Fraction Denominator",
-    "titleOwners": "LTSA Title Owner(s)",
+    "titleOwners": "LTSA Title Owners",
     "given": "Given Name",
     "last": "Last Name",
     "address": "Address",
