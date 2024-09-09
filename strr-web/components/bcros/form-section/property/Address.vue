@@ -24,7 +24,7 @@
             v-model="address"
             :placeholder="t('createAccount.contactForm.address')"
             aria-label="address"
-            @keypress.once="addressComplete()"
+            @input="onAddressInput"
             @click="addressComplete()"
           />
         </UFormGroup>
@@ -84,6 +84,14 @@ const addressComplete = () => {
   if (typeof country.value === 'string') {
     enableAddressComplete(id, 'CA', false)
   }
+}
+
+const onAddressInput = () => {
+  addressLineTwo.value = ''
+  city.value = ''
+  province.value = ''
+  postalCode.value = ''
+  addressComplete()
 }
 
 const {
