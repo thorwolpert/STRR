@@ -191,6 +191,7 @@ const validateProofPage = () => {
 
 const validateReviewPage = () => {
   setStepValid(3, formState.principal.agreeToSubmit)
+  steps[3].step.complete = true
 }
 
 watch(formState.supportingDocuments, () => {
