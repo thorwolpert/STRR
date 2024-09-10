@@ -141,6 +141,8 @@ const submit = () => {
       propertyToApiType(formState.propertyDetails.propertyType),
       ownershipToApiType(formState.propertyDetails.ownershipType)
     )
+  } else {
+    scrollToTop()
   }
 }
 
