@@ -17,10 +17,10 @@
         </div>
       </BcrosBanner>
     </div>
-    <div class="mt-[104px] m:mt-[74px]">
+    <div class="mt-[104px] m:mt-[152px]">
       <div>
         <BcrosTypographyH2
-          class="font-bold mb-6 mobile:mx-2"
+          class="font-bold mobile:mx-2"
           :text="tLtsa('ltsaGeneralInfo')"
         />
         <div
@@ -79,7 +79,7 @@
         </div>
         <div class="mt-[40px]">
           <BcrosTypographyH2
-            class="font-bold mb-6 mobile:mx-2"
+            class="font-bold mobile:mx-2"
             :text="tLtsa('titleOwners')"
           />
           <div
