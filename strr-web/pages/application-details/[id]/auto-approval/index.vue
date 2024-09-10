@@ -51,7 +51,6 @@ import { AutoApprovalDataI } from '~/interfaces/auto-approval-data-i'
 
 const route = useRoute()
 const { t } = useTranslation()
-const tApplicationDetails = (translationKey: string) => t(`applicationDetails.${translationKey}`)
 const tAutoApproval = (translationKey: string) => t(`autoApproval.${translationKey}`)
 const automaticRows = ref<{ [key: string]: string }[]>([])
 const provisionalRows = ref<{ [key: string]: string }[]>([])
