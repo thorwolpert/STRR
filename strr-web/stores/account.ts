@@ -84,7 +84,7 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
             if (acceptance) {
               navigateTo('/create-account')
             } else {
-                navigateTo('/')
+              navigateTo('/')
             }
           })
       })
