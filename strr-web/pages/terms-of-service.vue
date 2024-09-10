@@ -13,7 +13,7 @@
         />
         <BcrosButtonsPrimary
           :label="tTos('decline')"
-          :action="() => handleAcceptTermsOfService(false)"
+          :action="() => handleAcceptTermsOfService(false, tos?.versionId)"
           variant="outline"
           class-name="ml-[4px]"
         />
