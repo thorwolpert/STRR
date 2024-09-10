@@ -47,7 +47,7 @@
               <p>{{ applicationDetails?.unitDetails.businessLicense ?? '-' }}</p>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem :title="tApplicationDetails('ownership')">
-              <p>{{ applicationDetails?.unitDetails.ownershipType ?? '-' }}</p>
+              <p>{{ getOwnershipTypeDisplay(applicationDetails?.unitDetails.ownershipType) }}</p>
             </BcrosFormSectionReviewItem>
           </div>
           <div class="flex flex-row justify-between w-full mobile:flex-col">
@@ -250,6 +250,19 @@ const downloadDocument = async (supportingDocument: DocumentUploadI) => {
   link.click()
 
   URL.revokeObjectURL(link.href)
+}
+
+const getOwnershipTypeDisplay = (ownershipType: string | null) => {
+  switch (ownershipType) {
+    case 'CO_OWN':
+      return 'Co-owner'
+    case 'OWN':
+      return 'Owner'
+    case 'RENT':
+      return 'Tenant'
+    default:
+      return ownershipType ?? '-'
+  }
 }
 
 const getContactRows = (contactBlock: ContactI) => [{
