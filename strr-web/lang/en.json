@@ -276,7 +276,8 @@
       "strataGuest": "Strata corporation guest suite",
       "service": "Service Provider",
       "fileSizeError": "File must be less than 50MB in size",
-      "fileTypeError": "File must be of type pdf, doc, jpg, png"
+      "fileTypeError": "File must be of type pdf, doc, jpg, png",
+      "fileRequiredError": "Please upload a supporting document"
     },
     "review": {
       "reviewInstructions": "Please review all of the information entered below.",
