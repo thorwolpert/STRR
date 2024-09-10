@@ -177,11 +177,11 @@ const tPrincipal = (translationKey: string) => t(`createAccount.principalResiden
 const getOwnershipTypeDisplay = (ownershipType: string | null) => {
   switch (ownershipType) {
     case 'CO_OWN':
-      return 'Co-owner'
+      return 'Co-own'
     case 'OWN':
-      return 'Owner'
+      return 'Own'
     case 'RENT':
-      return 'Tenant'
+      return 'Rent'
     default:
       return ownershipType ?? '-'
   }
