@@ -40,7 +40,7 @@
               />
               <BcrosFormSectionReviewItem
                 :title="tReview('ownershipType')"
-                :content="formState.propertyDetails.ownershipType ?? '-'"
+                :content="getOwnershipTypeDisplay(formState.propertyDetails.ownershipType)"
               />
             </div>
             <div class="flex flex-row justify-between w-full desktop:mb-[24px] mobile:flex-col">
@@ -173,5 +173,18 @@ const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' })
 
 const tReview = (translationKey: string) => t(`createAccount.review.${translationKey}`)
 const tPrincipal = (translationKey: string) => t(`createAccount.principalResidence.${translationKey}`)
+
+const getOwnershipTypeDisplay = (ownershipType: string | null) => {
+  switch (ownershipType) {
+    case 'CO_OWN':
+      return 'Co-owner'
+    case 'OWN':
+      return 'Owner'
+    case 'RENT':
+      return 'Tenant'
+    default:
+      return ownershipType ?? '-'
+  }
+}
 
 </script>
