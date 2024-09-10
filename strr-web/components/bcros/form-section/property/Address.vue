@@ -30,7 +30,11 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]">
-        <UFormGroup name="AddressLineTwo" class="d:pr-[16px] flex-grow">
+        <UFormGroup
+          name="AddressLineTwo"
+          class="d:pr-[16px] flex-grow"
+          :error="fieldErrors.addressLineTwo"
+        >
           <UInput
             v-model="addressLineTwo"
             aria-label="address line two"
@@ -39,7 +43,11 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:flex-col mobile:mb-[16px]">
-        <UFormGroup name="city" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
+        <UFormGroup
+          name="city"
+          class="d:pr-[16px] flex-grow mobile:mb-[16px]"
+          :error="fieldErrors.city"
+        >
           <UInput v-model="city" aria-label="city" :placeholder="t('createAccount.contactForm.city')" />
         </UFormGroup>
         <UFormGroup
@@ -54,7 +62,11 @@
             disabled
           />
         </UFormGroup>
-        <UFormGroup name="postalCode" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
+        <UFormGroup
+          name="postalCode"
+          class="d:pr-[16px] flex-grow mobile:mb-[16px]"
+          :error="fieldErrors.postalCode"
+        >
           <UInput
             v-model="postalCode"
             aria-label="postal code"
@@ -79,6 +91,11 @@ const province = defineModel<string>('province')
 const postalCode = defineModel<string>('postalCode')
 const nickname = defineModel<string>('nickname')
 const countryItems = ref<CountryItem[]>([])
+const fieldErrors = ref({
+  addressLineTwo: '',
+  city: '',
+  postalCode: ''
+})
 
 const addressComplete = () => {
   if (typeof country.value === 'string') {
@@ -86,11 +103,17 @@ const addressComplete = () => {
   }
 }
 
+const resetFieldError = (field: keyof typeof fieldErrors.value) => {
+  fieldErrors.value[field] = ''
+}
+
 const onAddressInput = () => {
   addressLineTwo.value = ''
   city.value = ''
-  province.value = ''
   postalCode.value = ''
+  resetFieldError('addressLineTwo')
+  resetFieldError('city')
+  resetFieldError('postalCode')
   addressComplete()
 }
 
