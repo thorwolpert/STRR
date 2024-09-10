@@ -74,7 +74,7 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
   async function acceptTos (acceptance: boolean, versionId?: string): Promise<TermsOfServiceI | void> {
     return await axiosInstance.patch<TermsOfServiceI>(`${strrApiURL}/users/tos`,
       {
-        acceptTermsAndConditions: acceptance,
+        istermsaccepted: acceptance,
         termsVersion: versionId
       }
     )
