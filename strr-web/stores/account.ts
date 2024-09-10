@@ -95,12 +95,12 @@ export const useBcrosAccount = defineStore("bcros/account", () => {
       .then(() => {
         setAccountInfo().then(() => {
           if (acceptance) {
-            navigateTo("/create-account");
+            navigateTo('/create-account')
           } else {
-            navigateTo("/");
+            navigateTo('/')
           }
-        });
-      });
+        })
+      })
   }
 
   /** Set user name information */
