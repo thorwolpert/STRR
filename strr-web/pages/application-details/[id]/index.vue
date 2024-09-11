@@ -12,7 +12,7 @@
               `${applicationDetails?.unitAddress.nickname ?? ''} ${tApplicationDetails('applicationTitle')}
               #${application?.header.id ?? '-'}`
             "
-            class-name="mobile:text-6 mobile:col-span-7"
+            class="mobile:text-6 mobile:col-span-7"
             no-spacing
           />
           <BcrosChip v-if="flavour" :flavour="flavour" class="ml-[16px] mobile:mt-4 mobile:col-span-3">

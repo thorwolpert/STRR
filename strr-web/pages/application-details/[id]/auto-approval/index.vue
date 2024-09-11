@@ -8,7 +8,7 @@
         <div class="flex flex-col m:justify-between">
           <BcrosTypographyH1
             :text="tAutoApproval('autoApprovalDetails')"
-            class-name="mobile:text-6 mb-4"
+            class="mobile:text-6 mb-4"
             no-spacing
           />
           <p class="flex-shrink-0">
@@ -20,7 +20,7 @@
     <div class="mt-[104px] m:mt-[200px]">
       <div>
         <BcrosTypographyH2
-          class="font-bold mobile:mx-2"
+          class="mobile:mx-2"
           :text="tAutoApproval('automaticLogic')"
         />
         <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
@@ -32,7 +32,7 @@
       <div class="mt-[40px]">
         <div>
           <BcrosTypographyH2
-            class="font-bold mobile:mx-[8px]"
+            class="mobile:mx-[8px]"
             :text="tAutoApproval('provisionalLogic')"
           />
           <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">

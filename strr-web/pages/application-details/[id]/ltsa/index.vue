@@ -8,7 +8,7 @@
         <div class="flex flex-col m:justify-between">
           <BcrosTypographyH1
             :text="tLtsa('ltsaDetails')"
-            class-name="mobile:text-6 mb-4"
+            class="mobile:text-6 mb-4"
             no-spacing
           />
           <p class="flex-shrink-0">
@@ -20,7 +20,7 @@
     <div class="mt-[104px] m:mt-[152px]">
       <div>
         <BcrosTypographyH2
-          class="font-bold mobile:mx-2"
+          class="mobile:mx-2"
           :text="tLtsa('ltsaGeneralInfo')"
         />
         <div
@@ -79,7 +79,7 @@
         </div>
         <div class="mt-[40px]">
           <BcrosTypographyH2
-            class="font-bold mobile:mx-2"
+            class="mobile:mx-2"
             :text="tLtsa('titleOwners')"
           />
           <div
