@@ -49,10 +49,6 @@ const fetchedRegistration = ref()
 const { t } = useTranslation()
 const tApplicationConfirm = (translationKey: string) => t(`createAccount.applicationConfirm.${translationKey}`)
 
-const {
-  goToAccountInfo
-} = useBcrosNavigate()
-
 const id = route.params.id
 
 const apiURL = useRuntimeConfig().public.strrApiURL

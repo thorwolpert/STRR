@@ -230,10 +230,16 @@ const {
   getDocument
 } = useApplications()
 
+const {
+  setupBreadcrumbData
+} = useBreadcrumb()
+
 const [application, applicationHistory]: [ApplicationI, FilingHistoryEventI[]] = await Promise.all([
   getApplication(applicationId),
   getApplicationHistory(applicationId)
 ])
+
+setupBreadcrumbData(application)
 
 const applicationDetails: ApplicationDetailsI = application.registration
 

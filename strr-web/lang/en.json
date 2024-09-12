@@ -57,6 +57,7 @@
   "autoApproval": {
     "autoApprovalDetails": "Automatic Approval Details",
     "automaticLogic": "Automatic Approval Logic",
+    "automaticDetails": "Automatic Approval Details",
     "provisionalLogic": "Provisional Approval Logic",
     "renting": "Renting",
     "accommodationSelected": "Accommodation Service Provider Selected",

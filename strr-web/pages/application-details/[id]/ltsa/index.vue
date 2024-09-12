@@ -136,11 +136,14 @@ const tLtsa = (translationKey: string) => t(`ltsa.${translationKey}`)
 const applicationId = route.params.id.toString()
 
 const { getLtsa, getApplication } = useApplications()
+const { setupBreadcrumbData } = useBreadcrumb()
 
 const application = await getApplication(applicationId)
 const formatDate = (date: Date) => date.toLocaleDateString('en-US')
 const data: LtsaDataI[] = await getLtsa(applicationId) || {} as LtsaDataI[]
 const applicationDetails: ApplicationDetailsI = application.registration
+
+setupBreadcrumbData(application)
 
 const ownerRows = data.length > 0
   ? [{
