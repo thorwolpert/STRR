@@ -42,7 +42,7 @@
           </div>
           <div class="flex flex-col justify-between w-full mobile:flex-col mr-[40px]">
             <BcrosFormSectionReviewItem
-              :title="tLtsa('date')"
+              :title="tLtsa('description')"
             >
               <p>
                 {{ data[0].record.descriptionsOfLand[0].fullLegalDescription }}
@@ -65,9 +65,9 @@
           </div>
           <div class="flex flex-col justify-between w-full mobile:flex-col">
             <BcrosFormSectionReviewItem
-              :title="tLtsa('parcel')"
+              :title="tLtsa('ownership')"
             >
-              <p>{{ `${tLtsa('parcel')}: ${data[0].record.ownershipGroups[0].jointTenancyIndication}` }}</p>
+              <p>{{ `${tLtsa('joint')}: ${data[0].record.ownershipGroups[0].jointTenancyIndication}` }}</p>
               <p>
                 {{ `${tLtsa('numerator')}: ${data[0].record.ownershipGroups[0].interestFractionNumerator}` }}
               </p>
