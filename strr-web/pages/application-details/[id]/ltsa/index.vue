@@ -144,9 +144,9 @@ const applicationDetails: ApplicationDetailsI = application.registration
 
 const ownerRows = data.length > 0
   ? [{
-      givenName: data[0].record.ownershipGroups[0].titleOwners[0].givenName,
-      lastName: data[0].record.ownershipGroups[0].titleOwners[0].lastNameOrCorpName1,
-      address: `
+      'Given Name': data[0].record.ownershipGroups[0].titleOwners[0].givenName,
+      'Last Name': data[0].record.ownershipGroups[0].titleOwners[0].lastNameOrCorpName1,
+      Address: `
     ${data[0].record.ownershipGroups[0].titleOwners[0].address.addressLine1}
     ${data[0].record.ownershipGroups[0].titleOwners[0].address.addressLine2
       ? `${data[0].record.ownershipGroups[0].titleOwners[0].address.addressLine2} , `
@@ -155,7 +155,7 @@ const ownerRows = data.length > 0
     ${data[0].record.ownershipGroups[0].titleOwners[0].address.country}
     ${data[0].record.ownershipGroups[0].titleOwners[0].address.postalCode}
   `,
-      occupation: data[0].record.ownershipGroups[0].titleOwners[0].occupationDescription
+      Occupation: data[0].record.ownershipGroups[0].titleOwners[0].occupationDescription
     }]
   : []
 
