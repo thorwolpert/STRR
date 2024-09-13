@@ -97,7 +97,7 @@ export const useBreadcrumb = () => {
   const dashboardButtonLink = computed(():string => {
     const breadcrumbLinks = getBreadcrumbLinks.value
     // return second to last link for one level up
-    return breadcrumbLinks[breadcrumbLinks.length - 2].to || ''
+    return breadcrumbLinks[breadcrumbLinks.length - 2]?.to || ''
   })
 
   return {
