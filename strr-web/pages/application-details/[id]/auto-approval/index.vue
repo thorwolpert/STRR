@@ -7,12 +7,8 @@
       >
         <div class="flex flex-col m:justify-between">
           <BcrosTypographyH1
-            :text="
-              `${applicationDetails?.unitAddress.nickname ?? ''} ${tApplicationDetails(
-                'registration'
-              )} #${applicationId}`
-            "
-            class-name="mobile:text-[24px]"
+            :text="tAutoApproval('autoApprovalDetails')"
+            class="mobile:text-6 mb-4"
             no-spacing
           />
           <p class="flex-shrink-0">
@@ -21,11 +17,12 @@
         </div>
       </BcrosBanner>
     </div>
-    <div class="mt-[104px] m:mt-[74px]">
+    <div class="mt-[104px] m:mt-[200px]">
       <div>
-        <p class="font-bold mb-[24px] mobile:mx-[8px]">
-          {{ tAutoApproval('automaticLogic') }}
-        </p>
+        <BcrosTypographyH2
+          class="mobile:mx-2"
+          :text="tAutoApproval('automaticLogic')"
+        />
         <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
           <div class="flex flex-col justify-between w-full mobile:flex-col">
             <UTable :rows="automaticRows" />
@@ -34,9 +31,10 @@
       </div>
       <div class="mt-[40px]">
         <div>
-          <p class="font-bold mb-[24px] mobile:mx-[8px]">
-            {{ tAutoApproval('provisionalLogic') }}
-          </p>
+          <BcrosTypographyH2
+            class="mobile:mx-[8px]"
+            :text="tAutoApproval('provisionalLogic')"
+          />
           <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
             <div class="flex flex-col justify-between w-full mobile:flex-col">
               <UTable :rows="provisionalRows" />
@@ -53,7 +51,6 @@ import { AutoApprovalDataI } from '~/interfaces/auto-approval-data-i'
 
 const route = useRoute()
 const { t } = useTranslation()
-const tApplicationDetails = (translationKey: string) => t(`applicationDetails.${translationKey}`)
 const tAutoApproval = (translationKey: string) => t(`autoApproval.${translationKey}`)
 const automaticRows = ref<{ [key: string]: string }[]>([])
 const provisionalRows = ref<{ [key: string]: string }[]>([])
@@ -145,6 +142,7 @@ const headerLabel =
   }, ` +
   `${applicationDetails.unitAddress.city} ` +
   `${applicationDetails.unitAddress.province} ` +
-  `${applicationDetails.unitAddress.postalCode}`
+  `${applicationDetails.unitAddress.postalCode}` +
+  `, Application #${applicationId}`
 
 </script>

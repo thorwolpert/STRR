@@ -55,6 +55,7 @@
     "occupation": "Occupation"
   },
   "autoApproval": {
+    "autoApprovalDetails": "Automatic Approval Details",
     "automaticLogic": "Automatic Approval Logic",
     "provisionalLogic": "Provisional Approval Logic",
     "renting": "Renting",

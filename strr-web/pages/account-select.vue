@@ -2,7 +2,7 @@
   <div data-test-id="account-select-page">
     <div v-if="userOrgs.length > 0">
       <div class="mobile:px-[8px]">
-        <BcrosTypographyH1 :text="t('account.title')" data-test-id="accountPageTitle" class-name="mobile:pb-[20px]" />
+        <BcrosTypographyH1 :text="t('account.title')" data-test-id="accountPageTitle" class="mobile:pb-[20px]" />
         <BcrosAlertsMessage :flavour="alertFlavour">
           <b>{{ t('general.note') }} </b>{{ t('account.existingAccountWarning') }}
         </BcrosAlertsMessage>
@@ -12,7 +12,7 @@
       <BcrosExistingAccountsList :accounts="userOrgs" />
     </div>
     <div v-else>
-      <BcrosTypographyH1 :text="t('account.logIn')" data-test-id="accountPageTitle" class-name="mobile:pb-[20px]" />
+      <BcrosTypographyH1 :text="t('account.logIn')" data-test-id="accountPageTitle" class="mobile:pb-[20px]" />
     </div>
   </div>
 </template>

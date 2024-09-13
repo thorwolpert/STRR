@@ -10,7 +10,7 @@
             `${application?.unitAddress.nickname ?? ''} ${tApplicationDetails('registration')}
               #${application?.registration_number ?? '-'}`
           "
-          class-name="mobile:text-6"
+          class="mobile:text-6"
           no-spacing
         />
         <BcrosChip v-if="flavour" :flavour="flavour" class="ml-4">

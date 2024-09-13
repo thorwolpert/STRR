@@ -9,7 +9,7 @@
             <BcrosTypographyH1
               :text="t('createAccount.title')"
               data-test-id="create-application-title"
-              class-name="mobile:pb-[20px]"
+              class="mobile:pb-[20px]"
             />
             <BcrosStepper
               :key="headerUpdateKey"
