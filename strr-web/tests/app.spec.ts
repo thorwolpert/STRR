@@ -13,7 +13,7 @@ describe('App level test', () => {
   })
   afterEach(() => { wrapper.unmount() })
 
-  test('app initializes with layouts and default page', async () => {
+  test('app initializes with layouts and default page', () => {
     expect(wrapper.find('#bcros-main-header').exists()).toBe(true)
     expect(wrapper.find('#bcros-main-footer').exists()).toBe(true)
     expect(wrapper.findComponent(Breadcrumb).exists()).toBeTruthy()
