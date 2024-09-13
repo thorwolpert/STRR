@@ -1,7 +1,6 @@
 import {
-  applicationDetailsBreadcrumb,
-  breadcrumbs,
-  examinerApplicationDetailsBreadcrumb
+  hostBreadcrumbs,
+  examinerBreadcrumbs
 } from '~/page-data/breadcrumbs'
 
 export const useBreadcrumb = () => {
@@ -25,21 +24,6 @@ export const useBreadcrumb = () => {
     setApplicationId(application?.header.id.toString())
     setApplicationNickname(application?.registration.unitAddress.nickname)
     setRegistrationNumber(application?.header.registrationNumber)
-    console.log('finished setting up')
-  }
-
-  // Generate a breadcrumb array for Examiner role
-  const getExaminerBreadcrumb = () => {
-    const examinerBreadcrumb = [...examinerApplicationDetailsBreadcrumb]
-
-    examinerBreadcrumb[1] = {
-      label: `${getApplicationNickname.value ? `${getApplicationNickname.value}, ` : ''}Application #${
-        getApplicationId.value
-      }`,
-      to: `/${RouteNamesE.APPLICATION_DETAILS}/${getApplicationId.value}`
-    }
-
-    return examinerBreadcrumb
   }
 
   // Remove '-id' suffix and language codes (e.g., '___en') from route names to match RouteNamesE enum values
@@ -59,52 +43,48 @@ export const useBreadcrumb = () => {
     // cleanup route from locale and id suffix
     const currentRouteName = cleanupRoute(routeName as RouteNamesE)
 
-    // set base breadcrumb
-    let baseBreadcrumb = [...(breadcrumbs[currentRouteName as RouteNamesE] || applicationDetailsBreadcrumb)]
-
     // get nickname or set as empty string
     const nickname = getApplicationNickname.value ? `${getApplicationNickname.value}, ` : ''
 
-    // ad custom Breadcrumb info based on route
+    // set base Breadcrumb based on role
+    const breadcrumbLinks = isExaminer
+      ? [...(examinerBreadcrumbs[currentRouteName] || [])]
+      : [...(hostBreadcrumbs[currentRouteName] || [])]
+
+    // add custom Breadcrumb info based on current route
     switch (currentRouteName) {
       case RouteNamesE.APPLICATION_DETAILS:
-        if (isExaminer) {
-          baseBreadcrumb = getExaminerBreadcrumb()
-        }
-        baseBreadcrumb[1] = {
+        breadcrumbLinks[1] = {
           label: `${nickname}Application #${getApplicationId.value}`
         }
         break
       case RouteNamesE.APPLICATION_DETAILS_LTSA:
       case RouteNamesE.APPLICATION_DETAILS_AUTO_APPROVAL:
-        if (isExaminer) {
-          baseBreadcrumb = getExaminerBreadcrumb()
+        breadcrumbLinks[1] = {
+          label: `${nickname}Application #${getApplicationId.value}`,
+          to: `/${RouteNamesE.APPLICATION_DETAILS}/${getApplicationId.value}`
         }
-
-        baseBreadcrumb[2] = {
+        breadcrumbLinks[2] = {
           label:
             currentRouteName === RouteNamesE.APPLICATION_DETAILS_LTSA
               ? t('ltsa.ltsaDetails')
               : t('autoApproval.automaticDetails')
         }
-
         break
       case RouteNamesE.REGISTRATION_DETAILS:
-        baseBreadcrumb[1] = {
+        breadcrumbLinks[1] = {
           label: `${nickname}Registration #${getRegistrationNumber.value}`
         }
         break
-      default:
-        break
     }
 
-    return baseBreadcrumb
+    return breadcrumbLinks
   })
 
   // Disable Dashboard Back Button when already at top route (eg Dashboard route)
   const isDashboardButtonDisabled = computed((): boolean => {
     return [RouteNamesE.REGISTRY_DASHBOARD, RouteNamesE.APPLICATION_STATUS].includes(
-      cleanupRoute(route.name?.toString() || '')
+      cleanupRoute(route.name?.toString() ?? '')
     )
   })
 
@@ -113,10 +93,12 @@ export const useBreadcrumb = () => {
     NO_BREADCRUMB_ROUTES.every(routeName => !route.name?.toString().startsWith(routeName))
   )
 
-  // Set the dashboard button link based on the role
-  const dashboardButtonLink: string = isExaminer
-    ? `/${RouteNamesE.REGISTRY_DASHBOARD}`
-    : `/${RouteNamesE.APPLICATION_STATUS}`
+  // Set the back button link to navigate one level up in breadcrumb
+  const dashboardButtonLink = computed(():string => {
+    const breadcrumbLinks = getBreadcrumbLinks.value
+    // return second to last link for one level up
+    return breadcrumbLinks[breadcrumbLinks.length - 2].to || ''
+  })
 
   return {
     setupBreadcrumbData,

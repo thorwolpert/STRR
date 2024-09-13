@@ -37,11 +37,19 @@ export const examinerApplicationDetailsBreadcrumb: Array<BreadcrumbI> = [
   }
 ]
 
-export const breadcrumbs: Partial<BreadcrumbsI> = {
+export const hostBreadcrumbs: Partial<BreadcrumbsI> = {
   [RouteNamesE.APPLICATION_STATUS]: hostDashboardBreadcrumb,
-  [RouteNamesE.REGISTRY_DASHBOARD]: examinerDashboardBreadcrumb,
   [RouteNamesE.APPLICATION_DETAILS]: applicationDetailsBreadcrumb,
   [RouteNamesE.CREATE_ACCOUNT]: strRegistrationBreadcrumb,
   [RouteNamesE.REGISTRATION_DETAILS]: applicationDetailsBreadcrumb
+}
 
+export const examinerBreadcrumbs: Partial<BreadcrumbsI> = {
+  [RouteNamesE.APPLICATION_STATUS]: examinerDashboardBreadcrumb,
+  [RouteNamesE.REGISTRY_DASHBOARD]: examinerDashboardBreadcrumb,
+  [RouteNamesE.APPLICATION_DETAILS]: examinerApplicationDetailsBreadcrumb,
+  [RouteNamesE.APPLICATION_DETAILS_LTSA]: examinerApplicationDetailsBreadcrumb,
+  [RouteNamesE.APPLICATION_DETAILS_AUTO_APPROVAL]: examinerApplicationDetailsBreadcrumb,
+  [RouteNamesE.CREATE_ACCOUNT]: examinerDashboardBreadcrumb,
+  [RouteNamesE.REGISTRATION_DETAILS]: examinerDashboardBreadcrumb
 }
