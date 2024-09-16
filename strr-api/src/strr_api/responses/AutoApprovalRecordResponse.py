@@ -15,7 +15,6 @@ class AutoApprovalRecord(BaseModel):
 
     id: int
     applicationId: Optional[int]
-    applicationNumber: str
     record: AutoApproval
     creationDate: datetime
 
@@ -25,7 +24,6 @@ class AutoApprovalRecord(BaseModel):
         return cls(
             id=source.id,
             applicationId=source.application_id,
-            applicationNumber=source.application_number,
             record=AutoApproval(**source.record),
             creationDate=source.creation_date,
         )

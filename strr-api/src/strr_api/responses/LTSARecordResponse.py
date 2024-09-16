@@ -14,7 +14,6 @@ class LTSARecord(BaseModel):
 
     id: int
     applicationId: int
-    applicationNumber: str
     record: LtsaResponse
     creationDate: datetime
 
@@ -24,7 +23,6 @@ class LTSARecord(BaseModel):
         return cls(
             id=source.id,
             applicationId=source.application_id,
-            applicationNumber=source.application_number,
             record=LtsaResponse(**source.record),
             creationDate=source.creation_date,
         )
