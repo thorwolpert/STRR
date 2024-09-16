@@ -36,11 +36,11 @@ from __future__ import annotations
 
 import copy
 
+from nanoid import generate
 from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import backref
 from sqlalchemy_utils.types.ts_vector import TSVectorType
-from nanoid import generate
 
 from strr_api.common.enum import BaseEnum, auto
 from strr_api.models.base_model import BaseModel
