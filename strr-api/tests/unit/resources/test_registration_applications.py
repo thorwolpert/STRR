@@ -124,7 +124,7 @@ def test_get_application_ltsa(session, client, jwt):
         application = Application(
             type="registration",
             application_json=json_data,
-            application_number=Application.generate_unique_application_number()
+            application_number=Application.generate_unique_application_number(),
         )
         application.save()
         headers = create_header(jwt, [STRR_EXAMINER], "Account-Id")

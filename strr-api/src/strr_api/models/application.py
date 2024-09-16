@@ -123,7 +123,7 @@ class Application(BaseModel):
     def find_by_invoice_id(cls, invoice_id: int) -> Application | None:
         """Return the application by invoice id."""
         return cls.query.filter_by(invoice_id=invoice_id).one_or_none()
-    
+
     @classmethod
     def generate_unique_application_number(cls):
         """Generate a unique application number."""
