@@ -24,22 +24,14 @@ const { t } = useTranslation()
 
 const alertFlavour: AlertsFlavourE = AlertsFlavourE.INFO
 
-const { userOrgs, me, updateTosAcceptance } = useBcrosAccount()
+const { userOrgs, me } = useBcrosAccount()
 
 const existingAccountsTitle = `${t('account.existingAccountSection.title')} (${userOrgs.length})`
 
-onMounted(async () => {
+onMounted(() => {
   // if no sbc accounts navigate to sbc account creation
   if (!me?.settings.length) {
     navigateTo('/finalization')
-  }
-  const tos = await updateTosAcceptance()
-
-  const { isTermsOfUseAccepted, termsOfUseAcceptedVersion } = me?.profile.userTerms || {}
-  const currentTosAccepted = isTermsOfUseAccepted && termsOfUseAcceptedVersion === tos?.versionId
-
-  if (!currentTosAccepted) {
-    navigateTo('/terms-of-service')
   }
 })
 </script>

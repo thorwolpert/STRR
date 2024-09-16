@@ -84,7 +84,7 @@ const updateFees = async () => {
 }
 
 const { t } = useTranslation()
-const { userFullName, userFirstName, userLastName, updateTosAcceptance, me } = useBcrosAccount()
+const { userFullName, userFirstName, userLastName, me } = useBcrosAccount()
 
 const { createApplication } = useApplications()
 
@@ -243,14 +243,5 @@ const scrollToTop = () => {
 
 definePageMeta({
   layout: 'wide'
-})
-
-onMounted(async () => {
-  const tos = await updateTosAcceptance()
-  const currentTosAccepted =
-    me?.profile.userTerms.isTermsOfUseAccepted && me?.profile.userTerms.termsOfUseAcceptedVersion === tos?.versionId
-  if (!currentTosAccepted) {
-    navigateTo('/terms-of-service')
-  }
 })
 </script>
