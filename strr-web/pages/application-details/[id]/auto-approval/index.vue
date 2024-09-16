@@ -56,12 +56,15 @@ const automaticRows = ref<{ [key: string]: string }[]>([])
 const provisionalRows = ref<{ [key: string]: string }[]>([])
 
 const { getAutoApproval, getApplication } = useApplications()
+const { setupBreadcrumbData } = useBreadcrumb()
 
 const applicationId = route.params.id.toString()
 
 const application = await getApplication(applicationId)
 const data: AutoApprovalDataI[] = await getAutoApproval(applicationId) || {} as AutoApprovalDataI[]
 const applicationDetails: ApplicationDetailsI = application.registration
+
+setupBreadcrumbData(application)
 
 const buildAutomaticRows = (rowsData: AutoApprovalDataI[]) => {
   if (!rowsData.length || !rowsData[0].record) {
