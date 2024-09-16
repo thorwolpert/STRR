@@ -25,5 +25,3 @@ const { getBreadcrumbLinks, isDashboardButtonDisabled, isBreadcrumbVisible, dash
     </div>
   </div>
 </template>
-
-<style scoped></style>
