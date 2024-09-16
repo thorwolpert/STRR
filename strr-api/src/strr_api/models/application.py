@@ -35,6 +35,7 @@
 from __future__ import annotations
 
 import copy
+import datetime
 
 from nanoid import generate
 from sqlalchemy import func
@@ -68,7 +69,7 @@ class Application(BaseModel):
 
     id = db.Column(db.Integer, primary_key=True)
     application_json = db.Column("application_json", JSONB, nullable=False)
-    application_number = db.Column(db.String(15), unique=True, nullable=False)
+    application_number = db.Column(db.String(14), unique=True, nullable=False)
     application_date = db.Column(
         "application_date", db.DateTime(timezone=True), server_default=func.now()  # pylint:disable=not-callable
     )  # pylint:disable=not-callable
@@ -127,7 +128,9 @@ class Application(BaseModel):
     @classmethod
     def generate_unique_application_number(cls):
         """Generate a unique application number."""
-        new_number = generate(size=15)
+        date_part = datetime.date.today().strftime("%Y%m%d")
+        number_part = generate(alphabet="0123456789", size=5)
+        new_number = f"{date_part}-{number_part}"
         if not cls.query.filter_by(application_number=new_number).first():
             return new_number
 
