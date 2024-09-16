@@ -37,6 +37,16 @@ export const examinerApplicationDetailsBreadcrumb: Array<BreadcrumbI> = [
   }
 ]
 
+export const examinerStrRegistrationBreadcrumb: Array<BreadcrumbI> = [
+  {
+    label: 'My CEU STR Registry Dashboard',
+    to: '/' + RouteNamesE.REGISTRY_DASHBOARD
+  },
+  {
+    label: 'Short-Term Rental Registration'
+  }
+]
+
 export const hostBreadcrumbs: Partial<BreadcrumbsI> = {
   [RouteNamesE.APPLICATION_STATUS]: hostDashboardBreadcrumb,
   [RouteNamesE.APPLICATION_DETAILS]: applicationDetailsBreadcrumb,
@@ -50,6 +60,6 @@ export const examinerBreadcrumbs: Partial<BreadcrumbsI> = {
   [RouteNamesE.APPLICATION_DETAILS]: examinerApplicationDetailsBreadcrumb,
   [RouteNamesE.APPLICATION_DETAILS_LTSA]: examinerApplicationDetailsBreadcrumb,
   [RouteNamesE.APPLICATION_DETAILS_AUTO_APPROVAL]: examinerApplicationDetailsBreadcrumb,
-  [RouteNamesE.CREATE_ACCOUNT]: examinerDashboardBreadcrumb,
+  [RouteNamesE.CREATE_ACCOUNT]: examinerStrRegistrationBreadcrumb,
   [RouteNamesE.REGISTRATION_DETAILS]: examinerDashboardBreadcrumb
 }
