@@ -4,6 +4,8 @@ import axios from 'axios'
  * Composable to manage Terms of Service (ToS) checks and user acceptance.
  */
 export const useTermsOfService = () => {
+  const DECLINE_TERMS_REDIRECT_URL = 'https://www2.gov.bc.ca/gov/content/housing-tenancy/short-term-rentals/registry'
+
   const strrApiURL = useRuntimeConfig().public.strrApiURL
   const axiosInstance = addAxiosInterceptors(axios.create())
   const { tos, isTosAccepted } = storeToRefs(useBcrosAccount())
@@ -37,15 +39,19 @@ export const useTermsOfService = () => {
     }
   }
 
-  async function acceptTermsOfService (acceptance: boolean, versionId: string): Promise<void> {
+  async function acceptTermsOfService (isAccepted: boolean, versionId: string): Promise<void> {
     try {
       await axiosInstance
         .patch<TermsOfServiceI>(`${strrApiURL}/users/tos`, {
-          istermsaccepted: acceptance,
+          istermsaccepted: isAccepted,
           termsversion: versionId
         })
       await useBcrosAccount().setAccountInfo()
-      navigateTo(acceptance ? '/create-account' : '/')
+      if (isAccepted) {
+        navigateTo('/create-account')
+      } else {
+        navigateTo(DECLINE_TERMS_REDIRECT_URL, { external: true })
+      }
     } catch (error) {
       console.error('Error accepting Terms Of Service:', error)
     }
