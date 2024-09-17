@@ -13,6 +13,7 @@ const { getBreadcrumbLinks, isDashboardButtonDisabled, isBreadcrumbVisible, dash
         :to="isDashboardButtonDisabled ? '' : dashboardButtonLink"
         class="flex"
         :class="{ 'pointer-events-none': isDashboardButtonDisabled }"
+        data-test-id="breadcrumb-back-button"
       >
         <UIcon
           name="i-mdi-arrow-left-circle"

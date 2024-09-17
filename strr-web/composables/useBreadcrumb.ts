@@ -1,3 +1,4 @@
+import { useRoute } from 'vue-router'
 import {
   hostBreadcrumbs,
   examinerBreadcrumbs
