@@ -77,7 +77,50 @@
                 }}
               </p>
             </BcrosFormSectionReviewItem>
+            <div class="flex-1 max-w-[33.33%]">
+              <template v-if="applicationDetails?.listingDetails && applicationDetails.listingDetails.length > 0">
+                <BcrosFormSectionReviewItem
+                  :title="tApplicationDetails('platformUrl')"
+                >
+                  <a
+                    :href="applicationDetails?.listingDetails[0].url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-ellipsis overflow-hidden break-words"
+                  >
+                    {{ applicationDetails?.listingDetails[0].url }}
+                  </a>
+                </BcrosFormSectionReviewItem>
+              </template>
+            </div>
+          </div>
+          <div class="flex flex-row justify-between w-full mobile:flex-col">
             <div class="flex-1" />
+            <div class="flex-1" />
+            <div class="flex-1 max-w-[33.33%]">
+              <template v-if="applicationDetails?.listingDetails && applicationDetails.listingDetails.length > 1">
+                <div class="flex flex-col">
+                  <div
+                    v-for="(listingDetail, index) in applicationDetails.listingDetails.slice(1)"
+                    :key="index"
+                    :class="{ 'desktop:mt-6 mobile:mt-2': index > 1 }"
+                  >
+                    <BcrosFormSectionReviewItem
+                      :title="tApplicationDetails('platformUrl') + (` ${index + 2}`)"
+                    >
+                      <a
+                        :href="listingDetail.url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-ellipsis overflow-hidden break-words"
+                      >
+                        {{ listingDetail.url }}
+                      </a>
+                    </BcrosFormSectionReviewItem>
+                  </div>
+                </div>
+              </template>
+            </div>
           </div>
         </div>
         <div class="mt-10 relative overflow-x-scroll">
@@ -142,6 +185,37 @@
           </div>
           <div class="bg-white py-[22px] px-[30px] mobile:px-5 m:hidden overflow-x-scroll w-[150%]">
             <UTable :rows="getContactRows(applicationDetails?.secondaryContact)" />
+          </div>
+        </div>
+        <div class="mt-10 relative overflow-x-scroll">
+          <p class="font-bold mb-6 mobile:mx-2 text-xl">
+            {{ tApplicationDetails('principalResidence') }}
+          </p>
+          <div class="bg-white py-[22px] px-[30px] mobile:px-5">
+            <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
+              <p>
+                {{
+                  applicationDetails.principalResidence.isPrincipalResidence
+                    ? tApplicationDetails('principalResidenceApplies')
+                    : tApplicationDetails('principalResidenceNotApplies')
+                }}
+              </p>
+            </BcrosFormSectionReviewItem>
+            <BcrosFormSectionReviewItem
+              v-if="applicationDetails.principalResidence.nonPrincipalOption"
+              :title="tApplicationDetails('principalResidenceReason')"
+              class="mt-4"
+            >
+              <p>{{ applicationDetails.principalResidence.nonPrincipalOption }}</p>
+            </BcrosFormSectionReviewItem>
+            <BcrosFormSectionReviewItem
+              v-if="applicationDetails.principalResidence.specifiedServiceProvider &&
+                applicationDetails.principalResidence.specifiedServiceProvider !== 'n/a'"
+              :title="tApplicationDetails('principalResidenceServiceProvider')"
+              class="mt-4"
+            >
+              <p>{{ applicationDetails.principalResidence.specifiedServiceProvider }}</p>
+            </BcrosFormSectionReviewItem>
           </div>
         </div>
         <div v-if="documents.length" class="mt-10">
