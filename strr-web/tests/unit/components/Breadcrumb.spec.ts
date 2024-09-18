@@ -17,11 +17,6 @@ const mockRoute = (routeName: RouteNamesE) => {
   }))
 }
 
-vi.mock('axios', () => ({
-  get: vi.fn(() => Promise.resolve({ data: {} })),
-  post: vi.fn(() => Promise.resolve({ data: {} }))
-}))
-
 describe('Breadcrumb Tests', () => {
   const { t } = useTranslation()
 
