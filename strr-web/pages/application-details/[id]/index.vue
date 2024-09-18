@@ -209,7 +209,8 @@
               <p>{{ applicationDetails.principalResidence.nonPrincipalOption }}</p>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem
-              v-if="applicationDetails.principalResidence.specifiedServiceProvider"
+              v-if="applicationDetails.principalResidence.specifiedServiceProvider &&
+                applicationDetails.principalResidence.specifiedServiceProvider !== 'n/a'"
               :title="tApplicationDetails('principalResidenceServiceProvider')"
               class="mt-4"
             >
