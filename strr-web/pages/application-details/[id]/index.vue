@@ -83,7 +83,7 @@
                   :title="tApplicationDetails('platformUrl')"
                 >
                   <a
-                    :href="sanitizeUrl(applicationDetails?.listingDetails[0].url)"
+                    :href="applicationDetails?.listingDetails[0].url"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="text-ellipsis overflow-hidden break-words"
@@ -109,7 +109,7 @@
                       :title="tApplicationDetails('platformUrl') + (` ${index + 2}`)"
                     >
                       <a
-                        :href="sanitizeUrl(listingDetail.url)"
+                        :href="listingDetail.url"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="text-ellipsis overflow-hidden break-words"
@@ -275,8 +275,6 @@
 </template>
 
 <script setup lang="ts">
-import { sanitizeUrl } from '@braintree/sanitize-url'
-
 import FilingHistory from '~/components/FilingHistory.vue'
 import { propertyTypeMap } from '~/utils/propertyTypeMap'
 import { getOwnershipTypeDisplay } from '@/utils/common'
