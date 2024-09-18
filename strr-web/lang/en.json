@@ -100,6 +100,7 @@
     "documents": "Documents",
     "principalResidence": "Principal Residence",
     "principalResidenceReason": "Reason",
+    "principalResidenceServiceProvider": "Service Provider",
     "principalResidenceNotApplies": "Principal residence does not apply or my property is exempt",
     "principalResidenceApplies": "Pincipal residence does apply",
     "proof": "Proof of Principal Residence",

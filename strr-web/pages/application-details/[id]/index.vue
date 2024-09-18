@@ -208,6 +208,13 @@
             >
               <p>{{ applicationDetails.principalResidence.nonPrincipalOption }}</p>
             </BcrosFormSectionReviewItem>
+            <BcrosFormSectionReviewItem
+              v-if="applicationDetails.principalResidence.specifiedServiceProvider"
+              :title="tApplicationDetails('principalResidenceServiceProvider')"
+              class="mt-4"
+            >
+              <p>{{ applicationDetails.principalResidence.specifiedServiceProvider }}</p>
+            </BcrosFormSectionReviewItem>
           </div>
         </div>
         <div v-if="documents.length" class="mt-10">
