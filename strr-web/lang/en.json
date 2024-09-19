@@ -1,4 +1,11 @@
 {
+  "common": {
+    "breadcrumb": {
+      "hostDashboard": "My STR Registry Dashboard",
+      "examinerDashboard": "My CEU STR Registry Dashboard",
+      "rentalRegistration": "Short-Term Rental Registration"
+    }
+  },
   "registryDashboard": {
     "applicationNumber": "Application #",
     "registrationNumber": "Registration #",
