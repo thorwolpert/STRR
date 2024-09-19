@@ -6,15 +6,15 @@ const mockAxiosRequest = vi.hoisted(() => ({
     console.info('Mock is currently not doing anything with config', config)
     // account GET mocks
     if (url.includes('orgs/123')) {
-      return new Promise(resolve => resolve({ data: { ...testDetailsForDev1 } }))
+      return Promise.resolve({ data: { ...testDetailsForDev1 } })
     } else if (url.includes('orgs/124')) {
-      return new Promise(resolve => resolve({ data: { ...testDetailsForDev2 } }))
+      return Promise.resolve({ data: { ...testDetailsForDev2 } })
     } else if (url.includes('settings')) {
-      return new Promise(resolve => resolve({ data: [...mockUserSettings] }))
+      return Promise.resolve({ data: [...mockUserSettings] })
     } else if (url.includes('accounts')) {
-      return new Promise(resolve => resolve({ data: { ...testMe } }))
+      return Promise.resolve({ data: { ...testMe } })
     } else if (url.includes('users/orgs')) {
-      return new Promise(resolve => resolve({ data: { ...testDetailsForDev1 } }))
+      return Promise.resolve({ data: { ...testDetailsForDev1 } })
     }
   })
 }))
