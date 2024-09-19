@@ -1,7 +1,7 @@
 // import { createRouter, createWebHistory } from 'vue-router'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { useRoute } from 'vue-router'
-import { mockApplicationApproved } from '../utils/test-utils/mockedApplication'
+import { mockApplicationApproved } from '~/tests/mocks/mockApplication'
 import Breadcrumb from '~/components/Breadcrumb.vue'
 import { RouteNamesE } from '#imports'
 
