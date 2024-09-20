@@ -3,6 +3,7 @@
     <BcrosBanner
       :hide-buttons="!isExaminer"
       :application-id="applicationId"
+      :registration-id="registrationId"
       class="mobile:h-auto"
     >
       <div class="flex m:mb-2 m:justify-between">
@@ -316,6 +317,7 @@ const [application, applicationHistory]: [ApplicationI, FilingHistoryEventI[]] =
 setupBreadcrumbData(application)
 
 const applicationDetails: ApplicationDetailsI = application.registration
+const registrationId: string = application.header.registrationId.toString()
 
 // Get Supporting Documents from the Application response
 const documents: DocumentUploadI[] = applicationDetails.documents || []
