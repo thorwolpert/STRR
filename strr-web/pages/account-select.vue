@@ -9,7 +9,7 @@
           class="mb-6"
         >
           <p class="mb-10">
-            If you need help with setting up your BC Registries and Online Services account, please contact us.
+            {{ t('account.helpModal.contactUs') }}
           </p>
         </InfoModal>
         <BcrosAlertsMessage :flavour="alertFlavour">

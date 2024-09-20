@@ -367,7 +367,8 @@
     },
     "helpModal": {
       "header": "Need Help?",
-      "openButtonLabel": "Help with setting up an account"
+      "openButtonLabel": "Help with setting up an account",
+      "contactUs": "If you need help with setting up your BC Registries and Online Services account, please contact us."
     }
   },
   "header": {

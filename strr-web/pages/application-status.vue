@@ -1,5 +1,5 @@
 <template>
-  <div data-test-id="account-select-page">
+  <div data-test-id="application-status-page">
     <BcrosTypographyH1
       :text="tRegistrationStatus('title')"
       data-test-id="account-page-title"
