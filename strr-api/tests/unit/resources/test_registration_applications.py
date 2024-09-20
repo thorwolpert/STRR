@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from strr_api.enums.enum import PaymentStatus
 from strr_api.models import Application, Events
-from tests.unit.utils.auth_helpers import PUBLIC_USER, STRR_EXAMINER, create_header
+from tests.unit.utils.auth_helpers import PUBLIC_USER, STAFF_ROLE, STRR_EXAMINER, create_header
 
 CREATE_HOST_REGISTRATION_REQUEST = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), "../../mocks/json/host_registration.json"
@@ -127,7 +127,7 @@ def test_get_application_ltsa(session, client, jwt):
             application_number=Application.generate_unique_application_number(),
         )
         application.save()
-        headers = create_header(jwt, [STRR_EXAMINER], "Account-Id")
+        headers = create_header(jwt, [STRR_EXAMINER, STAFF_ROLE], "Account-Id")
         rv = client.get(f"/applications/{application.id}/ltsa", headers=headers)
 
         assert HTTPStatus.OK == rv.status_code
@@ -155,7 +155,7 @@ def test_get_application_auto_approval(session, client, jwt):
             application_number=Application.generate_unique_application_number(),
         )
         application.save()
-        headers = create_header(jwt, [STRR_EXAMINER], "Account-Id")
+        headers = create_header(jwt, [STRR_EXAMINER, STAFF_ROLE], "Account-Id")
         rv = client.get(f"/applications/{application.id}/auto-approval-records", headers=headers)
 
         assert HTTPStatus.OK == rv.status_code
