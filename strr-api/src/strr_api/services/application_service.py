@@ -109,9 +109,9 @@ class ApplicationService:
     def is_user_authorized_for_application(user_id: int, account_id: int, application_id: int, **kwargs) -> bool:
         """Check the user authorization for an application."""
         usr_context: UserContext = kwargs["user_context"]
-        if usr_context.is_examiner() or usr_context.is_system:
+        if usr_context.is_examiner() or usr_context.is_system():
             return True
-        application = Application.get_application(user_id, account_id, application_id)
+        application = Application.find_by_id_and_user(application_id, user_id)
         if application:
             return True
         return False

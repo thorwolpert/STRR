@@ -140,6 +140,11 @@ class Application(BaseModel):
         return cls.query.filter_by(application_number=application_number).one_or_none()
 
     @classmethod
+    def find_by_id_and_user(cls, application_id: int, user_id: int) -> Application | None:
+        """Return the application by application_id and submitter user_id."""
+        return cls.query.filter_by(submitter_id=user_id, id=application_id).one_or_none()
+
+    @classmethod
     def find_by_user_and_account(
         cls, user_id: int, account_id: int, filter_criteria: ApplicationSearch, is_examiner: bool
     ) -> Application | None:
