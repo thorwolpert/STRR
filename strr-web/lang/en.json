@@ -4,6 +4,9 @@
       "hostDashboard": "My STR Registry Dashboard",
       "examinerDashboard": "My CEU STR Registry Dashboard",
       "rentalRegistration": "Short-Term Rental Registration"
+    },
+    "baseModal": {
+      "closeButtonLabel": "Close" 
     }
   },
   "registryDashboard": {
@@ -361,6 +364,11 @@
       "subTitle": "Select an account below or create a new one",
       "useAccountButton": "Use this account",
       "createAccountButton": "Create account"
+    },
+    "helpModal": {
+      "header": "Need Help?",
+      "openButtonLabel": "Help with setting up an account",
+      "contactUs": "If you need help with setting up your BC Registries and Online Services account, please contact us."
     }
   },
   "header": {
@@ -419,6 +427,20 @@
       "bcsc": "BC Services Card",
       "bceid": "BCeID",
       "idir": "IDIR"
+    }
+  },
+  "bcrosContactInfo": {
+    "tollFree": {
+      "label": "Canada and U.S. Toll Free:",
+      "value": "1-877-370-1033"
+    },
+    "local": {
+      "label": "Victoria Office:",
+      "value": "250-370-1033"
+    },
+    "email": {
+      "label": "Email:",
+      "value": "BCRegistries{'@'}gov.bc.ca" 
     }
   }
 }
