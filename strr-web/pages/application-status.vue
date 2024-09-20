@@ -2,7 +2,7 @@
   <div data-test-id="account-select-page">
     <BcrosTypographyH1
       :text="tRegistrationStatus('title')"
-      data-test-id="accountPageTitle"
+      data-test-id="account-page-title"
       class="pb-[32px] mobile:pb-[24px]"
     />
     <div>
