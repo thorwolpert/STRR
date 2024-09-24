@@ -39,6 +39,13 @@
       "pending": "APPLIED",
       "submitted": "SUBMITTED",
       "paid": "PAID"
+    },
+    "modal":{
+      "contactInfo": {
+        "header": "Need Help?",
+        "openButtonLabel": "Help with using this dashboard",
+        "contactUs": "If you need help with setting up your BC Registries and Online Services account, please contact us."
+      }
     }
   },
   "tos": {
@@ -183,6 +190,21 @@
       "property": "Property Details",
       "eligibility": "Principal Residence",
       "review": "Review and Confirm"
+    },
+    "modal":{
+      "bcrosFoippaNotice": {
+        "header": "Information Collection Notice",
+        "openButtonLabel": "Information collection notice",
+        "noticeTextFirstPart": "Any personal information required is collected to support the administration and enforcement of the ",
+        "noticeTextSecondPart": ", under the authority of section 33(1) of that Act. Any questions about the collection of any information can be directed to the Executive Director of the Short-Term Rental Branch, at",
+        "email": "strbranch{'@'}gov.bc.ca",
+        "actName": "Short-Term Rental Accommodations Act"
+      },
+      "contactInfo": {
+        "header": "Need Help?",
+        "openButtonLabel": "Help with registering a rental unit",
+        "contactUs": "If you need help with setting up your BC Registries and Online Services account, please contact us."
+      }
     },
     "applicationConfirm": {
       "submitted": "Application Submitted",

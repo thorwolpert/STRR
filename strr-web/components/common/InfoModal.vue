@@ -12,7 +12,12 @@ const props = defineProps<{
   hideContactInfo?: boolean
 }>()
 
-const { header, hideContactInfo = false, openButtonLabel, openButtonIcon = 'i-mdi-help-circle-outline' } = props
+const {
+  header,
+  hideContactInfo = true,
+  openButtonLabel,
+  openButtonIcon = props.openButtonIcon || 'i-mdi-help-circle-outline'
+} = props
 
 const handleCloseModal = () => {
   isOpen.value = false
