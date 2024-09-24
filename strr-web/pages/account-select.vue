@@ -6,6 +6,7 @@
         <InfoModal
           :header="t('account.helpModal.header')"
           :open-button-label="t('account.helpModal.openButtonLabel')"
+          :hide-contact-info="false"
           class="mb-6"
         >
           <p class="mb-10">

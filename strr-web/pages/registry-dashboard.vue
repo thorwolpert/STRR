@@ -2,6 +2,16 @@
   <div class="mb-[100px]">
     <BcrosTypographyH1 text="My CEU STR Registry Dashboard" />
     <BcrosTypographyH2 text="Owners STR Registration Applications" />
+    <InfoModal
+      :header="tRegistryDashboard('modal.contactInfo.header')"
+      :open-button-label="tRegistryDashboard('modal.contactInfo.openButtonLabel')"
+      :hide-contact-info="false"
+      class="mb-6"
+    >
+      <p class="mb-10">
+        {{ tRegistryDashboard('modal.contactInfo.contactUs') }}
+      </p>
+    </InfoModal>
     <UTabs
       id="filter-applications-tabs"
       :items="filterOptions"
@@ -112,6 +122,7 @@
 
 <script setup lang="ts">
 import { ApplicationI, ApplicationStatusE } from '#imports'
+import InfoModal from '~/components/common/InfoModal.vue'
 
 const { t } = useTranslation()
 const tRegistryDashboard = (translationKey: string) => t(`registryDashboard.${translationKey}`)
