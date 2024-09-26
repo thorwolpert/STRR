@@ -5,6 +5,16 @@
       data-test-id="account-page-title"
       class="pb-[32px] mobile:pb-[24px]"
     />
+    <InfoModal
+      :header="tRegistrationStatus('modal.contactInfo.header')"
+      :open-button-label="tRegistrationStatus('modal.contactInfo.openButtonLabel')"
+      :hide-contact-info="false"
+      class="mb-6"
+    >
+      <p class="mb-10">
+        {{ tRegistrationStatus('modal.contactInfo.contactUs') }}
+      </p>
+    </InfoModal>
     <div>
       <div class="flex flex-row justify-between">
         <BcrosTypographyH2
@@ -79,6 +89,7 @@
 
 <script setup lang="ts">
 import { ApplicationI } from '~/interfaces/application-i'
+import InfoModal from '~/components/common/InfoModal.vue'
 
 definePageMeta({
   layout: 'wide-no-space'

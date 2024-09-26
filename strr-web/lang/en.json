@@ -174,7 +174,14 @@
     "view": "View",
     "download": "Download Certificate",
     "renewal": "Renewal",
-    "strrCertificate": "Short Term Rental Registry Certificate"
+    "strrCertificate": "Short Term Rental Registry Certificate",
+    "modal":{
+      "contactInfo": {
+        "header": "Need Help?",
+        "openButtonLabel": "Help with using this dashboard",
+        "contactUs": "If you need help with setting up your BC Registries and Online Services account, please contact us."
+      }
+    }
   },
   "feeWidget": {
     "summary": "Fee Summary",
