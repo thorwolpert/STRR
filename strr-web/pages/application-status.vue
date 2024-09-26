@@ -12,7 +12,11 @@
       class="mb-6"
     >
       <p class="mb-10">
-        {{ tRegistrationStatus('modal.contactInfo.contactUs') }}
+        {{ tRegistrationStatus('modal.contactInfo.contactUsFirstPart') }}
+        <a :href="`${tRegistrationStatus('modal.contactInfo.informationPageLink')}`">
+          {{ tRegistrationStatus('modal.contactInfo.informationPageLabel') }}
+        </a>
+        {{ tRegistrationStatus('modal.contactInfo.contactUsSecondPart') }}
       </p>
     </InfoModal>
     <div>

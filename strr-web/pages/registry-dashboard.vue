@@ -9,7 +9,11 @@
       class="mb-6"
     >
       <p class="mb-10">
-        {{ tRegistryDashboard('modal.contactInfo.contactUs') }}
+        {{ tRegistryDashboard('modal.contactInfo.contactUsFirstPart') }}
+        <a :href="`${tRegistryDashboard('modal.contactInfo.informationPageLink')}`">
+          {{ tRegistryDashboard('modal.contactInfo.informationPageLabel') }}
+        </a>
+        {{ tRegistryDashboard('modal.contactInfo.contactUsSecondPart') }}
       </p>
     </InfoModal>
     <UTabs
