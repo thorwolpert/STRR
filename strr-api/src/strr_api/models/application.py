@@ -50,6 +50,11 @@ from strr_api.models.dataclass import ApplicationSearch
 from .db import db
 
 
+def _generate_application_number() -> str:
+    """Generate an application number."""
+    return generate(alphabet="0123456789", size=14)
+
+
 class Application(BaseModel):
     """Stores the STRR Applications."""
 
@@ -126,13 +131,14 @@ class Application(BaseModel):
         return cls.query.filter_by(invoice_id=invoice_id).one_or_none()
 
     @classmethod
-    def generate_unique_application_number(cls):
+    def generate_unique_application_number(cls):  # pylint: disable=inconsistent-return-statements
         """Generate a unique application number."""
-        date_part = datetime.date.today().strftime("%Y%m%d")
-        number_part = generate(alphabet="0123456789", size=5)
-        new_number = f"{date_part}-{number_part}"
-        if not cls.query.filter_by(application_number=new_number).first():
-            return new_number
+        max_attempts = 10
+        for _ in range(max_attempts):
+            new_number = _generate_application_number()
+            if not cls.query.filter_by(application_number=new_number).first():
+                return new_number
+        raise ValueError("Failed to generate a unique application number")
 
     @classmethod
     def find_by_application_number(cls, application_number: str) -> Application | None:
@@ -169,7 +175,12 @@ class Application(BaseModel):
         """Returns the applications matching the search criteria."""
         query = cls.query
         if filter_criteria.search_text:
-            query = query.filter(Application.application_tsv.match(filter_criteria.search_text))
+            query = query.filter(
+                db.or_(
+                    Application.application_tsv.match(filter_criteria.search_text),
+                    Application.application_number.ilike(f"%{filter_criteria.search_text}%"),
+                )
+            )
         if filter_criteria.status:
             query = query.filter_by(status=filter_criteria.status.upper())
         query = query.order_by(Application.id.desc())
