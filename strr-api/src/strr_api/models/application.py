@@ -175,7 +175,12 @@ class Application(BaseModel):
         """Returns the applications matching the search criteria."""
         query = cls.query
         if filter_criteria.search_text:
-            query = query.filter(Application.application_tsv.match(filter_criteria.search_text))
+            query = query.filter(
+                db.or_(
+                    Application.application_tsv.match(filter_criteria.search_text),
+                    Application.application_number.ilike(f"%{filter_criteria.search_text}%"),
+                )
+            )
         if filter_criteria.status:
             query = query.filter_by(status=filter_criteria.status.upper())
         query = query.order_by(Application.id.desc())
