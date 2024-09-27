@@ -19,7 +19,11 @@
                 class="mb-6"
               >
                 <p class="mb-10">
-                  {{ t('createAccount.modal.contactInfo.contactUs') }}
+                  {{ t('createAccount.modal.contactInfo.contactUsFirstPart') }}
+                  <a :href="`${t('createAccount.modal.contactInfo.informationPageLink')}`">
+                    {{ t('createAccount.modal.contactInfo.informationPageLabel') }}
+                  </a>
+                  {{ t('createAccount.modal.contactInfo.contactUsSecondPart') }}
                 </p>
               </InfoModal>
               <div class="self-stretch w-px bg-gray-300 mx-4" />

@@ -44,7 +44,10 @@
       "contactInfo": {
         "header": "Need Help?",
         "openButtonLabel": "Help with using this dashboard",
-        "contactUs": "If you need help with setting up your BC Registries and Online Services account, please contact us."
+        "contactUsFirstPart": "For information about the Short-Term Rental Registry, visit the short-term ",
+        "contactUsSecondPart": ". If you need help with registering your rental unit, using the My STR Registry Dashboard, or resolving a technical issue, you can also contact us directly.",
+        "informationPageLabel": "Information Page",
+        "informationPageLink": "https://www2.gov.bc.ca/gov/content/housing-tenancy/short-term-rentals/registry"
       }
     }
   },
@@ -174,7 +177,17 @@
     "view": "View",
     "download": "Download Certificate",
     "renewal": "Renewal",
-    "strrCertificate": "Short Term Rental Registry Certificate"
+    "strrCertificate": "Short Term Rental Registry Certificate",
+    "modal":{
+      "contactInfo": {
+        "header": "Need Help?",
+        "openButtonLabel": "Help with using this dashboard",
+        "contactUsFirstPart": "For information about the Short-Term Rental Registry, visit the short-term ",
+        "contactUsSecondPart": ". If you need help with registering your rental unit, using the My STR Registry Dashboard, or resolving a technical issue, you can also contact us directly.",
+        "informationPageLabel": "Information Page",
+        "informationPageLink": "https://www2.gov.bc.ca/gov/content/housing-tenancy/short-term-rentals/registry"
+      }
+    }
   },
   "feeWidget": {
     "summary": "Fee Summary",
@@ -203,7 +216,10 @@
       "contactInfo": {
         "header": "Need Help?",
         "openButtonLabel": "Help with registering a rental unit",
-        "contactUs": "If you need help with setting up your BC Registries and Online Services account, please contact us."
+        "contactUsFirstPart": "For information about the Short-Term Rental Registry, visit the short-term ",
+        "contactUsSecondPart": ". If you need help with registering your rental unit, using the My STR Registry Dashboard, or resolving a technical issue, you can also contact us directly.",
+        "informationPageLabel": "Information Page",
+        "informationPageLink": "https://www2.gov.bc.ca/gov/content/housing-tenancy/short-term-rentals/registry"
       }
     },
     "applicationConfirm": {
