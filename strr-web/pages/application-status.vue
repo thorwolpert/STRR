@@ -119,8 +119,11 @@ if (res.total === 0) {
 
 applications.value = res.applications
   .sort(
-    (a: ApplicationI, b: ApplicationI) =>
-      hostApplicationStatusPriority[a.header.hostStatus] ?? 1 - hostApplicationStatusPriority[b.header.hostStatus] ?? 1
+    (a: ApplicationI, b: ApplicationI) => {
+      const priorityA = hostApplicationStatusPriority[a.header.hostStatus || a.header.status] ?? 1
+      const priorityB = hostApplicationStatusPriority[b.header.hostStatus || b.header.status] ?? 1
+      return priorityB - priorityA
+    }
   )
   .sort((a: ApplicationI, b: ApplicationI) =>
     a.registration.unitAddress.city.localeCompare(b.registration.unitAddress.city)

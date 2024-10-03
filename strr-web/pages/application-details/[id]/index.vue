@@ -30,7 +30,7 @@
         <div class="bg-white py-[22px] px-[30px] mobile:px-5">
           <div class="flex flex-row justify-between w-full mobile:flex-col">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('status')">
-              <p>{{ tApplicationDetails(application?.header.status ?? '-' ) }}</p>
+              <p>{{ displayApplicationStatus() }}</p>
             </BcrosFormSectionReviewItem>
           </div>
         </div>
@@ -287,6 +287,7 @@
 import FilingHistory from '~/components/FilingHistory.vue'
 import { propertyTypeMap } from '~/utils/propertyTypeMap'
 import { getOwnershipTypeDisplay } from '@/utils/common'
+import { ApplicationStatusE, HostApplicationStatusE, ExaminerApplicationStatusE } from '#imports'
 
 const route = useRoute()
 const { t } = useTranslation()
@@ -323,14 +324,60 @@ const isApprovedOrRejected: boolean =
 
 // Get Supporting Documents from the Application response
 const documents: DocumentUploadI[] = applicationDetails.documents || []
-const applicationStatus = computed(() => {
+const examinerOrHostStatus = computed(() => {
   if (isExaminer) {
     return application?.header.examinerStatus
   } else {
     return application?.header.hostStatus
   }
 })
-const flavour = application ? getChipFlavour(applicationStatus.value) : null
+const applicationStatus = application?.header.status
+const flavour = application ? getChipFlavour(examinerOrHostStatus.value || applicationStatus) : null
+
+const displayApplicationStatus = () => {
+  console.log('application status', applicationStatus)
+  console.log('examiner or host status', examinerOrHostStatus.value)
+  if (!applicationStatus) { return '-' }
+  switch (applicationStatus) {
+    case ApplicationStatusE.PROVISIONAL:
+      return tApplicationDetails('PROVISIONAL')
+    case ApplicationStatusE.ADDITIONAL_INFO_REQUESTED:
+      return tApplicationDetails('additionalInfoRequested')
+  }
+  switch (examinerOrHostStatus.value) {
+    case HostApplicationStatusE.DRAFT:
+    case ExaminerApplicationStatusE.DRAFT:
+      console.log(tApplicationDetails('draft'))
+      return tApplicationDetails('draft')
+    case HostApplicationStatusE.DECLINED:
+    case ExaminerApplicationStatusE.DECLINED:
+      return tApplicationDetails('declined')
+    case HostApplicationStatusE.PAYMENT_DUE:
+    case ExaminerApplicationStatusE.PAYMENT_DUE:
+      return tApplicationDetails(isExaminer ? 'examinerStatuses.paymentDue' : 'hostStatuses.paymentDue')
+    case HostApplicationStatusE.PAID:
+    case ExaminerApplicationStatusE.PAID:
+      return tApplicationDetails(isExaminer ? 'examinerStatuses.paid' : 'hostStatuses.paid')
+    case HostApplicationStatusE.AUTO_APPROVED:
+    case ExaminerApplicationStatusE.AUTO_APPROVED:
+      return tApplicationDetails(isExaminer ? 'examinerStatuses.autoApproved' : 'hostStatuses.autoApproved')
+    case HostApplicationStatusE.PROVISIONALLY_APPROVED:
+    case ExaminerApplicationStatusE.PROVISIONALLY_APPROVED:
+      return tApplicationDetails(isExaminer
+        ? 'examinerStatuses.provisionalApproved'
+        : 'hostStatuses.provisionalApproved'
+      )
+    case HostApplicationStatusE.PROVISIONAL_REVIEW:
+    case ExaminerApplicationStatusE.PROVISIONAL_REVIEW:
+      return tApplicationDetails(isExaminer ? 'examinerStatuses.provisionalReview' : 'hostStatuses.provisionalReview')
+    case HostApplicationStatusE.FULL_REVIEW_APPROVED:
+    case ExaminerApplicationStatusE.FULL_REVIEW_APPROVED:
+      return tApplicationDetails(isExaminer ? 'examinerStatuses.fullReviewApproved' : 'hostStatuses.fullReviewApproved')
+    case HostApplicationStatusE.FULL_REVIEW:
+    case ExaminerApplicationStatusE.FULL_REVIEW:
+      return tApplicationDetails(isExaminer ? 'examinerStatuses.fullReview' : 'hostStatuses.fullReview')
+  }
+}
 
 const downloadDocument = async (supportingDocument: DocumentUploadI) => {
   const file = await getDocument(applicationId, supportingDocument.fileKey)

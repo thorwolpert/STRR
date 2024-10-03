@@ -146,7 +146,7 @@ const sortBy = ref<string>('')
 const filterOptions = ref()
 const searchAppInput = ref<string>('')
 
-const DEFAULT_STATUS: ApplicationStatusE = ApplicationStatusE.PAID
+const DEFAULT_STATUS: ApplicationStatusE = ApplicationStatusE.FULL_REVIEW
 
 const sort = ({ column, direction }: { column: string, direction: string }) => {
   sortBy.value = column.replace(' ', '_').toLocaleUpperCase()

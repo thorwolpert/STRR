@@ -31,7 +31,7 @@
       "active": "ACTIVE",
       "approved": "APPROVED",
       "rejected": "REJECTED",
-      "provisional": "PROVISIONAL",
+      "provisional": "Provisional",
       "underReview": "UNDER REVIEW",
       "moreInfoNeeded": "MORE INFO NEEDED",
       "denied": "DENIED",
@@ -41,20 +41,27 @@
       "additionalInfoRequested": "ADDITIONAL INFO REQUESTED",
       "paid": "PAID",
       "draft": "DRAFT",
-      "declined": "DECLINED",
-      "paidExaminer": "Paid",
-      "paidHost": "Pending Approval",
-      "paymentDue": "Payment Due",
-      "autoApprovedExaminer": "Approved - Automatic",
-      "autoApprovedHost": "Approved",
-      "provisionalApprovedExaminer": "Approved - Provisional",
-      "provisionalApprovedHost": "Approved",
-      "provisionalReviewExaminer": "Provisional Examination",
-      "provisionalReviewHost": "Approved - Provisional",
-      "fullReviewApprovedExaminer": "Approved - Examined",
-      "fullReviewApprovedHost": "Approved",
-      "fullReviewExaminer": "Full Examination",
-      "fullReviewHost": "Pending Approval"
+      "declined": "Declined",
+      "examinerStatuses": {
+        "paid": "Paid",
+        "autoApproved": "Approved - Automatic",
+        "provisionalApproved": "Approved - Provisional",
+        "provisionalReview": "Provisional Examination",
+        "fullReviewApproved": "Approved - Examined",
+        "fullReview": "Full Examination",
+        "draft": "Draft",
+        "paymentDue": "Payment Due"
+      },
+      "hostStatuses": {
+        "paid": "Pending Approval",
+        "paymentDue": "Payment Due",
+        "autoApproved": "Approved",
+        "provisionalApproved": "Approved",
+        "provisionalReview": "Approved - Provisional",
+        "fullReviewApproved": "Approved",
+        "fullReview": "Pending Approval",
+        "draft": "Draft"
+      }
     },
     "modal": {
       "contactInfo": {
@@ -160,7 +167,28 @@
     "REJECTED": "Rejected",
     "coOwner": "Co-own",
     "owner": "Own",
-    "rent": "Rent"
+    "rent": "Rent",
+    "draft": "Draft",
+    "declined": "Declined",
+    "additionalInfoRequested": "ADDITIONAL INFO REQUESTED",
+    "examinerStatuses": {
+      "paid": "Paid",
+      "paymentDue": "Payment Due",
+      "autoApproved": "Approved - Automatic",
+      "provisionalApproved": "Approved - Provisional",
+      "provisionalReview": "Provisional Examination",
+      "fullReviewApproved": "Approved - Examined",
+      "fullReview": "Full Examination"
+    },
+    "hostStatuses": {
+      "paid": "Pending Approval",
+      "paymentDue": "Payment Due",
+      "autoApproved": "Approved",
+      "provisionalApproved": "Approved",
+      "provisionalReview": "Approved - Provisional",
+      "fullReviewApproved": "Approved",
+      "fullReview": "Pending Approval"
+    }
   },
   "banner": {
     "approve": "Approve",

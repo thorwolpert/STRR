@@ -1,4 +1,4 @@
-import { HostApplicationStatusE, ExaminerApplicationStatusE } from '#imports'
+import { ApplicationStatusE, HostApplicationStatusE, ExaminerApplicationStatusE } from '#imports'
 
 export const useChipFlavour = () => {
   const { t } = useTranslation()
@@ -52,21 +52,27 @@ export const useChipFlavour = () => {
       case ExaminerApplicationStatusE.PAID:
         return {
           alert: AlertsFlavourE.APPLIED,
-          text: isExaminer ? tRegistryDashboardStatus('paidExaminer') : tRegistryDashboardStatus('paidHost')
+          text: isExaminer
+            ? tRegistryDashboardStatus('examinerStatuses.paid')
+            : tRegistryDashboardStatus('hostStatuses.paid')
         }
       case ApplicationStatusE.DRAFT:
       case HostApplicationStatusE.DRAFT:
       case ExaminerApplicationStatusE.DRAFT:
         return {
           alert: AlertsFlavourE.INFO,
-          text: tRegistryDashboardStatus('draft')
+          text: isExaminer
+            ? tRegistryDashboardStatus('examinerStatuses.draft')
+            : tRegistryDashboardStatus('hostStatuses.draft')
         }
       case ApplicationStatusE.PAYMENT_DUE:
       case HostApplicationStatusE.PAYMENT_DUE:
       case ExaminerApplicationStatusE.PAYMENT_DUE:
         return {
           alert: AlertsFlavourE.INFO,
-          text: tRegistryDashboardStatus('paymentDue')
+          text: isExaminer
+            ? tRegistryDashboardStatus('examinerStatuses.paymentDue')
+            : tRegistryDashboardStatus('hostStatuses.paymentDue')
         }
       case ApplicationStatusE.AUTO_APPROVED:
       case HostApplicationStatusE.AUTO_APPROVED:
@@ -74,8 +80,8 @@ export const useChipFlavour = () => {
         return {
           alert: AlertsFlavourE.SUCCESS,
           text: isExaminer
-            ? tRegistryDashboardStatus('autoApprovedExaminer')
-            : tRegistryDashboardStatus('autoApprovedHost')
+            ? tRegistryDashboardStatus('examinerStatuses.autoApproved')
+            : tRegistryDashboardStatus('hostStatuses.autoApproved')
         }
       case ApplicationStatusE.PROVISIONALLY_APPROVED:
       case HostApplicationStatusE.PROVISIONALLY_APPROVED:
@@ -83,8 +89,8 @@ export const useChipFlavour = () => {
         return {
           alert: AlertsFlavourE.SUCCESS,
           text: isExaminer
-            ? tRegistryDashboardStatus('provisionalApprovedExaminer')
-            : tRegistryDashboardStatus('provisionalApprovedHost')
+            ? tRegistryDashboardStatus('examinerStatuses.provisionalApproved')
+            : tRegistryDashboardStatus('hostStatuses.provisionalApproved')
         }
       case ApplicationStatusE.FULL_REVIEW_APPROVED:
       case HostApplicationStatusE.FULL_REVIEW_APPROVED:
@@ -92,8 +98,8 @@ export const useChipFlavour = () => {
         return {
           alert: AlertsFlavourE.SUCCESS,
           text: isExaminer
-            ? tRegistryDashboardStatus('fullReviewApprovedExaminer')
-            : tRegistryDashboardStatus('fullReviewApprovedHost')
+            ? tRegistryDashboardStatus('examinerStatuses.fullReviewApproved')
+            : tRegistryDashboardStatus('hostStatuses.fullReviewApproved')
         }
       case ApplicationStatusE.PROVISIONAL_REVIEW:
       case HostApplicationStatusE.PROVISIONAL_REVIEW:
@@ -101,8 +107,8 @@ export const useChipFlavour = () => {
         return {
           alert: AlertsFlavourE.SUCCESS,
           text: isExaminer
-            ? tRegistryDashboardStatus('provisionalReviewExaminer')
-            : tRegistryDashboardStatus('provisionalReviewHost')
+            ? tRegistryDashboardStatus('examinerStatuses.provisionalReview')
+            : tRegistryDashboardStatus('hostStatuses.provisionalReview')
         }
       case ApplicationStatusE.FULL_REVIEW:
       case HostApplicationStatusE.FULL_REVIEW:
@@ -110,8 +116,8 @@ export const useChipFlavour = () => {
         return {
           alert: AlertsFlavourE.APPLIED,
           text: isExaminer
-            ? tRegistryDashboardStatus('fullReviewExaminer')
-            : tRegistryDashboardStatus('fullReviewHost')
+            ? tRegistryDashboardStatus('examinerStatuses.fullReview')
+            : tRegistryDashboardStatus('hostStatuses.fullReview')
         }
       case ApplicationStatusE.ADDITIONAL_INFO_REQUESTED:
         return {

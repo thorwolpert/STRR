@@ -71,13 +71,13 @@ const {
   isSingle: boolean,
 }>()
 
-const { registrationId, registrationNumber, hostStatus, examinerStatus, registrationStatus } = applicationHeader
+const { registrationId, registrationNumber, status, hostStatus, examinerStatus, registrationStatus } = applicationHeader
 const applicationId = applicationHeader.id.toString()
 const flavour = computed(() => {
   if (isExaminer) {
-    return getChipFlavour(examinerStatus)
+    return getChipFlavour(examinerStatus || status)
   } else {
-    return getChipFlavour(hostStatus)
+    return getChipFlavour(hostStatus || status)
   }
 })
 
