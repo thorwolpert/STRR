@@ -323,8 +323,14 @@ const isApprovedOrRejected: boolean =
 
 // Get Supporting Documents from the Application response
 const documents: DocumentUploadI[] = applicationDetails.documents || []
-
-const flavour = application ? getChipFlavour(application.header.status) : null
+const applicationStatus = computed(() => {
+  if (isExaminer) {
+    return application?.header.examinerStatus
+  } else {
+    return application?.header.hostStatus
+  }
+})
+const flavour = application ? getChipFlavour(applicationStatus.value) : null
 
 const downloadDocument = async (supportingDocument: DocumentUploadI) => {
   const file = await getDocument(applicationId, supportingDocument.fileKey)

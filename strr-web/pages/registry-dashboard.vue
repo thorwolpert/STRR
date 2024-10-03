@@ -146,7 +146,7 @@ const sortBy = ref<string>('')
 const filterOptions = ref()
 const searchAppInput = ref<string>('')
 
-const DEFAULT_STATUS: ApplicationStatusE = ApplicationStatusE.UNDER_REVIEW
+const DEFAULT_STATUS: ApplicationStatusE = ApplicationStatusE.PAID
 
 const sort = ({ column, direction }: { column: string, direction: string }) => {
   sortBy.value = column.replace(' ', '_').toLocaleUpperCase()
@@ -170,15 +170,15 @@ const onTabChange = (index: number) => {
 }
 
 const updateFilterOptions = async () => {
-  const [applications, underReview, provisionalApproval] = await Promise.all([
+  const [applications, fullReview, provisionalApproval] = await Promise.all([
     getApplications(),
-    getApplicationsByStatus(ApplicationStatusE.UNDER_REVIEW),
-    getApplicationsByStatus(ApplicationStatusE.PROVISIONAL)
+    getApplicationsByStatus(ApplicationStatusE.FULL_REVIEW),
+    getApplicationsByStatus(ApplicationStatusE.PROVISIONALLY_APPROVED)
   ])
 
   filterOptions.value = [
     {
-      label: `${tRegistryDashboard('fullReview')} (${underReview.total})`
+      label: `${tRegistryDashboard('fullReview')} (${fullReview.total})`
     },
     {
       label: `${tRegistryDashboard('provisionalApproval')} (${provisionalApproval.total})`
@@ -226,7 +226,7 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
         ${primaryContact.name.middleName ?? ''}
         ${primaryContact.name.lastName}
       `,
-      status: header.status,
+      status: header.examinerStatus,
       submissionDate: header.applicationDateTime
     }
     rows.push(row)

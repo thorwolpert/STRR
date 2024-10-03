@@ -38,7 +38,23 @@
       "issued": "ISSUED",
       "pending": "APPLIED",
       "submitted": "SUBMITTED",
-      "paid": "PAID"
+      "additionalInfoRequested": "ADDITIONAL INFO REQUESTED",
+      "paid": "PAID",
+      "draft": "DRAFT",
+      "declined": "DECLINED",
+      "paidExaminer": "Paid",
+      "paidHost": "Pending Approval",
+      "paymentDue": "Payment Due",
+      "autoApprovedExaminer": "Approved - Automatic",
+      "autoApprovedHost": "Approved",
+      "provisionalApprovedExaminer": "Approved - Provisional",
+      "provisionalApprovedHost": "Approved",
+      "provisionalReviewExaminer": "Provisional Examination",
+      "provisionalReviewHost": "Approved - Provisional",
+      "fullReviewApprovedExaminer": "Approved - Examined",
+      "fullReviewApprovedHost": "Approved",
+      "fullReviewExaminer": "Full Examination",
+      "fullReviewHost": "Pending Approval"
     },
     "modal": {
       "contactInfo": {

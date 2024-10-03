@@ -17,7 +17,7 @@ export const mockApplicationApproved: ApplicationI = {
       displayName: 'Joe Smith',
       username: 'joes@idir'
     },
-    status: ApplicationStatusE.APPROVED,
+    status: ApplicationStatusE.AUTO_APPROVED,
     submitter: {
       displayName: 'BCREGTEST TWENTYFIVE',
       username: 'bcsc/sdfasdfasdf'

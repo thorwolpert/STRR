@@ -99,13 +99,12 @@ definePageMeta({
   layout: 'wide-no-space'
 })
 
-/**
- * Default sorting order for applications
- */
-const applicationStatusPriority: any = {
-  [ApplicationStatusE.REJECTED]: 4,
-  [ApplicationStatusE.APPROVED]: 3,
-  [ApplicationStatusE.SUBMITTED]: 2
+const hostApplicationStatusPriority: any = {
+  [ApplicationStatusE.DECLINED]: 4,
+  [ApplicationStatusE.PROVISIONALLY_APPROVED]: 3,
+  [ApplicationStatusE.FULL_REVIEW_APPROVED]: 3,
+  [ApplicationStatusE.AUTO_APPROVED]: 3,
+  [ApplicationStatusE.PAYMENT_DUE]: 2
 }
 
 const tRegistrationStatus = (translationKey: string) => useTranslation().t(`registrationStatus.${translationKey}`)
@@ -121,7 +120,7 @@ if (res.total === 0) {
 applications.value = res.applications
   .sort(
     (a: ApplicationI, b: ApplicationI) =>
-      applicationStatusPriority[a.header.status] ?? 1 - applicationStatusPriority[b.header.status] ?? 1
+      hostApplicationStatusPriority[a.header.hostStatus] ?? 1 - hostApplicationStatusPriority[b.header.hostStatus] ?? 1
   )
   .sort((a: ApplicationI, b: ApplicationI) =>
     a.registration.unitAddress.city.localeCompare(b.registration.unitAddress.city)
