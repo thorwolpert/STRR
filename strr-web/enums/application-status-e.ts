@@ -16,9 +16,9 @@ export enum HostApplicationStatusE {
   DRAFT = 'Draft',
   PAYMENT_DUE = 'Payment Due',
   PAID = 'Pending Approval',
-  AUTO_APPROVED = 'Approved',
+  AUTO_APPROVED = 'Approved', // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   PROVISIONALLY_APPROVED = 'Approved', // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  FULL_REVIEW_APPROVED = 'Approved', // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  FULL_REVIEW_APPROVED = 'Approved',
   PROVISIONAL_REVIEW = 'Approved – Provisional', // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   FULL_REVIEW = 'Pending Approval',
   DECLINED = 'Declined'
