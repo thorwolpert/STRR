@@ -158,7 +158,7 @@ const sort = ({ column, direction }: { column: string, direction: string }) => {
 const onTabChange = (index: number) => {
   switch (index) {
     case 1:
-      statusFilter.value = ApplicationStatusE.PROVISIONAL
+      statusFilter.value = ApplicationStatusE.PROVISIONALLY_APPROVED
       break
     case 2:
       statusFilter.value = ''
