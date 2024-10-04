@@ -226,7 +226,9 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
         ${primaryContact.name.middleName ?? ''}
         ${primaryContact.name.lastName}
       `,
-      status: header.examinerStatus,
+      status: [ApplicationStatusE.PROVISIONAL, ApplicationStatusE.ADDITIONAL_INFO_REQUESTED].includes(header.status) 
+        ? header.status 
+        : header.examinerStatus,
       submissionDate: header.applicationDateTime
     }
     rows.push(row)
