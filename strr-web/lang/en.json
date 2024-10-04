@@ -212,7 +212,7 @@
         "openButtonLabel": "Information collection notice",
         "noticeTextFirstPart": "Any personal information required is collected to support the administration and enforcement of the ",
         "noticeTextSecondPart": ", under the authority of section 33(1) of that Act. Any questions about the collection of any information can be directed to the Executive Director of the Short-Term Rental Branch, at",
-        "email": "strbranch{'@'}gov.bc.ca",
+        "email": "STRBranch{'@'}gov.bc.ca",
         "actName": "Short-Term Rental Accommodations Act"
       },
       "contactInfo": {
@@ -485,7 +485,7 @@
     },
     "email": {
       "label": "Email:",
-      "value": "BCRegistries{'@'}gov.bc.ca"
+      "value": "STRBranch{'@'}gov.bc.ca"
     }
   }
 }
