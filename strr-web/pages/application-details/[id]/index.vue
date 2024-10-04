@@ -334,21 +334,16 @@ const examinerOrHostStatus = computed(() => {
 const applicationStatus = application?.header.status
 const flavour = application ? getChipFlavour(examinerOrHostStatus.value || applicationStatus) : null
 
-const displayApplicationStatus = () => {
-  if (!applicationStatus) { return '-' }
-  const applicationStatusMap = {
+const getApplicationStatusTranslation = (status, isExaminer) => {
+  const commonStatusMap = {
     [ApplicationStatusE.PROVISIONAL]: 'PROVISIONAL',
-    [ApplicationStatusE.ADDITIONAL_INFO_REQUESTED]: 'additionalInfoRequested'
-  }
-  if (applicationStatus in applicationStatusMap) {
-    return tApplicationDetails(applicationStatusMap[applicationStatus])
-  }
-
-  const statusMap = {
+    [ApplicationStatusE.ADDITIONAL_INFO_REQUESTED]: 'additionalInfoRequested',
     [HostApplicationStatusE.DRAFT]: 'draft',
     [ExaminerApplicationStatusE.DRAFT]: 'draft',
     [HostApplicationStatusE.DECLINED]: 'declined',
-    [ExaminerApplicationStatusE.DECLINED]: 'declined',
+    [ExaminerApplicationStatusE.DECLINED]: 'declined'
+  }
+  const roleSpecificStatusMap = {
     [HostApplicationStatusE.PAYMENT_DUE]: isExaminer
       ? 'examinerStatuses.paymentDue'
       : 'hostStatuses.paymentDue',
@@ -392,8 +387,15 @@ const displayApplicationStatus = () => {
       ? 'examinerStatuses.fullReview'
       : 'hostStatuses.fullReview'
   }
-  const status = examinerOrHostStatus.value
-  return status in statusMap ? tApplicationDetails(statusMap[status]) : '-'
+  return commonStatusMap[status] || roleSpecificStatusMap[status] || '-'
+}
+
+const displayApplicationStatus = () => {
+  if (!applicationStatus) {
+    return '-'
+  }
+  const statusTranslation = getApplicationStatusTranslation(examinerOrHostStatus.value || applicationStatus, isExaminer)
+  return tApplicationDetails(statusTranslation)
 }
 
 const downloadDocument = async (supportingDocument: DocumentUploadI) => {
