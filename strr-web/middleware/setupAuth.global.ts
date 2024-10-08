@@ -1,6 +1,6 @@
 export default defineNuxtRouteMiddleware(async (to) => {
   // setup auth
-  if ((!to.query.error) && !process.env.VITEST_WORKER_ID) {
+  if (!to.query.error && !process.env.VITEST_WORKER_ID) {
     // keycloak redirects with the error param when not logged in (nuxt/keycloak issue)
     //   - removing ^ condition will cause an infinite loop of keycloak redirects when not authenticated
     const { kcURL, kcRealm, kcClient } = useRuntimeConfig().public
@@ -45,6 +45,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
     params.delete('code')
     params.delete('error')
     params.delete('iss')
-    to.fullPath = to.path + (params.size > 0 ? `?${params}` : '') + to.hash
+    await navigateTo(to.path + (params.size > 0 ? `?${params}` : '') + to.hash)
   }
 })

@@ -1,3 +1,6 @@
 <template>
-  <NuxtLayout />
+  <div>
+    <CommonLoadingIndicator />
+    <NuxtLayout />
+  </div>
 </template>

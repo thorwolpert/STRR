@@ -1,4 +1,4 @@
-import { KeycloakConfig } from 'keycloak-js'
+import type { KeycloakConfig } from 'keycloak-js'
 
 /** Manages auth flows */
 export const useBcrosAuth = () => {
@@ -36,21 +36,30 @@ export const useBcrosAuth = () => {
   /** Setup keycloak / user auth pieces */
   async function setupAuth (kcConfig: KeycloakConfig, currentAccountId?: string) {
     if (!keycloak.kc.authenticated) {
-      console.info('Initializing auth setup...')
-      // initialize keycloak with user token
-      console.info('Initializing Keycloak...')
       try {
+        console.info('Initializing auth setup...')
+        // initialize keycloak with user token
+        console.info('Initializing Keycloak...')
         await keycloak.initKeyCloak(kcConfig)
         if (keycloak.kc.authenticated) {
           // successfully initialized so setup other pieces
           keycloak.syncSessionStorage()
           keycloak.scheduleRefreshToken()
-          // set user info
-          console.info('Setting user name...')
-          await account.setUserName()
-          // set account info
-          console.info('Setting user account information...')
-          await account.setAccountInfo(currentAccountId)
+          // set user and account info
+          const promises = [
+            (() => {
+              console.info('Setting user account information...')
+              account.setAccountInfo(currentAccountId)
+            })(),
+            (() => {
+              console.info('Setting user name...')
+              account.setUserName()
+            })()
+          ]
+
+          // Wait for all promises to resolve
+          await Promise.all(promises)
+
           // check account status
           console.info('Checking account status...')
           // verify account status
