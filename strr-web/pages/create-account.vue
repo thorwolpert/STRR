@@ -16,14 +16,16 @@
                 :header="t('createAccount.modal.contactInfo.header')"
                 :open-button-label="t('createAccount.modal.contactInfo.openButtonLabel')"
                 :hide-contact-info="false"
-                class="mb-6"
               >
                 <p class="mb-10">
                   {{ t('createAccount.modal.contactInfo.contactUsFirstPart') }}
-                  <a :href="`${t('createAccount.modal.contactInfo.informationPageLink')}`">
+                  <a
+                    :href="`${t('createAccount.modal.contactInfo.informationPageLink')}`"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     {{ t('createAccount.modal.contactInfo.informationPageLabel') }}
-                  </a>
-                  {{ t('createAccount.modal.contactInfo.contactUsSecondPart') }}
+                  </a>{{ t('createAccount.modal.contactInfo.contactUsSecondPart') }}
                 </p>
               </InfoModal>
               <div class="self-stretch w-px bg-bcGovColor-formFieldLines mx-4 h-6" />
