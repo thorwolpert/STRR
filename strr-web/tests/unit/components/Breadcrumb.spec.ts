@@ -3,7 +3,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { useRoute } from 'vue-router'
 import { mockApplicationApproved } from '~/tests/mocks/mockApplication'
 import Breadcrumb from '~/components/Breadcrumb.vue'
-import { RouteNamesE } from '#imports'
+import { RouteNamesE } from '~/enums/route-names-e'
 
 vi.mock('vue-router', () => ({
   useRoute: vi.fn()

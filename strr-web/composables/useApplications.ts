@@ -128,7 +128,7 @@ export const useApplications = () => {
    */
   const approveApplication = async (id: string) => {
     try {
-      await updateApplicationStatus(id, ApplicationStatusE.APPROVED)
+      await updateApplicationStatus(id, ApplicationStatusE.FULL_REVIEW_APPROVED)
     } catch (error) {
       console.error(error)
     }
@@ -140,7 +140,7 @@ export const useApplications = () => {
    */
   const rejectApplication = async (id: string) => {
     try {
-      await updateApplicationStatus(id, ApplicationStatusE.REJECTED)
+      await updateApplicationStatus(id, ApplicationStatusE.DECLINED)
     } catch (error) {
       console.error(error)
     }
