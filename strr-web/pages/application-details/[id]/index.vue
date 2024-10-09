@@ -329,6 +329,7 @@ import { ApplicationStatusE, HostApplicationStatusE, ExaminerApplicationStatusE 
 const route = useRoute()
 const { t } = useTranslation()
 const tApplicationDetails = (translationKey: string) => t(`applicationDetails.${translationKey}`)
+const tStatuses = (translationKey: string) => t(`statuses.${translationKey}`)
 const tPropertyForm = (translationKey: string) => t(`createAccount.propertyForm.${translationKey}`)
 const { isExaminer } = useBcrosKeycloak()
 const { getChipFlavour } = useChipFlavour()
@@ -378,11 +379,11 @@ const getApplicationStatusTranslation = (status) => {
     [HostApplicationStatusE.DRAFT]: 'draft',
     [ExaminerApplicationStatusE.DRAFT]: 'draft',
     [HostApplicationStatusE.DECLINED]: 'declined',
-    [ExaminerApplicationStatusE.DECLINED]: 'declined'
+    [ExaminerApplicationStatusE.DECLINED]: 'declined',
+    [HostApplicationStatusE.PAYMENT_DUE]: 'paymentDue',
+    [ExaminerApplicationStatusE.PAYMENT_DUE]: 'paymentDue'
   }
   const roleSpecificStatusMap = {
-    [HostApplicationStatusE.PAYMENT_DUE]: 'hostStatuses.paymentDue',
-    [ExaminerApplicationStatusE.PAYMENT_DUE]: 'examinerStatuses.paymentDue',
     [HostApplicationStatusE.PAID]: 'hostStatuses.paid',
     [ExaminerApplicationStatusE.PAID]: 'examinerStatuses.paid',
     [HostApplicationStatusE.AUTO_APPROVED]: 'hostStatuses.autoApproved',
@@ -404,7 +405,7 @@ const displayApplicationStatus = () => {
     return '-'
   }
   const statusTranslation = getApplicationStatusTranslation(examinerOrHostStatus.value || applicationStatus)
-  return tApplicationDetails(statusTranslation)
+  return tStatuses(statusTranslation)
 }
 
 const downloadDocument = async (supportingDocument: DocumentUploadI) => {

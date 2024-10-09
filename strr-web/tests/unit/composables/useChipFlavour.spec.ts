@@ -3,7 +3,7 @@ import { ApplicationStatusE, RegistrationStatusE, AlertsFlavourE, useChipFlavour
 
 describe('useChipFlavour', () => {
   const { t } = useTranslation()
-  const tRegistryDashboardStatus = (translationKey: string) => t(`registryDashboard.statusChip.${translationKey}`)
+  const tStatuses = (translationKey: string) => t(`statuses.${translationKey}`)
 
   describe('RegistrationStatusE tests', () => {
     beforeAll(() => {
@@ -21,28 +21,28 @@ describe('useChipFlavour', () => {
           status: RegistrationStatusE.ACTIVE,
           expected: {
             alert: AlertsFlavourE.SUCCESS,
-            text: tRegistryDashboardStatus('active')
+            text: tStatuses('active')
           }
         },
         {
           status: RegistrationStatusE.SUSPENDED,
           expected: {
             alert: AlertsFlavourE.ALERT,
-            text: tRegistryDashboardStatus('suspended')
+            text: tStatuses('suspended')
           }
         },
         {
           status: RegistrationStatusE.EXPIRED,
           expected: {
             alert: AlertsFlavourE.WARNING,
-            text: tRegistryDashboardStatus('expired')
+            text: tStatuses('expired')
           }
         },
         {
           status: RegistrationStatusE.CANCELLED,
           expected: {
             alert: AlertsFlavourE.ALERT,
-            text: tRegistryDashboardStatus('cancelled')
+            text: tStatuses('cancelled')
           }
         }
       ]
@@ -59,35 +59,35 @@ describe('useChipFlavour', () => {
         status: ApplicationStatusE.PAID,
         expected: (isExaminer: boolean) => ({
           alert: AlertsFlavourE.APPLIED,
-          text: tRegistryDashboardStatus(isExaminer ? 'examinerStatuses.paid' : 'hostStatuses.paid')
+          text: tStatuses(isExaminer ? 'examinerStatuses.paid' : 'hostStatuses.paid')
         })
       },
       {
         status: ApplicationStatusE.DRAFT,
-        expected: (isExaminer: boolean) => ({
+        expected: () => ({
           alert: AlertsFlavourE.INFO,
-          text: tRegistryDashboardStatus(isExaminer ? 'examinerStatuses.draft' : 'hostStatuses.draft')
+          text: tStatuses('draft')
         })
       },
       {
         status: ApplicationStatusE.PAYMENT_DUE,
-        expected: (isExaminer: boolean) => ({
+        expected: () => ({
           alert: AlertsFlavourE.INFO,
-          text: tRegistryDashboardStatus(isExaminer ? 'examinerStatuses.paymentDue' : 'hostStatuses.paymentDue')
+          text: tStatuses('paymentDue')
         })
       },
       {
         status: ApplicationStatusE.AUTO_APPROVED,
         expected: (isExaminer: boolean) => ({
           alert: AlertsFlavourE.SUCCESS,
-          text: tRegistryDashboardStatus(isExaminer ? 'examinerStatuses.autoApproved' : 'hostStatuses.autoApproved')
+          text: tStatuses(isExaminer ? 'examinerStatuses.autoApproved' : 'hostStatuses.autoApproved')
         })
       },
       {
         status: ApplicationStatusE.PROVISIONALLY_APPROVED,
         expected: (isExaminer: boolean) => ({
           alert: AlertsFlavourE.SUCCESS,
-          text: tRegistryDashboardStatus(isExaminer
+          text: tStatuses(isExaminer
             ? 'examinerStatuses.provisionalApproved'
             : 'hostStatuses.provisionalApproved'
           )
@@ -97,7 +97,7 @@ describe('useChipFlavour', () => {
         status: ApplicationStatusE.FULL_REVIEW_APPROVED,
         expected: (isExaminer: boolean) => ({
           alert: AlertsFlavourE.SUCCESS,
-          text: tRegistryDashboardStatus(isExaminer
+          text: tStatuses(isExaminer
             ? 'examinerStatuses.fullReviewApproved'
             : 'hostStatuses.fullReviewApproved'
           )
@@ -107,7 +107,7 @@ describe('useChipFlavour', () => {
         status: ApplicationStatusE.PROVISIONAL_REVIEW,
         expected: (isExaminer: boolean) => ({
           alert: AlertsFlavourE.SUCCESS,
-          text: tRegistryDashboardStatus(isExaminer
+          text: tStatuses(isExaminer
             ? 'examinerStatuses.provisionalReview'
             : 'hostStatuses.provisionalReview'
           )
@@ -117,28 +117,28 @@ describe('useChipFlavour', () => {
         status: ApplicationStatusE.FULL_REVIEW,
         expected: (isExaminer: boolean) => ({
           alert: AlertsFlavourE.APPLIED,
-          text: tRegistryDashboardStatus(isExaminer ? 'examinerStatuses.fullReview' : 'hostStatuses.fullReview')
+          text: tStatuses(isExaminer ? 'examinerStatuses.fullReview' : 'hostStatuses.fullReview')
         })
       },
       {
         status: ApplicationStatusE.ADDITIONAL_INFO_REQUESTED,
         expected: () => ({
           alert: AlertsFlavourE.WARNING,
-          text: tRegistryDashboardStatus('additionalInfoRequested')
+          text: tStatuses('additionalInfoRequested')
         })
       },
       {
         status: ApplicationStatusE.DECLINED,
         expected: () => ({
           alert: AlertsFlavourE.ALERT,
-          text: tRegistryDashboardStatus('declined')
+          text: tStatuses('declined')
         })
       },
       {
         status: ApplicationStatusE.PROVISIONAL,
         expected: () => ({
           alert: AlertsFlavourE.APPLIED,
-          text: tRegistryDashboardStatus('provisional')
+          text: tStatuses('provisional')
         })
       }
     ]

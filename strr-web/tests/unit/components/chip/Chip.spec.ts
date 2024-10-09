@@ -11,7 +11,7 @@ const i18n = createI18n({
 it('can mount Chip component', async () => {
   const { t } = useTranslation()
   const { getChipFlavour } = useChipFlavour()
-  const tRegistryDashboardStatus = (translationKey: string) => t(`registryDashboard.statusChip.${translationKey}`)
+  const tStatuses = (translationKey: string) => t(`statuses.${translationKey}`)
 
   const chip = await mountSuspended(BcrosChip,
     {
@@ -21,5 +21,5 @@ it('can mount Chip component', async () => {
       }
     })
   expect(chip.find('[data-test-id="chip"]').exists()).toBe(true)
-  expect(chip.text()).toEqual(tRegistryDashboardStatus('active'))
+  expect(chip.text()).toEqual(tStatuses('active'))
 })

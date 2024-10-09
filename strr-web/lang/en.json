@@ -27,37 +27,6 @@
     "results": "Results",
     "location": "Location",
     "approved": "Approved",
-    "statusChip": {
-      "active": "Active",
-      "provisional": "Provisional",
-      "expired": "Expired",
-      "suspended": "Suspended",
-      "cancelled": "Registration Cancelled",
-      "additionalInfoRequested": "ADDITIONAL INFO REQUESTED",
-      "paid": "PAID",
-      "draft": "DRAFT",
-      "declined": "Declined",
-      "examinerStatuses": {
-        "paid": "Paid",
-        "autoApproved": "Approved - Automatic",
-        "provisionalApproved": "Approved - Provisional",
-        "provisionalReview": "Provisional Examination",
-        "fullReviewApproved": "Approved - Examined",
-        "fullReview": "Full Examination",
-        "draft": "Draft",
-        "paymentDue": "Payment Due"
-      },
-      "hostStatuses": {
-        "paid": "Pending Approval",
-        "paymentDue": "Payment Due",
-        "autoApproved": "Approved",
-        "provisionalApproved": "Approved",
-        "provisionalReview": "Approved - Provisional",
-        "fullReviewApproved": "Approved",
-        "fullReview": "Pending Approval",
-        "draft": "Draft"
-      }
-    },
     "modal": {
       "contactInfo": {
         "header": "Need Help?",
@@ -91,6 +60,33 @@
     "last": "Last Name",
     "address": "Address",
     "occupation": "Occupation"
+  },
+  "statuses": {
+    "examinerStatuses": {
+      "paid": "Paid",
+      "autoApproved": "Approved - Automatic",
+      "provisionalApproved": "Approved - Provisional",
+      "provisionalReview": "Provisional Examination",
+      "fullReviewApproved": "Approved - Examined",
+      "fullReview": "Full Examination"
+    },
+    "hostStatuses": {
+      "paid": "Pending Approval",
+      "autoApproved": "Approved",
+      "provisionalApproved": "Approved",
+      "provisionalReview": "Approved - Provisional",
+      "fullReviewApproved": "Approved",
+      "fullReview": "Pending Approval"
+    },
+    "draft": "Draft",
+    "paymentDue": "Payment Due",
+    "declined": "Declined",
+    "additionalInfoRequested": "ADDITIONAL INFO REQUESTED",
+    "active": "Active",
+    "expired": "Expired",
+    "suspended": "Suspended",
+    "cancelled": "Registration Cancelled",
+    "provisional": "Provisional"
   },
   "autoApproval": {
     "autoApprovalDetails": "Automatic Approval Details",
@@ -149,35 +145,9 @@
     "autoApprovalLogic": "Auto-Approval Logic",
     "autoApprovalDetails": "View Auto-Approval Details",
     "filing": "Filing History",
-    "active": "Active",
-    "expired": "Expired",
-    "suspended": "Suspended",
-    "cancelled": "Registration Cancelled",
-    "provisional": "Provisional",
     "coOwner": "Co-own",
     "owner": "Own",
-    "rent": "Rent",
-    "draft": "Draft",
-    "declined": "Declined",
-    "additionalInfoRequested": "ADDITIONAL INFO REQUESTED",
-    "examinerStatuses": {
-      "paid": "Paid",
-      "paymentDue": "Payment Due",
-      "autoApproved": "Approved - Automatic",
-      "provisionalApproved": "Approved - Provisional",
-      "provisionalReview": "Provisional Examination",
-      "fullReviewApproved": "Approved - Examined",
-      "fullReview": "Full Examination"
-    },
-    "hostStatuses": {
-      "paid": "Pending Approval",
-      "paymentDue": "Payment Due",
-      "autoApproved": "Approved",
-      "provisionalApproved": "Approved",
-      "provisionalReview": "Approved - Provisional",
-      "fullReviewApproved": "Approved",
-      "fullReview": "Pending Approval"
-    }
+    "rent": "Rent"
   },
   "banner": {
     "approve": "Approve",
@@ -198,14 +168,6 @@
     "accountName": "Account Name"
   },
   "registrationStatus": {
-    "PENDING": "PENDING",
-    "approved": "APPROVED",
-    "denied": "DENIED",
-    "APPROVED": "APPROVED",
-    "MORE_INFO_NEEDED": "PROVISIONAL",
-    "DENIED": "DENIED",
-    "applied": "APPLIED",
-    "provisional": "PROVISIONAL",
     "create": "Create New Registration",
     "myRegApplication": "My Registration Applications",
     "title": "My STR Registry Dashboard",

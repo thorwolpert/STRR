@@ -3,18 +3,18 @@ import { ApplicationStatusE, RegistrationStatusE, AlertsFlavourE } from '#import
 export const useChipFlavour = () => {
   const { t } = useTranslation()
   const { isExaminer } = useBcrosKeycloak()
-  const tRegistryDashboardStatus = (translationKey: string) => t(`registryDashboard.statusChip.${translationKey}`)
 
+  const tStatuses = (translationKey: string) => t(`statuses.${translationKey}`)
   const statusMap = (flavour: AlertsFlavourE, translationKey: string) => ({
     alert: flavour,
-    text: tRegistryDashboardStatus(translationKey)
+    text: tStatuses(translationKey)
   })
 
   const examinerOrHostStatusMap = (flavour: AlertsFlavourE, key: string) => ({
     alert: flavour,
     text: isExaminer
-      ? tRegistryDashboardStatus(`examinerStatuses.${key}`)
-      : tRegistryDashboardStatus(`hostStatuses.${key}`)
+      ? tStatuses(`examinerStatuses.${key}`)
+      : tStatuses(`hostStatuses.${key}`)
   })
 
   const getChipFlavour = (status: string): StatusChipFlavoursI['flavour'] => {
@@ -27,18 +27,26 @@ export const useChipFlavour = () => {
         return statusMap(AlertsFlavourE.WARNING, 'expired')
       case RegistrationStatusE.CANCELLED:
         return statusMap(AlertsFlavourE.ALERT, 'cancelled')
+      case ApplicationStatusE.DRAFT:
+      case HostApplicationStatusE.DRAFT:
+      case ExaminerApplicationStatusE.DRAFT:
+        return statusMap(AlertsFlavourE.INFO, 'draft')
+      case ApplicationStatusE.PAYMENT_DUE:
+      case HostApplicationStatusE.PAYMENT_DUE:
+      case ExaminerApplicationStatusE.PAYMENT_DUE:
+        return statusMap(AlertsFlavourE.INFO, 'paymentDue')
+      case ApplicationStatusE.ADDITIONAL_INFO_REQUESTED:
+        return statusMap(AlertsFlavourE.WARNING, 'additionalInfoRequested')
+      case ApplicationStatusE.DECLINED:
+      case HostApplicationStatusE.DECLINED:
+      case ExaminerApplicationStatusE.DECLINED:
+        return statusMap(AlertsFlavourE.ALERT, 'declined')
+      case ApplicationStatusE.PROVISIONAL:
+        return statusMap(AlertsFlavourE.APPLIED, 'provisional')
       case ApplicationStatusE.PAID:
       case HostApplicationStatusE.PAID:
       case ExaminerApplicationStatusE.PAID:
         return examinerOrHostStatusMap(AlertsFlavourE.APPLIED, 'paid')
-      case ApplicationStatusE.DRAFT:
-      case HostApplicationStatusE.DRAFT:
-      case ExaminerApplicationStatusE.DRAFT:
-        return examinerOrHostStatusMap(AlertsFlavourE.INFO, 'draft')
-      case ApplicationStatusE.PAYMENT_DUE:
-      case HostApplicationStatusE.PAYMENT_DUE:
-      case ExaminerApplicationStatusE.PAYMENT_DUE:
-        return examinerOrHostStatusMap(AlertsFlavourE.INFO, 'paymentDue')
       case ApplicationStatusE.AUTO_APPROVED:
       case HostApplicationStatusE.AUTO_APPROVED:
       case ExaminerApplicationStatusE.AUTO_APPROVED:
@@ -59,14 +67,6 @@ export const useChipFlavour = () => {
       case HostApplicationStatusE.FULL_REVIEW:
       case ExaminerApplicationStatusE.FULL_REVIEW:
         return examinerOrHostStatusMap(AlertsFlavourE.APPLIED, 'fullReview')
-      case ApplicationStatusE.ADDITIONAL_INFO_REQUESTED:
-        return statusMap(AlertsFlavourE.WARNING, 'additionalInfoRequested')
-      case ApplicationStatusE.DECLINED:
-      case HostApplicationStatusE.DECLINED:
-      case ExaminerApplicationStatusE.DECLINED:
-        return statusMap(AlertsFlavourE.ALERT, 'declined')
-      case ApplicationStatusE.PROVISIONAL:
-        return statusMap(AlertsFlavourE.APPLIED, 'provisional')
       default:
         return { alert: AlertsFlavourE.MESSAGE, text: '' }
     }

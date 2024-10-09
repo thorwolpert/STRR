@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, vi } from 'vitest'
-import { mockFilingHistory } from '../../../../mocks/mockFilingHistory'
-import { mockApplicationApproved } from '../../../../mocks/mockApplication'
+import { mockFilingHistory } from '../../mocks/mockFilingHistory'
+import { mockApplicationApproved } from '../../mocks/mockApplication'
 import ApplicationDetails from '@/pages/application-details/[id]/index.vue'
 
 vi.mock('~/composables/useApplications', () => ({
