@@ -46,19 +46,13 @@ export const useBcrosAuth = () => {
           keycloak.syncSessionStorage()
           keycloak.scheduleRefreshToken()
           // set user and account info
-          const promises = [
-            (() => {
-              console.info('Setting user account information...')
-              account.setAccountInfo(currentAccountId)
-            })(),
-            (() => {
-              console.info('Setting user name...')
-              account.setUserName()
-            })()
-          ]
+          console.info('Setting user account information...')
+          const accountInfoPromise = account.setAccountInfo(currentAccountId)
+          console.info('Setting user name...')
+          const userNamePromise = account.setUserName()
 
           // Wait for all promises to resolve
-          await Promise.all(promises)
+          await Promise.all([accountInfoPromise, userNamePromise])
 
           // check account status
           console.info('Checking account status...')
