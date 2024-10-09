@@ -51,9 +51,11 @@ export const mockApplicationApproved: ApplicationI = {
       socialInsuranceNumber: '111 222 333'
     },
     principalResidence: {
-      isPrincipal: undefined,
-      declaration: false,
-      agreeToSubmit: false
+      isPrincipalResidence: true,
+      nonPrincipalOption: 'Some Option',
+      specifiedServiceProvider: 'Some Service Provider',
+      agreedToRentalAct: true,
+      agreedToSubmit: true
     },
     unitAddress: {
       address: '123 Main St',

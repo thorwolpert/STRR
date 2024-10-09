@@ -6,7 +6,7 @@
       :registration-id="registrationId"
       class="mobile:h-auto"
     >
-      <div class="flex m:mb-2 m:justify-between">
+      <div class="flex m:mb-2 m:justify-between" data-test-id="application-header">
         <div class="mobile:grid mobile:grid-cols-10 flex desktop:items-center">
           <BcrosTypographyH1
             :text="
@@ -15,8 +15,14 @@
             "
             class="mobile:text-6 mobile:col-span-7"
             no-spacing
+            data-test-id="application-title"
           />
-          <BcrosChip v-if="flavour" :flavour="flavour" class="ml-[16px] mobile:mt-4 mobile:col-span-3">
+          <BcrosChip
+            v-if="flavour"
+            :flavour="flavour"
+            class="ml-[16px] mobile:mt-4 mobile:col-span-3"
+            data-test-id="application-status-chip"
+          >
             {{ flavour.text }}
           </BcrosChip>
         </div>
@@ -30,7 +36,9 @@
         <div class="bg-white py-[22px] px-[30px] mobile:px-5">
           <div class="flex flex-row justify-between w-full mobile:flex-col">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('status')">
-              <p>{{ displayApplicationStatus() }}</p>
+              <p data-test-id="application-status-text">
+                {{ displayApplicationStatus() }}
+              </p>
             </BcrosFormSectionReviewItem>
           </div>
         </div>
@@ -42,18 +50,26 @@
         <div class="bg-white py-[22px] px-[30px] mobile:px-5" data-test-id="rental-unit-info">
           <div class="flex flex-row justify-between w-full mobile:flex-col desktop:mb-6">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('nickname')">
-              <p>{{ applicationDetails?.unitAddress.nickname ?? '-' }}</p>
+              <p data-test-id="unit-nickname">
+                {{ applicationDetails?.unitAddress.nickname ?? '-' }}
+              </p>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem :title="tApplicationDetails('businessLicense')">
-              <p>{{ applicationDetails?.unitDetails.businessLicense ?? '-' }}</p>
+              <p data-test-id="business-license">
+                {{ applicationDetails?.unitDetails.businessLicense ?? '-' }}
+              </p>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem :title="tApplicationDetails('ownership')">
-              <p>{{ getOwnershipTypeDisplay(applicationDetails?.unitDetails.ownershipType, tApplicationDetails) }}</p>
+              <p data-test-id="ownership-type">
+                {{ getOwnershipTypeDisplay(applicationDetails?.unitDetails.ownershipType, tApplicationDetails) }}
+              </p>
             </BcrosFormSectionReviewItem>
           </div>
           <div class="flex flex-row justify-between w-full mobile:flex-col">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('address')">
-              <p>{{ applicationDetails?.unitAddress.address }}</p>
+              <p data-test-id="unit-address">
+                {{ applicationDetails?.unitAddress.address }}
+              </p>
               <p v-if="applicationDetails?.unitAddress.addressLineTwo">
                 {{ applicationDetails?.unitAddress.addressLineTwo }}
               </p>
@@ -69,7 +85,7 @@
               </p>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem :title="tApplicationDetails('propertyType')">
-              <p>
+              <p data-test-id="property-type">
                 {{ applicationDetails?.unitDetails.propertyType
                   ? tPropertyForm(
                     propertyTypeMap[applicationDetails?.unitDetails.propertyType as keyof PropertyTypeMapI]
@@ -88,6 +104,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     class="text-ellipsis overflow-hidden break-words"
+                    data-test-id="platform-url-1"
                   >
                     {{ applicationDetails?.listingDetails[0].url }}
                   </a>
@@ -114,6 +131,7 @@
                         target="_blank"
                         rel="noopener noreferrer"
                         class="text-ellipsis overflow-hidden break-words"
+                        :data-test-id="`platform-url-${index + 2}`"
                       >
                         {{ listingDetail.url }}
                       </a>
@@ -124,27 +142,31 @@
             </div>
           </div>
         </div>
-        <div class="mt-10 relative overflow-x-scroll">
+        <div class="mt-10 relative overflow-x-scroll" data-test-id="primary-contact">
           <p class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('primaryContact') }}
           </p>
           <div class="d:hidden">
             <div class="bg-white py-[22px] px-[30px] mobile:px-5">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('name')">
-                <p>{{ (applicationDetails ? getContactRows(applicationDetails?.primaryContact): [])[0].name }}</p>
+                <p data-test-id="primary-contact-name">
+                  {{ (applicationDetails ? getContactRows(applicationDetails?.primaryContact): [])[0].name }}
+                </p>
               </BcrosFormSectionReviewItem>
               <BcrosFormSectionReviewItem :title="tApplicationDetails('address')">
-                <p>{{ (applicationDetails ? getContactRows(applicationDetails?.primaryContact): [])[0].address }}</p>
+                <p data-test-id="primary-contact-address">
+                  {{ (applicationDetails ? getContactRows(applicationDetails?.primaryContact): [])[0].address }}
+                </p>
               </BcrosFormSectionReviewItem>
               <BcrosFormSectionReviewItem :title="tApplicationDetails('email')">
-                <p>
+                <p data-test-id="primary-contact-email">
                   {{
                     (applicationDetails ? getContactRows(applicationDetails?.primaryContact): [])[0]['Email Address']
                   }}
                 </p>
               </BcrosFormSectionReviewItem>
               <BcrosFormSectionReviewItem :title="tApplicationDetails('phone')">
-                <p>
+                <p data-test-id="primary-contact-phone">
                   {{
                     (applicationDetails ? getContactRows(applicationDetails?.primaryContact): [])[0]['Phone Number']
                   }}
@@ -156,27 +178,35 @@
             <UTable :rows="applicationDetails ? getContactRows(applicationDetails?.primaryContact): []" />
           </div>
         </div>
-        <div v-if="applicationDetails && applicationDetails?.secondaryContact" class="mt-10 relative overflow-x-scroll">
+        <div
+          v-if="applicationDetails && applicationDetails?.secondaryContact"
+          class="mt-10 relative overflow-x-scroll"
+          data-test-id="secondary-contact"
+        >
           <p class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('secondaryContact') }}
           </p>
           <div class="d:hidden">
             <div class="bg-white py-[22px] px-[30px] mobile:px-5">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('name')">
-                <p>{{ (applicationDetails ? getContactRows(applicationDetails?.secondaryContact): [])[0].name }}</p>
+                <p data-test-id="secondary-contact-name">
+                  {{ (applicationDetails ? getContactRows(applicationDetails?.secondaryContact): [])[0].name }}
+                </p>
               </BcrosFormSectionReviewItem>
               <BcrosFormSectionReviewItem :title="tApplicationDetails('address')">
-                <p>{{ (applicationDetails ? getContactRows(applicationDetails?.secondaryContact): [])[0].address }}</p>
+                <p data-test-id="secondary-contact-address">
+                  {{ (applicationDetails ? getContactRows(applicationDetails?.secondaryContact): [])[0].address }}
+                </p>
               </BcrosFormSectionReviewItem>
               <BcrosFormSectionReviewItem :title="tApplicationDetails('email')">
-                <p>
+                <p data-test-id="secondary-contact-email">
                   {{
                     (applicationDetails ? getContactRows(applicationDetails?.secondaryContact): [])[0]['Email Address']
                   }}
                 </p>
               </BcrosFormSectionReviewItem>
               <BcrosFormSectionReviewItem :title="tApplicationDetails('phone')">
-                <p>
+                <p data-test-id="secondary-contact-phone">
                   {{
                     (applicationDetails ? getContactRows(applicationDetails?.secondaryContact): [])[0]['Phone Number']
                   }}
@@ -188,13 +218,13 @@
             <UTable :rows="getContactRows(applicationDetails?.secondaryContact)" />
           </div>
         </div>
-        <div class="mt-10 relative overflow-x-scroll">
+        <div class="mt-10 relative overflow-x-scroll" data-test-id="principal-residence">
           <p class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('principalResidence') }}
           </p>
           <div class="bg-white py-[22px] px-[30px] mobile:px-5">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
-              <p>
+              <p data-test-id="principal-residence-proof">
                 {{
                   applicationDetails.principalResidence.isPrincipalResidence
                     ? tApplicationDetails('principalResidenceApplies')
@@ -219,7 +249,7 @@
             </BcrosFormSectionReviewItem>
           </div>
         </div>
-        <div v-if="documents.length" class="mt-10">
+        <div v-if="documents.length" class="mt-10" data-test-id="documents-section">
           <p class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('documents') }}
           </p>
@@ -230,6 +260,7 @@
                   <UButton
                     class="px-0 underline"
                     variant="link"
+                    :data-test-id="`document-${document.fileKey}`"
                     @click="downloadDocument(document)"
                   >
                     <img
@@ -245,7 +276,7 @@
           </div>
         </div>
         <template v-if="isExaminer">
-          <div class="mt-10">
+          <div class="mt-10" data-test-id="ltsa-info-section">
             <p class="font-bold mb-6 mobile:mx-2 text-xl">
               {{ tApplicationDetails('ltsaInfo') }}
             </p>
@@ -254,11 +285,12 @@
               :href="`/application-details/${applicationId}/ltsa`"
               target="_blank"
               rel="noopener"
+              data-test-id="ltsa-details-link"
             >
               {{ tApplicationDetails('ltsaDetails') }}
             </a>
           </div>
-          <div class="mt-10">
+          <div class="mt-10" data-test-id="auto-approval-section">
             <p class="font-bold mb-6 mobile:mx-2">
               {{ tApplicationDetails('autoApprovalLogic') }}
             </p>
@@ -267,6 +299,7 @@
               :href="`/application-details/${applicationId}/auto-approval`"
               target="_blank"
               rel="noopener"
+              data-test-id="auto-approval-details-link"
             >
               {{ tApplicationDetails('autoApprovalDetails') }}
             </a>
@@ -277,6 +310,7 @@
           :header="tApplicationDetails('filing')"
           :history="applicationHistory"
           class="mt-10"
+          data-test-id="filing-history"
         />
       </div>
     </div>
@@ -285,6 +319,9 @@
 
 <script setup lang="ts">
 import FilingHistory from '~/components/FilingHistory.vue'
+import { useApplications } from '~/composables/useApplications'
+import { useBreadcrumb } from '~/composables/useBreadcrumb'
+import { useChipFlavour } from '~/composables/useChipFlavour'
 import { propertyTypeMap } from '~/utils/propertyTypeMap'
 import { getOwnershipTypeDisplay } from '@/utils/common'
 import { ApplicationStatusE, HostApplicationStatusE, ExaminerApplicationStatusE } from '#imports'
@@ -334,9 +371,9 @@ const examinerOrHostStatus = computed(() => {
 const applicationStatus = application?.header.status
 const flavour = application ? getChipFlavour(examinerOrHostStatus.value || applicationStatus) : null
 
-const getApplicationStatusTranslation = (status, isExaminer) => {
+const getApplicationStatusTranslation = (status) => {
   const commonStatusMap = {
-    [ApplicationStatusE.PROVISIONAL]: 'PROVISIONAL',
+    [ApplicationStatusE.PROVISIONAL]: 'provisional',
     [ApplicationStatusE.ADDITIONAL_INFO_REQUESTED]: 'additionalInfoRequested',
     [HostApplicationStatusE.DRAFT]: 'draft',
     [ExaminerApplicationStatusE.DRAFT]: 'draft',
@@ -344,48 +381,20 @@ const getApplicationStatusTranslation = (status, isExaminer) => {
     [ExaminerApplicationStatusE.DECLINED]: 'declined'
   }
   const roleSpecificStatusMap = {
-    [HostApplicationStatusE.PAYMENT_DUE]: isExaminer
-      ? 'examinerStatuses.paymentDue'
-      : 'hostStatuses.paymentDue',
-    [ExaminerApplicationStatusE.PAYMENT_DUE]: isExaminer
-      ? 'examinerStatuses.paymentDue'
-      : 'hostStatuses.paymentDue',
-    [HostApplicationStatusE.PAID]: isExaminer
-      ? 'examinerStatuses.paid'
-      : 'hostStatuses.paid',
-    [ExaminerApplicationStatusE.PAID]: isExaminer
-      ? 'examinerStatuses.paid'
-      : 'hostStatuses.paid',
-    [HostApplicationStatusE.AUTO_APPROVED]: isExaminer
-      ? 'examinerStatuses.autoApproved'
-      : 'hostStatuses.autoApproved',
-    [ExaminerApplicationStatusE.AUTO_APPROVED]: isExaminer
-      ? 'examinerStatuses.autoApproved'
-      : 'hostStatuses.autoApproved',
-    [HostApplicationStatusE.PROVISIONALLY_APPROVED]: isExaminer
-      ? 'examinerStatuses.provisionalApproved'
-      : 'hostStatuses.provisionalApproved',
-    [ExaminerApplicationStatusE.PROVISIONALLY_APPROVED]: isExaminer
-      ? 'examinerStatuses.provisionalApproved'
-      : 'hostStatuses.provisionalApproved',
-    [HostApplicationStatusE.PROVISIONAL_REVIEW]: isExaminer
-      ? 'examinerStatuses.provisionalReview'
-      : 'hostStatuses.provisionalReview',
-    [ExaminerApplicationStatusE.PROVISIONAL_REVIEW]: isExaminer
-      ? 'examinerStatuses.provisionalReview'
-      : 'hostStatuses.provisionalReview',
-    [HostApplicationStatusE.FULL_REVIEW_APPROVED]: isExaminer
-      ? 'examinerStatuses.fullReviewApproved'
-      : 'hostStatuses.fullReviewApproved',
-    [ExaminerApplicationStatusE.FULL_REVIEW_APPROVED]: isExaminer
-      ? 'examinerStatuses.fullReviewApproved'
-      : 'hostStatuses.fullReviewApproved',
-    [HostApplicationStatusE.FULL_REVIEW]: isExaminer
-      ? 'examinerStatuses.fullReview'
-      : 'hostStatuses.fullReview',
-    [ExaminerApplicationStatusE.FULL_REVIEW]: isExaminer
-      ? 'examinerStatuses.fullReview'
-      : 'hostStatuses.fullReview'
+    [HostApplicationStatusE.PAYMENT_DUE]: 'hostStatuses.paymentDue',
+    [ExaminerApplicationStatusE.PAYMENT_DUE]: 'examinerStatuses.paymentDue',
+    [HostApplicationStatusE.PAID]: 'hostStatuses.paid',
+    [ExaminerApplicationStatusE.PAID]: 'examinerStatuses.paid',
+    [HostApplicationStatusE.AUTO_APPROVED]: 'hostStatuses.autoApproved',
+    [ExaminerApplicationStatusE.AUTO_APPROVED]: 'examinerStatuses.autoApproved',
+    [HostApplicationStatusE.PROVISIONALLY_APPROVED]: 'hostStatuses.provisionalApproved',
+    [ExaminerApplicationStatusE.PROVISIONALLY_APPROVED]: 'examinerStatuses.provisionalApproved',
+    [HostApplicationStatusE.PROVISIONAL_REVIEW]: 'hostStatuses.provisionalReview',
+    [ExaminerApplicationStatusE.PROVISIONAL_REVIEW]: 'examinerStatuses.provisionalReview',
+    [HostApplicationStatusE.FULL_REVIEW_APPROVED]: 'hostStatuses.fullReviewApproved',
+    [ExaminerApplicationStatusE.FULL_REVIEW_APPROVED]: 'examinerStatuses.fullReviewApproved',
+    [HostApplicationStatusE.FULL_REVIEW]: 'hostStatuses.fullReview',
+    [ExaminerApplicationStatusE.FULL_REVIEW]: 'examinerStatuses.fullReview'
   }
   return commonStatusMap[status] || roleSpecificStatusMap[status] || '-'
 }
@@ -394,7 +403,7 @@ const displayApplicationStatus = () => {
   if (!applicationStatus) {
     return '-'
   }
-  const statusTranslation = getApplicationStatusTranslation(examinerOrHostStatus.value || applicationStatus, isExaminer)
+  const statusTranslation = getApplicationStatusTranslation(examinerOrHostStatus.value || applicationStatus)
   return tApplicationDetails(statusTranslation)
 }
 

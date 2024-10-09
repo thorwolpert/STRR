@@ -17,9 +17,9 @@ it('can mount Chip component', async () => {
     {
       global: { plugins: [i18n] },
       props: {
-        flavour: getChipFlavour('APPROVED')
+        flavour: getChipFlavour('ACTIVE')
       }
     })
   expect(chip.find('[data-test-id="chip"]').exists()).toBe(true)
-  expect(chip.text()).toEqual(tRegistryDashboardStatus('approved'))
+  expect(chip.text()).toEqual(tRegistryDashboardStatus('active'))
 })

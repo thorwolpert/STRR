@@ -1,4 +1,4 @@
-import { ApplicationStatusE, HostApplicationStatusE, ExaminerApplicationStatusE, AlertsFlavourE } from '#imports'
+import { ApplicationStatusE, RegistrationStatusE, AlertsFlavourE } from '#imports'
 
 export const useChipFlavour = () => {
   const { t } = useTranslation()
@@ -19,23 +19,15 @@ export const useChipFlavour = () => {
 
   const getChipFlavour = (status: string): StatusChipFlavoursI['flavour'] => {
     switch (status) {
-      case 'ACTIVE':
+      case RegistrationStatusE.ACTIVE:
         return statusMap(AlertsFlavourE.SUCCESS, 'active')
-      case 'DENIED':
-        return statusMap(AlertsFlavourE.ALERT, 'denied')
-      case 'APPROVED':
-        return statusMap(AlertsFlavourE.SUCCESS, 'approved')
-      case 'ISSUED':
-        return statusMap(AlertsFlavourE.SUCCESS, 'issued')
-      case 'REJECTED':
-        return statusMap(AlertsFlavourE.ALERT, 'rejected')
-      case 'PENDING':
-        return statusMap(AlertsFlavourE.WARNING, 'pending')
-      case 'UNDER_REVIEW':
-        return statusMap(AlertsFlavourE.APPLIED, 'underReview')
-      case 'SUBMITTED':
-        return statusMap(AlertsFlavourE.APPLIED, 'submitted')
-      case 'PAID':
+      case RegistrationStatusE.SUSPENDED:
+        return statusMap(AlertsFlavourE.ALERT, 'suspended')
+      case RegistrationStatusE.EXPIRED:
+        return statusMap(AlertsFlavourE.WARNING, 'expired')
+      case RegistrationStatusE.CANCELLED:
+        return statusMap(AlertsFlavourE.ALERT, 'cancelled')
+      case ApplicationStatusE.PAID:
       case HostApplicationStatusE.PAID:
       case ExaminerApplicationStatusE.PAID:
         return examinerOrHostStatusMap(AlertsFlavourE.APPLIED, 'paid')
