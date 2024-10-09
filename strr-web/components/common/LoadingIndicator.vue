@@ -1,23 +1,33 @@
 <script setup lang="ts">
+const props = defineProps<{
+  isLoading?: boolean
+}>()
+
+const { isLoading } = props
+
 const nuxtApp = useNuxtApp()
 
-const isLoading = ref(false)
+const isPageLoading = ref(false)
 
 // Listen for the 'page:start' event, which is triggered when a new page is about to be loaded
 nuxtApp.hook('page:start', () => {
-  isLoading.value = true
+  isPageLoading.value = true
 })
 
 // Listen for the 'page:finish' event, which is triggered when the page has finished loading
 nuxtApp.hook('page:finish', () => {
-  isLoading.value = false
+  isPageLoading.value = false
 })
+
+// Combined loading state that reflects both the prop and the page loading status
+const combinedLoading = computed(() => isLoading || isPageLoading.value)
+
 </script>
 
 <template>
   <div>
     <UModal
-      v-model="isLoading"
+      v-model="combinedLoading"
       prevent-close
       :ui="{
         container: 'items-center',

@@ -45,6 +45,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
     params.delete('code')
     params.delete('error')
     params.delete('iss')
-    await navigateTo(to.path + (params.size > 0 ? `?${params}` : '') + to.hash)
+    to.fullPath = to.path + (params.size > 0 ? `?${params}` : '') + to.hash
   }
 })
