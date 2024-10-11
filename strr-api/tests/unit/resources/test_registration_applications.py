@@ -78,7 +78,7 @@ def test_get_application_details(session, client, jwt):
         rv = client.get(f"/applications/{application_number}")
         assert HTTPStatus.UNAUTHORIZED == rv.status_code
 
-        rv = client.get(f"/applications/{application_number + "1"}", headers=headers)
+        rv = client.get(f"/applications/{application_number}1", headers=headers)
         assert HTTPStatus.NOT_FOUND == rv.status_code
 
 
