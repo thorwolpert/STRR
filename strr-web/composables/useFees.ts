@@ -42,14 +42,15 @@ export const useFees = () => {
   // Wrapper function to get Application fee for Large Platform (>1000 listings)
   const getLargePlatformApplicationFee = () => getPlatformApplicationFee('LG')
 
-  const createInvoiceRecord = (invoiceId: string, applicationId: string) => {
-    axiosInstance.post(`${apiURL}/registrations/${applicationId}/invoice/${invoiceId}/paid`)
+  // TODO: Needs to removed
+  const createInvoiceRecord = (invoiceId: string, applicationNumber: string) => {
+    axiosInstance.post(`${apiURL}/registrations/${applicationNumber}/invoice/${invoiceId}/paid`)
   }
 
-  const handlePaymentRedirect = async (invoiceId: number, applicationId: number) => {
+  const handlePaymentRedirect = async (invoiceId: number, applicationNumber: string) => {
     const paymentUrl = config.public.authWebURL + 'makepayment'
     const returnUrl = encodeURIComponent(
-      `${window.location.href.replace('create-account', `success/${applicationId}/invoice/${invoiceId}`)}`
+      `${window.location.href.replace('create-account', `success/${applicationNumber}/invoice/${invoiceId}`)}`
     )
     const payUrl = `${paymentUrl}/${invoiceId}/${returnUrl}`
     await navigateTo(payUrl, { external: true })

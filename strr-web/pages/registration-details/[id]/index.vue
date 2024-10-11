@@ -2,7 +2,7 @@
   <div data-test-id="reg-details">
     <BcrosBanner
       :hide-buttons="!isExaminer"
-      :application-id="registrationId"
+      :application-number="registrationId"
       :registration-id="registrationId"
     >
       <div data-test-id="reg-details-header" class="flex items-center m:mb-2 m:justify-between">

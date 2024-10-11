@@ -58,7 +58,7 @@ describe('Breadcrumb Tests', () => {
 
     expect(breadcrumbItems.length).toBe(2)
     expect(breadcrumbItems[0].text()).toBe(tBreadcrumb('hostDashboard'))
-    expect(breadcrumbItems[1].text()).toBe('Application #' + mockApplicationApproved.header.id)
+    expect(breadcrumbItems[1].text()).toBe('Application #' + mockApplicationApproved.header.applicationNumber)
 
     // Terms of Service page - Breadcrumb should not exist
     mockRoute(RouteNamesE.TERMS_OF_SERVICE)

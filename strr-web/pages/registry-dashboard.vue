@@ -65,22 +65,22 @@
       >
         <!-- Only way to do row clicks in NuxtUI currently -->
         <template #application-data="{ row }">
-          <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationId)">
+          <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationNumber)">
             {{ row.applicationNumber }}
           </div>
         </template>
         <template #location-data="{ row }">
-          <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationId)">
+          <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationNumber)">
             {{ row.location }}
           </div>
         </template>
         <template #address-data="{ row }">
-          <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationId)">
+          <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationNumber)">
             {{ row.address }}
           </div>
         </template>
         <template #owner-data="{ row }">
-          <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationId)">
+          <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationNumber)">
             {{ row.owner }}
           </div>
         </template>
@@ -93,7 +93,7 @@
         <template #submission-data="{ row }">
           <div
             class="cursor-pointer w-full"
-            @click="navigateToDetails(row.applicationId)"
+            @click="navigateToDetails(row.applicationNumber)"
           >
             {{ new Date(row.submissionDate).toLocaleDateString('en-US', { dateStyle: 'medium'}) }}
           </div>
@@ -217,7 +217,6 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
     const { header, registration: { unitAddress, primaryContact } } = application
 
     const row = {
-      applicationId: header.id.toString(),
       applicationNumber: header.applicationNumber,
       location: unitAddress.city,
       address: unitAddress.address,
