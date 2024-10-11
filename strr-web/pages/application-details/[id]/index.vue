@@ -2,7 +2,7 @@
   <div data-test-id="application-details">
     <BcrosBanner
       :hide-buttons="!isExaminer"
-      :application-id="isApprovedOrRejected ? '' : applicationId"
+      :application-number="isApprovedOrRejected ? '' : applicationNumber"
       :registration-id="registrationId"
       class="mobile:h-auto"
     >
@@ -11,7 +11,7 @@
           <BcrosTypographyH1
             :text="
               `${applicationDetails?.unitAddress.nickname ?? ''} ${tApplicationDetails('applicationTitle')}
-              #${application?.header.id ?? '-'}`
+              #${application?.header.applicationNumber ?? '-'}`
             "
             class="mobile:text-6 mobile:col-span-7"
             no-spacing
@@ -282,7 +282,7 @@
             </p>
             <a
               class="mobile:mx-2"
-              :href="`/application-details/${applicationId}/ltsa`"
+              :href="`/application-details/${applicationNumber}/ltsa`"
               target="_blank"
               rel="noopener"
               data-test-id="ltsa-details-link"
@@ -296,7 +296,7 @@
             </p>
             <a
               class="mobile:mx-2"
-              :href="`/application-details/${applicationId}/auto-approval`"
+              :href="`/application-details/${applicationNumber}/auto-approval`"
               target="_blank"
               rel="noopener"
               data-test-id="auto-approval-details-link"
@@ -336,7 +336,7 @@ const { getChipFlavour } = useChipFlavour()
 
 const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' })
 
-const applicationId = route.params.id.toString()
+const applicationNumber = route.params.id.toString()
 
 const {
   getApplication,
@@ -349,8 +349,8 @@ const {
 } = useBreadcrumb()
 
 const [application, applicationHistory]: [ApplicationI, FilingHistoryEventI[]] = await Promise.all([
-  getApplication(applicationId),
-  getApplicationHistory(applicationId)
+  getApplication(applicationNumber),
+  getApplicationHistory(applicationNumber)
 ])
 
 setupBreadcrumbData(application)
@@ -409,7 +409,7 @@ const displayApplicationStatus = () => {
 }
 
 const downloadDocument = async (supportingDocument: DocumentUploadI) => {
-  const file = await getDocument(applicationId, supportingDocument.fileKey)
+  const file = await getDocument(applicationNumber, supportingDocument.fileKey)
   const link = document.createElement('a')
 
   link.href = URL.createObjectURL(file)

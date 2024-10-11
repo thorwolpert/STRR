@@ -24,7 +24,7 @@
     </div>
     <div class="flex flex-row text-bcGovColor-activeBlue justify-start">
       <BcrosButtonsPrimary
-        :action="() => navigateTo(`/application-details/${applicationId}`, { open: { target: '_blank' } })"
+        :action="() => navigateTo(`/application-details/${applicationNumber}`, { open: { target: '_blank' } })"
         :label="tRegistrationStatus('view')"
         class-name="px-4 py-1 mobile:grow-0"
         variant="ghost"
@@ -72,7 +72,7 @@ const {
 }>()
 
 const { registrationId, registrationNumber, status, hostStatus, examinerStatus, registrationStatus } = applicationHeader
-const applicationId = applicationHeader.id.toString()
+const applicationNumber = applicationHeader.applicationNumber
 const flavour = computed(() => {
   if (isExaminer) {
     return getChipFlavour(examinerStatus || status)

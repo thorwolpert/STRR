@@ -38,7 +38,7 @@
       <div class="flex flex-row mobile:flex-col flex-wrap">
         <div
           v-for="(application, index) in applications"
-          :key="application?.header.id"
+          :key="application?.header.applicationNumber"
           :class="[
             (applications && applications?.length > 1) ? 'desktop:w-[calc(33.33%)]' : 'desktop:w-full flex-grow flex-1',
             'flex flex-row mobile:flex-col'
