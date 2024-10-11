@@ -6,7 +6,7 @@
   >
     <div class="d:flex justify-between px-4 w-full max-w-[1360px]">
       <slot />
-      <div v-if="userActions" cla ss="flex gap-4">
+      <div v-if="userActions" class="flex gap-4">
         <div v-for="(action, index) in userActions" :key="index">
           <BcrosButtonsPrimary
             :label="t(`banner.${action}`)"
