@@ -49,10 +49,10 @@ export const useFees = () => {
 
   const handlePaymentRedirect = async (invoiceId: number, applicationNumber: string) => {
     const paymentUrl = config.public.authWebURL + 'makepayment'
-    const returnUrl = encodeURIComponent(
-      `${window.location.href.replace('create-account', `success/${applicationNumber}/invoice/${invoiceId}`)}`
-    )
-    const payUrl = `${paymentUrl}/${invoiceId}/${returnUrl}`
+    const currentUrl = window.location.href
+    const successPath = 'success/' + applicationNumber + '/invoice/' + invoiceId
+    const returnUrl = encodeURIComponent(currentUrl.replace('create-account', successPath))
+    const payUrl = paymentUrl + '/' + invoiceId + '/' + returnUrl
     await navigateTo(payUrl, { external: true })
   }
 
