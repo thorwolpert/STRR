@@ -14,7 +14,7 @@ export const useChipFlavour = () => {
     alert: flavour,
     text: isExaminer
       ? tStatuses(`examinerStatuses.${commonKey}`)
-      : tStatuses(`hostStatuses.${commonKey || hostSpecificKey}`)
+      : tStatuses(`hostStatuses.${hostSpecificKey || commonKey}`)
   })
 
   const getChipFlavour = (status: string): StatusChipFlavoursI['flavour'] => {
