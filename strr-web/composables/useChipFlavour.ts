@@ -10,11 +10,11 @@ export const useChipFlavour = () => {
     text: tStatuses(translationKey)
   })
 
-  const examinerOrHostStatusMap = (flavour: AlertsFlavourE, examinerKey: string, hostKey: string) => ({
+  const examinerOrHostStatusMap = (flavour: AlertsFlavourE, key: string, hostSpecificKey?: string) => ({
     alert: flavour,
     text: isExaminer
-      ? tStatuses(`examinerStatuses.${examinerKey}`)
-      : tStatuses(`hostStatuses.${hostKey}`)
+      ? tStatuses(`examinerStatuses.${key}`)
+      : tStatuses(`hostStatuses.${key || hostSpecificKey}`)
   })
 
   const getChipFlavour = (status: string): StatusChipFlavoursI['flavour'] => {
@@ -46,28 +46,28 @@ export const useChipFlavour = () => {
       case ApplicationStatusE.PAID:
       case HostApplicationStatusE.PAID:
       case ExaminerApplicationStatusE.PAID:
-        return examinerOrHostStatusMap(AlertsFlavourE.APPLIED, 'paid', 'paid')
+        return examinerOrHostStatusMap(AlertsFlavourE.APPLIED, 'paid')
       case ApplicationStatusE.AUTO_APPROVED:
       case HostApplicationStatusE.AUTO_APPROVED:
       case ExaminerApplicationStatusE.AUTO_APPROVED:
-        return examinerOrHostStatusMap(AlertsFlavourE.SUCCESS, 'autoApproved', 'autoApproved')
+        return examinerOrHostStatusMap(AlertsFlavourE.SUCCESS, 'autoApproved')
       case ApplicationStatusE.PROVISIONALLY_APPROVED:
       case HostApplicationStatusE.PROVISIONALLY_APPROVED:
-        return examinerOrHostStatusMap(AlertsFlavourE.SUCCESS, 'provisionalApproved', 'provisionalApproved')
+        return examinerOrHostStatusMap(AlertsFlavourE.SUCCESS, 'provisionalApproved')
       case ExaminerApplicationStatusE.PROVISIONALLY_APPROVED:
       case HostApplicationStatusE.PROVISIONAL_REVIEW:
         return examinerOrHostStatusMap(AlertsFlavourE.SUCCESS, 'provisionalApproved', 'provisionalReview')
       case ApplicationStatusE.FULL_REVIEW_APPROVED:
       case HostApplicationStatusE.FULL_REVIEW_APPROVED:
       case ExaminerApplicationStatusE.FULL_REVIEW_APPROVED:
-        return examinerOrHostStatusMap(AlertsFlavourE.SUCCESS, 'fullReviewApproved', 'fullReviewApproved')
+        return examinerOrHostStatusMap(AlertsFlavourE.SUCCESS, 'fullReviewApproved')
       case ApplicationStatusE.PROVISIONAL_REVIEW:
       case ExaminerApplicationStatusE.PROVISIONAL_REVIEW:
-        return examinerOrHostStatusMap(AlertsFlavourE.SUCCESS, 'provisionalReview', 'provisionalReview')
+        return examinerOrHostStatusMap(AlertsFlavourE.SUCCESS, 'provisionalReview')
       case ApplicationStatusE.FULL_REVIEW:
       case HostApplicationStatusE.FULL_REVIEW:
       case ExaminerApplicationStatusE.FULL_REVIEW:
-        return examinerOrHostStatusMap(AlertsFlavourE.APPLIED, 'fullReview', 'fullReview')
+        return examinerOrHostStatusMap(AlertsFlavourE.APPLIED, 'fullReview')
       default:
         return { alert: AlertsFlavourE.MESSAGE, text: '' }
     }
