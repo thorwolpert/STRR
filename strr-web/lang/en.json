@@ -150,9 +150,10 @@
     "rent": "Rent"
   },
   "banner": {
-    "approve": "Approve",
-    "reject": "Reject",
-    "issue": "Issue Certificate"
+    "SUBMIT_PAYMENT": "Submit Payment",
+    "ISSUE_CERTIFICATE": "Issue Certificate",
+    "APPROVE": "Approve",
+    "REJECT": "Reject"
   },
   "finalization": {
     "title": "Service BC Account Creation",
