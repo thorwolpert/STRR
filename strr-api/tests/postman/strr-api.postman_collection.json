@@ -22,7 +22,7 @@
 									"    pm.response.to.have.status(201);",
 									"});",
 									"",
-									"pm.environment.set(\"application_number\",jsonData.header.applicationNumber)"
+									"pm.environment.set(\"application_id\",jsonData.header.id)"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -82,7 +82,7 @@
 									"    pm.response.to.have.status(201);",
 									"});",
 									"",
-									"pm.environment.set(\"application_number\",jsonData.header.applicationNumber)"
+									"pm.environment.set(\"application_id\",jsonData.header.id)"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -151,13 +151,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}/payment-details",
+							"raw": "{{api_url}}/applications/{{application_id}}/payment-details",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}",
+								"{{application_id}}",
 								"payment-details"
 							]
 						}
@@ -251,13 +251,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}",
+							"raw": "{{api_url}}/applications/{{application_id}}",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}"
+								"{{application_id}}"
 							]
 						}
 					},
@@ -279,13 +279,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}/events",
+							"raw": "{{api_url}}/applications/{{application_id}}/events",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}",
+								"{{application_id}}",
 								"events"
 							]
 						}
@@ -324,13 +324,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}/ltsa",
+							"raw": "{{api_url}}/applications/{{application_id}}/ltsa",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}",
+								"{{application_id}}",
 								"ltsa"
 							]
 						}
@@ -369,13 +369,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}/auto-approval-records",
+							"raw": "{{api_url}}/applications/{{application_id}}/auto-approval-records",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}",
+								"{{application_id}}",
 								"auto-approval-records"
 							]
 						}
@@ -407,13 +407,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}/status",
+							"raw": "{{api_url}}/applications/{{application_id}}/status",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}",
+								"{{application_id}}",
 								"status"
 							]
 						}
@@ -445,13 +445,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}/status",
+							"raw": "{{api_url}}/applications/{{application_id}}/status",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}",
+								"{{application_id}}",
 								"status"
 							]
 						}
@@ -508,13 +508,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}/documents",
+							"raw": "{{api_url}}/applications/{{application_id}}/documents",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}",
+								"{{application_id}}",
 								"documents"
 							]
 						}
@@ -544,13 +544,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}/documents/{{file_key}}",
+							"raw": "{{api_url}}/applications/{{application_id}}/documents/{{file_key}}",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}",
+								"{{application_id}}",
 								"documents",
 								"{{file_key}}"
 							]
@@ -594,13 +594,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}/documents/{{file_key}}",
+							"raw": "{{api_url}}/applications/{{application_id}}/documents/{{file_key}}",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}",
+								"{{application_id}}",
 								"documents",
 								"{{file_key}}"
 							]
@@ -721,13 +721,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}/payment/receipt",
+							"raw": "{{api_url}}/applications/{{application_id}}/payment/receipt",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}",
+								"{{application_id}}",
 								"payment",
 								"receipt"
 							]
@@ -765,13 +765,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{api_url}}/applications/{{application_number}}/status",
+							"raw": "{{api_url}}/applications/{{application_id}}/status",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications",
-								"{{application_number}}",
+								"{{application_id}}",
 								"status"
 							]
 						}

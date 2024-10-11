@@ -14,17 +14,16 @@ class AutoApprovalRecord(BaseModel):
     """AutoApprovalRecord response object."""
 
     id: int
-    applicationNumber: str
+    applicationId: Optional[int]
     record: AutoApproval
     creationDate: datetime
 
     @classmethod
     def from_db(cls, source: models.AutoApprovalRecord):
         """Return an AutoApprovalRecord object from a database model."""
-        application = models.Application.find_by_id(source.application_id)
         return cls(
             id=source.id,
-            applicationNumber=application.application_number if application else None,
+            applicationId=source.application_id,
             record=AutoApproval(**source.record),
             creationDate=source.creation_date,
         )
