@@ -52,10 +52,9 @@ export const mockApplicationDetails: ApplicationDetailsI = {
 
 export const mockApplicationApproved: ApplicationI = {
   header: {
-    applicationNumber: '',
+    applicationNumber: '41447512384286',
     applicationDateTime: '2024-08-14T22:24:42.006030+00:00',
     decisionDate: '2024-08-16T11:08:40.948148+00:00',
-    id: 1,
     name: 'registration',
     paymentAccount: '1699',
     paymentStatus: 'CREATED',
@@ -76,8 +75,8 @@ export const mockApplicationApproved: ApplicationI = {
     },
     hostActions: [],
     examinerActions: [ExaminerActionsE.ISSUE_CERTIFICATE],
-    hostStatus: '',
-    examinerStatus: ''
+    hostStatus: HostApplicationStatusE.AUTO_APPROVED,
+    examinerStatus: ExaminerApplicationStatusE.FULL_REVIEW_APPROVED
   },
   registration: mockApplicationDetails,
   selectedAccount: {
@@ -87,10 +86,9 @@ export const mockApplicationApproved: ApplicationI = {
 
 export const mockApplicationPaymentDue: ApplicationI = {
   header: {
-    applicationNumber: '',
+    applicationNumber: '41447512384286',
     applicationDateTime: '2024-08-14T22:24:42.006030+00:00',
     decisionDate: '2024-08-16T11:08:40.948148+00:00',
-    id: 1,
     name: 'registration',
     paymentAccount: '1699',
     paymentStatus: 'CREATED',
@@ -111,8 +109,8 @@ export const mockApplicationPaymentDue: ApplicationI = {
     },
     hostActions: [HostActionsE.SUBMIT_PAYMENT],
     examinerActions: [],
-    hostStatus: '',
-    examinerStatus: ''
+    hostStatus: HostApplicationStatusE.PAYMENT_DUE,
+    examinerStatus: ExaminerApplicationStatusE.PAYMENT_DUE
   },
   registration: mockApplicationDetails,
   selectedAccount: {
@@ -122,10 +120,9 @@ export const mockApplicationPaymentDue: ApplicationI = {
 
 export const mockApplicationFullReview: ApplicationI = {
   header: {
-    applicationNumber: '',
+    applicationNumber: '41447512384286',
     applicationDateTime: '2024-08-14T22:24:42.006030+00:00',
     decisionDate: '2024-08-16T11:08:40.948148+00:00',
-    id: 1,
     name: 'registration',
     paymentAccount: '1699',
     paymentStatus: 'COMPLETED',
@@ -146,8 +143,8 @@ export const mockApplicationFullReview: ApplicationI = {
     },
     hostActions: [],
     examinerActions: [ExaminerActionsE.APPROVE, ExaminerActionsE.REJECT],
-    hostStatus: '',
-    examinerStatus: ''
+    hostStatus: HostApplicationStatusE.FULL_REVIEW,
+    examinerStatus: ExaminerApplicationStatusE.FULL_REVIEW
   },
   registration: mockApplicationDetails,
   selectedAccount: {
