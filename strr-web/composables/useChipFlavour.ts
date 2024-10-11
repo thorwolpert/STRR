@@ -10,11 +10,11 @@ export const useChipFlavour = () => {
     text: tStatuses(translationKey)
   })
 
-  const examinerOrHostStatusMap = (flavour: AlertsFlavourE, key: string, hostSpecificKey?: string) => ({
+  const examinerOrHostStatusMap = (flavour: AlertsFlavourE, commonKey: string, hostSpecificKey?: string) => ({
     alert: flavour,
     text: isExaminer
-      ? tStatuses(`examinerStatuses.${key}`)
-      : tStatuses(`hostStatuses.${key || hostSpecificKey}`)
+      ? tStatuses(`examinerStatuses.${commonKey}`)
+      : tStatuses(`hostStatuses.${commonKey || hostSpecificKey}`)
   })
 
   const getChipFlavour = (status: string): StatusChipFlavoursI['flavour'] => {
