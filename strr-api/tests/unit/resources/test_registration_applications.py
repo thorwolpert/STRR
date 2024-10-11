@@ -78,7 +78,7 @@ def test_get_application_details(session, client, jwt):
         rv = client.get(f"/applications/{application_number}")
         assert HTTPStatus.UNAUTHORIZED == rv.status_code
 
-        rv = client.get(f"/applications/{application_number + 1}", headers=headers)
+        rv = client.get(f"/applications/{application_number + "1"}", headers=headers)
         assert HTTPStatus.NOT_FOUND == rv.status_code
 
 
@@ -176,7 +176,7 @@ def test_get_application_ltsa(session, client, jwt):
         )
         application.save()
         headers = create_header(jwt, [STRR_EXAMINER], "Account-Id")
-        rv = client.get(f"/applications/{application.id}/ltsa", headers=headers)
+        rv = client.get(f"/applications/{application.application_number}/ltsa", headers=headers)
 
         assert HTTPStatus.OK == rv.status_code
 
@@ -204,7 +204,7 @@ def test_get_application_auto_approval(session, client, jwt):
         )
         application.save()
         headers = create_header(jwt, [STRR_EXAMINER], "Account-Id")
-        rv = client.get(f"/applications/{application.id}/auto-approval-records", headers=headers)
+        rv = client.get(f"/applications/{application.application_number}/auto-approval-records", headers=headers)
 
         assert HTTPStatus.OK == rv.status_code
 
