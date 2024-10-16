@@ -15,17 +15,7 @@ export const useDownloadCertificate = () => {
     URL.revokeObjectURL(link.href)
   }
 
-  const isCertificateIssued = async (id: string): Promise<boolean> => {
-    try {
-      await getCertificate(id)
-      return true
-    } catch (error) {
-      return false
-    }
-  }
-
   return {
-    downloadCertificate,
-    isCertificateIssued
+    downloadCertificate
   }
 }

@@ -31,7 +31,7 @@
       />
 
       <BcrosButtonsPrimary
-        v-if="showDownloadButton"
+        v-if="isCertificateIssued"
         :action="() => downloadCertificate(registrationId.toString())"
         :label="tRegistrationStatus('download')"
         class-name="px-4 py-1 mobile:grow-0"
@@ -42,8 +42,8 @@
 </template>
 
 <script setup lang="ts">
-import { RegistrationStatusE, HostApplicationStatusE, ExaminerApplicationStatusE } from '#imports'
-const { downloadCertificate, isCertificateIssued } = useDownloadCertificate()
+import { HostApplicationStatusE, ExaminerApplicationStatusE } from '#imports'
+const { downloadCertificate } = useDownloadCertificate()
 
 const { t } = useTranslation()
 const tRegistrationStatus = (translationKey: string) => t(`registrationStatus.${translationKey}`)
@@ -59,9 +59,16 @@ const {
   isSingle: boolean,
 }>()
 
-const canDownloadCertificate = ref(false)
-const { registrationId, registrationNumber, status, hostStatus, examinerStatus, registrationStatus } = applicationHeader
-const applicationNumber = applicationHeader.applicationNumber
+const {
+  registrationId,
+  registrationNumber,
+  status,
+  hostStatus,
+  examinerStatus,
+  isCertificateIssued,
+  applicationNumber
+} = applicationHeader
+
 const flavour = computed(() => {
   if (isExaminer) {
     return getChipFlavour(examinerStatus || status)
@@ -70,7 +77,6 @@ const flavour = computed(() => {
   }
 })
 
-const isRegistrationActive: boolean = registrationStatus === RegistrationStatusE.ACTIVE
 const isApproved = computed(() => {
   if (isExaminer) {
     return [
@@ -85,11 +91,5 @@ const isApproved = computed(() => {
       HostApplicationStatusE.FULL_REVIEW_APPROVED
     ].includes(hostStatus)
   }
-})
-const showDownloadButton = computed(() => isRegistrationActive && canDownloadCertificate.value)
-onMounted(async () => {
-  canDownloadCertificate.value = registrationId
-    ? await isCertificateIssued(registrationId.toString())
-    : false
 })
 </script>
