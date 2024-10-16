@@ -93,9 +93,10 @@
             {{ row.registrationType }}
           </div>
         </template>
-        <template #unitAddress-data="{ row }">
+        <template #address-data="{ row }">
           <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationNumber)">
-            {{ row.unitAddress }}
+            <div>{{ row.unitAddress }}</div>
+            <div>{{ row.unitAddressCity }} {{ row.unitAddressPostalCode }}</div>
           </div>
         </template>
         <template #contact-data="{ row }">
@@ -247,7 +248,9 @@ const registrationsToTableRows = async (applications: PaginatedApplicationsI): P
       registrationId: header.registrationId ? header.registrationId.toString() : '',
       isCertificateIssued: certificateIssued,
       registrationType: getRegistrationTypeLabel(registrationType),
-      unitAddress: `${unitAddress.address}, ${unitAddress.city}, ${unitAddress.province} ${unitAddress.postalCode}`,
+      unitAddressCity: unitAddress.city,
+      unitAddressPostalCode: unitAddress.postalCode,
+      unitAddress: unitAddress.address,
       contact: contactPerson
         ? `${contactPerson.firstName} ${contactPerson.middleName ?? ''} ${contactPerson.lastName}`.trim()
         : '-',
@@ -295,7 +298,7 @@ const columns = [
   { key: 'application', label: tRegistryDashboard('applicationNumber'), sortable: true },
   { key: 'registrationNumber', label: tRegistryDashboard('registrationNumber'), sortable: true },
   { key: 'registrationType', label: tRegistryDashboard('registrationType'), sortable: true },
-  { key: 'unitAddress', label: tRegistryDashboard('address'), sortable: true },
+  { key: 'address', label: tRegistryDashboard('address'), sortable: true },
   { key: 'contact', label: tRegistryDashboard('contact'), sortable: true },
   { key: 'status', label: tRegistryDashboard('status'), sortable: true },
   { key: 'submission', label: tRegistryDashboard('submissionDate'), sortable: true }
