@@ -93,6 +93,11 @@
             {{ row.registrationType }}
           </div>
         </template>
+        <template #unitAddress-data="{ row }">
+          <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationNumber)">
+            {{ row.unitAddress }}
+          </div>
+        </template>
         <template #contact-data="{ row }">
           <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationNumber)">
             {{ row.contact }}
@@ -229,7 +234,7 @@ const updateTableRows = async () => {
 const registrationsToTableRows = async (applications: PaginatedApplicationsI): Promise<Record<string, string>[]> => {
   const rows: Record<string, string>[] = []
   for (const application of applications.applications) {
-    const { header, registration: { primaryContact, registrationType } } = application
+    const { header, registration: { primaryContact, registrationType, unitAddress } } = application
     const contactPerson = primaryContact?.name
     let certificateIssued = false
     if (header.registrationStatus === RegistrationStatusE.ACTIVE && header.registrationId) {
@@ -242,6 +247,7 @@ const registrationsToTableRows = async (applications: PaginatedApplicationsI): P
       registrationId: header.registrationId ? header.registrationId.toString() : '',
       isCertificateIssued: certificateIssued,
       registrationType: getRegistrationTypeLabel(registrationType),
+      unitAddress: `${unitAddress.address}, ${unitAddress.city}, ${unitAddress.province} ${unitAddress.postalCode}`,
       contact: contactPerson
         ? `${contactPerson.firstName} ${contactPerson.middleName ?? ''} ${contactPerson.lastName}`.trim()
         : '-',
@@ -289,6 +295,7 @@ const columns = [
   { key: 'application', label: tRegistryDashboard('applicationNumber'), sortable: true },
   { key: 'registrationNumber', label: tRegistryDashboard('registrationNumber'), sortable: true },
   { key: 'registrationType', label: tRegistryDashboard('registrationType'), sortable: true },
+  { key: 'unitAddress', label: tRegistryDashboard('address'), sortable: true },
   { key: 'contact', label: tRegistryDashboard('contact'), sortable: true },
   { key: 'status', label: tRegistryDashboard('status'), sortable: true },
   { key: 'submission', label: tRegistryDashboard('submissionDate'), sortable: true }
