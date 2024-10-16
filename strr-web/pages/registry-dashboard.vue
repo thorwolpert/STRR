@@ -86,7 +86,7 @@
             </span>
             <UIcon
               v-if="row.isCertificateIssued"
-              name="i-heroicons-document-text"
+              name="i-mdi-file-document-outline"
               class="h-[20px] w-[20px] ml-3 text-blue-600 cursor-pointer"
               alt="certificate download"
               @click="downloadCertificate(row.registrationId)"
@@ -211,7 +211,7 @@ const updateFilterOptions = async () => {
   ]
 }
 
-const navigateToApplicationDetails = (id: number) => navigateTo(`/application-details/${id.toString()}`)
+const navigateToApplicationDetails = (appNumber: string) => navigateTo(`/application-details/${appNumber}`)
 const navigateToRegistrationDetails = (id: number) => navigateTo(`/registration-details/${id.toString()}`)
 
 const updateTableRows = async () => {
@@ -227,7 +227,7 @@ const updateTableRows = async () => {
   const applications = await getPaginatedApplications(paginationObject)
   if (applications) {
     totalResults.value = applications.total
-    tableRows.value = await registrationsToTableRows(applications)
+    tableRows.value = registrationsToTableRows(applications)
   }
 
   updateMaxPageResults()
