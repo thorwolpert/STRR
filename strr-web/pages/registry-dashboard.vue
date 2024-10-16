@@ -72,19 +72,30 @@
             {{ row.applicationNumber }}
           </div>
         </template>
-        <template #location-data="{ row }">
-          <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationNumber)">
-            {{ row.location }}
+        <template #registrationNumber-data="{ row }">
+          <div
+            :class="{
+              'text-blue-600 font-semibold hover:underline':
+                row.registrationNumber !== '-' && row.isCertificateIssued
+            }"
+            class="cursor-pointer w-full"
+            @click="
+              row.registrationNumber !== '-' && row.isCertificateIssued
+                ? downloadCertificate(row.registrationId)
+                : navigateToDetails(row.applicationNumber)
+            "
+          >
+            {{ row.registrationNumber }}
           </div>
         </template>
-        <template #address-data="{ row }">
+        <template #registrationType-data="{ row }">
           <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationNumber)">
-            {{ row.address }}
+            {{ row.registrationType }}
           </div>
         </template>
-        <template #owner-data="{ row }">
+        <template #contact-data="{ row }">
           <div class="cursor-pointer w-full" @click="navigateToDetails(row.applicationNumber)">
-            {{ row.owner }}
+            {{ row.contact }}
           </div>
         </template>
         <template #status-data="{ row }">
@@ -128,12 +139,13 @@
 </template>
 
 <script setup lang="ts">
-import { ApplicationI, ApplicationStatusE } from '#imports'
+import { ApplicationStatusE, RegistrationTypeE } from '#imports'
 import InfoModal from '~/components/common/InfoModal.vue'
 
 const { t } = useTranslation()
 const tRegistryDashboard = (translationKey: string) => t(`registryDashboard.${translationKey}`)
 const { getChipFlavour } = useChipFlavour()
+const { downloadCertificate, isCertificateIssued } = useDownloadCertificate()
 
 const { getApplications, getApplicationsByStatus, getPaginatedApplications } = useApplications()
 
@@ -207,33 +219,49 @@ const updateTableRows = async () => {
   const applications = await getPaginatedApplications(paginationObject)
   if (applications) {
     totalResults.value = applications.total
-    tableRows.value = registrationsToTableRows(applications)
+    tableRows.value = await registrationsToTableRows(applications)
   }
 
   updateMaxPageResults()
   loading.value = false
 }
 
-const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<string, string>[] => {
+const registrationsToTableRows = async (applications: PaginatedApplicationsI): Promise<Record<string, string>[]> => {
   const rows: Record<string, string>[] = []
-  applications.applications.forEach((application: ApplicationI) => {
-    const { header, registration: { unitAddress, primaryContact } } = application
+  for (const application of applications.applications) {
+    const { header, registration: { primaryContact, registrationType } } = application
+    const contactPerson = primaryContact?.name
+    let certificateIssued = false
+    if (header.registrationStatus === RegistrationStatusE.ACTIVE && header.registrationId) {
+      certificateIssued = await isCertificateIssued(header.registrationId.toString())
+    }
 
     const row = {
       applicationNumber: header.applicationNumber,
-      location: unitAddress.city,
-      address: unitAddress.address,
-      owner: `
-        ${primaryContact.name.firstName}
-        ${primaryContact.name.middleName ?? ''}
-        ${primaryContact.name.lastName}
-      `,
+      registrationNumber: header.registrationNumber ?? '-',
+      registrationId: header.registrationId ? header.registrationId.toString() : '',
+      isCertificateIssued: certificateIssued,
+      registrationType: getRegistrationTypeLabel(registrationType),
+      contact: contactPerson
+        ? `${contactPerson.firstName} ${contactPerson.middleName ?? ''} ${contactPerson.lastName}`.trim()
+        : '-',
       status: header.examinerStatus || header.status,
       submissionDate: header.applicationDateTime
     }
     rows.push(row)
-  })
+  }
   return rows
+}
+
+const getRegistrationTypeLabel = (type: RegistrationTypeE): string => {
+  switch (type) {
+    case RegistrationTypeE.HOST:
+      return 'Host'
+    case RegistrationTypeE.PLATFORM:
+      return 'Platform'
+    default:
+      return '-'
+  }
 }
 
 watch(statusFilter, () => updateTableRows())
@@ -259,9 +287,9 @@ const selectedColumns = ref<{ key: string; label: string; }[]>([])
 
 const columns = [
   { key: 'application', label: tRegistryDashboard('applicationNumber'), sortable: true },
-  { key: 'location', label: tRegistryDashboard('location'), sortable: true },
-  { key: 'address', label: tRegistryDashboard('address'), sortable: true },
-  { key: 'owner', label: tRegistryDashboard('owner'), sortable: true },
+  { key: 'registrationNumber', label: tRegistryDashboard('registrationNumber'), sortable: true },
+  { key: 'registrationType', label: tRegistryDashboard('registrationType'), sortable: true },
+  { key: 'contact', label: tRegistryDashboard('contact'), sortable: true },
   { key: 'status', label: tRegistryDashboard('status'), sortable: true },
   { key: 'submission', label: tRegistryDashboard('submissionDate'), sortable: true }
 ]

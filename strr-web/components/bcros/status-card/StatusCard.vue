@@ -31,7 +31,7 @@
       />
 
       <BcrosButtonsPrimary
-        v-if="isCertificateIssued"
+        v-if="showDownloadButton"
         :action="() => downloadCertificate(registrationId.toString())"
         :label="tRegistrationStatus('download')"
         class-name="px-4 py-1 mobile:grow-0"
@@ -43,25 +43,13 @@
 
 <script setup lang="ts">
 import { RegistrationStatusE, HostApplicationStatusE, ExaminerApplicationStatusE } from '#imports'
+const { downloadCertificate, isCertificateIssued } = useDownloadCertificate()
 
 const { t } = useTranslation()
 const tRegistrationStatus = (translationKey: string) => t(`registrationStatus.${translationKey}`)
 
-const { getCertificate } = useRegistrations()
 const { getChipFlavour } = useChipFlavour()
 const { isExaminer } = useBcrosKeycloak()
-
-const downloadCertificate = async (id: string) => {
-  const file = await getCertificate(id)
-  const link = document.createElement('a')
-  const blob = new Blob([file], { type: 'application/pdf' })
-  link.href = window.URL.createObjectURL(blob)
-  link.target = '_blank'
-  link.download = `${tRegistrationStatus('strrCertificate')}.pdf`
-  document.body.appendChild(link)
-  link.click()
-  URL.revokeObjectURL(link.href)
-}
 
 const {
   applicationHeader,
@@ -71,6 +59,7 @@ const {
   isSingle: boolean,
 }>()
 
+const canDownloadCertificate = ref(false)
 const { registrationId, registrationNumber, status, hostStatus, examinerStatus, registrationStatus } = applicationHeader
 const applicationNumber = applicationHeader.applicationNumber
 const flavour = computed(() => {
@@ -81,7 +70,7 @@ const flavour = computed(() => {
   }
 })
 
-const isCertificateIssued: boolean = registrationStatus === RegistrationStatusE.ACTIVE
+const isRegistrationActive: boolean = registrationStatus === RegistrationStatusE.ACTIVE
 const isApproved = computed(() => {
   if (isExaminer) {
     return [
@@ -96,5 +85,11 @@ const isApproved = computed(() => {
       HostApplicationStatusE.FULL_REVIEW_APPROVED
     ].includes(hostStatus)
   }
+})
+const showDownloadButton = computed(() => isRegistrationActive && canDownloadCertificate.value)
+onMounted(async () => {
+  canDownloadCertificate.value = registrationId
+    ? await isCertificateIssued(registrationId.toString())
+    : false
 })
 </script>

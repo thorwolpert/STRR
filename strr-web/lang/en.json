@@ -13,6 +13,8 @@
     "applicationNumber": "Application #",
     "registrationNumber": "Registration #",
     "status": "Status",
+    "registrationType": "Type",
+    "contact": "Contact",
     "nickname": "Listing Nickname",
     "address": "Listing Address",
     "owner": "Owner",
