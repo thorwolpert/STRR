@@ -47,6 +47,7 @@ export interface ApplicationDetailsI {
   unitDetails: {
     parcelIdentifier?: string
     businessLicense?: string
+    businessLicenseExpiryDate?: string
     propertyType: string
     ownershipType: string
   }

@@ -32,11 +32,11 @@
             <div class="flex flex-row justify-between w-full desktop:mb-[24px] mobile:flex-col">
               <BcrosFormSectionReviewItem
                 :title="tReview('nickname')"
-                :content="formState.propertyDetails.nickname ?? '-'"
+                :content="formState.propertyDetails.nickname || '-'"
               />
               <BcrosFormSectionReviewItem
                 :title="tReview('businessLicense')"
-                :content="formState.propertyDetails.businessLicense ?? '-'"
+                :content="formState.propertyDetails.businessLicense || '-'"
               />
               <BcrosFormSectionReviewItem
                 :title="tReview('ownershipType')"
@@ -63,10 +63,15 @@
                 </p>
               </BcrosFormSectionReviewItem>
               <BcrosFormSectionReviewItem
+                v-if="formState.propertyDetails.businessLicenseExpiryDate"
+                :title="tReview('businessLicenseExpiryDate')"
+                :content="convertDateToLongFormat(formState.propertyDetails.businessLicenseExpiryDate)"
+              />
+              <BcrosFormSectionReviewItem
                 :title="tReview('propertyType')"
                 :content="formState.propertyDetails.propertyType ?? '-'"
               />
-              <div class="flex-1" />
+              <div v-if="!formState.propertyDetails.businessLicenseExpiryDate" class="flex-1" />
             </div>
             <div
               v-if="
