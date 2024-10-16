@@ -29,6 +29,21 @@ export default defineNuxtConfig({
     dirs: ['stores', 'composables', 'enums', 'interfaces', 'types', 'utils']
   },
 
+  css: [
+    '@/assets/styles/layout.css'
+  ],
+
+  app: {
+    head: {
+      link: [
+        { rel: 'stylesheet', href: '/css/addresscomplete-2.50.min.css' }
+      ],
+      script: [
+        { src: '/js/addresscomplete-2.50.min.js', type: 'text/javascript', defer: true }
+      ]
+    }
+  },
+
   i18n: {
     locales: [
       {
