@@ -11,7 +11,7 @@ const { completingParty, primaryRep, secondaryRep } = storeToRefs(useStrrPlatfor
 const { platformBusiness } = storeToRefs(useStrrPlatformBusiness())
 const { platformDetails } = storeToRefs(useStrrPlatformDetails())
 
-const { agreeToSubmit } = storeToRefs(useStrrHostApplication())
+const { confirmInfoAccuracy, confirmDelistAndCancelBookings } = storeToRefs(useStrrPlatformApplication())
 
 defineProps<{ isComplete: boolean }>()
 
@@ -349,13 +349,37 @@ defineEmits<{
       </div>
     </ConnectPageSection>
 
-    <ConnectPageSection :heading="{ label: tReview('review') }">
+    <section class="space-y-6">
+      <h2>Certify</h2>
+
       <UCheckbox
-        v-model="agreeToSubmit"
+        v-model="confirmInfoAccuracy"
+        :label="tPlatReview('confirm.infoAccuracy')"
+        class="rounded bg-white p-4"
+        :class="`${isComplete && !confirmInfoAccuracy ? 'outline outline-red-600' : ''}`"
+      />
+
+      <UCheckbox
+        v-model="confirmDelistAndCancelBookings"
+        :label="tPlatReview('confirm.delistAndCancelBookings')"
+        class="rounded bg-white p-4"
+        :class="`${isComplete && !confirmDelistAndCancelBookings ? 'outline outline-red-600' : ''}`"
+      />
+    </section>
+    <!-- <ConnectPageSection :heading="{ label: tReview('review') }">
+      <UCheckbox
+        v-model="confirmInfoAccuracy"
         :label="tReview('confirm')"
         class="p-4"
-        :class="`${isComplete && !agreeToSubmit ? 'outline outline-red-600' : ''}`"
+        :class="`${isComplete && !confirmInfoAccuracy ? 'outline outline-red-600' : ''}`"
       />
-    </ConnectPageSection>
+
+      <UCheckbox
+        v-model="confirmDelistAndCancelBookings"
+        :label="tReview('confirm')"
+        class="p-4"
+        :class="`${isComplete && !confirmDelistAndCancelBookings ? 'outline outline-red-600' : ''}`"
+      />
+    </ConnectPageSection> -->
   </div>
 </template>

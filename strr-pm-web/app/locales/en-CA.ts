@@ -520,6 +520,10 @@ export default {
           GREATER_THAN_THOUSAND: 'Greater than 1,000 listings',
           LESS_THAN_THOUSAND: 'Less than 1,000 listings'
         }
+      },
+      confirm: {
+        infoAccuracy: 'I confirm that the information contained in the application for registration is accurate and true. I understand that, if I have provided inaccurate or false information, I may be the subject of enforcement action under Part 4 of the Short-Term Rental Accommodations Act. Enforcement action may include being ordered to pay an administrative penalty.',
+        delistAndCancelBookings: 'I confirm agreement to delist and cancel existing bookings for unregistered listings as required under s. 17 (2) (a) and [relevant section of the forthcoming regulation].'
       }
     }
   }

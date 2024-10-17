@@ -17,10 +17,15 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
   }
 
   // TODO: submit
+  function submitPlatformApplication () {
+    // eslint-disable-next-line
+    console.log('submitting platform app')
+  }
 
   return {
     confirmInfoAccuracy,
     confirmDelistAndCancelBookings,
-    getPlatformApplication
+    getPlatformApplication,
+    submitPlatformApplication
   }
 })
