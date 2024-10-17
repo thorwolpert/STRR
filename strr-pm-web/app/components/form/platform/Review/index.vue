@@ -15,6 +15,9 @@ const { agreeToSubmit } = storeToRefs(useStrrHostApplication())
 
 defineProps<{ isComplete: boolean }>()
 
+defineEmits<{
+  edit: [index: number]
+}>()
 </script>
 <template>
   <div class="space-y-10" data-testid="platform-review-confirm">
@@ -38,7 +41,7 @@ defineProps<{ isComplete: boolean }>()
         <FormPlatformReviewEditCardHeader
           :title="tPlat('section.title.completingParty')"
           icon="i-mdi-account-multiple-plus"
-          @edit="() => console.log('edit clicked')"
+          @edit="$emit('edit', 0)"
         />
       </template>
 
@@ -76,7 +79,7 @@ defineProps<{ isComplete: boolean }>()
         <FormPlatformReviewEditCardHeader
           :title="tPlat('section.title.primaryRep')"
           icon="i-mdi-account-multiple-plus"
-          @edit="() => console.log('edit clicked')"
+          @edit="$emit('edit', 0)"
         />
       </template>
 
@@ -131,7 +134,7 @@ defineProps<{ isComplete: boolean }>()
         <FormPlatformReviewEditCardHeader
           :title="tPlat('section.title.secondaryRep')"
           icon="i-mdi-account-multiple-plus"
-          @edit="() => console.log('edit clicked')"
+          @edit="$emit('edit', 0)"
         />
       </template>
 
@@ -186,7 +189,7 @@ defineProps<{ isComplete: boolean }>()
         <FormPlatformReviewEditCardHeader
           :title="tPlat('section.title.businessInfo')"
           icon="i-mdi-domain"
-          @edit="() => console.log('edit clicked')"
+          @edit="$emit('edit', 1)"
         />
       </template>
 
@@ -282,7 +285,7 @@ defineProps<{ isComplete: boolean }>()
         <FormPlatformReviewEditCardHeader
           :title="tPlat('step.description.2')"
           icon="i-mdi-map-marker-plus-outline"
-          @edit="() => console.log('edit clicked')"
+          @edit="$emit('edit', 2)"
         />
       </template>
 
