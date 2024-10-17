@@ -520,6 +520,17 @@ export default {
       thousandOrMore: '1000 or more',
       yourNameBcsc: 'This is your legal name as it appears on your BC Services Card.',
       yourNameBceid: 'This is your legal name as it appears on your BCeID.'
+    },
+    review: {
+      platInfo: {
+        brandName: 'Platform Brand Name | Platform Brand {count} Name',
+        brandSite: 'Platform Brand Website | Platform Brand {count} Website',
+        size: 'Platform Size',
+        sizeDesc: {
+          GREATER_THAN_THOUSAND: 'Greater than 1,000 listings',
+          LESS_THAN_THOUSAND: 'Less than 1,000 listings'
+        }
+      }
     }
   }
 }

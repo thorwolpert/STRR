@@ -208,7 +208,7 @@ setBreadcrumbs([
       <FormPlatformDetails :is-complete="activeStep.complete" />
     </div>
     <div v-else key="review-confirm">
-      <!-- tbd -->
+      <FormPlatformReview :is-complete="activeStep.complete" />
     </div>
   </div>
 </template>
