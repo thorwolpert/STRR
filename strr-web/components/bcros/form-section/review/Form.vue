@@ -24,7 +24,7 @@
             :primary="false"
           />
         </div>
-        <div class="mt-[48px]">
+        <div class="mt-[48px]" data-test-id="rental-unit-review">
           <p class="font-bold mb-[24px] mobile:mx-[8px]">
             {{ tReview('rentalUnitInfo') }}
           </p>
@@ -159,7 +159,7 @@
               <UCheckbox
                 v-model="formState.principal.agreeToSubmit"
                 :label="tReview('confirm')"
-                :class="`${isComplete && !formState.principal.agreeToSubmit ? 'outline outline-bcGovColor-error' : ''}`"
+                :ui="{ label: isComplete && !formState.principal.agreeToSubmit ? 'text-bcGovColor-error' : '' }"
               />
             </div>
           </div>

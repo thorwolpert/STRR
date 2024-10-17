@@ -51,6 +51,7 @@
             type="date"
             :min="new Date().toISOString().split('T')[0]"
             :max="new Date('2999-12-31').toISOString().split('T')[0]"
+            :ui="{ base: 'uppercase' }"
             @blur="emit('validateBusinessLicenseExpiryDate')"
             @change="emit('validateBusinessLicenseExpiryDate')"
           />
