@@ -2,7 +2,6 @@
 const { t } = useI18n()
 const tReview = (translationKey: string) => t(`createAccount.review.${translationKey}`)
 const tContact = (translationKey: string) => t(`createAccount.contactForm.${translationKey}`)
-const tPrincipal = (translationKey: string) => t(`createAccount.principalResidence.${translationKey}`)
 const tPlat = (path: string) => t(`platform.${path}`)
 const tPlatReview = (path: string) => t(`platform.review.${path}`)
 
@@ -29,34 +28,18 @@ defineProps<{ isComplete: boolean }>()
       }"
     >
       <template #description>
-        <p>
-          <b>{{ t('label.note') }}:</b>
-          {{ t('platform.text.emailNote') }}
-        </p>
+        <ConnectI18nBold class="text-bcGovGray-900" translation-path="platform.review.alert.contactInfo" />
       </template>
     </UAlert>
 
     <!-- person completing platform application -->
     <ConnectPageSection>
       <template #header>
-        <div class="flex items-center px-4">
-          <div class="inline-flex grow items-center gap-2">
-            <UIcon
-              name="i-mdi-account-multiple-plus"
-              class="size-6 shrink-0 text-bcGovColor-activeBlue"
-            />
-            <h2>
-              {{ tPlat('section.title.completingParty') }}
-            </h2>
-          </div>
-          <UButton
-            label="Edit"
-            icon="i-mdi-edit"
-            variant="link"
-            :padded="false"
-            @click="() => console.log('clicked')"
-          />
-        </div>
+        <FormPlatformReviewEditCardHeader
+          :title="tPlat('section.title.completingParty')"
+          icon="i-mdi-account-multiple-plus"
+          @edit="() => console.log('edit clicked')"
+        />
       </template>
 
       <div class="p-8">
@@ -90,24 +73,11 @@ defineProps<{ isComplete: boolean }>()
     <!-- primary platform rep section -->
     <ConnectPageSection>
       <template #header>
-        <div class="flex items-center px-4">
-          <div class="inline-flex grow items-center gap-2">
-            <UIcon
-              name="i-mdi-account-multiple-plus"
-              class="size-6 shrink-0 text-bcGovColor-activeBlue"
-            />
-            <h2>
-              {{ tPlat('section.title.primaryRep') }}
-            </h2>
-          </div>
-          <UButton
-            label="Edit"
-            icon="i-mdi-edit"
-            variant="link"
-            :padded="false"
-            @click="() => console.log('clicked')"
-          />
-        </div>
+        <FormPlatformReviewEditCardHeader
+          :title="tPlat('section.title.primaryRep')"
+          icon="i-mdi-account-multiple-plus"
+          @edit="() => console.log('edit clicked')"
+        />
       </template>
 
       <div class="space-y-6 p-8">
@@ -158,24 +128,11 @@ defineProps<{ isComplete: boolean }>()
     <!-- secondary platform rep section -->
     <ConnectPageSection v-if="secondaryRep">
       <template #header>
-        <div class="flex items-center px-4">
-          <div class="inline-flex grow items-center gap-2">
-            <UIcon
-              name="i-mdi-account-multiple-plus"
-              class="size-6 shrink-0 text-bcGovColor-activeBlue"
-            />
-            <h2>
-              {{ tPlat('section.title.secondaryRep') }}
-            </h2>
-          </div>
-          <UButton
-            label="Edit"
-            icon="i-mdi-edit"
-            variant="link"
-            :padded="false"
-            @click="() => console.log('clicked')"
-          />
-        </div>
+        <FormPlatformReviewEditCardHeader
+          :title="tPlat('section.title.secondaryRep')"
+          icon="i-mdi-account-multiple-plus"
+          @edit="() => console.log('edit clicked')"
+        />
       </template>
 
       <div class="space-y-6 p-8">
@@ -226,24 +183,11 @@ defineProps<{ isComplete: boolean }>()
     <!-- business info section -->
     <ConnectPageSection>
       <template #header>
-        <div class="flex items-center px-4">
-          <div class="inline-flex grow items-center gap-2">
-            <UIcon
-              name="i-mdi-domain"
-              class="size-6 shrink-0 text-bcGovColor-activeBlue"
-            />
-            <h2>
-              {{ tPlat('section.title.businessInfo') }}
-            </h2>
-          </div>
-          <UButton
-            label="Edit"
-            icon="i-mdi-edit"
-            variant="link"
-            :padded="false"
-            @click="() => console.log('clicked')"
-          />
-        </div>
+        <FormPlatformReviewEditCardHeader
+          :title="tPlat('section.title.businessInfo')"
+          icon="i-mdi-domain"
+          @edit="() => console.log('edit clicked')"
+        />
       </template>
 
       <div class="space-y-6 p-8">
@@ -257,7 +201,7 @@ defineProps<{ isComplete: boolean }>()
           </template>
           <template #item-2>
             <ConnectInfoBox
-              :title="tPlat('label.attForSvcName')"
+              :title="tPlatReview('busInfo.attForSvcName')"
               title-class="font-bold text-bcGovGray-900"
               :content="platformBusiness.regOfficeOrAtt.attorneyName || '-'"
             />
@@ -335,24 +279,11 @@ defineProps<{ isComplete: boolean }>()
     <!-- platform info section -->
     <ConnectPageSection>
       <template #header>
-        <div class="flex items-center px-4">
-          <div class="inline-flex grow items-center gap-2">
-            <UIcon
-              name="i-mdi-map-marker-plus-outline"
-              class="size-6 shrink-0 text-bcGovColor-activeBlue"
-            />
-            <h2>
-              {{ tPlat('step.description.2') }}
-            </h2>
-          </div>
-          <UButton
-            label="Edit"
-            icon="i-mdi-edit"
-            variant="link"
-            :padded="false"
-            @click="() => console.log('clicked')"
-          />
-        </div>
+        <FormPlatformReviewEditCardHeader
+          :title="tPlat('step.description.2')"
+          icon="i-mdi-map-marker-plus-outline"
+          @edit="() => console.log('edit clicked')"
+        />
       </template>
 
       <div class="space-y-6 p-8">
