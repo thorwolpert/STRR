@@ -142,7 +142,7 @@ watch(activeStepIndex, (val) => {
   }
   const isLastStep = val === steps.value.length - 1
   buttons.push({
-    action: isLastStep ? () => {} : setNextStep,
+    action: isLastStep ? () => console.log('submit and pay') : setNextStep,
     icon: 'i-mdi-chevron-right',
     label: isLastStep ? t('btn.submitAndPay') : t('btn.next'),
     trailing: true
