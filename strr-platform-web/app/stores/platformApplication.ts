@@ -39,11 +39,11 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
     try {
       const body = createApplicationBody()
 
-      console.log('submitting application: ', body)
-      // await $strrApi('/applications', {
-      //   method: 'POST',
-      //   body
-      // })
+      // console.log('submitting application: ', body)
+      await $strrApi('/applications', {
+        method: 'POST',
+        body
+      })
     } catch (e) {
       logFetchError(e, 'Error creating platform application')
       strrModal.openAppSubmitError() // pass in error object ??
