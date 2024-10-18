@@ -35,7 +35,6 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
 
   async function submitPlatformApplication () {
     // validate all forms/fields first??
-    // set button control loading true
     try {
       const body = createApplicationBody()
 
@@ -47,8 +46,6 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
     } catch (e) {
       logFetchError(e, 'Error creating platform application')
       // show error modal/alert?
-    } finally {
-      // set button control loading false
     }
   }
 

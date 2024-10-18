@@ -129,12 +129,54 @@ const setPreviousStep = () => {
 // how can we set loading state on the submit and pay button?
 // i wonder if tracking the steps in a store would be useful
 const handlePlatformSubmit = () => {
-  // validate each step
-  // if invalid step, set prop on Review component to highlight invalid fields/section ?
-  // show alert with some error text ?
+  try {
+    // set buttons to loading state
+    setButtonControl({
+      leftButtons: [
+        {
+          action: setPreviousStep,
+          icon: 'i-mdi-chevron-left',
+          label: t('btn.back'),
+          variant: 'outline',
+          disabled: true
+        },
+        {
+          action: handlePlatformSubmit,
+          icon: 'i-mdi-chevron-right',
+          label: t('btn.submitAndPay'),
+          trailing: true,
+          loading: true
+        }
+      ],
+      rightButtons: []
+    })
 
-  // if all steps valid, submit form with store function
-  submitPlatformApplication()
+    // validate all forms
+
+    // if all steps valid, submit form with store function
+    submitPlatformApplication()
+  } catch (e) {
+
+  } finally {
+    // set buttons back to non loading state
+    setButtonControl({
+      leftButtons: [
+        {
+          action: setPreviousStep,
+          icon: 'i-mdi-chevron-left',
+          label: t('btn.back'),
+          variant: 'outline'
+        },
+        {
+          action: handlePlatformSubmit,
+          icon: 'i-mdi-chevron-right',
+          label: t('btn.submitAndPay'),
+          trailing: true
+        }
+      ],
+      rightButtons: []
+    })
+  }
 }
 
 watch(activeStepIndex, (val) => {
