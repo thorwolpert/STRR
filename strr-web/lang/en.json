@@ -124,6 +124,7 @@
     "unitInfo": "Rental Unit Information",
     "nickname": "Nickname",
     "businessLicense": "Business License",
+    "businessLicenseExpiryDate": "Business License Expiry Date",
     "listingLink": "Listing Link",
     "listingLinkOptional": "Listing Link (Optional)",
     "listingLinkHelp": "e.g., https://www.airbnb.ca/your_listing123",
