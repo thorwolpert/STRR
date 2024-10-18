@@ -25,6 +25,7 @@ onMounted(async () => {
 })
 
 const { platformBusiness } = storeToRefs(useStrrPlatformBusiness())
+// const { getBusinessSchema } = useStrrPlatformBusiness()
 watch(() => platformBusiness.value.hasCpbc, (val) => {
   if (!val && !platformDetails.value.listingSize) {
     removeFee(ConnectFeeCode.STR_PLAT_SM)
@@ -125,10 +126,8 @@ const setPreviousStep = () => {
   }
 }
 
-// something like this? need to discuss options
-// how can we set loading state on the submit and pay button?
-// i wonder if tracking the steps in a store would be useful
-const handlePlatformSubmit = () => {
+// need to cleanup the setButtonControl somehow
+const handlePlatformSubmit = async () => {
   try {
     // set buttons to loading state
     setButtonControl({
@@ -151,10 +150,19 @@ const handlePlatformSubmit = () => {
       rightButtons: []
     })
 
+    // something like this but cleaner
     // validate all forms
+    // const isCompletingPartyValid = getContactSchema(true).safeParse(completingParty.value).success
+    // const isPrimaryRepValid = getContactSchema(false).safeParse(primaryRep.value).success
+    // if (secondaryRep.value) {
+    //   const isSecondaryRepValid = getContactSchema(false).safeParse(secondaryRep.value).success
+    // }
+    // const isBusDetailsValid = getBusinessSchema(
+    //   platformBusiness.value.hasCpbc, platformBusiness.value.hasRegOffAtt)
+    // console.log(isCompletingPartyValid)
 
     // if all steps valid, submit form with store function
-    submitPlatformApplication()
+    await submitPlatformApplication()
   } catch (e) {
 
   } finally {
