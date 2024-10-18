@@ -1,15 +1,13 @@
 import { z } from 'zod'
-import { getRequiredNonEmptyString } from '~/utils/connect-validation'
+import { getRequiredNonEmptyString, getRequiredUrl } from '~/utils/connect-validation'
 
 export const useStrrPlatformDetails = defineStore('strr/platformDetails', () => {
   const { t } = useI18n()
-  const platformDetailsSchema = z.object({
-    brands: z.array(z.object({
-      name: getRequiredNonEmptyString(t('validation.brand.name')),
-      website: getRequiredNonEmptyString(t('validation.brand.site'))
-    })).min(1),
-    listingSize: getRequiredNonEmptyString(t('validation.listingSize'))
+  const getPlatformBrandSchema = () => z.object({
+    name: getRequiredNonEmptyString(t('validation.brand.name')),
+    website: getRequiredUrl(t('validation.brand.site'))
   })
+
   const platformDetails = ref<{ brands: PlatBrand[], listingSize: ListingSize | undefined }>({
     brands: [{ name: '', website: '' }],
     listingSize: undefined
@@ -23,7 +21,7 @@ export const useStrrPlatformDetails = defineStore('strr/platformDetails', () => 
   }
   return {
     platformDetails,
-    platformDetailsSchema,
+    getPlatformBrandSchema,
     addNewEmptyBrand,
     removeBrandAtIndex
   }

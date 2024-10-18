@@ -246,6 +246,10 @@ export default {
         country: 'Please enter a BC, Canada address'
       }
     },
+    brand: {
+      name: 'Please enter a brand name',
+      site: 'Please enter a valid full url for this brand (i.e. https://www.bcregistry.gov.bc.ca)'
+    },
     business: {
       legalName: 'Please enter the business legal name',
       jurisdiction: 'Please enter the business home jusrisdiction',
@@ -333,7 +337,7 @@ export default {
       rentalUnitDetails: 'Rental Unit Details',
       internetListingDetails: 'Internet Listing Details',
       rentalUnitAddress: 'Rental Unit Address',
-      platformUrl: 'Paltform URL',
+      platformUrl: 'Platform URL',
       primaryDwelling: 'All or part of primary dwelling',
       secondarySuite: 'Secondary suite',
       accessory: 'Accessory dwelling unit',
@@ -478,7 +482,7 @@ export default {
     },
     hint: {
       brandName: 'The brand name for the platform',
-      brandSite: 'The URL for this brand name',
+      brandSite: 'The full URL for this brand (i.e. https://www.bcregistry.gov.bc.ca)',
       businessLegalName: 'The full legal name of the business that is operating the platform. Include corporate designations (e.g., "Ltd.", "Inc.", "LLC")',
       businessNumber: 'Canada Revenue Agency (CRA) Business Number',
       humeJurisdiction: 'The regional or federal jurisdiction where the business was incorporated or registered',

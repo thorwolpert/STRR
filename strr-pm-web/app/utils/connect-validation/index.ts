@@ -17,6 +17,9 @@ export const optionalOrEmptyString = z
 
 export const getRequiredNonEmptyString = (message: string) => z.string().refine(e => e.trim() !== '', message)
 
+export const getRequiredUrl = (message: string) =>
+  z.string().refine(e => e.trim() !== '' && httpRegex.test(e), message)
+
 /**
  * Normalizes a string.
  * If the input is provided, it removes leading, trailing, and extra spaces within the name.
