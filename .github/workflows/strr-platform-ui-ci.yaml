@@ -18,3 +18,4 @@ jobs:
       app_name: "strr-platform-ui"
       working_directory: "./strr-platform-web"
       codecov_flag: "strrplatformui"
+      node_version: 20
