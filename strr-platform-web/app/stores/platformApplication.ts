@@ -3,6 +3,7 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
   const { completingParty, primaryRep, secondaryRep } = storeToRefs(useStrrPlatformContact())
   const { platformBusiness } = storeToRefs(useStrrPlatformBusiness())
   const { platformDetails } = storeToRefs(useStrrPlatformDetails())
+  const strrModal = useStrrModals()
 
   const confirmInfoAccuracy = ref(false)
   const confirmDelistAndCancelBookings = ref(false)
@@ -45,7 +46,7 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
       // })
     } catch (e) {
       logFetchError(e, 'Error creating platform application')
-      // show error modal/alert?
+      strrModal.openAppSubmitError() // pass in error object ??
     }
   }
 
