@@ -245,6 +245,10 @@ export default {
         country: 'Please enter a BC, Canada address'
       }
     },
+    brand: {
+      name: 'Please enter a brand name',
+      site: 'Please enter a valid full url for this brand (i.e. https://www.bcregistry.gov.bc.ca)'
+    },
     business: {
       legalName: 'Please enter the business legal name',
       jurisdiction: 'Please enter the business home jusrisdiction',
@@ -489,7 +493,7 @@ export default {
     },
     hint: {
       brandName: 'The brand name for the platform',
-      brandSite: 'The URL for this brand name',
+      brandSite: 'The full URL for this brand (i.e. https://www.bcregistry.gov.bc.ca)',
       // eslint-disable-next-line
       businessLegalName: 'The full legal name of the business that is operating the platform. Include corporate designations (e.g., "Ltd.", "Inc.", "LLC")',
       businessNumber: 'Canada Revenue Agency (CRA) Business Number',

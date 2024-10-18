@@ -236,10 +236,7 @@ watch(canadaPostAddress, (newAddress) => {
         <ConnectSection :title="tPlat('section.subTitle.noticeNonCompliance')" :error="showErrorNonComp">
           <div class="space-y-5">
             <p>
-              {{ platformBusiness.hasRegOffAtt
-                ? tPlat('text.nonComplianceEmail')
-                : tPlat('text.nonComplianceEmailLong')
-              }}
+              {{ tPlat('text.nonComplianceEmail') }}
             </p>
             <ConnectFieldGroup
               id="platform-business-noncompliance-email"
@@ -260,7 +257,7 @@ watch(canadaPostAddress, (newAddress) => {
         <div class="h-px w-full border-b border-gray-100" />
         <ConnectSection :title="tPlat('section.subTitle.takedownRequest')" :error="showErrorTakedownReq">
           <div class="space-y-5">
-            <p>{{ platformBusiness.hasRegOffAtt ? tPlat('text.takedownEmail') : tPlat('text.takedownEmailLong') }}</p>
+            <p>{{ tPlat('text.takedownEmail') }}</p>
             <ConnectFieldGroup
               id="platform-business-takedown-email"
               v-model="platformBusiness.takeDownEmail"
