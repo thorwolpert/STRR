@@ -27,7 +27,7 @@ async function isServerReady (url: string, timeout: number = 30000): Promise<boo
 async function authSetup () {
   const baseURL = process.env.NUXT_BASE_URL!
 
-  console.log('Waiting for the server to be ready...')
+  console.info('Waiting for the server to be ready...')
   const serverReady = await isServerReady(baseURL)
   if (!serverReady) {
     throw new Error(`Server at ${baseURL} did not become ready within the timeout period.`)
