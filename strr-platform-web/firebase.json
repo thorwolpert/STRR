@@ -1,7 +1,7 @@
 {
   "hosting":
     {
-      "site": "strr-platform-ui-dev",
+      "site": "strr-platform-dev",
       "public": "dist",
       "ignore": ["**/devops/**", "**/.*", "**/node_modules/**"],
       "rewrites": [
