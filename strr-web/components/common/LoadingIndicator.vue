@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useTranslation()
+
 const props = defineProps<{
   isLoading?: boolean
 }>()
@@ -20,7 +22,7 @@ nuxtApp.hook('page:finish', () => {
 })
 
 // Combined loading state that reflects both the prop and the page loading status
-const combinedLoading = computed(() => isLoading || isPageLoading.value)
+const combinedLoading = computed(() => !!isLoading || isPageLoading.value)
 
 </script>
 
@@ -43,7 +45,7 @@ const combinedLoading = computed(() => isLoading || isPageLoading.value)
       }"
     >
       <p class="mb-4">
-        Loading, please wait...
+        {{ t('common.loadingState') }}
       </p>
       <UProgress animation="carousel" />
     </UModal>

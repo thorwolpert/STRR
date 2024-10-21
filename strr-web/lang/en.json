@@ -7,7 +7,8 @@
     },
     "baseModal": {
       "closeButtonLabel": "Close"
-    }
+    },
+    "loadingState": "Loading, please wait..."
   },
   "registryDashboard": {
     "applicationNumber": "Application #",
