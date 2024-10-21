@@ -102,17 +102,17 @@ export const useRegistrations = () => {
       }>(`${apiURL}/accounts`,
         registration
       )
-      .then((res) => {
+      .then(async (res) => {
         if (res.data) {
           const { setAccountInfo } = useBcrosAccount()
-          setAccountInfo(res.data.sbc_account_id)
+          await setAccountInfo(res.data.sbc_account_id)
           navigateTo('/' + RouteNamesE.CREATE_ACCOUNT)
           return SbcCreationResponseE.SUCCESS
         }
         return SbcCreationResponseE.ERROR
       })
       .catch((err) => {
-        if (err.status === '403') { return SbcCreationResponseE.CONFLICT }
+        if (err.status === '400') { return SbcCreationResponseE.CONFLICT }
         return SbcCreationResponseE.ERROR
       })
 

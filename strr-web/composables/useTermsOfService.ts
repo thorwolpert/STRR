@@ -10,7 +10,8 @@ export const useTermsOfService = () => {
   const axiosInstance = addAxiosInterceptors(axios.create())
   const { tos, isTosAccepted } = storeToRefs(useBcrosAccount())
 
-  async function checkTermsOfService () {
+  async function checkTermsOfService (): Promise<boolean> {
+    let isAccepted = false
     // if ToS is already loaded, check acceptance status
     // this prevents multiple fetch calls to get ToS
     if (tos.value) {
@@ -23,21 +24,19 @@ export const useTermsOfService = () => {
       tos.value = data // Update the tos state
 
       // handle acceptance status after fetching
-      return handleTosAcceptance(data.isTermsOfUseAccepted)
+      isAccepted = handleTosAcceptance(data.isTermsOfUseAccepted)
     } catch (error) {
       console.error('Error fetching Terms Of Service:', error)
     }
+    return isAccepted
   }
 
-  function handleTosAcceptance (isAccepted: boolean) {
-    if (!isAccepted) {
-      // if user has not accepted the terms, redirect to ToS page
-      navigateTo('/' + RouteNamesE.TERMS_OF_SERVICE)
-    } else {
-      // if user already accepted the terms, update the store and to Account Select page
+  function handleTosAcceptance (isAccepted: boolean): boolean {
+    if (isAccepted) {
       isTosAccepted.value = true
-      navigateTo('/' + RouteNamesE.ACCOUNT_SELECT)
+      return true
     }
+    return false
   }
 
   async function acceptTermsOfService (isAccepted: boolean, versionId: string): Promise<void> {

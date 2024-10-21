@@ -1,12 +1,16 @@
 import type { KeycloakConfig } from 'keycloak-js'
+import { isEmpty } from 'lodash'
 
 /** Manages auth flows */
 export const useBcrosAuth = () => {
   const config = useRuntimeConfig()
   const keycloak = useBcrosKeycloak()
   const account = useBcrosAccount()
-  const { redirect, goToSetupAccount, goToCreateAccount } = useBcrosNavigate()
+  const { redirect, goToSetupAccount, goToCreateAccount, goToAccountSelect, goToTermsOfService, goToCreateSbcAccount } =
+    useBcrosNavigate()
   const { checkTermsOfService } = useTermsOfService()
+
+  const { currentAccount, userOrgs } = storeToRefs(account)
 
   /** redirect to the correct creation screen based on auth state */
   function createAccount () {
@@ -18,7 +22,10 @@ export const useBcrosAuth = () => {
   }
 
   /** Logout and then redirect to given page (if redirect provided). */
-  async function logout (redirect: string) { await keycloak.logout(redirect) }
+  async function logout (redirect: string) {
+    localStorage.clear()
+    await keycloak.logout(redirect)
+  }
 
   /** redirect if account status is suspended */
   function verifyAccountStatus () {
@@ -58,10 +65,28 @@ export const useBcrosAuth = () => {
           console.info('Checking account status...')
           // verify account status
           verifyAccountStatus()
-          console.info('Auth setup complete.')
 
           console.info('Checking Terms of Service acceptance...')
-          checkTermsOfService()
+          const isToSAccepted = await checkTermsOfService()
+
+          // if Terms not accepted - redirect TOS page
+          if (!isToSAccepted) {
+            goToTermsOfService()
+            return
+          }
+
+          // if user has not picked an account - go to Account Select
+          if (isEmpty(currentAccount.value) && userOrgs.value.length > 0) {
+            goToAccountSelect()
+            return
+          }
+
+          // if user has no accounts - go to account finalization page
+          if (userOrgs.value.length === 0) {
+            goToCreateSbcAccount()
+          }
+
+          console.info('Auth setup complete.')
         }
       } catch (error) {
         console.warn('Keycloak initialization failed:', error)

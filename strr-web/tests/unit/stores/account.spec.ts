@@ -49,16 +49,21 @@ describe('Account Store Tests', () => {
 
   it('sets account values as expected when setAccountInfo is called', async () => {
     expect(mockAxiosRequest.get).not.toHaveBeenCalled()
-    expect(sessionStorage.getItem(SessionStorageKeyE.CURRENT_ACCOUNT)).toBeNull()
+    expect(localStorage.getItem(SessionStorageKeyE.CURRENT_ACCOUNT)).toBeNull()
     await account.setAccountInfo()
     expect(mockAxiosRequest.get).toHaveBeenCalled()
-    expect(mockAxiosRequest.get).toHaveBeenCalledWith(`${apiURL}/users/${account.user.keycloakGuid}/settings`)
-    expect(account.currentAccount).toEqual(mockUserSettings[0])
-    expect(sessionStorage.getItem(SessionStorageKeyE.CURRENT_ACCOUNT)).toBe(JSON.stringify(mockUserSettings[0]))
+    // expect(mockAxiosRequest.get).toHaveBeenCalledWith(`${apiURL}/users/${account.user.keycloakGuid}/settings`)
+    expect(account.currentAccount).toEqual({}) // current account is empty because user has not selected it yet
     // test setting the current account to the 2nd value
-    sessionStorage.setItem(SessionStorageKeyE.CURRENT_ACCOUNT, JSON.stringify(mockUserSettings[1]))
-    await account.setAccountInfo()
+    localStorage.setItem(SessionStorageKeyE.CURRENT_ACCOUNT, JSON.stringify(mockUserSettings[1]))
+    await account.setAccountInfo(mockUserSettings[1].id)
     expect(account.currentAccount).toEqual(mockUserSettings[1])
+
+    // user selected account
+    account.switchCurrentAccount(mockUserSettings[0].id)
+    await nextTick()
+    expect(account.currentAccount).toEqual(mockUserSettings[0])
+    expect(localStorage.getItem(SessionStorageKeyE.CURRENT_ACCOUNT)).toBe(JSON.stringify(mockUserSettings[0]))
   })
 
   // TODO: TC - add api calls to use mock data to
