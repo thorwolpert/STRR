@@ -8,8 +8,6 @@ import { useBcrosKeycloak } from '@/stores/keycloak'
 describe('Account Store Tests', () => {
   let account: any
   let keycloak: any
-  // TODO: TC - what is this one, hopefully auth api
-  let apiURL: string
 
   // axios mocks
   vi.mock('axios', () => { return { default: { ...mockAxiosDefault } } })
@@ -25,8 +23,6 @@ describe('Account Store Tests', () => {
     account.user = computed(() => keycloak.kcUser)
     account.userFirstName = ref(account.user.firstName)
     account.userLastName = ref(account.user.lastName)
-
-    apiURL = useRuntimeConfig().public.authApiURL
   })
 
   afterEach(() => vi.clearAllMocks())
@@ -52,7 +48,6 @@ describe('Account Store Tests', () => {
     expect(localStorage.getItem(SessionStorageKeyE.CURRENT_ACCOUNT)).toBeNull()
     await account.setAccountInfo()
     expect(mockAxiosRequest.get).toHaveBeenCalled()
-    // expect(mockAxiosRequest.get).toHaveBeenCalledWith(`${apiURL}/users/${account.user.keycloakGuid}/settings`)
     expect(account.currentAccount).toEqual({}) // current account is empty because user has not selected it yet
     // test setting the current account to the 2nd value
     localStorage.setItem(SessionStorageKeyE.CURRENT_ACCOUNT, JSON.stringify(mockUserSettings[1]))
