@@ -32,10 +32,11 @@ export const useTermsOfService = () => {
   function handleTosAcceptance (isAccepted: boolean) {
     if (!isAccepted) {
       // if user has not accepted the terms, redirect to ToS page
-      navigateTo('/terms-of-service')
+      navigateTo('/' + RouteNamesE.TERMS_OF_SERVICE)
     } else {
-      // if user already accepted the terms, update the store and continue without redirect
+      // if user already accepted the terms, update the store and to Account Select page
       isTosAccepted.value = true
+      navigateTo('/' + RouteNamesE.ACCOUNT_SELECT)
     }
   }
 
@@ -48,7 +49,7 @@ export const useTermsOfService = () => {
         })
       await useBcrosAccount().setAccountInfo()
       if (isAccepted) {
-        navigateTo('/create-account')
+        navigateTo('/' + RouteNamesE.ACCOUNT_SELECT)
       } else {
         navigateTo(DECLINE_TERMS_REDIRECT_URL, { external: true })
       }

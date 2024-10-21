@@ -10,7 +10,7 @@ export const useRegistrations = () => {
   const getRegistrations = () => axiosInstance.get<PaginatedRegistrationsI>(`${apiURL}/registrations`)
     .then((res) => {
       if (res.data.count === 0) {
-        navigateTo('/create-account')
+        navigateTo('/' + RouteNamesE.CREATE_ACCOUNT)
       }
       return res.data.results
         .sort(
@@ -106,7 +106,7 @@ export const useRegistrations = () => {
         if (res.data) {
           const { setAccountInfo } = useBcrosAccount()
           setAccountInfo(res.data.sbc_account_id)
-          navigateTo('/create-account')
+          navigateTo('/' + RouteNamesE.CREATE_ACCOUNT)
           return SbcCreationResponseE.SUCCESS
         }
         return SbcCreationResponseE.ERROR

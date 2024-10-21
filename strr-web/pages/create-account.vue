@@ -129,7 +129,7 @@ const { createApplication } = useApplications()
 onMounted(() => {
   // if no SBC accounts exist redirect to SBC account creation
   if (!me?.settings.length) {
-    navigateTo('/finalization')
+    navigateTo('/' + RouteNamesE.FINALIZATION)
   }
   updateFees()
 })
