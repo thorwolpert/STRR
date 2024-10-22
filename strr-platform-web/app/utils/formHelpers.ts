@@ -1,4 +1,5 @@
 import type { Form } from '#ui/types'
+import type { ZodSchema } from 'zod'
 
 export const getOwnershipTypeDisplay = (ownershipType: string | null, t: (key: string) => string) => {
   switch (ownershipType) {
@@ -20,4 +21,22 @@ export const hasFormErrors = (form: Form<any> | undefined, paths: string[]) => {
     }
   }
   return false
+}
+
+export const validateSchemaAgainstState = (schema: ZodSchema<any>, state: any, formId: string) => {
+  const result = schema.safeParse(state)
+
+  if (result.success) {
+    return {
+      formId,
+      success: true,
+      errors: []
+    }
+  } else {
+    return {
+      formId,
+      success: false,
+      errors: result.error.issues
+    }
+  }
 }
