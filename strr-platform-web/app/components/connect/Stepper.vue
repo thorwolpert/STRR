@@ -1,11 +1,71 @@
 <script setup lang="ts">
+// const { activeStep } = defineProps<{ activeStep: number }>()
+// const { steps, activeStep } = defineProps<{ steps: Step[], activeStep: number }>()
+// const props = defineProps<{ steps: Step[] }>()
 
-const { steps, activeStep } = defineProps<{ steps: Step[], activeStep: number }>()
-
-const emit = defineEmits<{ changeStep: [stepIndex: number] }>()
+const emit = defineEmits<{ newStep: [stepIndex: number] }>()
 
 const { t } = useI18n()
 
+const stepsModel = defineModel('steps', { type: Array as PropType<Step[]>, default: () => [] })
+const activeStepIndexModel = defineModel('activeStepIndex', { type: Number, default: 0 })
+const activeStepModel = defineModel('activeStep', {
+  type: Object as PropType<Step>,
+  default: () => {}
+})
+
+function setActiveStep (newStep: number) {
+  const totalSteps = stepsModel.value.length
+
+  // If the user is on the last step and moves back, mark the last step as complete
+  if (activeStepIndexModel.value === totalSteps - 1) {
+    const lastStep = stepsModel.value[totalSteps - 1]
+    if (lastStep) {
+      lastStep.complete = true
+    }
+  }
+
+  // Set the active step to the new step
+  activeStepIndexModel.value = newStep
+  activeStepModel.value = stepsModel.value[activeStepIndexModel.value] as Step
+
+  // Mark all previous steps as complete
+  for (let i = 0; i < newStep; i++) {
+    if (stepsModel.value[i]) {
+      // @ts-expect-error
+      stepsModel.value[i].complete = true
+    }
+  }
+
+  emit('newStep', newStep)
+}
+
+function setNextStep () {
+  const totalSteps = stepsModel.value.length
+  const currentStep = activeStepIndexModel.value
+
+  // Check if we're not on the last step
+  if (currentStep < totalSteps - 1) {
+    setActiveStep(currentStep + 1)
+  }
+}
+
+function setPreviousStep () {
+  const currentStep = activeStepIndexModel.value
+
+  // Check if we're not on the first step
+  if (currentStep > 0) {
+    setActiveStep(currentStep - 1)
+  }
+}
+
+defineExpose({ setActiveStep, setNextStep, setPreviousStep })
+
+onMounted(() => {
+  if (stepsModel.value.length > 0) {
+    activeStepModel.value = stepsModel.value[activeStepIndexModel.value] as Step
+  }
+})
 </script>
 <template>
   <div>
@@ -18,17 +78,15 @@ const { t } = useI18n()
       data-testid="stepper"
     >
       <div
-        v-for="(step, index) in steps"
+        v-for="(step, index) in stepsModel"
         :key="'step' + index"
         class="flex flex-row"
-        :class="index == steps.length - 1 ? 'shrink grow-0': 'shrink-0 grow'"
+        :class="index == stepsModel.length - 1 ? 'shrink grow-0': 'shrink-0 grow'"
       >
-        <div
-          aria-roledescription="button"
-          tabindex="0"
-          class="flex cursor-pointer flex-col border-b-0 border-blue-500 pb-5"
-          :class="index === activeStep ? 'sm:border-b-[3px]' : ''"
-          @click="() => emit('changeStep', index)"
+        <button
+          class="flex cursor-pointer flex-col items-center border-b-0 border-blue-500 pb-5"
+          :class="index === activeStepIndexModel ? 'sm:border-b-[3px]' : ''"
+          @click="setActiveStep(index)"
         >
           <div class="flex justify-center pt-2 ">
             <div
@@ -37,7 +95,7 @@ const { t } = useI18n()
                 outline outline-1 outline-blue-500
                 sm:size-12 sm:p-3 md:size-16 md:p-4
               "
-              :class="index === activeStep ? 'bg-blue-500' : ''"
+              :class="index === activeStepIndexModel ? 'bg-blue-500' : ''"
             >
               <div v-if="step.complete">
                 <img
@@ -52,12 +110,12 @@ const { t } = useI18n()
               <UIcon
                 v-if="step.icon"
                 class="size-5 sm:size-6 md:size-8"
-                :class="index === activeStep ? 'text-white' : 'text-primary'"
+                :class="index === activeStepIndexModel ? 'text-white' : 'text-primary'"
                 :name="step.icon"
               />
               <img
                 v-else
-                :src="`${index === activeStep ? `${step.activeIconPath}`: step.inactiveIconPath}`"
+                :src="`${index === activeStepIndexModel ? `${step.activeIconPath}`: step.inactiveIconPath}`"
                 class="size-5 sm:size-6 md:size-8"
                 :alt="step.i18nPrefix ? t(`${step.i18nPrefix}.description.${index}`) : step.alt"
               >
@@ -68,13 +126,13 @@ const { t } = useI18n()
               mt-2 hidden max-w-[95px] text-center
               text-[14px] leading-5 sm:block
             "
-            :class="index === activeStep ? 'font-bold text-black' : 'text-blue-500'"
+            :class="index === activeStepIndexModel ? 'font-bold text-black' : 'text-blue-500'"
           >
             {{ step.label ? t(step.label) : t(`${step.i18nPrefix}.description.${index}`) }}
           </p>
-        </div>
+        </button>
         <div
-          v-if="index < steps.length - 1"
+          v-if="index < stepsModel.length - 1"
           class="mb-2 shrink-0 grow self-center sm:mb-10 md:mb-10"
         >
           <div class="h-px bg-gray-600" />
@@ -82,10 +140,10 @@ const { t } = useI18n()
       </div>
     </div>
   </div>
-  <div v-if="steps[activeStep]?.i18nPrefix" class="space-y-5 py-5">
-    <ConnectTypographyH2 :text="t(`${steps[activeStep]?.i18nPrefix}.title.${activeStep}`)" />
+  <div v-if="stepsModel[activeStepIndexModel]?.i18nPrefix" class="space-y-5 py-5">
+    <ConnectTypographyH2 :text="t(`${stepsModel[activeStepIndexModel]?.i18nPrefix}.title.${activeStepIndexModel}`)" />
     <p>
-      {{ t(`${steps[activeStep]?.i18nPrefix}.info.${activeStep}`) }}
+      {{ t(`${stepsModel[activeStepIndexModel]?.i18nPrefix}.info.${activeStepIndexModel}`) }}
     </p>
   </div>
 </template>
