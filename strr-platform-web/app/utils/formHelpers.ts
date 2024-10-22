@@ -63,6 +63,8 @@ export const focusAndScrollToInputByName = (inputName: string) => {
   if (!el) { return }
 
   if (el.hasAttribute('readonly')) {
+    // some elements (eg: UInputMenu) display the form group name on a readonly input
+    // get actual input and apply focus
     const visibleInput = el.closest('div')?.querySelector('input:not([readonly])') as HTMLInputElement | null
     if (visibleInput) {
       focusAndScroll(visibleInput)
