@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Form, FormError } from '#ui/types'
+import type { Form } from '#ui/types'
 import { z } from 'zod'
 const { t } = useI18n()
 
@@ -16,9 +16,6 @@ const {
   completingParty,
   primaryRep,
   secondaryRep
-  // compPartySchema,
-  // primaryRepSchema,
-  // secondaryRepSchema
 } = storeToRefs(useStrrPlatformContact())
 
 type CompletingPartySchema = z.output<typeof compPartySchema>
@@ -38,59 +35,23 @@ watch(isCompletingPartyRep, (val) => {
   primaryRep.value = getNewRepresentative(val)
 })
 
-const validateForm = async (form: Form<any> | undefined, formId: string): Promise<{
-    formId: string
-    errors: FormError<string>[]
-} | undefined> => {
-  if (form && props.isComplete) {
-    try {
-      await form.validate()
-
-      console.log('form after validation: ', form)
-    } catch {
-      return { formId, errors: toValue(form.errors) }
-    }
-  }
-}
-
-async function validateAll () {
-  if (isCompletingPartyRep.value === undefined) {
-    console.log('completing party ref is undefined')
-  }
-
-  const validations = [
-    validateForm(compPartyFormRef.value, 'completing-party-form'),
-    validateForm(primaryRepFormRef.value, 'primary-rep-form'),
-    validateForm(secondaryRepFormRef.value, 'secondary-rep-form')
-  ]
-
-  const results = await Promise.all(validations)
-
-  return results.filter(item => item !== undefined)
-}
-
 onMounted(async () => {
-  if (props.isComplete) { // only try to validate if step marked as complete
-    const results = await validateAll()
-    if (results.length > 0) {
-      const firstError = results[0]?.errors[0]?.path // get first error found
+  // only try to validate if step marked as complete
+  if (props.isComplete) {
+    // validate all form refs
+    const validations = [
+      validateForm(compPartyFormRef.value, props.isComplete),
+      validateForm(primaryRepFormRef.value, props.isComplete),
+      validateForm(secondaryRepFormRef.value, props.isComplete)
+    ]
+
+    // get all errors and filter out undefined results (secondary rep form validate might return undefined)
+    const validationResults = (await Promise.all(validations)).filter(item => item !== undefined)
+
+    if (validationResults.length > 0) {
+      const firstError = validationResults[0]?.[0]?.path // get first error found
       if (firstError) {
-        const el = document.querySelector(`input[name='${firstError}']`) as HTMLInputElement | null
-        if (el) {
-          if (el.hasAttribute('readonly')) {
-            // some inputs (eg: UInputMenu) renders a readonly input with the form group name
-            // find the correct input element
-            const visibleInput = el.closest('div')?.querySelector('input:not([readonly])') as HTMLInputElement | null
-            if (visibleInput) { // if visible input found, apply focus and scroll into view
-              visibleInput.focus()
-              visibleInput.scrollIntoView({ behavior: 'smooth', block: 'center' })
-              return
-            }
-          }
-          // if element is not readonly, scroll into view as normal
-          el.focus()
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }
+        focusAndScrollToInputByName(firstError)
       }
     }
   }
@@ -220,3 +181,9 @@ onMounted(async () => {
     </div>
   </div>
 </template>
+<style>
+/* smooth scroll not working without this, add to layer? */
+html {
+  scroll-behavior: smooth;
+}
+</style>

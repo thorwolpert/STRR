@@ -41,14 +41,33 @@ export const validateSchemaAgainstState = (schema: ZodSchema<any>, state: any, f
   }
 }
 
-// export const validateForm = async (form: Form<any> | undefined, isComplete: boolean): Promise<
-//   { errors: FormError<string>[]} | undefined
-// > => {
-//   if (form && isComplete) {
-//     try {
-//       await form.validate()
-//     } catch {
-//       return { errors: toValue(form.errors) }
-//     }
-//   }
-// }
+export const validateForm = async (form: Form<any> | undefined, isComplete: boolean): Promise<
+  FormError<string>[] | undefined
+> => {
+  if (form && isComplete) {
+    try {
+      await form.validate()
+    } catch {
+      return toValue(form.errors)
+    }
+  }
+}
+
+export const focusAndScroll = (element: HTMLInputElement) => {
+  element.focus()
+  element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+
+export const focusAndScrollToInputByName = (inputName: string) => {
+  const el = document.querySelector(`input[name='${inputName}']`) as HTMLInputElement | null
+  if (!el) { return }
+
+  if (el.hasAttribute('readonly')) {
+    const visibleInput = el.closest('div')?.querySelector('input:not([readonly])') as HTMLInputElement | null
+    if (visibleInput) {
+      focusAndScroll(visibleInput)
+    }
+  } else {
+    focusAndScroll(el)
+  }
+}
