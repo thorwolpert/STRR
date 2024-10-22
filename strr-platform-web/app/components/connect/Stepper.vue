@@ -3,15 +3,17 @@ const emit = defineEmits<{ newStep: [stepIndex: number] }>()
 
 const { t } = useI18n()
 
-const stepsModel = defineModel('steps', { type: Array as PropType<Step[]>, default: () => [] })
-const activeStepIndexModel = defineModel('activeStepIndex', { type: Number, default: 0 })
-const activeStepModel = defineModel('activeStep', {
-  type: Object as PropType<Step>,
-  default: () => {}
-})
+const stepsModel = defineModel<Step[]>('steps', { default: () => [] })
+const activeStepIndexModel = defineModel<number>('activeStepIndex', { default: 0 })
+const activeStepModel = defineModel<Step>('activeStep', { default: () => {} })
 
-function setActiveStep (newStep: number) {
+async function setActiveStep (newStep: number) {
   activeStepModel.value.complete = true // set currently active step to complete
+
+  if (activeStepModel.value.validationFn) { // run step validation if exists
+    const isValid = await activeStepModel.value.validationFn()
+    setStepValidity(activeStepIndexModel.value, !!isValid)
+  }
 
   activeStepIndexModel.value = newStep // update active step index
   activeStepModel.value = stepsModel.value[newStep] as Step // update active step model
@@ -46,7 +48,12 @@ function setPreviousStep () {
   }
 }
 
-defineExpose({ setActiveStep, setNextStep, setPreviousStep })
+function setStepValidity (index: number, valid: boolean) {
+  // @ts-ignore
+  stepsModel.value[index].isValid = valid
+}
+
+defineExpose({ setActiveStep, setNextStep, setPreviousStep, setStepValidity })
 
 onMounted(() => {
   if (stepsModel.value.length > 0) { // init first step based on activeStepIndexModel default value
