@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const emit = defineEmits<{ newStep: [stepIndex: number] }>()
 
-const { t } = useI18n()
-
 const stepsModel = defineModel<Step[]>('steps', { default: () => [] })
 const activeStepIndexModel = defineModel<number>('activeStepIndex', { default: 0 })
 const activeStepModel = defineModel<Step>('activeStep', { default: () => {} })
@@ -97,7 +95,7 @@ onMounted(() => {
                     ? '/icons/valid_step.svg'
                     : '/icons/invalid_step.svg'
                   "
-                  :alt="t(`validation.step.${step.isValid}`)"
+                  :alt="$t(`validation.step.${step.isValid}`)"
                   class="absolute right-[-10px] top-[-10px]"
                 >
               </div>
@@ -111,7 +109,7 @@ onMounted(() => {
                 v-else
                 :src="`${index === activeStepIndexModel ? `${step.activeIconPath}`: step.inactiveIconPath}`"
                 class="size-5 sm:size-6 md:size-8"
-                :alt="step.i18nPrefix ? t(`${step.i18nPrefix}.description.${index}`) : step.alt"
+                :alt="step.i18nPrefix ? $t(`${step.i18nPrefix}.description.${index}`) : step.alt"
               >
             </div>
           </div>
@@ -122,7 +120,7 @@ onMounted(() => {
             "
             :class="index === activeStepIndexModel ? 'font-bold text-black' : 'text-blue-500'"
           >
-            {{ step.label ? t(step.label) : t(`${step.i18nPrefix}.description.${index}`) }}
+            {{ step.label ? $t(step.label) : $t(`${step.i18nPrefix}.description.${index}`) }}
           </p>
         </button>
         <div
@@ -135,9 +133,9 @@ onMounted(() => {
     </div>
   </div>
   <div v-if="stepsModel[activeStepIndexModel]?.i18nPrefix" class="space-y-5 py-5">
-    <ConnectTypographyH2 :text="t(`${stepsModel[activeStepIndexModel]?.i18nPrefix}.title.${activeStepIndexModel}`)" />
+    <ConnectTypographyH2 :text="$t(`${stepsModel[activeStepIndexModel]?.i18nPrefix}.title.${activeStepIndexModel}`)" />
     <p>
-      {{ t(`${stepsModel[activeStepIndexModel]?.i18nPrefix}.info.${activeStepIndexModel}`) }}
+      {{ $t(`${stepsModel[activeStepIndexModel]?.i18nPrefix}.info.${activeStepIndexModel}`) }}
     </p>
   </div>
 </template>
