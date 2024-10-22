@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ConnectFeeCode, ConnectFeeEntityType, type ConnectFeeItem, type Step } from '#imports'
 import type { ConnectBtnControlItem } from '~/interfaces/connect-btn-control/item-i'
+import { FormPlatformContactInfo, ConnectStepper } from '#components'
 
 const { t } = useI18n()
 
-const { getContactSchema } = useStrrPlatformContact()
-const { isCompletingPartyRep, completingParty, primaryRep, secondaryRep } = storeToRefs(useStrrPlatformContact())
+const { validatePlatformContact } = useStrrPlatformContact()
 const { submitPlatformApplication } = useStrrPlatformApplication()
 // fee stuff
 const { addReplaceFee, getFee, removeFee, setPlaceholderFilingTypeCode, setPlaceholderServiceFee } = useConnectFee()
@@ -72,7 +72,8 @@ const steps = ref<Step[]>([
     i18nPrefix: 'platform.step',
     icon: 'i-mdi-account-multiple-plus',
     complete: false,
-    isValid: false
+    isValid: false,
+    validationFn: async () => await validatePlatformContact(true) as boolean
   },
   {
     i18nPrefix: 'platform.step',
@@ -93,31 +94,9 @@ const steps = ref<Step[]>([
     isValid: false
   }
 ])
-const activeStepIndex: Ref<number> = ref(0)
-const activeStep: Ref<Step> = ref(steps.value[activeStepIndex.value] as Step)
-const setActiveStep = (newStep: number) => {
-  activeStep.value.complete = true
-  activeStepIndex.value = newStep
-  activeStep.value = steps.value[activeStepIndex.value] as Step
-}
-const setNextStep = () => {
-  if (activeStepIndex.value < steps.value.length - 1) {
-    const nextStep = activeStepIndex.value + 1
-    activeStepIndex.value = nextStep
-    activeStep.value = steps.value[activeStepIndex.value] as Step
-    // @ts-ignore
-    steps.value[activeStepIndex.value - 1].complete = true
-  }
-}
-const setPreviousStep = () => {
-  if (activeStepIndex.value > 0) {
-    const nextStep = activeStepIndex.value - 1
-    activeStepIndex.value = nextStep
-    activeStep.value = steps.value[activeStepIndex.value] as Step
-    // @ts-ignore
-    steps.value[activeStepIndex.value + 1].complete = true
-  }
-}
+const activeStepIndex = ref<number>(0)
+const activeStep = ref<Step>(steps.value[activeStepIndex.value] as Step)
+const stepperRef = shallowRef<InstanceType<typeof ConnectStepper> | null>(null)
 
 // need to cleanup the setButtonControl somehow
 const handlePlatformSubmit = async () => {
@@ -126,14 +105,14 @@ const handlePlatformSubmit = async () => {
     setButtonControl({
       leftButtons: [
         {
-          action: setPreviousStep,
+          action: () => undefined, // is disabled
           icon: 'i-mdi-chevron-left',
           label: t('btn.back'),
           variant: 'outline',
           disabled: true
         },
         {
-          action: handlePlatformSubmit,
+          action: () => undefined, // is disabled
           icon: 'i-mdi-chevron-right',
           label: t('btn.submitAndPay'),
           trailing: true,
@@ -143,27 +122,21 @@ const handlePlatformSubmit = async () => {
       rightButtons: []
     })
 
-    // something like this but cleaner
+    // TODO: something like this but cleaner
     // validate all forms
-    // const isCompletingPartyValid = getContactSchema(true).safeParse(completingParty.value).success
-    // const isPrimaryRepValid = getContactSchema(false).safeParse(primaryRep.value).success
-    // if (secondaryRep.value) {
-    //   const isSecondaryRepValid = getContactSchema(false).safeParse(secondaryRep.value).success
-    // }
-    // const isBusDetailsValid = getBusinessSchema(
-    //   platformBusiness.value.hasCpbc, platformBusiness.value.hasRegOffAtt)
-    // console.log(isCompletingPartyValid)
+    activeStep.value.complete = true // set final review step as active before validation
 
     // if all steps valid, submit form with store function
     await submitPlatformApplication()
   } catch (e) {
-
+    // eslint-disable-next-line
+    console.log('error from application page', e)
   } finally {
     // set buttons back to non loading state
     setButtonControl({
       leftButtons: [
         {
-          action: setPreviousStep,
+          action: () => stepperRef.value?.setPreviousStep(),
           icon: 'i-mdi-chevron-left',
           label: t('btn.back'),
           variant: 'outline'
@@ -184,50 +157,23 @@ watch(activeStepIndex, (val) => {
   const buttons: ConnectBtnControlItem[] = []
   if (val !== 0) {
     buttons.push({
-      action: setPreviousStep,
+      action: () => stepperRef.value?.setPreviousStep(),
       icon: 'i-mdi-chevron-left',
       label: t('btn.back'),
       variant: 'outline'
     })
-    // set previous steps to complete (in case they skipped past steps.value)
-    for (let i = 1; i < val; i++) {
-      // @ts-ignore
-      steps.value[i].complete = true
-    }
   }
   const isLastStep = val === steps.value.length - 1
   buttons.push({
-    action: isLastStep ? handlePlatformSubmit : setNextStep,
+    action: isLastStep ? handlePlatformSubmit : () => stepperRef.value?.setNextStep(),
     icon: 'i-mdi-chevron-right',
     label: isLastStep ? t('btn.submitAndPay') : t('btn.next'),
     trailing: true
   })
+
   setButtonControl({ leftButtons: buttons, rightButtons: [] })
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }, { immediate: true })
-
-const setStepValid = (index: number, valid: boolean) => {
-  // @ts-ignore
-  steps.value[index].isValid = valid
-}
-const validateStep = (schema: any, state: any, index: number) => {
-  setStepValid(index, schema.safeParse(state).success)
-}
-
-const validateStep1 = () => {
-  if (isCompletingPartyRep === undefined) {
-    setStepValid(0, false)
-    return
-  }
-  validateStep(getContactSchema(true), completingParty.value, 0)
-  validateStep(getContactSchema(false), primaryRep.value, 0)
-  if (secondaryRep.value) {
-    validateStep(getContactSchema(false), secondaryRep.value, 0)
-  }
-}
-watch(completingParty, validateStep1, { deep: true })
-watch(primaryRep, validateStep1, { deep: true })
-watch(secondaryRep, validateStep1, { deep: true })
 
 // page stuff
 useHead({
@@ -248,24 +194,25 @@ setBreadcrumbs([
   <div class="space-y-8 py-8 sm:py-10">
     <ConnectTypographyH1 :text="t('platform.title')" class="my-5" />
     <ConnectStepper
+      ref="stepperRef"
       :key="0"
-      :active-step="activeStepIndex"
-      :steps="steps"
-      @change-step="setActiveStep"
+      v-model:steps="steps"
+      v-model:active-step-index="activeStepIndex"
+      v-model:active-step="activeStep"
     />
     <div v-if="activeStepIndex === 0" key="contact-information">
       <FormPlatformContactInfo :is-complete="activeStep.complete" />
     </div>
-    <div v-else-if="activeStepIndex === 1" key="business-details">
+    <div v-if="activeStepIndex === 1" key="business-details">
       <FormPlatformBusinessDetails :is-complete="activeStep.complete" />
     </div>
-    <div v-else-if="activeStepIndex === 2" key="platform-information">
+    <div v-if="activeStepIndex === 2" key="platform-information">
       <FormPlatformDetails :is-complete="activeStep.complete" />
     </div>
-    <div v-else key="review-confirm">
+    <div v-if="activeStepIndex === 3" key="review-confirm">
       <FormPlatformReview
         :is-complete="activeStep.complete"
-        @edit="setActiveStep"
+        @edit="stepperRef?.setActiveStep"
       />
     </div>
   </div>

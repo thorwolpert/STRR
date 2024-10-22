@@ -1,9 +1,10 @@
 export const useStrrPlatformApplication = defineStore('strr/platformApplication', () => {
-  const { $strrApi } = useNuxtApp()
+  // const { $strrApi } = useNuxtApp()
   const { completingParty, primaryRep, secondaryRep } = storeToRefs(useStrrPlatformContact())
   const { platformBusiness } = storeToRefs(useStrrPlatformBusiness())
   const { platformDetails } = storeToRefs(useStrrPlatformDetails())
   const strrModal = useStrrModals()
+  const platContactStore = useStrrPlatformContact()
 
   const confirmInfoAccuracy = ref(false)
   const confirmDelistAndCancelBookings = ref(false)
@@ -35,15 +36,18 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
   }
 
   async function submitPlatformApplication () {
-    // validate all forms/fields first??
     try {
+      const results = await platContactStore.validatePlatformContact()
+
+      console.info('platform contact info results: ', results)
+
       const body = createApplicationBody()
 
-      // console.log('submitting application: ', body)
-      await $strrApi('/applications', {
-        method: 'POST',
-        body
-      })
+      console.info('submitting application: ', body)
+      // await $strrApi('/applications', {
+      //   method: 'POST',
+      //   body
+      // })
     } catch (e) {
       logFetchError(e, 'Error creating platform application')
       strrModal.openAppSubmitError() // pass in error object ??

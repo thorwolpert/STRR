@@ -1,4 +1,4 @@
-import type { Form } from '#ui/types'
+import type { Form, FormError } from '#ui/types'
 import type { ZodSchema } from 'zod'
 
 export const getOwnershipTypeDisplay = (ownershipType: string | null, t: (key: string) => string) => {
@@ -40,3 +40,15 @@ export const validateSchemaAgainstState = (schema: ZodSchema<any>, state: any, f
     }
   }
 }
+
+// export const validateForm = async (form: Form<any> | undefined, isComplete: boolean): Promise<
+//   { errors: FormError<string>[]} | undefined
+// > => {
+//   if (form && isComplete) {
+//     try {
+//       await form.validate()
+//     } catch {
+//       return { errors: toValue(form.errors) }
+//     }
+//   }
+// }
