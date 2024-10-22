@@ -1,8 +1,4 @@
 <script setup lang="ts">
-// const { activeStep } = defineProps<{ activeStep: number }>()
-// const { steps, activeStep } = defineProps<{ steps: Step[], activeStep: number }>()
-// const props = defineProps<{ steps: Step[] }>()
-
 const emit = defineEmits<{ newStep: [stepIndex: number] }>()
 
 const { t } = useI18n()
@@ -15,21 +11,12 @@ const activeStepModel = defineModel('activeStep', {
 })
 
 function setActiveStep (newStep: number) {
-  const totalSteps = stepsModel.value.length
+  activeStepModel.value.complete = true // set currently active step to complete
 
-  // If the user is on the last step and moves back, mark the last step as complete
-  if (activeStepIndexModel.value === totalSteps - 1) {
-    const lastStep = stepsModel.value[totalSteps - 1]
-    if (lastStep) {
-      lastStep.complete = true
-    }
-  }
+  activeStepIndexModel.value = newStep // update active step index
+  activeStepModel.value = stepsModel.value[newStep] as Step // update active step model
 
-  // Set the active step to the new step
-  activeStepIndexModel.value = newStep
-  activeStepModel.value = stepsModel.value[activeStepIndexModel.value] as Step
-
-  // Mark all previous steps as complete
+  // mark all previous steps as complete
   for (let i = 0; i < newStep; i++) {
     if (stepsModel.value[i]) {
       // @ts-expect-error
@@ -44,7 +31,7 @@ function setNextStep () {
   const totalSteps = stepsModel.value.length
   const currentStep = activeStepIndexModel.value
 
-  // Check if we're not on the last step
+  // check if not on last step
   if (currentStep < totalSteps - 1) {
     setActiveStep(currentStep + 1)
   }
@@ -53,7 +40,7 @@ function setNextStep () {
 function setPreviousStep () {
   const currentStep = activeStepIndexModel.value
 
-  // Check if we're not on the first step
+  // check if not on first step
   if (currentStep > 0) {
     setActiveStep(currentStep - 1)
   }
@@ -62,7 +49,7 @@ function setPreviousStep () {
 defineExpose({ setActiveStep, setNextStep, setPreviousStep })
 
 onMounted(() => {
-  if (stepsModel.value.length > 0) {
+  if (stepsModel.value.length > 0) { // init first step based on activeStepIndexModel default value
     activeStepModel.value = stepsModel.value[activeStepIndexModel.value] as Step
   }
 })
