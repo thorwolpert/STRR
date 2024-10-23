@@ -36,6 +36,12 @@ export const useBcrosNavigate = () => {
   function goToCreateSbcAccount () {
     router.push('/' + RouteNamesE.FINALIZATION)
   }
+  function goToHostDashboard () {
+    router.push('/' + RouteNamesE.APPLICATION_STATUS)
+  }
+  function goToExaminerDashboard () {
+    router.push('/' + RouteNamesE.REGISTRY_DASHBOARD)
+  }
   function goToCreateAccount () {
     router.push('/' + RouteNamesE.CREATE_ACCOUNT)
   }
@@ -56,6 +62,8 @@ export const useBcrosNavigate = () => {
     goToAccountInfo,
     goToTermsOfService,
     goToCreateSbcAccount,
+    goToHostDashboard,
+    goToExaminerDashboard,
     goToCreateAccount,
     goToEditProfile,
     goToSetupAccount,
