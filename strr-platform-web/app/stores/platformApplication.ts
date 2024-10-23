@@ -1,10 +1,9 @@
 export const useStrrPlatformApplication = defineStore('strr/platformApplication', () => {
   // const { $strrApi } = useNuxtApp()
-  const { completingParty, primaryRep, secondaryRep } = storeToRefs(useStrrPlatformContact())
-  const { platformBusiness } = storeToRefs(useStrrPlatformBusiness())
   const { platformDetails } = storeToRefs(useStrrPlatformDetails())
   const strrModal = useStrrModals()
   const platContactStore = useStrrPlatformContact()
+  const platBusinessStore = useStrrPlatformBusiness()
 
   const confirmInfoAccuracy = ref(false)
   const confirmDelistAndCancelBookings = ref(false)
@@ -13,22 +12,22 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
     const applicationBody: PlatformApplicationPayload = {
       registration: {
         registrationType: ApplicationType.PLATFORM,
-        completingParty: formatParty(completingParty.value),
+        completingParty: formatParty(platContactStore.completingParty),
         platformRepresentatives: [],
-        businessDetails: formatBusinessDetails(platformBusiness.value),
+        businessDetails: formatBusinessDetails(platBusinessStore.platformBusiness),
         platformDetails: formatPlatformDetails(platformDetails.value)
       }
     }
 
-    if (primaryRep.value !== undefined) {
+    if (platContactStore.primaryRep !== undefined) {
       applicationBody.registration.platformRepresentatives.push(
-        formatRepresentative(primaryRep.value)
+        formatRepresentative(platContactStore.primaryRep)
       )
     }
 
-    if (secondaryRep.value !== undefined) {
+    if (platContactStore.secondaryRep !== undefined) {
       applicationBody.registration.platformRepresentatives.push(
-        formatRepresentative(secondaryRep.value)
+        formatRepresentative(platContactStore.secondaryRep)
       )
     }
 
@@ -37,9 +36,11 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
 
   async function submitPlatformApplication () {
     try {
-      const results = await platContactStore.validatePlatformContact()
+      const contactResults = await platContactStore.validatePlatformContact()
+      const businessResults = await platBusinessStore.validatePlatformBusiness()
 
-      console.info('platform contact info results: ', results)
+      console.info('contact validations: ', contactResults)
+      console.info('business validations: ', businessResults)
 
       const body = createApplicationBody()
 

@@ -6,6 +6,7 @@ import { FormPlatformContactInfo, ConnectStepper } from '#components'
 const { t } = useI18n()
 
 const { validatePlatformContact } = useStrrPlatformContact()
+const { validatePlatformBusiness } = useStrrPlatformBusiness()
 const { submitPlatformApplication } = useStrrPlatformApplication()
 // fee stuff
 const { addReplaceFee, getFee, removeFee, setPlaceholderFilingTypeCode, setPlaceholderServiceFee } = useConnectFee()
@@ -79,7 +80,8 @@ const steps = ref<Step[]>([
     i18nPrefix: 'platform.step',
     icon: 'i-mdi-domain-plus',
     complete: false,
-    isValid: false
+    isValid: false,
+    validationFn: async () => await validatePlatformBusiness(true) as boolean
   },
   {
     i18nPrefix: 'platform.step',
