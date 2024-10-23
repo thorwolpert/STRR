@@ -1,9 +1,7 @@
-import { PropertyManagerI } from './property-manager-i'
-import { RegistrationTypeE } from '#imports'
 import { AccountStatusE } from '~/enums/account-status-e'
 import { AccountTypeE } from '~/enums/account-type-e'
 import { UserSettingsTypeE } from '~/enums/user-settings-type-e'
-
+import { RegistrationTypeE, type PropertyManagerI } from '#imports'
 export interface DateOfBirthI {
   day: string
   month: string
@@ -149,9 +147,9 @@ export interface PrincipalResidenceI {
 export interface CreateAccountFormStateI {
   primaryContact: PrimaryContactInformationI
   secondaryContact: SecondaryContactInformationI
-  isPropertyManagerRole: boolean,
-  hasPropertyManager: boolean,
   propertyManager: PropertyManagerI
+  isPropertyManagerRole: boolean
+  hasPropertyManager: boolean
   propertyDetails: {
     primaryResidence: string | undefined
     whichPlatform: string | undefined
@@ -231,8 +229,8 @@ export interface CreateAccountFormAPII {
       agreedToSubmit: boolean
     }
     primaryContact?: ContactAPII
-    propertyManager?: PropertyManagerI
     secondaryContact?: ContactAPII
+    propertyManager?: PropertyManagerI
     unitAddress: UnitAddressI
     unitDetails: {
       parcelIdentifier?: string

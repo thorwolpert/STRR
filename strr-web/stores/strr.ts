@@ -212,6 +212,29 @@ export const secondaryContactSchema = z.object({
     .optional()
 })
 
+const propertyManager: PropertyManagerI = {
+  businessLegalName: '',
+  craBusinessNumber: '',
+  businessMailingAddress: {
+    address: '',
+    addressLineTwo: '',
+    city: '',
+    postalCode: '',
+    province: '',
+    country: ''
+  },
+  contact: {
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    preferredName: '',
+    phoneNumber: '',
+    extension: '',
+    faxNumber: '',
+    emailAddress: ''
+  }
+}
+
 const primaryContact: PrimaryContactInformationI = {
   preferredName: '',
   phoneNumber: undefined,
@@ -431,6 +454,7 @@ export const formDataForAPI: CreateAccountFormAPII = {
       nonPrincipalOption: '',
       specifiedServiceProvider: '',
       agreedToSubmit: false
-    }
+    },
+    registrationType: undefined
   }
 }
