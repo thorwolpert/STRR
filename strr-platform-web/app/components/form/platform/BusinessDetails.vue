@@ -78,25 +78,7 @@ watch(canadaPostAddress, (newAddress) => {
 onMounted(async () => {
   // validate form if step marked as complete
   if (props.isComplete) {
-    // validate all form refs
-    const validations = [
-      validateForm(platformBusinessFormRef.value, props.isComplete)
-    ]
-    await Promise.all(validations) // remove this if adding the scroll into view stuff
-
-    // TODO: implement ?
-    // disabled scrolling to errors as validation results must be sorted
-    // in order to match the form input order for the first element to be consistently correct
-
-    // get all errors and filter out undefined results (conditional form may return undefined if not mounted)
-    // const validationResults = (await Promise.all(validations)).filter(item => item !== undefined)
-
-    // if (validationResults.length > 0) {
-    //   const firstError = validationResults[0]?.[0]?.path // get first error found
-    //   if (firstError) {
-    //     focusAndScrollToInputByName(firstError)
-    //   }
-    // }
+    await validateForm(platformBusinessFormRef.value, props.isComplete)
   }
 })
 </script>

@@ -46,7 +46,7 @@ onMounted(async () => {
     ]
     await Promise.all(validations) // remove this if adding the scroll into view stuff
 
-    // TODO: implement ?
+    // TODO: implement ? leaving this here for reference
     // disabled scrolling to errors as validation results must be sorted
     // in order to match the form input order for the first element to be consistently correct
 

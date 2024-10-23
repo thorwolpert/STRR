@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ConnectFeeCode, ConnectFeeEntityType, type ConnectFeeItem, type Step } from '#imports'
 import type { ConnectBtnControlItem } from '~/interfaces/connect-btn-control/item-i'
 import { FormPlatformContactInfo, ConnectStepper } from '#components'
 
@@ -7,6 +6,7 @@ const { t } = useI18n()
 
 const { validatePlatformContact } = useStrrPlatformContact()
 const { validatePlatformBusiness } = useStrrPlatformBusiness()
+const { validatePlatformDetails } = useStrrPlatformDetails()
 const { submitPlatformApplication } = useStrrPlatformApplication()
 // fee stuff
 const { addReplaceFee, getFee, removeFee, setPlaceholderFilingTypeCode, setPlaceholderServiceFee } = useConnectFee()
@@ -87,7 +87,8 @@ const steps = ref<Step[]>([
     i18nPrefix: 'platform.step',
     icon: 'i-mdi-earth',
     complete: false,
-    isValid: false
+    isValid: false,
+    validationFn: async () => await validatePlatformDetails(true) as boolean
   },
   {
     i18nPrefix: 'platform.step',

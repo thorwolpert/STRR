@@ -1,9 +1,10 @@
 export const useStrrPlatformApplication = defineStore('strr/platformApplication', () => {
   // const { $strrApi } = useNuxtApp()
-  const { platformDetails } = storeToRefs(useStrrPlatformDetails())
+  // const { platformDetails } = storeToRefs(useStrrPlatformDetails())
   const strrModal = useStrrModals()
   const platContactStore = useStrrPlatformContact()
   const platBusinessStore = useStrrPlatformBusiness()
+  const platDetailsStore = useStrrPlatformDetails()
 
   const confirmInfoAccuracy = ref(false)
   const confirmDelistAndCancelBookings = ref(false)
@@ -15,7 +16,7 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
         completingParty: formatParty(platContactStore.completingParty),
         platformRepresentatives: [],
         businessDetails: formatBusinessDetails(platBusinessStore.platformBusiness),
-        platformDetails: formatPlatformDetails(platformDetails.value)
+        platformDetails: formatPlatformDetails(platDetailsStore.platformDetails)
       }
     }
 
@@ -38,9 +39,11 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
     try {
       const contactResults = await platContactStore.validatePlatformContact()
       const businessResults = await platBusinessStore.validatePlatformBusiness()
+      const detailsResults = await platDetailsStore.validatePlatformDetails()
 
       console.info('contact validations: ', contactResults)
       console.info('business validations: ', businessResults)
+      console.info('details validations: ', detailsResults)
 
       const body = createApplicationBody()
 
