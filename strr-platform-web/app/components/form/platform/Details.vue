@@ -1,11 +1,14 @@
 <script setup lang="ts">
 const { t } = useI18n()
-const tPlat = (path: string) => t(`platform.${path}`)
+const { addNewEmptyBrand, getPlatformBrandSchema, removeBrandAtIndex, getPlatformDetailsSchema } = useStrrPlatformDetails()
+const { platformDetails } = storeToRefs(useStrrPlatformDetails())
 
 const { isComplete } = defineProps<{ isComplete: boolean }>()
 
-const { addNewEmptyBrand, getPlatformBrandSchema, removeBrandAtIndex } = useStrrPlatformDetails()
-const { platformDetails } = storeToRefs(useStrrPlatformDetails())
+const tPlat = (path: string) => t(`platform.${path}`)
+const radioOptions = [
+  { value: ListingSize.THOUSAND_OR_MORE, label: tPlat('text.thousandOrMore') },
+  { value: ListingSize.UNDER_THOUSAND, label: tPlat('text.lessThanThousand') }]
 
 const validateBrand = (index: number, field: 'name' | 'website', isBlur = false) => {
   if (platformDetails.value.brands[index]) {
@@ -30,11 +33,6 @@ onMounted(() => {
     }
   }
 })
-
-const radioOptions = [
-  { value: ListingSize.THOUSAND_OR_MORE, label: tPlat('text.thousandOrMore') },
-  { value: ListingSize.UNDER_THOUSAND, label: tPlat('text.lessThanThousand') }]
-
 </script>
 
 <template>

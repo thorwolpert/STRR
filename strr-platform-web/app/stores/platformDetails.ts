@@ -8,6 +8,11 @@ export const useStrrPlatformDetails = defineStore('strr/platformDetails', () => 
     website: getRequiredUrl(t('validation.brand.site'))
   })
 
+  const getPlatformDetailsSchema = () => z.object({
+    listingSize: z.enum([ListingSize.UNDER_THOUSAND, ListingSize.THOUSAND_OR_MORE]),
+    brands: z.array(getPlatformBrandSchema())
+  })
+
   const platformDetails = ref<{ brands: PlatBrand[], listingSize: ListingSize | undefined }>({
     brands: [{ name: '', website: '' }],
     listingSize: undefined
@@ -22,6 +27,7 @@ export const useStrrPlatformDetails = defineStore('strr/platformDetails', () => 
   return {
     platformDetails,
     getPlatformBrandSchema,
+    getPlatformDetailsSchema,
     addNewEmptyBrand,
     removeBrandAtIndex
   }
