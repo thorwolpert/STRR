@@ -32,9 +32,7 @@ const steps: FormPageI[] = [
     'Add property managers',
     'propertyManager',
     'propertyManager',
-    'propertyManager',
-    true,
-    true
+    'propertyManager'
   ),
   createStep('contact', 'add_person', 'Add contacts', 'contact', 'contact', 'contact'),
   createStep('property', 'add_location', 'Add properties', 'details', 'details', 'details'),

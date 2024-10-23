@@ -6,6 +6,7 @@ import {
   PrimaryContactInformationI,
   SecondaryContactInformationI
 } from '~/interfaces/account-i'
+import { PropertyManagerI } from '~/interfaces/property-manager-i'
 
 const apiURL = useRuntimeConfig().public.strrApiURL
 const axiosInstance = addAxiosInterceptors(axios.create())
@@ -90,6 +91,29 @@ export const finalizationSchema = z.object({
   name: requiredNonEmptyString
 })
 
+export const propertyManagerSchema = z.object({
+  businessLegalName: optionalOrEmptyString,
+  craBusinessNumber: optionalOrEmptyString,
+  businessMailingAddress: z.object({
+    address: requiredNonEmptyString,
+    addressLineTwo: optionalOrEmptyString,
+    city: requiredNonEmptyString,
+    postalCode: requiredNonEmptyString,
+    province: requiredNonEmptyString,
+    country: requiredNonEmptyString
+  }),
+  contact: z.object({
+    firstName: requiredNonEmptyString,
+    middleName: optionalOrEmptyString,
+    lastName: requiredNonEmptyString,
+    preferredName: optionalOrEmptyString,
+    phoneNumber: requiredPhone,
+    extension: optionalOrEmptyString,
+    faxNumber: optionalOrEmptyString,
+    emailAddress: requiredEmail
+  })
+})
+
 export const primaryContactSchema = z.object({
   preferredName: optionalOrEmptyString,
   socialInsuranceNumber: requiredSin,
@@ -162,6 +186,29 @@ const primaryContact: PrimaryContactInformationI = {
   businessNumber: undefined
 }
 
+const propertyManager: PropertyManagerI = {
+  businessLegalName: '',
+  craBusinessNumber: '',
+  businessMailingAddress: {
+    address: undefined,
+    addressLineTwo: '',
+    city: undefined,
+    postalCode: undefined,
+    province: undefined,
+    country: undefined
+  },
+  contact: {
+    firstName: undefined,
+    middleName: '',
+    lastName: undefined,
+    preferredName: '',
+    phoneNumber: undefined,
+    extension: '',
+    faxNumber: '',
+    emailAddress: undefined
+  }
+}
+
 const secondaryContact: SecondaryContactInformationI = {
   preferredName: '',
   phoneNumber: undefined,
@@ -223,6 +270,9 @@ export const propertyDetailsSchema = z.object({
 export const formState: CreateAccountFormStateI = reactive({
   primaryContact,
   secondaryContact,
+  isPropertyManagerRole: false,
+  hasPropertyManager: true,
+  propertyManager,
   propertyDetails: {
     parcelIdentifier: undefined,
     businessLicense: undefined,
@@ -310,6 +360,7 @@ export const formDataForAPI: CreateAccountFormAPII = {
   registration: {
     primaryContact: primaryContactAPI,
     secondaryContact: secondaryContactAPI,
+    propertyManager: undefined,
     unitAddress: {
       address: '',
       addressLineTwo: '',
