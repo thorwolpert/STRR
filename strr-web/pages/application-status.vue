@@ -117,7 +117,7 @@ const applications = ref<(ApplicationI | undefined)[]>()
 const res = await getApplications()
 
 if (res.total === 0) {
-  navigateTo('/create-account')
+  navigateTo('/' + RouteNamesE.CREATE_ACCOUNT)
 }
 
 applications.value = res.applications

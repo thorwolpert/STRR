@@ -57,11 +57,15 @@ describe('useBcrosAuth Tests', () => {
     expect(keycloak.isExaminer).toEqual(false) // is not examiner because loginSource in testParsedToken is not IDIR
     expect(account.user).toEqual(keycloak.kcUser)
     expect(account.userAccounts.length).toBe(2)
-    expect(account.currentAccount).toEqual(mockUserSettings[0])
+    expect(account.currentAccount).toEqual({}) // current account is empty because user has not selected it yet
     expect(sessionStorage.getItem(SessionStorageKeyE.KEYCLOAK_TOKEN)).toBe(testToken)
     expect(sessionStorage.getItem(SessionStorageKeyE.KEYCLOAK_TOKEN_ID)).toBe(testTokenId)
     expect(sessionStorage.getItem(SessionStorageKeyE.KEYCLOAK_TOKEN_REFRESH)).toBe(testTokenRefresh)
     expect(sessionStorage.getItem(SessionStorageKeyE.KEYCLOAK_SYNCED)).toBe('true')
-    expect(sessionStorage.getItem(SessionStorageKeyE.CURRENT_ACCOUNT)).toBe(JSON.stringify(mockUserSettings[0]))
+
+    // user selected account
+    account.switchCurrentAccount(mockUserSettings[0].id)
+    expect(account.currentAccount).toEqual(mockUserSettings[0])
+    expect(localStorage.getItem(SessionStorageKeyE.CURRENT_ACCOUNT)).toBe(JSON.stringify(mockUserSettings[0]))
   })
 })
