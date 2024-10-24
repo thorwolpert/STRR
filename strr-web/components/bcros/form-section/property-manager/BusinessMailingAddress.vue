@@ -13,7 +13,7 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]">
-        <UFormGroup name="address" class="flex-grow">
+        <UFormGroup name="address" class="flex-grow" :error="errors.address">
           <UInput
             :id="id"
             v-model="address"
@@ -21,6 +21,8 @@
             :placeholder="t('createAccount.propertyManagerForm.address')"
             @input="onAddressInput"
             @click="addressComplete()"
+            @blur="emit('validateField', 'address')"
+            @change="emit('validateField', 'address')"
           />
         </UFormGroup>
       </div>
@@ -37,14 +39,18 @@
         <UFormGroup
           name="city"
           class="d:pr-[16px] flex-grow mobile:mb-[16px]"
+          :error="errors.city"
         >
           <UInput
             v-model="city"
             :placeholder="t('createAccount.propertyManagerForm.city')"
             aria-label="city"
+            @input="emit('resetFieldError', 'city')"
+            @blur="emit('validateField', 'city')"
+            @change="emit('validateField', 'city')"
           />
         </UFormGroup>
-        <UFormGroup name="province" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
+        <UFormGroup name="province" :error="errors.province" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
           <USelect
             v-if="['CA', 'US'].includes(country)"
             v-model="province"
@@ -58,13 +64,19 @@
             v-model="province"
             :placeholder="t('createAccount.propertyManagerForm.province')"
             aria-label="province"
+            @input="emit('resetFieldError', 'province')"
+            @blur="emit('validateField', 'province')"
+            @change="emit('validateField', 'province')"
           />
         </UFormGroup>
-        <UFormGroup name="postalCode" class="flex-grow mobile:mb-[16px]">
+        <UFormGroup name="postalCode" :error="errors.postalCode" class="flex-grow mobile:mb-[16px]">
           <UInput
             v-model="postalCode"
             :placeholder="t('createAccount.propertyManagerForm.postalCode')"
             aria-label="postal code"
+            @input="emit('resetFieldError', 'postalCode')"
+            @blur="emit('validateField', 'postalCode')"
+            @change="emit('validateField', 'postalCode')"
           />
         </UFormGroup>
       </div>
@@ -114,24 +126,32 @@ const onAddressInput = () => {
   province.value = ''
   city.value = ''
   postalCode.value = ''
+  emit('resetFieldError', 'address')
+  emit('resetFieldError', 'city')
+  emit('resetFieldError', 'province')
+  emit('resetFieldError', 'postalCode')
   addressComplete()
 }
 
-defineEmits<{
+const emit = defineEmits<{
     setId: [id: string]
+    validateField: [field: string]
+    resetFieldError: [field: string]
 }>()
 
 const {
   id,
   defaultCountryIso2,
   enableAddressComplete,
-  divider
+  divider,
+  errors = {}
 } = defineProps<{
     id: string,
     defaultCountryIso2: string,
     enableAddressComplete:(id: string, countryIso2: string, countrySelect: boolean) => void,
-    divider: boolean
-  }>()
+    divider: boolean,
+    errors: Record<string, string>
+}>()
 
 country.value = defaultCountryIso2
 </script>

@@ -5,12 +5,16 @@
         <UFormGroup
           name="phoneNumber"
           class="desktop:d:pr-[16px] flex-grow mobile:mb-[16px]"
+          :error="errors.phoneNumber"
         >
           <UInput
             v-model="phoneNumber"
             type="tel"
             aria-label="phone number"
             :placeholder="t('createAccount.propertyManagerForm.phoneNumber')"
+            @input="emit('resetFieldError', 'phoneNumber')"
+            @blur="emit('validateField', 'phoneNumber')"
+            @change="emit('validateField', 'phoneNumber')"
           />
         </UFormGroup>
         <UFormGroup name="extension" class="flex-grow">
@@ -35,11 +39,15 @@
           type="email"
           name="emailAddress"
           class="flex-grow"
+          :error="errors.emailAddress"
         >
           <UInput
             v-model="emailAddress"
             :placeholder="t('createAccount.propertyManagerForm.emailAddress')"
             aria-label="email address"
+            @input="emit('resetFieldError', 'emailAddress')"
+            @blur="emit('validateField', 'emailAddress')"
+            @change="emit('validateField', 'emailAddress')"
           />
         </UFormGroup>
       </div>
@@ -59,8 +67,14 @@
 <script setup lang="ts">
 const { t } = useTranslation()
 
-const { divider } = defineProps<{
-  divider: boolean
+const emit = defineEmits<{
+    validateField: [field: string]
+    resetFieldError: [field: string]
+}>()
+
+const { divider, errors = {} } = defineProps<{
+  divider: boolean,
+  errors: Record<string, string>
 }>()
 
 const phoneNumber = defineModel<string>('phoneNumber')

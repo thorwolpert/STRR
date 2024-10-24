@@ -45,6 +45,9 @@
               :enable-address-complete="enableAddressComplete"
               default-country-iso2="CA"
               :divider="true"
+              :errors="errorRefs"
+              @reset-field-error="resetFieldError"
+              @validate-field="validateField"
             />
             <BcrosFormSectionPropertyManagerContactName
               v-model:preferred-name="formState.propertyManager.contact.preferredName"
@@ -52,6 +55,9 @@
               v-model:last-name="formState.propertyManager.contact.lastName"
               v-model:middle-name="formState.propertyManager.contact.middleName"
               :divider="true"
+              :errors="errorRefs"
+              @reset-field-error="resetFieldError"
+              @validate-field="validateField"
             />
             <BcrosFormSectionPropertyManagerContactDetails
               v-model:phone-number="formState.propertyManager.contact.phoneNumber"
@@ -59,6 +65,9 @@
               v-model:fax-number="formState.propertyManager.contact.faxNumber"
               v-model:email-address="formState.propertyManager.contact.emailAddress"
               :divider="false"
+              :errors="errorRefs"
+              @reset-field-error="resetFieldError"
+              @validate-field="validateField"
             />
           </UForm>
         </div>
@@ -114,8 +123,37 @@ watch(canadaPostAddress, (newAddress) => {
   }
 })
 
+const errorRefs = reactive({
+  address: '',
+  city: '',
+  province: '',
+  postalCode: '',
+  emailAddress: '',
+  phoneNumber: '',
+  firstName: '',
+  lastName: ''
+})
+
+const resetFieldError = (field: keyof typeof errorRefs) => {
+  errorRefs[field] = ''
+}
+
+const validateField = (field: keyof typeof errorRefs) => {
+  const parsed = propertyManagerSchema.safeParse(formState.propertyManager).error?.errors
+  const error = parsed?.find(error => error.path.includes(field))
+  errorRefs[field] = error ? error.message : ''
+}
+
 const form = ref()
 watch(form, () => {
   if (form.value && isComplete) { form.value.validate() }
+})
+
+onMounted(() => {
+  if (isComplete) {
+    Object.keys(errorRefs).forEach((field) => {
+      validateField(field as keyof typeof errorRefs)
+    })
+  }
 })
 </script>
