@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import type { ConnectBtnControlItem } from '~/interfaces/connect-btn-control/item-i'
-import { FormPlatformContactInfo, ConnectStepper } from '#components'
+import { ConnectStepper } from '#components'
 
 const { t } = useI18n()
+const strrModal = useStrrModals()
 
 const { validatePlatformContact } = useStrrPlatformContact()
 const { validatePlatformBusiness } = useStrrPlatformBusiness()
 const { validatePlatformDetails } = useStrrPlatformDetails()
-const { submitPlatformApplication } = useStrrPlatformApplication()
+const { submitPlatformApplication, validatePlatformConfirmation } = useStrrPlatformApplication()
 // fee stuff
 const { addReplaceFee, getFee, removeFee, setPlaceholderFilingTypeCode, setPlaceholderServiceFee } = useConnectFee()
 
@@ -81,20 +82,21 @@ const steps = ref<Step[]>([
     icon: 'i-mdi-domain-plus',
     complete: false,
     isValid: false,
-    validationFn: async () => await validatePlatformBusiness(true) as boolean
+    validationFn: () => validatePlatformBusiness(true) as boolean
   },
   {
     i18nPrefix: 'platform.step',
     icon: 'i-mdi-earth',
     complete: false,
     isValid: false,
-    validationFn: async () => await validatePlatformDetails(true) as boolean
+    validationFn: () => validatePlatformDetails(true) as boolean
   },
   {
     i18nPrefix: 'platform.step',
     icon: 'i-mdi-text-box-check-outline',
     complete: false,
-    isValid: false
+    isValid: false,
+    validationFn: () => validatePlatformConfirmation(true) as boolean
   }
 ])
 const activeStepIndex = ref<number>(0)
@@ -103,7 +105,9 @@ const stepperRef = shallowRef<InstanceType<typeof ConnectStepper> | null>(null)
 
 // need to cleanup the setButtonControl somehow
 const handlePlatformSubmit = async () => {
+  let formErrors: MultiFormValidationResult = []
   try {
+    // TODO: move button management into composable ?
     // set buttons to loading state
     setButtonControl({
       leftButtons: [
@@ -125,15 +129,31 @@ const handlePlatformSubmit = async () => {
       rightButtons: []
     })
 
-    // TODO: something like this but cleaner
-    // validate all forms
     activeStep.value.complete = true // set final review step as active before validation
 
+    // all step validations
+    const validations = [
+      validatePlatformContact(),
+      validatePlatformBusiness(),
+      validatePlatformDetails(),
+      validatePlatformConfirmation()
+    ]
+
+    const validationResults = await Promise.all(validations)
+    formErrors = validationResults.flatMap(result => result as MultiFormValidationResult)
+    const isApplicationValid = formErrors.every(result => result.success === true)
+
+    console.info('is application valid: ', isApplicationValid, formErrors)
+
     // if all steps valid, submit form with store function
-    await submitPlatformApplication()
+    if (isApplicationValid) {
+      await submitPlatformApplication()
+    } else {
+      // TODO: display form errors better
+      strrModal.openAppSubmitError(formErrors)
+    }
   } catch (e) {
-    // eslint-disable-next-line
-    console.log('error from application page', e)
+    logFetchError(e, 'Error creating platform application')
   } finally {
     // set buttons back to non loading state
     setButtonControl({

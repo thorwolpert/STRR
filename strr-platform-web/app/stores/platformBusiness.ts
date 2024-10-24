@@ -1,4 +1,4 @@
-import { z, type ZodIssue } from 'zod'
+import { z } from 'zod'
 import {
   getOptionalEmail, getRequiredAddress, getRequiredEmail, getRequiredNonEmptyString, optionalOrEmptyString
 } from '~/utils/connect-validation'
@@ -81,19 +81,13 @@ export const useStrrPlatformBusiness = defineStore('strr/platformBusiness', () =
   //   platformBusiness.value.hasCpbc, platformBusiness.value.hasRegOffAtt)
   // )
 
-  const validatePlatformBusiness = async (returnBool = false): Promise<
-    { formId: string; success: boolean; errors: ZodIssue[] }[] | boolean
-  > => {
-    const validations = [
-      validateSchemaAgainstState(getBusinessSchema(), platformBusiness.value, 'business-details-form')
-    ]
-
-    const results = await Promise.all(validations)
+  const validatePlatformBusiness = (returnBool = false): MultiFormValidationResult | boolean => {
+    const result = validateSchemaAgainstState(getBusinessSchema(), platformBusiness.value, 'business-details-form')
 
     if (returnBool) {
-      return results.every(result => result.success === true)
+      return result.success === true
     } else {
-      return results
+      return [result]
     }
   }
 

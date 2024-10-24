@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { Form } from '#ui/types'
+import { z } from 'zod'
+
 const { t } = useI18n()
 const tReview = (translationKey: string) => t(`createAccount.review.${translationKey}`)
 const tContact = (translationKey: string) => t(`createAccount.contactForm.${translationKey}`)
@@ -10,14 +13,23 @@ const accountStore = useConnectAccountStore()
 const { completingParty, primaryRep, secondaryRep } = storeToRefs(useStrrPlatformContact())
 const { platformBusiness } = storeToRefs(useStrrPlatformBusiness())
 const { platformDetails } = storeToRefs(useStrrPlatformDetails())
+const { platformConfirmation } = storeToRefs(useStrrPlatformApplication())
+const { platformConfirmationSchema } = useStrrPlatformApplication()
 
-const { confirmInfoAccuracy, confirmDelistAndCancelBookings } = storeToRefs(useStrrPlatformApplication())
+const platformConfirmationFormRef = ref<Form<z.output<typeof platformConfirmationSchema>>>()
 
-defineProps<{ isComplete: boolean }>()
+const props = defineProps<{ isComplete: boolean }>()
 
 defineEmits<{
   edit: [index: number]
 }>()
+
+onMounted(async () => {
+  // validate form if step marked as complete
+  if (props.isComplete) {
+    await validateForm(platformConfirmationFormRef.value, props.isComplete)
+  }
+})
 </script>
 <template>
   <div class="space-y-10" data-testid="platform-review-confirm">
@@ -352,34 +364,36 @@ defineEmits<{
     <section class="space-y-6">
       <h2>Certify</h2>
 
-      <UCheckbox
-        v-model="confirmInfoAccuracy"
-        :label="tPlatReview('confirm.infoAccuracy')"
-        class="rounded bg-white p-4"
-        :class="`${isComplete && !confirmInfoAccuracy ? 'outline outline-red-600' : ''}`"
-      />
+      <UForm
+        ref="platformConfirmationFormRef"
+        :state="platformConfirmation"
+        :schema="platformConfirmationSchema"
+        class="space-y-10 py-10"
+      >
+        <UFormGroup name="confirmInfoAccuracy">
+          <UCheckbox
+            v-model="platformConfirmation.confirmInfoAccuracy"
+            :label="tPlatReview('confirm.infoAccuracy')"
+            class="rounded bg-white p-4"
+            :class="hasFormErrors(platformConfirmationFormRef, ['confirmInfoAccuracy'])
+              ? 'outline outline-red-600'
+              : ''
+            "
+          />
+        </UFormGroup>
 
-      <UCheckbox
-        v-model="confirmDelistAndCancelBookings"
-        :label="tPlatReview('confirm.delistAndCancelBookings')"
-        class="rounded bg-white p-4"
-        :class="`${isComplete && !confirmDelistAndCancelBookings ? 'outline outline-red-600' : ''}`"
-      />
+        <UFormGroup name="confirmDelistAndCancelBookings">
+          <UCheckbox
+            v-model="platformConfirmation.confirmDelistAndCancelBookings"
+            :label="tPlatReview('confirm.delistAndCancelBookings')"
+            class="rounded bg-white p-4"
+            :class="hasFormErrors(platformConfirmationFormRef, ['confirmDelistAndCancelBookings'])
+              ? 'outline outline-red-600'
+              : ''
+            "
+          />
+        </UFormGroup>
+      </UForm>
     </section>
-    <!-- <ConnectPageSection :heading="{ label: tReview('review') }">
-      <UCheckbox
-        v-model="confirmInfoAccuracy"
-        :label="tReview('confirm')"
-        class="p-4"
-        :class="`${isComplete && !confirmInfoAccuracy ? 'outline outline-red-600' : ''}`"
-      />
-
-      <UCheckbox
-        v-model="confirmDelistAndCancelBookings"
-        :label="tReview('confirm')"
-        class="p-4"
-        :class="`${isComplete && !confirmDelistAndCancelBookings ? 'outline outline-red-600' : ''}`"
-      />
-    </ConnectPageSection> -->
   </div>
 </template>

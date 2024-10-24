@@ -1,15 +1,37 @@
+import { z } from 'zod'
+import type { MultiFormValidationResult } from '~/interfaces/validation'
+
 export const useStrrPlatformApplication = defineStore('strr/platformApplication', () => {
   // const { $strrApi } = useNuxtApp()
-  // const { platformDetails } = storeToRefs(useStrrPlatformDetails())
-  const strrModal = useStrrModals()
   const platContactStore = useStrrPlatformContact()
   const platBusinessStore = useStrrPlatformBusiness()
   const platDetailsStore = useStrrPlatformDetails()
 
-  const confirmInfoAccuracy = ref(false)
-  const confirmDelistAndCancelBookings = ref(false)
+  const platformConfirmation = reactive({
+    confirmInfoAccuracy: false,
+    confirmDelistAndCancelBookings: false
+  })
 
-  function createApplicationBody (): PlatformApplicationPayload {
+  const getConfirmationSchema = () => z.object({
+    confirmInfoAccuracy: z.literal(true),
+    confirmDelistAndCancelBookings: z.literal(true)
+  })
+
+  const platformConfirmationSchema = getConfirmationSchema()
+
+  const validatePlatformConfirmation = (returnBool = false): MultiFormValidationResult | boolean => {
+    const result = validateSchemaAgainstState(
+      getConfirmationSchema(), platformConfirmation, 'platform-confirmation-form'
+    )
+
+    if (returnBool) {
+      return result.success === true
+    } else {
+      return [result]
+    }
+  }
+
+  const createApplicationBody = (): PlatformApplicationPayload => {
     const applicationBody: PlatformApplicationPayload = {
       registration: {
         registrationType: ApplicationType.PLATFORM,
@@ -35,33 +57,23 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
     return applicationBody
   }
 
-  async function submitPlatformApplication () {
-    try {
-      const contactResults = await platContactStore.validatePlatformContact()
-      const businessResults = await platBusinessStore.validatePlatformBusiness()
-      const detailsResults = await platDetailsStore.validatePlatformDetails()
+  const submitPlatformApplication = async () => {
+    const body = createApplicationBody()
 
-      console.info('contact validations: ', contactResults)
-      console.info('business validations: ', businessResults)
-      console.info('details validations: ', detailsResults)
-
-      const body = createApplicationBody()
-
-      console.info('submitting application: ', body)
-      // await $strrApi('/applications', {
-      //   method: 'POST',
-      //   body
-      // })
-    } catch (e) {
-      logFetchError(e, 'Error creating platform application')
-      strrModal.openAppSubmitError() // pass in error object ??
-    }
+    console.info('submitting application: ', body)
+    // await $strrApi('/applications', {
+    //   method: 'POST',
+    //   body
+    // })
   }
 
   return {
-    confirmInfoAccuracy,
-    confirmDelistAndCancelBookings,
+    platformConfirmation,
+    platformConfirmationSchema,
+    // confirmInfoAccuracy,
+    // confirmDelistAndCancelBookings,
     // getPlatformApplication,
-    submitPlatformApplication
+    submitPlatformApplication,
+    validatePlatformConfirmation
   }
 })

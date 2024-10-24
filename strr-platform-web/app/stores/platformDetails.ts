@@ -1,4 +1,4 @@
-import { z, type ZodIssue } from 'zod'
+import { z } from 'zod'
 import { getRequiredNonEmptyString, getRequiredUrl } from '~/utils/connect-validation'
 
 export const useStrrPlatformDetails = defineStore('strr/platformDetails', () => {
@@ -28,19 +28,13 @@ export const useStrrPlatformDetails = defineStore('strr/platformDetails', () => 
     platformDetails.value.brands.splice(index, 1)
   }
 
-  const validatePlatformDetails = async (returnBool = false): Promise<
-    { formId: string; success: boolean; errors: ZodIssue[] }[] | boolean
-  > => {
-    const validations = [
-      validateSchemaAgainstState(platformDetailSchema, platformDetails.value, 'platform-details-form')
-    ]
-
-    const results = await Promise.all(validations)
+  const validatePlatformDetails = (returnBool = false): MultiFormValidationResult | boolean => {
+    const result = validateSchemaAgainstState(platformDetailSchema, platformDetails.value, 'platform-details-form')
 
     if (returnBool) {
-      return results.every(result => result.success === true)
+      return result.success === true
     } else {
-      return results
+      return [result]
     }
   }
 
