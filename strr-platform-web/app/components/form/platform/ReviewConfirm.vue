@@ -24,10 +24,17 @@ defineEmits<{
   edit: [index: number]
 }>()
 
-onMounted(async () => {
+const validateConfirmation = () => {
+  platformConfirmationFormRef.value?.validate(undefined, { silent: true })
+}
+
+// expose to trigger on application submission
+defineExpose({ validateConfirmation })
+
+onMounted(() => {
   // validate form if step marked as complete
   if (props.isComplete) {
-    await validateForm(platformConfirmationFormRef.value, props.isComplete)
+    validateConfirmation()
   }
 })
 </script>

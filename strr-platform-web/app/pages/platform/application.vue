@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ConnectBtnControlItem } from '~/interfaces/connect-btn-control/item-i'
-import { ConnectStepper } from '#components'
+import { ConnectStepper, FormPlatformReviewConfirm } from '#components'
 
 const { t } = useI18n()
 const strrModal = useStrrModals()
@@ -108,6 +108,7 @@ const steps = ref<Step[]>([
 const activeStepIndex = ref<number>(0)
 const activeStep = ref<Step>(steps.value[activeStepIndex.value] as Step)
 const stepperRef = shallowRef<InstanceType<typeof ConnectStepper> | null>(null)
+const reviewFormRef = shallowRef<InstanceType<typeof FormPlatformReviewConfirm> | null>(null)
 
 // need to cleanup the setButtonControl somehow
 const handlePlatformSubmit = async () => {
@@ -136,6 +137,7 @@ const handlePlatformSubmit = async () => {
     })
 
     activeStep.value.complete = true // set final review step as active before validation
+    reviewFormRef.value?.validateConfirmation() // validate confirmation checkboxes on submit
 
     // all step validations
     const validations = [
@@ -242,6 +244,7 @@ setBreadcrumbs([
     </div>
     <div v-if="activeStepIndex === 3" key="review-confirm">
       <FormPlatformReviewConfirm
+        ref="reviewFormRef"
         :is-complete="activeStep.complete"
         @edit="stepperRef?.setActiveStep"
       />
