@@ -16,11 +16,17 @@ async function setActiveStep (newStep: number) {
   activeStepIndexModel.value = newStep // update active step index
   activeStepModel.value = stepsModel.value[newStep] as Step // update active step model
 
-  // mark all previous steps as complete
+  // mark and validate all previous steps
   for (let i = 0; i < newStep; i++) {
-    if (stepsModel.value[i]) {
-      // @ts-expect-error
-      stepsModel.value[i].complete = true
+    const previousStep = stepsModel.value[i]
+
+    if (previousStep) {
+      previousStep.complete = true
+
+      if (previousStep.validationFn) {
+        const isValid = await previousStep.validationFn()
+        setStepValidity(i, !!isValid)
+      }
     }
   }
 

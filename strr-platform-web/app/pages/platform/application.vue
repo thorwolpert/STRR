@@ -154,6 +154,7 @@ const handlePlatformSubmit = async () => {
     }
   } catch (e) {
     logFetchError(e, 'Error creating platform application')
+    // TODO: handle backend errors
   } finally {
     // set buttons back to non loading state
     setButtonControl({

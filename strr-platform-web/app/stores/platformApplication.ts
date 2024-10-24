@@ -2,7 +2,7 @@ import { z } from 'zod'
 import type { MultiFormValidationResult } from '~/interfaces/validation'
 
 export const useStrrPlatformApplication = defineStore('strr/platformApplication', () => {
-  // const { $strrApi } = useNuxtApp()
+  const { $strrApi } = useNuxtApp()
   const platContactStore = useStrrPlatformContact()
   const platBusinessStore = useStrrPlatformBusiness()
   const platDetailsStore = useStrrPlatformDetails()
@@ -21,7 +21,7 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
 
   const validatePlatformConfirmation = (returnBool = false): MultiFormValidationResult | boolean => {
     const result = validateSchemaAgainstState(
-      getConfirmationSchema(), platformConfirmation, 'platform-confirmation-form'
+      platformConfirmationSchema, platformConfirmation, 'platform-confirmation-form'
     )
 
     if (returnBool) {
@@ -61,18 +61,16 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
     const body = createApplicationBody()
 
     console.info('submitting application: ', body)
-    // await $strrApi('/applications', {
-    //   method: 'POST',
-    //   body
-    // })
+
+    return await $strrApi('/applications', {
+      method: 'POST',
+      body
+    })
   }
 
   return {
     platformConfirmation,
     platformConfirmationSchema,
-    // confirmInfoAccuracy,
-    // confirmDelistAndCancelBookings,
-    // getPlatformApplication,
     submitPlatformApplication,
     validatePlatformConfirmation
   }
