@@ -117,14 +117,14 @@ onMounted(async () => {
         :state="platformBusiness"
         class="space-y-10 py-10"
       >
-        <ConnectSection
+        <ConnectFormSection
           :title="$t('platform.section.subTitle.businessIds')"
           :error="isComplete && (platformBusiness.hasCpbc === undefined ||
             hasFormErrors(platformBusinessFormRef, ['legalName', 'homeJurisdiction', 'cpbcLicenceNumber']))
           "
         >
           <div class="space-y-5">
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               id="platform-business-legal-name"
               v-model="platformBusiness.legalName"
               :aria-label="$t('label.busNameLegal')"
@@ -132,7 +132,7 @@ onMounted(async () => {
               name="legalName"
               :placeholder="t('label.busNameLegal')"
             />
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               id="platform-business-home-jur"
               v-model="platformBusiness.homeJurisdiction"
               :aria-label="$t('label.homeJurisdiction')"
@@ -140,7 +140,7 @@ onMounted(async () => {
               name="homeJurisdiction"
               :placeholder="t('label.homeJurisdiction')"
             />
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               id="platform-business-number"
               v-model="platformBusiness.businessNumber"
               :aria-label="$t('label.busNumOpt')"
@@ -158,7 +158,7 @@ onMounted(async () => {
                 :ui-radio="{ inner: 'space-y-2' }"
               />
             </UFormGroup>
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               v-if="platformBusiness.hasCpbc"
               id="platform-cpbc"
               v-model="platformBusiness.cpbcLicenceNumber"
@@ -167,9 +167,9 @@ onMounted(async () => {
               :placeholder="$t('label.cpbcLicNum')"
             />
           </div>
-        </ConnectSection>
+        </ConnectFormSection>
         <div class="h-px w-full border-b border-gray-100" />
-        <ConnectSection
+        <ConnectFormSection
           :title="$t('platform.section.subTitle.businessMailAddress')"
           :error="hasFormErrors(platformBusinessFormRef, [
             'mailingAddress.country',
@@ -180,7 +180,7 @@ onMounted(async () => {
           ])"
         >
           <div class="max-w-bcGovInput">
-            <ConnectAddress
+            <ConnectFormAddress
               id="platform-business-address"
               v-model:country="platformBusiness.mailingAddress.country"
               v-model:street="platformBusiness.mailingAddress.street"
@@ -193,9 +193,9 @@ onMounted(async () => {
               :enable-address-complete="enableAddressComplete"
             />
           </div>
-        </ConnectSection>
+        </ConnectFormSection>
         <div class="h-px w-full border-b border-gray-100" />
-        <ConnectSection
+        <ConnectFormSection
           :title="$t('platform.section.subTitle.regOfficeAttSvcAddrress')"
           :error="hasFormErrors(platformBusinessFormRef, [
             'hasRegOffAtt',
@@ -225,14 +225,14 @@ onMounted(async () => {
                   :label="t('label.sameAsMailAddress')"
                 />
               </UFormGroup>
-              <ConnectFieldGroup
+              <ConnectFormFieldGroup
                 id="platform-att-for-svc-name"
                 v-model="platformBusiness.regOfficeOrAtt.attorneyName"
                 :aria-label="t('platform.label.attForSvcName')"
                 name="regOfficeOrAtt.attorneyName"
                 :placeholder="t('platform.label.attForSvcName')"
               />
-              <ConnectAddress
+              <ConnectFormAddress
                 v-if="!platformBusiness.regOfficeOrAtt.sameAsMailAddress"
                 id="platform-registered-office-address"
                 v-model:country="platformBusiness.regOfficeOrAtt.mailingAddress.country"
@@ -247,9 +247,9 @@ onMounted(async () => {
               />
             </div>
           </div>
-        </ConnectSection>
+        </ConnectFormSection>
         <div class="h-px w-full border-b border-gray-100" />
-        <ConnectSection
+        <ConnectFormSection
           :title="$t('platform.section.subTitle.noticeNonCompliance')"
           :error="hasFormErrors(platformBusinessFormRef, ['nonComplianceEmail'])"
         >
@@ -257,14 +257,14 @@ onMounted(async () => {
             <p>
               {{ $t('platform.text.nonComplianceEmail') }}
             </p>
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               id="platform-business-noncompliance-email"
               v-model="platformBusiness.nonComplianceEmail"
               :aria-label="$t('label.emailAddress')"
               name="nonComplianceEmail"
               :placeholder="$t('label.emailAddress')"
             />
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               id="platform-business-noncompliance-email-optional"
               v-model="platformBusiness.nonComplianceEmailOptional"
               :aria-label="$t('label.emailAddressOpt')"
@@ -272,22 +272,22 @@ onMounted(async () => {
               :placeholder="$t('label.emailAddressOpt')"
             />
           </div>
-        </ConnectSection>
+        </ConnectFormSection>
         <div class="h-px w-full border-b border-gray-100" />
-        <ConnectSection
+        <ConnectFormSection
           :title="$t('platform.section.subTitle.takedownRequest')"
           :error="hasFormErrors(platformBusinessFormRef, ['takeDownEmail'])"
         >
           <div class="space-y-5">
             <p>{{ $t('platform.text.takedownEmail') }}</p>
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               id="platform-business-takedown-email"
               v-model="platformBusiness.takeDownEmail"
               :aria-label="$t('label.emailAddress')"
               name="takeDownEmail"
               :placeholder="$t('label.emailAddress')"
             />
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               id="platform-business-takedown-email-optional"
               v-model="platformBusiness.takeDownEmailOptional"
               :aria-label="$t('label.emailAddressOpt')"
@@ -295,7 +295,7 @@ onMounted(async () => {
               :placeholder="$t('label.emailAddressOpt')"
             />
           </div>
-        </ConnectSection>
+        </ConnectFormSection>
       </UForm>
     </ConnectPageSection>
   </div>

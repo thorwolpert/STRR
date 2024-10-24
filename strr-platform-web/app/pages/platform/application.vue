@@ -10,7 +10,13 @@ const { validatePlatformBusiness } = useStrrPlatformBusiness()
 const { validatePlatformDetails } = useStrrPlatformDetails()
 const { submitPlatformApplication, validatePlatformConfirmation } = useStrrPlatformApplication()
 // fee stuff
-const { addReplaceFee, getFee, removeFee, setPlaceholderFilingTypeCode, setPlaceholderServiceFee } = useConnectFee()
+const {
+  addReplaceFee,
+  getFee,
+  removeFee,
+  setPlaceholderFilingTypeCode,
+  setPlaceholderServiceFee
+} = useConnectFeeStore()
 
 setPlaceholderFilingTypeCode(ConnectFeeCode.STR_PLAT_SM)
 
@@ -201,22 +207,23 @@ watch(activeStepIndex, (val) => {
 
 // page stuff
 useHead({
-  title: t('platform.title')
+  title: t('platform.title.application')
 })
 
 definePageMeta({
   layout: 'connect-form',
-  order: 1,
   path: '/platform/application'
 })
 
 setBreadcrumbs([
-  { label: t('platform.title') }
+  { label: t('label.bcregDash'), to: useRuntimeConfig().public.registryHomeURL + 'dashboard' },
+  { label: t('platform.title.dashboard'), to: useLocalePath()('/platform/dashboard') },
+  { label: t('platform.title.application') }
 ])
 </script>
 <template>
   <div class="space-y-8 py-8 sm:py-10">
-    <ConnectTypographyH1 :text="t('platform.title')" class="my-5" />
+    <ConnectTypographyH1 :text="t('platform.title.application')" class="my-5" />
     <ConnectStepper
       ref="stepperRef"
       :key="0"

@@ -20,7 +20,7 @@ const inputMask = computed(() => countryCode.value === '1' ? northAmericaMask : 
 <template>
   <div class="flex w-full max-w-bcGovInput flex-col gap-3 sm:flex-row">
     <UFormGroup :name="name + '.countryCode'" class="grow sm:max-w-[130px]">
-      <ConnectPhoneNumberCountryCode
+      <ConnectFormPhoneNumberCountryCode
         v-model:country-calling-code="countryCode"
         v-model:country-iso2="countryIso2"
         :aria-label="$t('label.phone.countryCode')"

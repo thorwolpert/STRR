@@ -22,7 +22,7 @@ const props = defineProps({
 
 <template>
   <UFormGroup :label="label" :name="name" :help="help">
-    <ConnectField
+    <ConnectFormField
       :id="id"
       v-model="model"
       :placeholder="placeholder"

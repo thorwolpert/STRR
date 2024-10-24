@@ -67,8 +67,8 @@ watch(secondForm, () => {
         :state="primaryContact"
         class="space-y-10 pb-10"
       >
-        <ConnectSection :title="t('createAccount.contactForm.dateOfBirth')">
-          <ConnectDateInput
+        <ConnectFormSection :title="t('createAccount.contactForm.dateOfBirth')">
+          <ConnectFormDateInput
             name="dateOfBirth"
             :initial-date="primaryContact.dateOfBirth
               ? dateStringToDate(primaryContact.dateOfBirth)
@@ -77,14 +77,14 @@ watch(secondForm, () => {
             placeholder="YYYY-MM-DD"
             @selection="primaryContact.dateOfBirth = dateToString($event, 'YYYY-MM-DD')"
           />
-        </ConnectSection>
-        <ConnectSection :title="t('createAccount.contactForm.cra')">
+        </ConnectFormSection>
+        <ConnectFormSection :title="t('createAccount.contactForm.cra')">
           <FormCommonCraInfo
             v-model:social-insurance-number="primaryContact.socialInsuranceNumber"
             v-model:business-number="primaryContact.businessNumber"
             :is-primary="true"
           />
-        </ConnectSection>
+        </ConnectFormSection>
         <FormCommonContact
           v-model:full-name="primaryContact.fullName"
           v-model:preferred-name="primaryContact.preferredName"
@@ -95,9 +95,9 @@ watch(secondForm, () => {
           :prepopulate-name="false"
           email-warning
         />
-        <ConnectSection :title="t('createAccount.contactForm.mailingAddress')">
+        <ConnectFormSection :title="t('createAccount.contactForm.mailingAddress')">
           <div class="max-w-bcGovInput">
-            <ConnectAddress
+            <ConnectFormAddress
               id="primaryContactAddress"
               v-model:country="primaryContact.address.country"
               v-model:street="primaryContact.address.street"
@@ -110,7 +110,7 @@ watch(secondForm, () => {
               :enable-address-complete="enableAddressComplete"
             />
           </div>
-        </ConnectSection>
+        </ConnectFormSection>
       </UForm>
     </ConnectPageSection>
     <div v-if="!secondaryContact">
@@ -149,21 +149,21 @@ watch(secondForm, () => {
         :state="secondaryContact"
         class="space-y-10 pb-10"
       >
-        <ConnectSection :title="t('createAccount.contactForm.dateOfBirth')">
-          <ConnectDateInput
+        <ConnectFormSection :title="t('createAccount.contactForm.dateOfBirth')">
+          <ConnectFormDateInput
             name="dateOfBirth"
             :max-date="new Date()"
             placeholder="YYYY-MM-DD"
             @selection="secondaryContact.dateOfBirth = dateToString($event, 'YYYY-MM-DD')"
           />
-        </ConnectSection>
-        <ConnectSection :title="t('createAccount.contactForm.cra')">
+        </ConnectFormSection>
+        <ConnectFormSection :title="t('createAccount.contactForm.cra')">
           <FormCommonCraInfo
             v-model:social-insurance-number="secondaryContact.socialInsuranceNumber"
             v-model:business-number="secondaryContact.businessNumber"
             :is-primary="false"
           />
-        </ConnectSection>
+        </ConnectFormSection>
         <FormCommonContact
           v-model:full-name="secondaryContact.fullName"
           v-model:preferred-name="secondaryContact.preferredName"
@@ -173,9 +173,9 @@ watch(secondForm, () => {
           id-prefix="host-secondary-contact"
           :prepopulate-name="false"
         />
-        <ConnectSection :title="t('createAccount.contactForm.mailingAddress')">
+        <ConnectFormSection :title="t('createAccount.contactForm.mailingAddress')">
           <div class="max-w-bcGovInput">
-            <ConnectAddress
+            <ConnectFormAddress
               id="secondaryContactAddress"
               v-model:country="secondaryContact.address.country"
               v-model:street="secondaryContact.address.street"
@@ -188,7 +188,7 @@ watch(secondForm, () => {
               :enable-address-complete="enableAddressComplete"
             />
           </div>
-        </ConnectSection>
+        </ConnectFormSection>
       </UForm>
     </ConnectPageSection>
   </div>

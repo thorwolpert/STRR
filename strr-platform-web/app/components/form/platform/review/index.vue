@@ -247,7 +247,7 @@ onMounted(async () => {
               :title="tPlat('section.subTitle.regOfficeAttSvcAddrress')"
               title-class="font-bold text-bcGovGray-900"
             >
-              <ConnectAddressDisplay
+              <ConnectFormAddressDisplay
                 v-if="platformBusiness.regOfficeOrAtt.mailingAddress.street"
                 :address="platformBusiness.regOfficeOrAtt.mailingAddress"
               />
@@ -280,7 +280,7 @@ onMounted(async () => {
               :title="tPlat('section.subTitle.businessMailAddress')"
               title-class="font-bold text-bcGovGray-900"
             >
-              <ConnectAddressDisplay
+              <ConnectFormAddressDisplay
                 v-if="platformBusiness.mailingAddress.street"
                 :address="platformBusiness.mailingAddress"
               />

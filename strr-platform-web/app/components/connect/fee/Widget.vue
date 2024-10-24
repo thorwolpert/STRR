@@ -11,7 +11,7 @@ const {
   totalProcessingFees,
   totalGst,
   totalPst
-} = storeToRefs(useConnectFee())
+} = storeToRefs(useConnectFeeStore())
 
 const isPlaceholderActive = ref(false)
 

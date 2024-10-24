@@ -89,7 +89,7 @@ const handleManualDateEntry = (input: string) => {
       </template>
     </UInput>
 
-    <ConnectDatePicker
+    <ConnectFormDatePicker
       v-if="showDatePicker"
       ref="dateSelectPickerRef"
       class="absolute z-20"

@@ -1,4 +1,4 @@
-export const useConnectFee = defineStore('connect/fee', () => {
+export const useConnectFeeStore = defineStore('connect/fee', () => {
   const { $payApi } = useNuxtApp()
 
   const feeOptions = ref({

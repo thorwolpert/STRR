@@ -11,7 +11,7 @@ const { property } = storeToRefs(useStrrProperty())
 const { principal, supportingDocuments } = storeToRefs(useStrrPrincipal())
 const { agreeToSubmit } = storeToRefs(useStrrHostApplication())
 
-const { getFee, addReplaceFee, setPlaceholderFilingTypeCode } = useConnectFee()
+const { getFee, addReplaceFee, setPlaceholderFilingTypeCode } = useConnectFeeStore()
 
 setPlaceholderFilingTypeCode(ConnectFeeCode.STR_HOST)
 
@@ -159,7 +159,6 @@ useHead({
 
 definePageMeta({
   layout: 'connect-form',
-  order: 1,
   path: '/property-manager/host-application'
 })
 

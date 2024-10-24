@@ -172,7 +172,9 @@ export default {
     },
     faxNumber: 'Fax Number',
     faxNumberOpt: 'Fax Number (Optional)',
-    positionTitle: 'Position/Title'
+    positionTitle: 'Position/Title',
+    todo: 'To Do',
+    bcregDash: 'BC Registries Dashboard'
   },
   word: {
     i: 'i',
@@ -192,7 +194,8 @@ export default {
     Added: 'Added',
     Yes: 'Yes',
     No: 'No',
-    Edit: 'Edit'
+    Edit: 'Edit',
+    Save: 'Save'
   },
   page: {
     notFound: {
@@ -206,6 +209,11 @@ export default {
   },
   table: {},
   text: {
+    completeFilingToDisplay: 'Complete your filing to display',
+    filingsWillAppear: 'Filings that require your attention will appear here',
+    notAvailable: 'Not Available',
+    notEntered: 'Not Entered',
+    nothingTodo: 'You don’t have anything to do yet',
     preferredName: {
       checkbox: 'This individual also has an another name they prefer to use',
       note: 'Preferred name refers to the name that an individual chooses to use and be addressed by, which may differ from their legal or given name.',
@@ -430,7 +438,10 @@ export default {
     }
   },
   platform: {
-    title: 'Short-Term Rental Platform Registration',
+    title: {
+      application: 'Short-Term Rental Platform Application',
+      dashboard: 'My Short-Term Rental Registry'
+    },
     step: {
       description: {
         0: 'Contact Information',
@@ -475,11 +486,21 @@ export default {
     label: {
       addBrand: 'Add a Platform Brand',
       attForSvcName: 'Attorney for Service Name (Optional)',
+      attName: 'Attorney Name',
       addRepresentative: 'Add Another Representative',
       brandName: 'Platform Brand Name',
       brandNameOpt: 'Platform Brand Name (Optional)',
+      brandNames: 'Brand Names',
       brandSite: 'Platform Brand Website',
-      brandSiteOpt: 'Platform Brand Website (Optional)'
+      brandSiteOpt: 'Platform Brand Website (Optional)',
+      cpbcNum: 'Consumer Protection BC Number',
+      listingSize: {
+        UNDER_THOUSAND: 'Small Platform',
+        GREATER_THAN_THOUSAND: 'Large Platform'
+      },
+      noncomplianceEmail: 'Non-compliance Email',
+      registeredOfficeAttorney: 'Registered Office / Attorney',
+      takedownEmail: 'Takedown Email'
     },
     hint: {
       brandName: 'The brand name for the platform',

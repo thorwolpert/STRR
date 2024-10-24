@@ -190,7 +190,7 @@ const hasSpaces = (str: string) => /\s/.test(str)
           level: 'h3'
         }"
       >
-        <ConnectSection :title="$t('createAccount.principalResidence.fileUpload')">
+        <ConnectFormSection :title="$t('createAccount.principalResidence.fileUpload')">
           <p>{{ $t('createAccount.principalResidence.uploadMultiple') }}</p>
           <div class="relative mt-4 flex flex-row gap-3">
             <img
@@ -245,7 +245,7 @@ const hasSpaces = (str: string) => /\s/.test(str)
               />
             </div>
           </div>
-        </ConnectSection>
+        </ConnectFormSection>
       </ConnectPageSection>
 
       <ConnectPageSection
@@ -256,7 +256,7 @@ const hasSpaces = (str: string) => /\s/.test(str)
           level: 'h3'
         }"
       >
-        <ConnectSection class="pb-[40px]">
+        <ConnectFormSection class="pb-[40px]">
           <div
             class="flex flex-row"
             :class=" isComplete && !principal.declaration
@@ -271,7 +271,7 @@ const hasSpaces = (str: string) => /\s/.test(str)
             />
             <Declaration />
           </div>
-        </ConnectSection>
+        </ConnectFormSection>
       </ConnectPageSection>
     </div>
   </div>

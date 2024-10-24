@@ -73,7 +73,7 @@ defineProps<{ isComplete: boolean }>()
               :title="tContact('mailingAddress')"
               title-class="font-bold"
             >
-              <ConnectAddressDisplay :address="primaryContact.address" />
+              <ConnectFormAddressDisplay :address="primaryContact.address" />
             </ConnectInfoBox>
           </template>
           <template #item-2>
@@ -148,7 +148,7 @@ defineProps<{ isComplete: boolean }>()
               :title="tContact('mailingAddress')"
               title-class="font-bold"
             >
-              <ConnectAddressDisplay :address="secondaryContact.address" />
+              <ConnectFormAddressDisplay :address="secondaryContact.address" />
             </ConnectInfoBox>
           </template>
           <template #item-2>
@@ -196,7 +196,7 @@ defineProps<{ isComplete: boolean }>()
         <FormCommonReviewRow>
           <template #item-1>
             <ConnectInfoBox :title="tReview('address')" title-class="font-bold">
-              <ConnectAddressDisplay :address="property.address" />
+              <ConnectFormAddressDisplay :address="property.address" />
             </ConnectInfoBox>
           </template>
           <template #item-2>

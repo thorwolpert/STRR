@@ -70,15 +70,15 @@ watch(canadaPostAddress, (newAddress) => {
         :state="property"
         class="space-y-10 pb-10"
       >
-        <ConnectSection :title="t('createAccount.propertyForm.rentalUnitAddress')">
+        <ConnectFormSection :title="t('createAccount.propertyForm.rentalUnitAddress')">
           <div class="max-w-bcGovInput space-y-5">
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               id="property-nickname"
               v-model="property.nickname"
               name="nickname"
               :placeholder="$t('createAccount.propertyForm.nickname')"
             />
-            <ConnectAddress
+            <ConnectFormAddress
               id="rentalUnitAddress"
               v-model:country="property.address.country"
               v-model:street="property.address.street"
@@ -91,16 +91,16 @@ watch(canadaPostAddress, (newAddress) => {
               :enable-address-complete="enableAddressComplete"
             />
           </div>
-        </ConnectSection>
-        <ConnectSection :title="t('createAccount.propertyForm.rentalUnitDetails')">
+        </ConnectFormSection>
+        <ConnectFormSection :title="t('createAccount.propertyForm.rentalUnitDetails')">
           <div class="max-w-bcGovInput space-y-5">
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               id="parcel-itentifier"
               v-model="property.parcelIdentifier"
               name="parcelIdentifier"
               :placeholder="$t('createAccount.propertyForm.parcelIdentifier')"
             />
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               id="business-license"
               v-model="property.businessLicense"
               name="businessLicense"
@@ -141,10 +141,10 @@ watch(canadaPostAddress, (newAddress) => {
               />
             </UFormGroup>
           </div>
-        </ConnectSection>
-        <ConnectSection :title="t('createAccount.propertyForm.internetListingDetails')">
+        </ConnectFormSection>
+        <ConnectFormSection :title="t('createAccount.propertyForm.internetListingDetails')">
           <div name="whichPlatform" class="space-y-5">
-            <ConnectFieldGroup
+            <ConnectFormFieldGroup
               id="platform-url"
               v-model="property.whichPlatform"
               name="whichPlatform"
@@ -152,7 +152,7 @@ watch(canadaPostAddress, (newAddress) => {
               :placeholder="$t('createAccount.propertyForm.platformUrl')"
             />
           </div>
-        </ConnectSection>
+        </ConnectFormSection>
       </UForm>
     </ConnectPageSection>
   </div>

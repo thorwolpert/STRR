@@ -37,7 +37,7 @@ onMounted(async () => {
           v-for="brand, i in platformDetails.brands"
           :key="'brand' + i"
         >
-          <ConnectSection
+          <ConnectFormSection
             :title="$t('platform.section.subTitle.brand') + ((i > 0) ? ` ${ i + 1 }` : '')"
             :error="hasFormErrors(platformDetailsFormRef, [`brands.${i}.name`, `brands.${i}.website`])"
           >
@@ -60,7 +60,7 @@ onMounted(async () => {
                     :help="$t('platform.hint.brandName')"
                     :name="`brands.${i}.name`"
                   >
-                    <ConnectField
+                    <ConnectFormField
                       :id="'platform-brand-name-' + i"
                       v-model="brand.name"
                       :placeholder="(i > 0) ? $t('platform.label.brandNameOpt') : $t('platform.label.brandName')"
@@ -71,7 +71,7 @@ onMounted(async () => {
                     :help="$t('platform.hint.brandSite')"
                     :name="`brands.${i}.website`"
                   >
-                    <ConnectField
+                    <ConnectFormField
                       :id="'platform-brand-site-' + i"
                       v-model="brand.website"
                       name="website"
@@ -90,10 +90,10 @@ onMounted(async () => {
                 @click="addNewEmptyBrand()"
               />
             </div>
-          </ConnectSection>
+          </ConnectFormSection>
         </div>
         <div class="h-px w-full border-b border-gray-100" />
-        <ConnectSection
+        <ConnectFormSection
           :title="$t('platform.section.subTitle.size')"
           :error="hasFormErrors(platformDetailsFormRef, ['listingSize'])"
         >
@@ -108,7 +108,7 @@ onMounted(async () => {
               :ui-radio="{ inner: 'space-y-2' }"
             />
           </UFormGroup>
-        </ConnectSection>
+        </ConnectFormSection>
       </UForm>
     </ConnectPageSection>
   </div>

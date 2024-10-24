@@ -4,7 +4,8 @@ export interface ApiAddress {
   addressLineTwo: string
   city: string
   province: string
-  postalCode: string
+  postalCode: string,
+  locationDescription: string
 }
 
 export interface ApiParty {
@@ -42,12 +43,25 @@ export interface ApiPlatformDetails {
   listingSize: ListingSize
 }
 
+export interface ApiBaseRegistration {
+  registrationType: ApplicationType
+  completingParty: ApiParty
+  platformRepresentatives: ApiRep[]
+  businessDetails: ApiBusinessDetails
+  platformDetails: ApiPlatformDetails
+}
+
 export interface PlatformApplicationPayload {
-  registration: {
-    registrationType: ApplicationType
-    completingParty: ApiParty
-    platformRepresentatives: ApiRep[]
-    businessDetails: ApiBusinessDetails
-    platformDetails: ApiPlatformDetails
-  }
+  registration: ApiBaseRegistration
+}
+
+export interface PlatformRegistrationPayload extends ApiBaseRegistration {
+  expiryDate: Date
+  id: number
+  registration_number: string
+  sbc_account_id: number
+  startDate: Date
+  status: 'ACTIVE' | 'CANCELLED' | 'EXPIRED' | 'SUSPENDED',
+  updatedDate: Date
+  user_id: number
 }

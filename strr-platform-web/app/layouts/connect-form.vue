@@ -1,15 +1,9 @@
 <template>
-  <div
-    class="app-container"
-    data-testid="strr-form-layout"
-  >
+  <div class="app-container" data-testid="connect-form-layout">
     <ConnectHeader />
     <ConnectSystemBanner />
     <ConnectBreadcrumb />
-    <main
-      class="app-inner-container app-body"
-      data-testid="strr-form-layout-slot"
-    >
+    <main class="app-inner-container app-body">
       <div class="flex flex-col lg:flex-row">
         <div class="grow">
           <slot />

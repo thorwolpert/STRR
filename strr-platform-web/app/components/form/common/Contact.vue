@@ -27,7 +27,7 @@ defineProps<{
 
 <template>
   <div class="space-y-10 py-10">
-    <ConnectSection v-if="prepopulateName" :title="tPlat('section.subTitle.yourName')">
+    <ConnectFormSection v-if="prepopulateName" :title="tPlat('section.subTitle.yourName')">
       <p class="font-bold">
         <span v-if="fullName">{{ fullName }}</span>
         <span v-else>{{ firstName }} {{ lastName }}</span>
@@ -35,13 +35,13 @@ defineProps<{
       <p v-if="prepopulateType" class="text-sm">
         {{ tPlat(`text.yourName${prepopulateType}`) }}
       </p>
-    </ConnectSection>
-    <ConnectSection v-else :title="tPlat('section.subTitle.contactName')" :error="errorName">
+    </ConnectFormSection>
+    <ConnectFormSection v-else :title="tPlat('section.subTitle.contactName')" :error="errorName">
       <div class="space-y-5">
         <p v-if="sectionInfo" class="mt-1 text-sm">
           {{ sectionInfo }}
         </p>
-        <ConnectFieldGroup
+        <ConnectFormFieldGroup
           v-if="fullName !== undefined"
           :id="idPrefix + '-full-name'"
           v-model="fullName"
@@ -50,7 +50,7 @@ defineProps<{
           :placeholder="t('label.fullName')"
         />
         <div v-else class="flex max-w-bcGovInput flex-col gap-3 sm:flex-row">
-          <ConnectFieldGroup
+          <ConnectFormFieldGroup
             v-if="firstName !== undefined"
             :id="idPrefix + '-first-name'"
             v-model="firstName"
@@ -59,7 +59,7 @@ defineProps<{
             name="firstName"
             :placeholder="t('label.firstName')"
           />
-          <ConnectFieldGroup
+          <ConnectFormFieldGroup
             v-if="middleName !== undefined"
             :id="idPrefix + '-middle-name'"
             v-model="middleName"
@@ -68,7 +68,7 @@ defineProps<{
             name="middleName"
             :placeholder="t('label.middleNameOpt')"
           />
-          <ConnectFieldGroup
+          <ConnectFormFieldGroup
             v-if="lastName !== undefined"
             :id="idPrefix + '-last-name'"
             v-model="lastName"
@@ -78,7 +78,7 @@ defineProps<{
             :placeholder="t('label.lastName')"
           />
         </div>
-        <ConnectFieldGroup
+        <ConnectFormFieldGroup
           v-if="preferredName !== undefined"
           :id="idPrefix + '-preferred-name'"
           v-model="preferredName"
@@ -88,11 +88,11 @@ defineProps<{
           data-testid="preferredName"
         />
       </div>
-    </ConnectSection>
+    </ConnectFormSection>
     <div v-if="nameDivider" class="h-px w-full border-b border-gray-100" />
-    <ConnectSection :title="tPlat('section.subTitle.contactDetails')" :error="errorDetails">
+    <ConnectFormSection :title="tPlat('section.subTitle.contactDetails')" :error="errorDetails">
       <div class="space-y-5">
-        <ConnectFieldGroup
+        <ConnectFormFieldGroup
           v-if="position !== undefined"
           :id="idPrefix + '-position'"
           v-model="position"
@@ -101,14 +101,14 @@ defineProps<{
           name="position"
           :placeholder="t('label.positionTitle')"
         />
-        <ConnectPhoneNumber
+        <ConnectFormPhoneNumber
           v-if="phone"
           v-model:country-code="phone.countryCode"
           v-model:country-iso2="phone.countryIso2"
           v-model:extension="phone.extension"
           v-model:number="phone.number"
         />
-        <ConnectFieldGroup
+        <ConnectFormFieldGroup
           v-if="faxNumber !== undefined"
           :id="idPrefix + '-fax-number'"
           v-model="faxNumber"
@@ -116,7 +116,7 @@ defineProps<{
           name="faxNumber"
           :placeholder="t('createAccount.contactForm.faxNumber')"
         />
-        <ConnectFieldGroup
+        <ConnectFormFieldGroup
           v-if="emailAddress !== undefined"
           :id="idPrefix + '-party-email'"
           v-model="emailAddress"
@@ -126,6 +126,6 @@ defineProps<{
         />
         <EmailAlert v-if="emailWarning" />
       </div>
-    </ConnectSection>
+    </ConnectFormSection>
   </div>
 </template>

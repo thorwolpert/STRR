@@ -1,3 +1,5 @@
 export enum ApplicationType {
-  PLATFORM = 'PLATFORM'
+  HOST = 'HOST',
+  PLATFORM = 'PLATFORM',
+  STRATA_HOTEL = 'STRATA_HOTEL'
 }
