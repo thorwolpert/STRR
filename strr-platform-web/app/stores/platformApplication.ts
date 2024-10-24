@@ -12,7 +12,7 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
     confirmDelistAndCancelBookings: false
   })
 
-  // TODO: add validation messages
+  // TODO: add validation messages - will add in future pr
   const getConfirmationSchema = () => z.object({
     confirmInfoAccuracy: z.literal(true),
     confirmDelistAndCancelBookings: z.literal(true)

@@ -77,10 +77,6 @@ export const useStrrPlatformBusiness = defineStore('strr/platformBusiness', () =
     }
   })
 
-  // const businessDetailsSchema = computed(() => getBusinessSchema(
-  //   platformBusiness.value.hasCpbc, platformBusiness.value.hasRegOffAtt)
-  // )
-
   const validatePlatformBusiness = (returnBool = false): MultiFormValidationResult | boolean => {
     const schema = getBusinessSchema()
     const result = validateSchemaAgainstState(schema, platformBusiness.value, 'business-details-form')
