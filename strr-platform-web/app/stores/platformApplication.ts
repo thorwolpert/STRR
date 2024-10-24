@@ -12,6 +12,7 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
     confirmDelistAndCancelBookings: false
   })
 
+  // TODO: add validation messages
   const getConfirmationSchema = () => z.object({
     confirmInfoAccuracy: z.literal(true),
     confirmDelistAndCancelBookings: z.literal(true)
@@ -62,10 +63,14 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
 
     console.info('submitting application: ', body)
 
-    return await $strrApi('/applications', {
+    const response = await $strrApi('/applications', {
       method: 'POST',
       body
     })
+
+    console.info('strr api response: ', response)
+
+    return response
   }
 
   return {
