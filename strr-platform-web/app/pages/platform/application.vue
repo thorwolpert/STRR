@@ -241,7 +241,7 @@ setBreadcrumbs([
       <FormPlatformDetails :is-complete="activeStep.complete" />
     </div>
     <div v-if="activeStepIndex === 3" key="review-confirm">
-      <FormPlatformReview
+      <FormPlatformReviewConfirm
         :is-complete="activeStep.complete"
         @edit="stepperRef?.setActiveStep"
       />
