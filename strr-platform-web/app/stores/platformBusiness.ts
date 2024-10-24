@@ -29,7 +29,7 @@ export const useStrrPlatformBusiness = defineStore('strr/platformBusiness', () =
       regOfficeOrAtt: platformBusiness.value.hasRegOffAtt
         ? z.object({
           attorneyName: optionalOrEmptyString,
-          sameAsMailing: z.boolean(),
+          sameAsMailAddress: z.boolean(),
           mailingAddress: getRequiredAddress(
             t('validation.address.street'),
             t('validation.address.city'),
@@ -82,7 +82,8 @@ export const useStrrPlatformBusiness = defineStore('strr/platformBusiness', () =
   // )
 
   const validatePlatformBusiness = (returnBool = false): MultiFormValidationResult | boolean => {
-    const result = validateSchemaAgainstState(getBusinessSchema(), platformBusiness.value, 'business-details-form')
+    const schema = getBusinessSchema()
+    const result = validateSchemaAgainstState(schema, platformBusiness.value, 'business-details-form')
 
     if (returnBool) {
       return result.success === true

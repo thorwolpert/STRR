@@ -19,23 +19,36 @@ watch(() => platformBusiness.value.hasCpbc, () => {
   platformBusiness.value.cpbcLicenceNumber = ''
 })
 
-// manage regOfficeOrAtt
-watchEffect(() => {
-  // set regOfficeOrAtt.mailingAddress to match business mailing address if sameAsMailAddress checkbox checked
-  if (platformBusiness.value.regOfficeOrAtt.sameAsMailAddress) {
-    platformBusiness.value.regOfficeOrAtt.mailingAddress = { ...platformBusiness.value.mailingAddress }
+// set regOfficeOrAtt.mailingAddress to match business mailing address if sameAsMailAddress checkbox checked
+watch(() => platformBusiness.value.regOfficeOrAtt.sameAsMailAddress,
+  (newVal) => {
+    if (newVal) {
+      platformBusiness.value.regOfficeOrAtt.mailingAddress = { ...platformBusiness.value.mailingAddress }
+      // revalidate fields to update/remove form errors
+      platformBusinessFormRef.value?.validate([
+        'regOfficeOrAtt.mailingAddress.country',
+        'regOfficeOrAtt.mailingAddress.street',
+        'regOfficeOrAtt.mailingAddress.city',
+        'regOfficeOrAtt.mailingAddress.region',
+        'regOfficeOrAtt.mailingAddress.postalCode'
+      ], { silent: true })
+    }
   }
+)
 
+watch(() => platformBusiness.value.hasRegOffAtt,
+  (newVal) => {
   // reset regOfficeOrAtt if hasRegOffAtt radio set to false
-  if (platformBusiness.value.hasRegOffAtt === false) {
-    platformBusiness.value.regOfficeOrAtt.attorneyName = ''
-    platformBusiness.value.regOfficeOrAtt.sameAsMailAddress = false
-    Object.keys(platformBusiness.value.regOfficeOrAtt.mailingAddress).forEach((key) => {
+    if (!newVal) {
+      platformBusiness.value.regOfficeOrAtt.attorneyName = ''
+      platformBusiness.value.regOfficeOrAtt.sameAsMailAddress = false
+      Object.keys(platformBusiness.value.regOfficeOrAtt.mailingAddress).forEach((key) => {
       // @ts-expect-error - ts doesnt recognize key type
-      platformBusiness.value.regOfficeOrAtt.mailingAddress[key] = ''
-    })
+        platformBusiness.value.regOfficeOrAtt.mailingAddress[key] = ''
+      })
+    }
   }
-})
+)
 
 // address stuff
 const {
@@ -175,7 +188,14 @@ onMounted(async () => {
         <div class="h-px w-full border-b border-gray-100" />
         <ConnectSection
           :title="$t('platform.section.subTitle.regOfficeAttSvcAddrress')"
-          :error="hasFormErrors(platformBusinessFormRef, ['regOfficeOrAtt'])"
+          :error="hasFormErrors(platformBusinessFormRef, [
+            'hasRegOffAtt',
+            'regOfficeOrAtt.mailingAddress.country',
+            'regOfficeOrAtt.mailingAddress.street',
+            'regOfficeOrAtt.mailingAddress.city',
+            'regOfficeOrAtt.mailingAddress.region',
+            'regOfficeOrAtt.mailingAddress.postalCode'
+          ])"
         >
           <div class="max-w-bcGovInput space-y-5">
             <UFormGroup id="platform-business-hasRegOffAtt" name="hasRegOffAtt">
