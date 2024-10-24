@@ -3,6 +3,7 @@ export interface Step {
   icon?: string
   complete: boolean
   isValid: boolean
+  validationFn?: () => boolean | Promise<boolean>
   // below can be ommitted if using i18nPrefix + icon
   alt?: string
   activeIconPath?: string

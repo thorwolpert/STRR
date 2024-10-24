@@ -1,83 +1,65 @@
 <script setup lang="ts">
+import type { Form } from '#ui/types'
 const { t } = useI18n()
-const tPlat = (path: string) => t(`platform.${path}`)
-
-const { isComplete } = defineProps<{ isComplete: boolean }>()
-
 const { getBusinessSchema } = useStrrPlatformBusiness()
 const { platformBusiness } = storeToRefs(useStrrPlatformBusiness())
 
+const props = defineProps<{ isComplete: boolean }>()
+
+// cant set form schema type as businessDetailsSchema is a computed property
+const platformBusinessFormRef = ref<Form<any>>()
+
 const getRadioOptions = () => [
   { value: true, label: t('word.Yes') },
-  { value: false, label: t('word.No') }]
+  { value: false, label: t('word.No') }
+]
 
-// data manipulation stuff
-
+// reset cpbcLicenceNumber if hasCpbc radio button changed
 watch(() => platformBusiness.value.hasCpbc, () => {
   platformBusiness.value.cpbcLicenceNumber = ''
 })
 
-const businessdetailsSchema = computed(() => getBusinessSchema(
-  platformBusiness.value.hasCpbc, platformBusiness.value.hasRegOffAtt))
-
-watch(() => platformBusiness.value.regOfficeOrAtt.sameAsMailAddress, (val) => {
-  if (val) {
-    platformBusiness.value.regOfficeOrAtt.mailingAddress = { ...platformBusiness.value.mailingAddress }
-  }
-})
-watch(() => platformBusiness.value.mailingAddress, (val) => {
-  if (platformBusiness.value.regOfficeOrAtt.sameAsMailAddress) {
-    platformBusiness.value.regOfficeOrAtt.mailingAddress = { ...val }
-  }
-}, { deep: true })
-
-// form validation / error styling
-
-const showErrorBusIds = ref(false)
-const showErrorBusAddr = ref(false)
-const showErrorRegOffAtt = ref(false)
-const showErrorNonComp = ref(false)
-const showErrorTakedownReq = ref(false)
-
-const platformBusinessRef = ref()
-
-const formHasErrors = (paths: string[]) => {
-  for (const path of paths) {
-    // @ts-ignore
-    if (platformBusinessRef.value.getErrors(path)?.length) {
-      return true
+// set regOfficeOrAtt.mailingAddress to match business mailing address if sameAsMailAddress checkbox checked
+watch(() => platformBusiness.value.regOfficeOrAtt.sameAsMailAddress,
+  (newVal) => {
+    if (newVal) {
+      platformBusiness.value.regOfficeOrAtt.mailingAddress = { ...platformBusiness.value.mailingAddress }
+      // revalidate fields to update/remove form errors
+      platformBusinessFormRef.value?.validate([
+        'regOfficeOrAtt.mailingAddress.country',
+        'regOfficeOrAtt.mailingAddress.street',
+        'regOfficeOrAtt.mailingAddress.city',
+        'regOfficeOrAtt.mailingAddress.region',
+        'regOfficeOrAtt.mailingAddress.postalCode'
+      ], { silent: true })
     }
   }
-  return false
-}
+)
 
-const validateForm = async () => {
-  if (platformBusinessRef.value && isComplete) {
-    try {
-      await platformBusinessRef.value.validate()
-    } catch (e) {
-      console.info(e)
+watch(() => platformBusiness.value.hasRegOffAtt,
+  (newVal) => {
+  // reset regOfficeOrAtt if hasRegOffAtt radio set to false
+    if (!newVal) {
+      platformBusiness.value.regOfficeOrAtt.attorneyName = ''
+      platformBusiness.value.regOfficeOrAtt.sameAsMailAddress = false
+      Object.keys(platformBusiness.value.regOfficeOrAtt.mailingAddress).forEach((key) => {
+      // @ts-expect-error - ts doesnt recognize key type
+        platformBusiness.value.regOfficeOrAtt.mailingAddress[key] = ''
+      })
+
+      // revalidate fields to update/remove form errors
+      platformBusinessFormRef.value?.validate([
+        'regOfficeOrAtt.mailingAddress.country',
+        'regOfficeOrAtt.mailingAddress.street',
+        'regOfficeOrAtt.mailingAddress.city',
+        'regOfficeOrAtt.mailingAddress.region',
+        'regOfficeOrAtt.mailingAddress.postalCode'
+      ], { silent: true })
     }
-    showErrorBusIds.value = platformBusiness.value.hasCpbc === undefined ||
-      formHasErrors(['legalName', 'homeJurisdiction', 'cpbcLicenceNumber'])
-    showErrorBusAddr.value = formHasErrors([
-      'mailingAddress.country',
-      'mailingAddress.street',
-      'mailingAddress.city',
-      'mailingAddress.region',
-      'mailingAddress.postalCode'
-    ])
-    showErrorRegOffAtt.value = formHasErrors(['regOfficeOrAtt'])
-    showErrorNonComp.value = formHasErrors(['nonComplianceEmail'])
-    showErrorTakedownReq.value = formHasErrors(['takeDownEmail'])
   }
-}
-
-watch(platformBusinessRef, validateForm)
-watch(platformBusiness, validateForm, { deep: true })
+)
 
 // address stuff
-
 const {
   activeAddressField,
   address: canadaPostAddress,
@@ -92,23 +74,33 @@ const activeAddressPath = computed(() => {
 })
 
 watch(canadaPostAddress, (newAddress) => {
-  platformBusinessRef.value.clear(`${activeAddressPath.value}.city`)
-  platformBusinessRef.value.clear(`${activeAddressPath.value}.region`)
-  platformBusinessRef.value.clear(`${activeAddressPath.value}.postalCode`)
-  if (newAddress && activeAddressPath.value === 'mailingAddress') {
-    platformBusiness.value.mailingAddress.street = newAddress.street
-    platformBusiness.value.mailingAddress.streetAdditional = newAddress.streetAdditional
-    platformBusiness.value.mailingAddress.country = newAddress.country
-    platformBusiness.value.mailingAddress.city = newAddress.city
-    platformBusiness.value.mailingAddress.region = newAddress.region
-    platformBusiness.value.mailingAddress.postalCode = newAddress.postalCode
-  } else if (newAddress) {
-    platformBusiness.value.regOfficeOrAtt.mailingAddress.street = newAddress.street
-    platformBusiness.value.regOfficeOrAtt.mailingAddress.streetAdditional = newAddress.streetAdditional
-    platformBusiness.value.regOfficeOrAtt.mailingAddress.country = newAddress.country
-    platformBusiness.value.regOfficeOrAtt.mailingAddress.city = newAddress.city
-    platformBusiness.value.regOfficeOrAtt.mailingAddress.region = newAddress.region
-    platformBusiness.value.regOfficeOrAtt.mailingAddress.postalCode = newAddress.postalCode
+  if (platformBusinessFormRef.value) {
+    // reset form validation for city/region/postalCode if address is changed
+    platformBusinessFormRef.value.clear(`${activeAddressPath.value}.city`)
+    platformBusinessFormRef.value.clear(`${activeAddressPath.value}.region`)
+    platformBusinessFormRef.value.clear(`${activeAddressPath.value}.postalCode`)
+    if (newAddress && activeAddressPath.value === 'mailingAddress') {
+      platformBusiness.value.mailingAddress.street = newAddress.street
+      platformBusiness.value.mailingAddress.streetAdditional = newAddress.streetAdditional
+      platformBusiness.value.mailingAddress.country = newAddress.country
+      platformBusiness.value.mailingAddress.city = newAddress.city
+      platformBusiness.value.mailingAddress.region = newAddress.region
+      platformBusiness.value.mailingAddress.postalCode = newAddress.postalCode
+    } else if (newAddress) {
+      platformBusiness.value.regOfficeOrAtt.mailingAddress.street = newAddress.street
+      platformBusiness.value.regOfficeOrAtt.mailingAddress.streetAdditional = newAddress.streetAdditional
+      platformBusiness.value.regOfficeOrAtt.mailingAddress.country = newAddress.country
+      platformBusiness.value.regOfficeOrAtt.mailingAddress.city = newAddress.city
+      platformBusiness.value.regOfficeOrAtt.mailingAddress.region = newAddress.region
+      platformBusiness.value.regOfficeOrAtt.mailingAddress.postalCode = newAddress.postalCode
+    }
+  }
+})
+
+onMounted(async () => {
+  // validate form if step marked as complete
+  if (props.isComplete) {
+    await validateForm(platformBusinessFormRef.value, props.isComplete)
   }
 })
 </script>
@@ -117,45 +109,50 @@ watch(canadaPostAddress, (newAddress) => {
   <div data-testid="business-details">
     <ConnectPageSection
       class="bg-white"
-      :heading="{ label: tPlat('section.title.businessInfo'), labelClass: 'font-bold md:ml-6' }"
+      :heading="{ label: $t('platform.section.title.businessInfo'), labelClass: 'font-bold md:ml-6' }"
     >
       <UForm
-        ref="platformBusinessRef"
-        :schema="businessdetailsSchema"
+        ref="platformBusinessFormRef"
+        :schema="getBusinessSchema()"
         :state="platformBusiness"
         class="space-y-10 py-10"
       >
-        <ConnectSection :title="tPlat('section.subTitle.businessIds')" :error="showErrorBusIds">
+        <ConnectSection
+          :title="$t('platform.section.subTitle.businessIds')"
+          :error="isComplete && (platformBusiness.hasCpbc === undefined ||
+            hasFormErrors(platformBusinessFormRef, ['legalName', 'homeJurisdiction', 'cpbcLicenceNumber']))
+          "
+        >
           <div class="space-y-5">
             <ConnectFieldGroup
               id="platform-business-legal-name"
               v-model="platformBusiness.legalName"
-              :aria-label="t('label.busNameLegal')"
-              :help="tPlat('hint.businessLegalName')"
+              :aria-label="$t('label.busNameLegal')"
+              :help="$t('platform.hint.businessLegalName')"
               name="legalName"
               :placeholder="t('label.busNameLegal')"
             />
             <ConnectFieldGroup
               id="platform-business-home-jur"
               v-model="platformBusiness.homeJurisdiction"
-              :aria-label="t('label.homeJurisdiction')"
-              :help="tPlat('hint.humeJurisdiction')"
+              :aria-label="$t('label.homeJurisdiction')"
+              :help="$t('platform.hint.humeJurisdiction')"
               name="homeJurisdiction"
               :placeholder="t('label.homeJurisdiction')"
             />
             <ConnectFieldGroup
               id="platform-business-number"
               v-model="platformBusiness.businessNumber"
-              :aria-label="t('label.busNumOpt')"
+              :aria-label="$t('label.busNumOpt')"
               name="businessNumber"
-              :placeholder="t('label.busNumOpt')"
+              :placeholder="$t('label.busNumOpt')"
             />
             <UFormGroup id="platform-business-hasCpbc" name="hasCpbc">
               <URadioGroup
                 v-model="platformBusiness.hasCpbc"
                 class="p-2"
                 :class="isComplete && platformBusiness.hasCpbc === undefined ? 'border-red-600 border-2' : ''"
-                :legend="tPlat('text.hasCpbc')"
+                :legend="$t('platform.text.hasCpbc')"
                 :options="getRadioOptions()"
                 :ui="{ legend: 'mb-3 text-default font-bold text-gray-700' }"
                 :ui-radio="{ inner: 'space-y-2' }"
@@ -165,14 +162,23 @@ watch(canadaPostAddress, (newAddress) => {
               v-if="platformBusiness.hasCpbc"
               id="platform-cpbc"
               v-model="platformBusiness.cpbcLicenceNumber"
-              :aria-label="t('label.cpbcLicNum')"
+              :aria-label="$t('label.cpbcLicNum')"
               name="cpbcLicenceNumber"
-              :placeholder="t('label.cpbcLicNum')"
+              :placeholder="$t('label.cpbcLicNum')"
             />
           </div>
         </ConnectSection>
         <div class="h-px w-full border-b border-gray-100" />
-        <ConnectSection :title="tPlat('section.subTitle.businessMailAddress')" :error="showErrorBusAddr">
+        <ConnectSection
+          :title="$t('platform.section.subTitle.businessMailAddress')"
+          :error="hasFormErrors(platformBusinessFormRef, [
+            'mailingAddress.country',
+            'mailingAddress.street',
+            'mailingAddress.city',
+            'mailingAddress.region',
+            'mailingAddress.postalCode'
+          ])"
+        >
           <div class="max-w-bcGovInput">
             <ConnectAddress
               id="platform-business-address"
@@ -189,14 +195,24 @@ watch(canadaPostAddress, (newAddress) => {
           </div>
         </ConnectSection>
         <div class="h-px w-full border-b border-gray-100" />
-        <ConnectSection :title="tPlat('section.subTitle.regOfficeAttSvcAddrress')" :error="showErrorRegOffAtt">
+        <ConnectSection
+          :title="$t('platform.section.subTitle.regOfficeAttSvcAddrress')"
+          :error="hasFormErrors(platformBusinessFormRef, [
+            'hasRegOffAtt',
+            'regOfficeOrAtt.mailingAddress.country',
+            'regOfficeOrAtt.mailingAddress.street',
+            'regOfficeOrAtt.mailingAddress.city',
+            'regOfficeOrAtt.mailingAddress.region',
+            'regOfficeOrAtt.mailingAddress.postalCode'
+          ])"
+        >
           <div class="max-w-bcGovInput space-y-5">
             <UFormGroup id="platform-business-hasRegOffAtt" name="hasRegOffAtt">
               <URadioGroup
                 v-model="platformBusiness.hasRegOffAtt"
                 class="p-2"
                 :class="isComplete && platformBusiness.hasRegOffAtt === undefined ? 'border-red-600 border-2' : ''"
-                :legend="tPlat('text.regOffOrAtt')"
+                :legend="$t('platform.text.regOffOrAtt')"
                 :options="getRadioOptions()"
                 :ui="{ legend: 'mb-3 text-default font-bold text-gray-700' }"
                 :ui-radio="{ inner: 'space-y-2' }"
@@ -233,44 +249,50 @@ watch(canadaPostAddress, (newAddress) => {
           </div>
         </ConnectSection>
         <div class="h-px w-full border-b border-gray-100" />
-        <ConnectSection :title="tPlat('section.subTitle.noticeNonCompliance')" :error="showErrorNonComp">
+        <ConnectSection
+          :title="$t('platform.section.subTitle.noticeNonCompliance')"
+          :error="hasFormErrors(platformBusinessFormRef, ['nonComplianceEmail'])"
+        >
           <div class="space-y-5">
             <p>
-              {{ tPlat('text.nonComplianceEmail') }}
+              {{ $t('platform.text.nonComplianceEmail') }}
             </p>
             <ConnectFieldGroup
               id="platform-business-noncompliance-email"
               v-model="platformBusiness.nonComplianceEmail"
-              :aria-label="t('label.emailAddress')"
+              :aria-label="$t('label.emailAddress')"
               name="nonComplianceEmail"
-              :placeholder="t('label.emailAddress')"
+              :placeholder="$t('label.emailAddress')"
             />
             <ConnectFieldGroup
               id="platform-business-noncompliance-email-optional"
               v-model="platformBusiness.nonComplianceEmailOptional"
-              :aria-label="t('label.emailAddressOpt')"
+              :aria-label="$t('label.emailAddressOpt')"
               name="nonComplianceEmailOptional"
-              :placeholder="t('label.emailAddressOpt')"
+              :placeholder="$t('label.emailAddressOpt')"
             />
           </div>
         </ConnectSection>
         <div class="h-px w-full border-b border-gray-100" />
-        <ConnectSection :title="tPlat('section.subTitle.takedownRequest')" :error="showErrorTakedownReq">
+        <ConnectSection
+          :title="$t('platform.section.subTitle.takedownRequest')"
+          :error="hasFormErrors(platformBusinessFormRef, ['takeDownEmail'])"
+        >
           <div class="space-y-5">
-            <p>{{ tPlat('text.takedownEmail') }}</p>
+            <p>{{ $t('platform.text.takedownEmail') }}</p>
             <ConnectFieldGroup
               id="platform-business-takedown-email"
               v-model="platformBusiness.takeDownEmail"
-              :aria-label="t('label.emailAddress')"
+              :aria-label="$t('label.emailAddress')"
               name="takeDownEmail"
-              :placeholder="t('label.emailAddress')"
+              :placeholder="$t('label.emailAddress')"
             />
             <ConnectFieldGroup
               id="platform-business-takedown-email-optional"
               v-model="platformBusiness.takeDownEmailOptional"
-              :aria-label="t('label.emailAddressOpt')"
+              :aria-label="$t('label.emailAddressOpt')"
               name="takeDownEmailOptional"
-              :placeholder="t('label.emailAddressOpt')"
+              :placeholder="$t('label.emailAddressOpt')"
             />
           </div>
         </ConnectSection>

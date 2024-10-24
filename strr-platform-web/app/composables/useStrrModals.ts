@@ -5,12 +5,13 @@ export const useStrrModals = () => {
   const modal = useModal()
   const { t } = useI18n()
 
-  function openAppSubmitError () {
+  function openAppSubmitError (e: any) {
     modal.open(ModalBase, {
       error: {
         title: 'Error submitting application', // need to come up with different error messages for different scenarios
         description: 'Some description here.'
       },
+      content: `Do something with errors: ${JSON.stringify(e)}`,
       actions: [{ label: t('btn.close'), handler: () => close() }]
     })
   }

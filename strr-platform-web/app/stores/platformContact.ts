@@ -3,6 +3,7 @@ import type { Contact, PlatformContact } from '#imports'
 import {
   optionalOrEmptyString, getRequiredEmail, getRequiredNonEmptyString, getRequiredPhone
 } from '~/utils/connect-validation'
+import type { MultiFormValidationResult } from '~/interfaces/validation'
 
 export const useStrrPlatformContact = defineStore('strr/platformContact', () => {
   const { t } = useI18n()
@@ -81,13 +82,48 @@ export const useStrrPlatformContact = defineStore('strr/platformContact', () => 
 
   const secondaryRep = ref<PlatformContact | undefined>(undefined)
 
+  const compPartySchema = getContactSchema(true)
+  const primaryRepSchema = getContactSchema(false)
+  const secondaryRepSchema = getContactSchema(false)
+
+  const validatePlatformContact = async (returnBool = false): Promise<MultiFormValidationResult | boolean> => {
+    const validations = [
+      validateSchemaAgainstState(compPartySchema, completingParty.value, 'completing-party-form'),
+      validateSchemaAgainstState(primaryRepSchema, primaryRep.value, 'primary-rep-form')
+    ]
+
+    if (secondaryRep.value !== undefined) {
+      validations.push(validateSchemaAgainstState(secondaryRepSchema, secondaryRep.value, 'secondary-rep-form'))
+    }
+
+    const results = await Promise.all(validations)
+
+    if (isCompletingPartyRep.value === undefined) {
+      results.unshift({
+        formId: 'completing-party-radio-group',
+        errors: [],
+        success: false
+      })
+    }
+
+    if (returnBool) {
+      return results.every(result => result.success === true)
+    } else {
+      return results
+    }
+  }
+
   return {
     completingParty,
     isCompletingPartyRep,
     primaryRep,
     secondaryRep,
+    compPartySchema,
+    primaryRepSchema,
+    secondaryRepSchema,
     getContactSchema,
     getNewContact,
-    getNewRepresentative
+    getNewRepresentative,
+    validatePlatformContact
   }
 })

@@ -1,59 +1,84 @@
+import { z } from 'zod'
+import type { MultiFormValidationResult } from '~/interfaces/validation'
+
 export const useStrrPlatformApplication = defineStore('strr/platformApplication', () => {
   const { $strrApi } = useNuxtApp()
-  const { completingParty, primaryRep, secondaryRep } = storeToRefs(useStrrPlatformContact())
-  const { platformBusiness } = storeToRefs(useStrrPlatformBusiness())
-  const { platformDetails } = storeToRefs(useStrrPlatformDetails())
-  const strrModal = useStrrModals()
+  const platContactStore = useStrrPlatformContact()
+  const platBusinessStore = useStrrPlatformBusiness()
+  const platDetailsStore = useStrrPlatformDetails()
 
-  const confirmInfoAccuracy = ref(false)
-  const confirmDelistAndCancelBookings = ref(false)
+  const platformConfirmation = reactive({
+    confirmInfoAccuracy: false,
+    confirmDelistAndCancelBookings: false
+  })
 
-  function createApplicationBody (): PlatformApplicationPayload {
+  // TODO: add validation messages - will add in future pr
+  const getConfirmationSchema = () => z.object({
+    confirmInfoAccuracy: z.literal(true),
+    confirmDelistAndCancelBookings: z.literal(true)
+  })
+
+  const platformConfirmationSchema = getConfirmationSchema()
+
+  const validatePlatformConfirmation = (returnBool = false): MultiFormValidationResult | boolean => {
+    const result = validateSchemaAgainstState(
+      platformConfirmationSchema, platformConfirmation, 'platform-confirmation-form'
+    )
+
+    if (returnBool) {
+      return result.success === true
+    } else {
+      return [result]
+    }
+  }
+
+  const createApplicationBody = (): PlatformApplicationPayload => {
     const applicationBody: PlatformApplicationPayload = {
       registration: {
         registrationType: ApplicationType.PLATFORM,
-        completingParty: formatParty(completingParty.value),
+        completingParty: formatParty(platContactStore.completingParty),
         platformRepresentatives: [],
-        businessDetails: formatBusinessDetails(platformBusiness.value),
-        platformDetails: formatPlatformDetails(platformDetails.value)
+        businessDetails: formatBusinessDetails(platBusinessStore.platformBusiness),
+        platformDetails: formatPlatformDetails(platDetailsStore.platformDetails)
       }
     }
 
-    if (primaryRep.value !== undefined) {
+    if (platContactStore.primaryRep !== undefined) {
       applicationBody.registration.platformRepresentatives.push(
-        formatRepresentative(primaryRep.value)
+        formatRepresentative(platContactStore.primaryRep)
       )
     }
 
-    if (secondaryRep.value !== undefined) {
+    if (platContactStore.secondaryRep !== undefined) {
       applicationBody.registration.platformRepresentatives.push(
-        formatRepresentative(secondaryRep.value)
+        formatRepresentative(platContactStore.secondaryRep)
       )
     }
 
     return applicationBody
   }
 
-  async function submitPlatformApplication () {
-    // validate all forms/fields first??
-    try {
-      const body = createApplicationBody()
+  const submitPlatformApplication = async () => {
+    const body = createApplicationBody()
 
-      // console.log('submitting application: ', body)
-      await $strrApi('/applications', {
-        method: 'POST',
-        body
-      })
-    } catch (e) {
-      logFetchError(e, 'Error creating platform application')
-      strrModal.openAppSubmitError() // pass in error object ??
-    }
+    console.info('submitting application: ', body)
+
+    // TODO: implement
+    // commenting this out now until payment is complete
+    // const response = await $strrApi('/applications', {
+    //   method: 'POST',
+    //   body
+    // })
+
+    // console.info('strr api response: ', response)
+
+    // return response
   }
 
   return {
-    confirmInfoAccuracy,
-    confirmDelistAndCancelBookings,
-    // getPlatformApplication,
-    submitPlatformApplication
+    platformConfirmation,
+    platformConfirmationSchema,
+    submitPlatformApplication,
+    validatePlatformConfirmation
   }
 })

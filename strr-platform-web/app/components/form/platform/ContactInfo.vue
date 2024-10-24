@@ -1,86 +1,75 @@
 <script setup lang="ts">
+import type { Form } from '#ui/types'
+import { z } from 'zod'
 const { t } = useI18n()
 
-const tPlat = (path: string) => t(`platform.${path}`)
+const props = defineProps<{ isComplete: boolean }>()
 
-const { isComplete } = defineProps<{ isComplete: boolean }>()
+const {
+  compPartySchema,
+  primaryRepSchema,
+  secondaryRepSchema,
+  getNewRepresentative
+} = useStrrPlatformContact()
+const {
+  isCompletingPartyRep,
+  completingParty,
+  primaryRep,
+  secondaryRep
+} = storeToRefs(useStrrPlatformContact())
 
-const { getContactSchema, getNewRepresentative } = useStrrPlatformContact()
-const { isCompletingPartyRep, completingParty, primaryRep, secondaryRep } = storeToRefs(useStrrPlatformContact())
+type CompletingPartySchema = z.output<typeof compPartySchema>
+type PrimaryRepSchema = z.output<typeof primaryRepSchema>
+type SecondaryRepSchema = z.output<typeof secondaryRepSchema>
+
+const compPartyFormRef = ref<Form<CompletingPartySchema>>()
+const primaryRepFormRef = ref<Form<PrimaryRepSchema>>()
+const secondaryRepFormRef = ref<Form<SecondaryRepSchema>>()
 
 const radioOptions = [
   { value: true, label: t('word.Yes') },
-  { value: false, label: t('word.No') }]
+  { value: false, label: t('word.No') }
+]
 
 watch(isCompletingPartyRep, (val) => {
   primaryRep.value = getNewRepresentative(val)
 })
 
-// error styling stuff
+onMounted(async () => {
+  // validate form if step marked as complete
+  if (props.isComplete) {
+    // validate all form refs
+    const validations = [
+      validateForm(compPartyFormRef.value, props.isComplete),
+      validateForm(primaryRepFormRef.value, props.isComplete),
+      validateForm(secondaryRepFormRef.value, props.isComplete)
+    ]
+    await Promise.all(validations) // remove this if adding the scroll into view stuff
 
-const formHasErrors = (form: any, paths: string[]) => {
-  for (const path of paths) {
-    if (form?.getErrors(path)?.length) {
-      return true
-    }
+    // TODO: implement ? leaving this here for reference
+    // disabled scrolling to errors as validation results must be sorted
+    // in order to match the form input order for the first element to be consistently correct
+
+    // get all errors and filter out undefined results (secondary rep form validate might return undefined)
+    // const validationResults = (await Promise.all(validations)).filter(item => item !== undefined)
+
+    // if (validationResults.length > 0) {
+    //   const firstError = validationResults[0]?.[0]?.path // get first error found
+    //   if (firstError) {
+    //     focusAndScrollToInputByName(firstError)
+    //   }
+    // }
   }
-  return false
-}
-
-const compPartyDetailsErr = ref(false)
-const primaryRepNameErr = ref(false)
-const primaryRepDetailsErr = ref(false)
-const secondaryRepNameErr = ref(false)
-const secondaryRepDetailsErr = ref(false)
-
-const validateForm = async (form: any) => {
-  if (form && isComplete) {
-    try {
-      await form.validate()
-    } catch (e) {
-      // console.info(e)
-    }
-    switch (form) {
-      case compPartyRef.value:
-        compPartyDetailsErr.value = formHasErrors(compPartyRef.value, ['phone.countryCode', 'phone.number', 'email'])
-        break
-      case primaryRepRef.value:
-        primaryRepNameErr.value = formHasErrors(primaryRepRef.value, ['firstName', 'lastName'])
-        primaryRepDetailsErr.value = formHasErrors(
-          primaryRepRef.value, ['position', 'phone.countryCode', 'phone.number', 'email'])
-        break
-      case secondaryRepRef.value:
-        secondaryRepNameErr.value = formHasErrors(secondaryRepRef.value, ['firstName', 'lastName'])
-        secondaryRepDetailsErr.value = formHasErrors(
-          secondaryRepRef.value, ['position', 'phone.countryCode', 'phone.number', 'email'])
-    }
-  }
-}
-
-const compPartyRef = ref()
-const primaryRepRef = ref()
-const secondaryRepRef = ref()
-watch(compPartyRef, validateForm)
-watch(primaryRepRef, validateForm)
-watch(secondaryRepRef, validateForm)
-
-watch(completingParty, async () => {
-  await validateForm(compPartyRef.value)
-}, { deep: true })
-watch(primaryRep, async () => {
-  await validateForm(primaryRepRef.value)
-}, { deep: true })
-watch(secondaryRep, async () => {
-  await validateForm(secondaryRepRef.value)
-}, { deep: true })
+})
 </script>
 
 <template>
   <div data-testid="contact-information" class="space-y-10">
     <URadioGroup
+      id="completing-party-radio-group"
       v-model="isCompletingPartyRep"
       :class="isComplete && isCompletingPartyRep === undefined ? 'border-red-600 border-2 p-2' : 'p-2'"
-      :legend="tPlat('text.isUserRep')"
+      :legend="$t('platform.text.isUserRep')"
       :options="radioOptions"
       :ui="{ legend: 'mb-3 text-default font-bold text-gray-700' }"
       :ui-radio="{ inner: 'space-y-2' }"
@@ -89,11 +78,11 @@ watch(secondaryRep, async () => {
       <ConnectPageSection
         v-if="!isCompletingPartyRep"
         class="bg-white"
-        :heading="{ label: tPlat('section.title.completingParty'), labelClass: 'font-bold md:ml-6' }"
+        :heading="{ label: $t('platform.section.title.completingParty'), labelClass: 'font-bold md:ml-6' }"
       >
         <UForm
-          ref="compPartyRef"
-          :schema="getContactSchema(true)"
+          ref="compPartyFormRef"
+          :schema="compPartySchema"
           :state="completingParty"
         >
           <FormCommonContact
@@ -105,18 +94,18 @@ watch(secondaryRep, async () => {
             name-divider
             prepopulate-name
             prepopulate-type="Bceid"
-            :error-details="compPartyDetailsErr"
+            :error-details="hasFormErrors(compPartyFormRef, ['phone.countryCode', 'phone.number', 'email'])"
           />
         </UForm>
       </ConnectPageSection>
       <ConnectPageSection
         v-if="primaryRep"
         class="bg-white"
-        :heading="{ label: tPlat('section.title.primaryRep'), labelClass: 'font-bold md:ml-6' }"
+        :heading="{ label: $t('platform.section.title.primaryRep'), labelClass: 'font-bold md:ml-6' }"
       >
         <UForm
-          ref="primaryRepRef"
-          :schema="getContactSchema(false)"
+          ref="primaryRepFormRef"
+          :schema="primaryRepSchema"
           :state="primaryRep"
           class="space-y-10"
         >
@@ -133,15 +122,17 @@ watch(secondaryRep, async () => {
             :prepopulate-name="isCompletingPartyRep"
             prepopulate-type="Bceid"
             email-warning
-            :section-info="isCompletingPartyRep ? undefined : t('platform.text.primaryContact')"
-            :error-name="primaryRepNameErr"
-            :error-details="primaryRepDetailsErr"
+            :section-info="isCompletingPartyRep ? undefined : $t('platform.text.primaryContact')"
+            :error-name="hasFormErrors(primaryRepFormRef, ['firstName', 'lastName'])"
+            :error-details="
+              hasFormErrors(primaryRepFormRef, ['position', 'phone.countryCode', 'phone.number', 'email'])
+            "
           />
         </UForm>
       </ConnectPageSection>
       <div v-if="!secondaryRep">
         <UButton
-          :label="tPlat('label.addRepresentative')"
+          :label="$t('platform.label.addRepresentative')"
           class="px-5 py-3"
           color="primary"
           icon="i-mdi-account-plus"
@@ -156,7 +147,7 @@ watch(secondaryRep, async () => {
         <template #header>
           <div class="flex">
             <h2 class="ml-6 grow font-bold">
-              {{ tPlat('section.title.secondaryRep') }}
+              {{ $t('platform.section.title.secondaryRep') }}
             </h2>
             <UButton
               :label="t('word.Remove')"
@@ -169,8 +160,8 @@ watch(secondaryRep, async () => {
           </div>
         </template>
         <UForm
-          ref="secondaryRepRef"
-          :schema="getContactSchema(false)"
+          ref="secondaryRepFormRef"
+          :schema="secondaryRepSchema"
           :state="secondaryRep"
           class="space-y-10 pb-10"
         >
@@ -185,11 +176,19 @@ watch(secondaryRep, async () => {
             id-prefix="platform-secondary-rep"
             :prepopulate-name="false"
             name-divider
-            :error-name="secondaryRepNameErr"
-            :error-details="secondaryRepDetailsErr"
+            :error-name="hasFormErrors(secondaryRepFormRef, ['firstName', 'lastName'])"
+            :error-details="
+              hasFormErrors(secondaryRepFormRef, ['position', 'phone.countryCode', 'phone.number', 'email'])
+            "
           />
         </UForm>
       </ConnectPageSection>
     </div>
   </div>
 </template>
+<style>
+/* smooth scroll not working without this, add to layer? */
+html {
+  scroll-behavior: smooth;
+}
+</style>
