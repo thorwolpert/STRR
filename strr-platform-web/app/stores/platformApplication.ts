@@ -63,14 +63,16 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
 
     console.info('submitting application: ', body)
 
-    const response = await $strrApi('/applications', {
-      method: 'POST',
-      body
-    })
+    // TODO: implement
+    // commenting this out now until payment is complete
+    // const response = await $strrApi('/applications', {
+    //   method: 'POST',
+    //   body
+    // })
 
-    console.info('strr api response: ', response)
+    // console.info('strr api response: ', response)
 
-    return response
+    // return response
   }
 
   return {
