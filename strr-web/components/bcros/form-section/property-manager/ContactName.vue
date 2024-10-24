@@ -1,12 +1,11 @@
 <template>
-  <div data-test-id="property-manager-contact-name">
+  <div data-test-id="property-manager-contact-name" class="with-divider">
     <BcrosFormSection :title="t('createAccount.propertyManagerForm.contactName')">
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:flex-col mobile:mb-[16px]">
         <UFormGroup name="firstName" class="d:pr-[16px] flex-grow mobile:mb-[16px]" :error="errors.firstName">
           <UInput
             v-model="firstName"
             :placeholder="t('createAccount.propertyManagerForm.firstName')"
-            aria-label="firstName"
             @input="emit('resetFieldError', 'firstName')"
             @blur="emit('validateField', 'firstName')"
             @change="emit('validateField', 'firstName')"
@@ -16,14 +15,12 @@
           <UInput
             v-model="middleName"
             :placeholder="t('createAccount.propertyManagerForm.middleName')"
-            aria-label="middleName"
           />
         </UFormGroup>
         <UFormGroup name="lastName" class="flex-grow mobile:mb-[16px]" :error="errors.lastName">
           <UInput
             v-model="lastName"
             :placeholder="t('createAccount.propertyManagerForm.lastName')"
-            aria-label="last name"
             @input="emit('resetFieldError', 'lastName')"
             @blur="emit('validateField', 'lastName')"
             @change="emit('validateField', 'lastName')"
@@ -35,13 +32,11 @@
           <UInput
             v-model="preferredName"
             type="name"
-            aria-label="preferred name"
             :placeholder="t('createAccount.propertyManagerForm.preferredName')"
           />
         </UFormGroup>
       </div>
     </BcrosFormSection>
-    <div v-if="divider" class="h-[1px] bg-bcGovGray-300 mobile:hidden" />
   </div>
 </template>
 
@@ -57,8 +52,7 @@ const emit = defineEmits<{
     resetFieldError: [field: string]
 }>()
 
-const { divider, errors = {} } = defineProps<{
-  divider: boolean,
+const { errors = {} } = defineProps<{
   errors: Record<string, string>
 }>()
 </script>

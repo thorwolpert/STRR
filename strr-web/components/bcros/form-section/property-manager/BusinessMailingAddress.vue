@@ -1,11 +1,10 @@
 <template>
-  <div data-test-id="property-manager-business-address">
+  <div data-test-id="property-manager-business-address" class="with-divider">
     <BcrosFormSection :title="t('createAccount.propertyManagerForm.businessMailingAddress')">
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]">
         <UFormGroup name="country" class="flex-grow">
           <USelect
             v-model="country"
-            aria-label="country"
             :options="countryItems"
             option-attribute="name"
             class="w-full"
@@ -17,7 +16,6 @@
           <UInput
             :id="id"
             v-model="address"
-            aria-label="address"
             :placeholder="t('createAccount.propertyManagerForm.address')"
             @input="onAddressInput"
             @click="addressComplete()"
@@ -31,7 +29,6 @@
           <UInput
             v-model="addressLineTwo"
             :placeholder="t('createAccount.propertyManagerForm.addressLineTwo')"
-            aria-label="address line two"
           />
         </UFormGroup>
       </div>
@@ -44,7 +41,6 @@
           <UInput
             v-model="city"
             :placeholder="t('createAccount.propertyManagerForm.city')"
-            aria-label="city"
             @input="emit('resetFieldError', 'city')"
             @blur="emit('validateField', 'city')"
             @change="emit('validateField', 'city')"
@@ -57,13 +53,11 @@
             :options="provinceItems"
             option-attribute="name"
             :placeholder="t('createAccount.propertyManagerForm.province')"
-            aria-label="province"
           />
           <UInput
             v-else
             v-model="province"
             :placeholder="t('createAccount.propertyManagerForm.province')"
-            aria-label="province"
             @input="emit('resetFieldError', 'province')"
             @blur="emit('validateField', 'province')"
             @change="emit('validateField', 'province')"
@@ -73,7 +67,6 @@
           <UInput
             v-model="postalCode"
             :placeholder="t('createAccount.propertyManagerForm.postalCode')"
-            aria-label="postal code"
             @input="emit('resetFieldError', 'postalCode')"
             @blur="emit('validateField', 'postalCode')"
             @change="emit('validateField', 'postalCode')"
@@ -81,7 +74,6 @@
         </UFormGroup>
       </div>
     </BcrosFormSection>
-    <div v-if="divider" class="h-[1px] w-full bg-bcGovGray-300 mobile:hidden" />
   </div>
 </template>
 
@@ -143,13 +135,11 @@ const {
   id,
   defaultCountryIso2,
   enableAddressComplete,
-  divider,
   errors = {}
 } = defineProps<{
     id: string,
     defaultCountryIso2: string,
     enableAddressComplete:(id: string, countryIso2: string, countrySelect: boolean) => void,
-    divider: boolean,
     errors: Record<string, string>
 }>()
 

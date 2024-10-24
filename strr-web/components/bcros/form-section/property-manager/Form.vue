@@ -32,7 +32,6 @@
             <BcrosFormSectionPropertyManagerBusinessDetails
               v-model:business-name="formState.propertyManager.businessLegalName"
               v-model:business-number="formState.propertyManager.businessNumber"
-              :divider="true"
             />
             <BcrosFormSectionPropertyManagerBusinessMailingAddress
               id="propertyManagerBusinessAddress"
@@ -44,7 +43,6 @@
               v-model:postal-code="formState.propertyManager.businessMailingAddress.postalCode"
               :enable-address-complete="enableAddressComplete"
               default-country-iso2="CA"
-              :divider="true"
               :errors="errorRefs"
               @reset-field-error="resetFieldError"
               @validate-field="validateField"
@@ -54,7 +52,6 @@
               v-model:first-name="formState.propertyManager.contact.firstName"
               v-model:last-name="formState.propertyManager.contact.lastName"
               v-model:middle-name="formState.propertyManager.contact.middleName"
-              :divider="true"
               :errors="errorRefs"
               @reset-field-error="resetFieldError"
               @validate-field="validateField"
@@ -64,7 +61,6 @@
               v-model:extension="formState.propertyManager.contact.extension"
               v-model:fax-number="formState.propertyManager.contact.faxNumber"
               v-model:email-address="formState.propertyManager.contact.emailAddress"
-              :divider="false"
               :errors="errorRefs"
               @reset-field-error="resetFieldError"
               @validate-field="validateField"
@@ -157,3 +153,8 @@ onMounted(() => {
   }
 })
 </script>
+<style scoped>
+.with-divider {
+  @apply desktop:border-b desktop:border-bcGovGray-300 desktop:mx-[25px];
+}
+</style>
