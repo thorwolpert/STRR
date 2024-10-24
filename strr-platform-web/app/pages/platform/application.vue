@@ -3,6 +3,7 @@ import type { ConnectBtnControlItem } from '~/interfaces/connect-btn-control/ite
 import { ConnectStepper, FormPlatformReviewConfirm } from '#components'
 
 const { t } = useI18n()
+const localePath = useLocalePath()
 const strrModal = useStrrModals()
 
 const { validatePlatformContact } = useStrrPlatformContact()
@@ -155,7 +156,10 @@ const handlePlatformSubmit = async () => {
 
     // if all steps valid, submit form with store function
     if (isApplicationValid) {
-      await submitPlatformApplication()
+      const response = await submitPlatformApplication()
+      if (response) {
+        return navigateTo(localePath('/platform/dashboard'))
+      }
     } else {
       // TODO: display form errors better
       strrModal.openAppSubmitError(formErrors)

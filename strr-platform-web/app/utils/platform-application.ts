@@ -81,14 +81,15 @@ export function formatBusinessDetails (bus: PlatBusiness): ApiBusinessDetails {
     businessNumber: bus.businessNumber,
     consumerProtectionBCLicenceNumber: bus.cpbcLicenceNumber,
     noticeOfNonComplianceEmail: bus.nonComplianceEmail,
-    noticeOfNonComplianceOptionalEmail: bus.nonComplianceEmailOptional,
     takeDownRequestEmail: bus.takeDownEmail,
-    takeDownRequestOptionalEmail: bus.takeDownEmailOptional,
     mailingAddress: formatAddress(bus.mailingAddress),
     registeredOfficeOrAttorneyForServiceDetails: {
       attorneyName: bus.regOfficeOrAtt.attorneyName,
       mailingAddress: formatAddress(bus.regOfficeOrAtt.mailingAddress)
-    }
+    },
+    // add optional fields only if defined
+    ...(bus.nonComplianceEmailOptional && { noticeOfNonComplianceOptionalEmail: bus.nonComplianceEmailOptional }),
+    ...(bus.takeDownEmailOptional && { takeDownRequestOptionalEmail: bus.takeDownEmailOptional })
   }
 }
 

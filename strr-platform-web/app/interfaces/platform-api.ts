@@ -28,9 +28,9 @@ export interface ApiBusinessDetails {
   businessNumber: string
   consumerProtectionBCLicenceNumber: string
   noticeOfNonComplianceEmail: string
-  noticeOfNonComplianceOptionalEmail: string
+  noticeOfNonComplianceOptionalEmail?: string
   takeDownRequestEmail: string
-  takeDownRequestOptionalEmail: string
+  takeDownRequestOptionalEmail?: string
   mailingAddress: ApiAddress
   registeredOfficeOrAttorneyForServiceDetails: {
     attorneyName: string
