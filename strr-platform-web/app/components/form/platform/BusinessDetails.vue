@@ -46,6 +46,15 @@ watch(() => platformBusiness.value.hasRegOffAtt,
       // @ts-expect-error - ts doesnt recognize key type
         platformBusiness.value.regOfficeOrAtt.mailingAddress[key] = ''
       })
+
+      // revalidate fields to update/remove form errors
+      platformBusinessFormRef.value?.validate([
+        'regOfficeOrAtt.mailingAddress.country',
+        'regOfficeOrAtt.mailingAddress.street',
+        'regOfficeOrAtt.mailingAddress.city',
+        'regOfficeOrAtt.mailingAddress.region',
+        'regOfficeOrAtt.mailingAddress.postalCode'
+      ], { silent: true })
     }
   }
 )
