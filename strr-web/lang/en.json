@@ -202,7 +202,7 @@
     "title": "Short-Term Rental Registration",
     "stepTitle": {
       "propertyManager": "Property Manager Information",
-      "contact": "Contact Information",
+      "contact": "Host Information",
       "property": "Property Details",
       "eligibility": "Principal Residence",
       "review": "Review and Confirm"
