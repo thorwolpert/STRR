@@ -42,12 +42,12 @@
 <script setup lang="ts">
 const { t } = useTranslation()
 
-const { divider } = defineProps<{
-    divider: boolean
-}>()
-
 const preferredName = defineModel<string>('preferredName')
 const firstName = defineModel<string>('firstName')
 const middleName = defineModel<string>('middleName')
 const lastName = defineModel<string>('lastName')
+
+const { divider } = defineProps<{
+  divider: boolean
+}>()
 </script>

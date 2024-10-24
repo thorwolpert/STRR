@@ -53,6 +53,7 @@ const httpRegex = /^(https?:\/\/)([\w-]+(\.[\w-]+)+\.?(:\d+)?(\/.*)?)$/i
 const emailRegex = /^\S+@\S+\.\S+$/
 const pidRegex = /^\d{3}(-)\d{3}(-)\d{3}$/
 const sinRegex = /^\d{3}( )\d{3}( )\d{3}$/
+const craBusinessNumberRegex = /^\d{9}$/
 const phoneError = { message: 'Valid characters are "()- 123457890" ' }
 const emailError = { message: 'Email must contain @ symbol and domain' }
 const requiredPhone = z.string().regex(phoneRegex, phoneError)
@@ -77,6 +78,12 @@ const optionalSin = z
     message: 'Social Insurance Number must be provided in the format 111 111 111'
   })
   .optional()
+const optionalCRABusinessNumber = z
+  .string()
+  .refine(val => val === '' || craBusinessNumberRegex.test(val), {
+    message: 'CRA Business Number must be a 9-digit number'
+  })
+  .optional()
 const optionalExtension = optionalNumber
 const optionalOrEmptyString = z
   .string()
@@ -93,7 +100,7 @@ export const finalizationSchema = z.object({
 
 export const propertyManagerSchema = z.object({
   businessLegalName: optionalOrEmptyString,
-  craBusinessNumber: optionalOrEmptyString,
+  businessNumber: optionalCRABusinessNumber,
   businessMailingAddress: z.object({
     address: requiredNonEmptyString,
     addressLineTwo: optionalOrEmptyString,
@@ -188,7 +195,7 @@ const primaryContact: PrimaryContactInformationI = {
 
 const propertyManager: PropertyManagerI = {
   businessLegalName: '',
-  craBusinessNumber: '',
+  businessNumber: '',
   businessMailingAddress: {
     address: undefined,
     addressLineTwo: '',

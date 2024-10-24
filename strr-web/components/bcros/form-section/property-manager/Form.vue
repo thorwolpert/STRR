@@ -31,7 +31,7 @@
           <UForm ref="form" :schema="propertyManagerSchema" :state="formState.propertyManager">
             <BcrosFormSectionPropertyManagerBusinessDetails
               v-model:business-name="formState.propertyManager.businessLegalName"
-              v-model:cra-business-number="formState.propertyManager.craBusinessNumber"
+              v-model:business-number="formState.propertyManager.businessNumber"
               :divider="true"
             />
             <BcrosFormSectionPropertyManagerBusinessMailingAddress

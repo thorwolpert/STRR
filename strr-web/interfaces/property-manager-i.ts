@@ -20,7 +20,7 @@ export interface PropertyManagerBusinessAddressI {
 
 export interface PropertyManagerI {
     businessLegalName: string | undefined
-    craBusinessNumber: string | undefined
+    businessNumber: string | undefined
     businessMailingAddress: PropertyManagerBusinessAddressI
     contact: PropertyManagerContactI
 }

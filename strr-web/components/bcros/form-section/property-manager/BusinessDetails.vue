@@ -12,9 +12,9 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:flex-col mobile:mb-[16px]">
-        <UFormGroup name="craBusinessNumber" class="flex-grow">
+        <UFormGroup name="businessNumber" class="flex-grow">
           <UInput
-            v-model="craBusinessNumber"
+            v-model="businessNumber"
             type="text"
             aria-label="property manager cra business number"
             :placeholder="t('createAccount.propertyManagerForm.businessNumber')"
@@ -31,6 +31,6 @@ const { t } = useTranslation()
 const { divider } = defineProps<{ divider: boolean }>()
 
 const businessName = defineModel<string>('businessName')
-const craBusinessNumber = defineModel<string>('craBusinessNumber')
+const businessNumber = defineModel<string>('businessNumber')
 
 </script>

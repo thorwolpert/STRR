@@ -2,7 +2,10 @@
   <div data-test-id="property-manager-contact-details">
     <BcrosFormSection :title="t('createAccount.propertyManagerForm.contactDetails')">
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:flex-col mobile:mb-[16px]">
-        <UFormGroup name="phoneNumber" class="desktop:d:pr-[16px] flex-grow mobile:mb-[16px]">
+        <UFormGroup
+          name="phoneNumber"
+          class="desktop:d:pr-[16px] flex-grow mobile:mb-[16px]"
+        >
           <UInput
             v-model="phoneNumber"
             type="tel"

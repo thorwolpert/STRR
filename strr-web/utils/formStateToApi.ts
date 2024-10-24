@@ -115,7 +115,7 @@ export const formStateToApi = (
     if (formState.hasPropertyManager && formState.propertyManager) {
       formData.registration.propertyManager = {
         businessLegalName: formState.propertyManager.businessLegalName,
-        craBusinessNumber: formState.propertyManager.craBusinessNumber,
+        businessNumber: formState.propertyManager.businessNumber,
         businessMailingAddress: {
           address: formState.propertyManager.businessMailingAddress.address ?? '',
           addressLineTwo: formState.propertyManager.businessMailingAddress.addressLineTwo,

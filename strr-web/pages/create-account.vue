@@ -164,7 +164,7 @@ const ownershipToApiType = (type: string | undefined): string => {
 }
 
 const submit = () => {
-  validateStep(propertyManagerSchema, formState.propertyManager, 0)
+  validatePropertyManagerStep()
   validateStep(primaryContactSchema, formState.primaryContact, 1)
   if (hasSecondaryContact.value) {
     validateStep(secondaryContactSchema, formState.secondaryContact, 1)
@@ -202,8 +202,16 @@ const validateStep = (schema: any, state: any, index: number) => {
   steps[index].step.isValid = schema.safeParse(state).success
 }
 
+const validatePropertyManagerStep = () => {
+  if (!formState.hasPropertyManager) {
+    steps[0].step.isValid = true
+  } else {
+    validateStep(propertyManagerSchema, formState.propertyManager, 0)
+  }
+}
+
 watch(formState.propertyManager, () => {
-  validateStep(propertyManagerSchema, formState.propertyManager, 0)
+  validatePropertyManagerStep()
 })
 
 watch(formState.primaryContact, () => {
@@ -249,7 +257,7 @@ watch(formState.principal, () => {
 
 const validateSteps = () => {
   if (activeStepIndex.value === 0) {
-    validateStep(propertyManagerSchema, formState.propertyManager, 0)
+    validatePropertyManagerStep()
   } else if (activeStepIndex.value === 1) {
     validateStep(primaryContactSchema, formState.primaryContact, 1)
     if (hasSecondaryContact.value) {

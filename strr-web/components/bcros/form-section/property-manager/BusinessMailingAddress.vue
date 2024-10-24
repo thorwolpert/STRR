@@ -13,7 +13,7 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]">
-        <UFormGroup name="address" class="flex-grow" :error="fieldErrors.address">
+        <UFormGroup name="address" class="flex-grow">
           <UInput
             :id="id"
             v-model="address"
@@ -34,15 +34,17 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:flex-col mobile:mb-[16px]">
-        <UFormGroup name="city" :error="fieldErrors.city" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
+        <UFormGroup
+          name="city"
+          class="d:pr-[16px] flex-grow mobile:mb-[16px]"
+        >
           <UInput
             v-model="city"
             :placeholder="t('createAccount.propertyManagerForm.city')"
             aria-label="city"
-            @input="resetFieldError('city')"
           />
         </UFormGroup>
-        <UFormGroup name="province" :error="fieldErrors.province" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
+        <UFormGroup name="province" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
           <USelect
             v-if="['CA', 'US'].includes(country)"
             v-model="province"
@@ -56,15 +58,13 @@
             v-model="province"
             :placeholder="t('createAccount.propertyManagerForm.province')"
             aria-label="province"
-            @input="resetFieldError('province')"
           />
         </UFormGroup>
-        <UFormGroup name="postalCode" :error="fieldErrors.postalCode" class="flex-grow mobile:mb-[16px]">
+        <UFormGroup name="postalCode" class="flex-grow mobile:mb-[16px]">
           <UInput
             v-model="postalCode"
             :placeholder="t('createAccount.propertyManagerForm.postalCode')"
             aria-label="postal code"
-            @input="resetFieldError('postalCode')"
           />
         </UFormGroup>
       </div>
@@ -85,12 +85,6 @@ const addressLineTwo = defineModel<string>('addressLineTwo')
 const city = defineModel<string>('city')
 const province = defineModel<string>('province')
 const postalCode = defineModel<string>('postalCode')
-const fieldErrors = ref({
-  address: '',
-  city: '',
-  postalCode: '',
-  province: ''
-})
 const countryItems = computed<CountryItem[]>(() =>
   countries.map(country => ({
     value: country.iso2,
@@ -115,21 +109,17 @@ const addressComplete = () => {
   }
 }
 
-const resetFieldError = (field: keyof typeof fieldErrors.value) => {
-  fieldErrors.value[field] = ''
-}
-
 const onAddressInput = () => {
   address.value = ''
   province.value = ''
   city.value = ''
   postalCode.value = ''
-  resetFieldError('address')
-  resetFieldError('city')
-  resetFieldError('province')
-  resetFieldError('postalCode')
   addressComplete()
 }
+
+defineEmits<{
+    setId: [id: string]
+}>()
 
 const {
   id,
@@ -142,10 +132,6 @@ const {
     enableAddressComplete:(id: string, countryIso2: string, countrySelect: boolean) => void,
     divider: boolean
   }>()
-
-defineEmits<{
-    setId: [id: string]
-}>()
 
 country.value = defaultCountryIso2
 </script>
