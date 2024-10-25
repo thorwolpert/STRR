@@ -59,12 +59,12 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
     return applicationBody
   }
 
-  const submitPlatformApplication = async () => {
+  const submitPlatformApplication = () => {
     const body = createApplicationBody()
 
     console.info('submitting application: ', body)
 
-    return await $strrApi('/applications', {
+    return $strrApi('/applications', {
       method: 'POST',
       body
     })

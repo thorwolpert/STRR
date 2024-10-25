@@ -1,14 +1,14 @@
-export function formatPhoneNumber (phone: ConnectPhone) {
+export function formatPhoneNumber (party: Contact): ApiPhone {
   return {
-    phoneNumber: `${phone.countryCode ?? ''}${phone.number}`,
-    extension: phone.extension ?? ''
+    phoneNumber: party.phone.number,
+    phoneCountryCode: party.phone.countryCode ?? '',
+    extension: party.phone.extension ?? ''
   }
 }
 
 export function formatPhoneNumberUI (party: ApiParty): ConnectPhone {
   return {
-    // TODO: update after lekshmi's phone change is in
-    countryCode: '',
+    countryCode: party.phoneCountryCode,
     number: party.phoneNumber,
     extension: party.extension ?? ''
   }
@@ -43,7 +43,7 @@ export function formatParty (party: Contact): ApiParty {
     firstName: party.firstName,
     middleName: party.middleName ?? '',
     lastName: party.lastName,
-    ...formatPhoneNumber(party.phone),
+    ...formatPhoneNumber(party),
     faxNumber: party.faxNumber ?? '',
     emailAddress: party.emailAddress
   }
@@ -105,9 +105,9 @@ export function formatBusinessDetailsUI (bus: ApiBusinessDetails): PlatBusiness 
     hasCpbc: !!bus.consumerProtectionBCLicenceNumber,
     cpbcLicenceNumber: bus.consumerProtectionBCLicenceNumber,
     nonComplianceEmail: bus.noticeOfNonComplianceEmail,
-    nonComplianceEmailOptional: bus.noticeOfNonComplianceOptionalEmail,
+    nonComplianceEmailOptional: bus.noticeOfNonComplianceOptionalEmail ?? '',
     takeDownEmail: bus.takeDownRequestEmail,
-    takeDownEmailOptional: bus.takeDownRequestOptionalEmail,
+    takeDownEmailOptional: bus.takeDownRequestOptionalEmail ?? '',
     mailingAddress: formatAddressUI(bus.mailingAddress),
     hasRegOffAtt: !!bus.registeredOfficeOrAttorneyForServiceDetails.mailingAddress,
     regOfficeOrAtt: {

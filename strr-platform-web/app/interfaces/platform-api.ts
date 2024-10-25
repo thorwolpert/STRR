@@ -1,3 +1,9 @@
+export interface ApiPhone {
+  phoneCountryCode: string
+  phoneNumber: string
+  extension: string
+}
+
 export interface ApiAddress {
   country: string
   address: string
@@ -8,14 +14,12 @@ export interface ApiAddress {
   locationDescription: string
 }
 
-export interface ApiParty {
+export interface ApiParty extends ApiPhone {
   firstName: string
   lastName: string
   middleName: string
-  phoneNumber: string
-  extension: string
-  faxNumber: string
   emailAddress: string
+  faxNumber: string
 }
 
 export interface ApiRep extends ApiParty {
