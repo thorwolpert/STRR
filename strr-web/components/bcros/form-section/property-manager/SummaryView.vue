@@ -10,11 +10,10 @@ const props = defineProps<{
 // default values
 const {
   headerTag = 'p',
-  headerClass = 'font-bold mb-6 mobile:mx-2',
-  propertyManager
+  headerClass = 'font-bold mb-6 mobile:mx-2'
 } = props
 
-const propertyManagerContact = computed((): PropertyManagerContactI => propertyManager.contact)
+const propertyManagerContact = computed((): PropertyManagerContactI => props.propertyManager.contact)
 </script>
 
 <template>
@@ -28,17 +27,17 @@ const propertyManagerContact = computed((): PropertyManagerContactI => propertyM
     >
       <BcrosFormSectionReviewItem
         :title="tReviewPM('businessLegalName')"
-        :content="propertyManager.businessLegalName || '-'"
+        :content="props.propertyManager.businessLegalName || '-'"
       />
       <BcrosFormSectionReviewItem
         :title="tReviewPM('craBusinessNumber')"
-        :content="propertyManager.craBusinessNumber || '-'"
+        :content="props.propertyManager.businessNumber || '-'"
       />
       <BcrosFormSectionReviewItem
         :title="tReviewPM('businessMailingAddress')"
       >
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <p v-html="displayFullAddress(propertyManager.businessMailingAddress) || '-'" />
+        <p v-html="displayFullAddress(props.propertyManager.businessMailingAddress) || '-'" />
       </BcrosFormSectionReviewItem>
       <BcrosFormSectionReviewItem
         :title="tReviewPM('contactName')"

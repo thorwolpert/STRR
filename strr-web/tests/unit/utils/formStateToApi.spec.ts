@@ -51,9 +51,10 @@ it('begins with empty address', () => {
 
   const propertyManager: PropertyManagerI = {
     businessLegalName: 'businessLegalName',
-    craBusinessNumber: 'businessLegalName',
+    businessNumber: 'businessNumber',
     businessMailingAddress: {
       address: 'address',
+      addressLineTwo: 'addressLineTwo',
       city: 'city',
       postalCode: 'postalCode',
       province: 'province',
@@ -61,8 +62,12 @@ it('begins with empty address', () => {
     },
     contact: {
       firstName: 'firstName',
+      middleName: 'middleName',
       lastName: 'lastName',
+      preferredName: 'preferredName',
       phoneNumber: 'phoneNumber',
+      extension: 'extension',
+      faxNumber: 'faxNumber',
       emailAddress: 'emailAddress'
     }
   }
@@ -88,7 +93,11 @@ it('begins with empty address', () => {
       city: 'city',
       province: 'province',
       postalCode: 'postalCode',
-      listingDetails: [{ url: 'https://www.airbnb.com' }]
+      listingDetails: [{ url: 'https://www.airbnb.com' }],
+      rentalUnitSpaceType: '',
+      isUnitOnPrincipalResidenceProperty: false,
+      hostResidence: '',
+      numberOfRoomsForRent: 0
     },
     selectedAccount: {} as OrgI,
     principal: {} as PrincipalResidenceI,

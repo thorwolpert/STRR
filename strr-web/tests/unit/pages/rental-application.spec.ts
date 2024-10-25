@@ -75,8 +75,8 @@ describe('Rental Application', () => {
 
     expect(wrapper.findComponent(H2).text()).toContain(t('createAccount.confirm.title'))
 
-    // Property Manager should not exists
-    expect(wrapper.findTestId('property-manager-review').exists()).toBeFalsy()
+    // Property Manager should exist by default
+    expect(wrapper.findTestId('property-manager-review').exists()).toBe(true)
 
     // update Property Manager state
     formState.hasPropertyManager = true
