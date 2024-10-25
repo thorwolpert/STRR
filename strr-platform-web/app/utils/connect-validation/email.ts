@@ -37,7 +37,8 @@ export const validateEmailRfc6532Regex = (email: string): boolean => {
     /^("(?:[!#-\[\]-\u{10FFFF}]|\\[\t -\u{10FFFF}])*"|[!#-'*+\-/-9=?A-Z\^-\u{10FFFF}](?:\.?[!#-'*+\-/-9=?A-Z\^-\u{10FFFF}])*)@([!#-'*+\-/-9=?A-Z\^-\u{10FFFF}](?:\.?[!#-'*+\-/-9=?A-Z\^-\u{10FFFF}])*|\[[!-Z\^-\u{10FFFF}]*\])$/u.test(email) // NOSONAR
 }
 
-export const getRequiredEmail = (message: string) => z.string().refine(validateEmailRfc6532Regex, message)
+export const getRequiredEmail = (message: string) =>
+  z.string().refine(validateEmailRfc6532Regex, message).refine(validateEmailRfc5322Regex, message)
 export const getOptionalEmail = (message: string) => z.string().refine((email: string) => {
   if (email) {
     return validateEmailRfc6532Regex(email)

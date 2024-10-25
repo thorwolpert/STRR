@@ -48,7 +48,9 @@ export default {
     fileNowNoFee: 'File Now (no fee)',
     reviewConfirm: 'Review and Confirm',
     save: 'Save',
-    saveExit: 'Save and Resume Later'
+    saveExit: 'Save and Resume Later',
+    beginApplication: 'Begin Application',
+    resumeApplication: 'Resume Application'
   },
   contactInfo: {
     bcRegGeneral: {
@@ -180,6 +182,7 @@ export default {
     i: 'i',
     addresses: 'Addresses',
     directors: 'Directors',
+    representatives: 'Representatives',
     confirm: 'Confirm',
     select: 'Select',
     none: 'None',
@@ -195,7 +198,8 @@ export default {
     Yes: 'Yes',
     No: 'No',
     Edit: 'Edit',
-    Save: 'Save'
+    Save: 'Save',
+    Receipt: 'Receipt'
   },
   page: {
     notFound: {
@@ -495,7 +499,7 @@ export default {
       brandSiteOpt: 'Platform Brand Website (Optional)',
       cpbcNum: 'Consumer Protection BC Number',
       listingSize: {
-        UNDER_THOUSAND: 'Small Platform',
+        LESS_THAN_THOUSAND: 'Small Platform',
         GREATER_THAN_THOUSAND: 'Large Platform'
       },
       noncomplianceEmail: 'Non-compliance Email',

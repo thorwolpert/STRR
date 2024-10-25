@@ -25,14 +25,16 @@ const platFeeSm = ref<ConnectFeeItem | undefined>(undefined)
 const platFeeLg = ref<ConnectFeeItem | undefined>(undefined)
 const platFeeWv = ref<ConnectFeeItem | undefined>(undefined)
 onMounted(async () => {
-  const smallFee = getFee(ConnectFeeEntityType.STRR, ConnectFeeCode.STR_PLAT_SM)
-  const largeFee = getFee(ConnectFeeEntityType.STRR, ConnectFeeCode.STR_PLAT_LG)
-  const waivedFee = getFee(ConnectFeeEntityType.STRR, ConnectFeeCode.STR_PLAT_WV)
-  platFeeSm.value = await smallFee
-  platFeeLg.value = await largeFee
-  platFeeWv.value = await waivedFee
+  const [smallFeeResp, largeFeeResp, waivedFeeResp] = await Promise.all([
+    getFee(ConnectFeeEntityType.STRR, ConnectFeeCode.STR_PLAT_SM),
+    getFee(ConnectFeeEntityType.STRR, ConnectFeeCode.STR_PLAT_LG),
+    getFee(ConnectFeeEntityType.STRR, ConnectFeeCode.STR_PLAT_WV)
+  ])
+  platFeeSm.value = smallFeeResp
+  platFeeLg.value = largeFeeResp
+  platFeeWv.value = waivedFeeResp
   if (platFeeWv.value && platFeeSm.value) {
-    // NOTE: setting 'waived' changes the text to 'NO FEE' instead of $0.00
+    // NOTE: setting 'waived' changes the text to 'No Fee' instead of $0.00
     platFeeWv.value.waived = true
     // NOTE: service fee is variable and dependent on the account
     // Pay api incorrectly sets the service fee for $0 fee codes to 0,
@@ -44,7 +46,7 @@ onMounted(async () => {
 
 const { platformDetails } = storeToRefs(useStrrPlatformDetails())
 const { platformBusiness } = storeToRefs(useStrrPlatformBusiness())
-// const { getBusinessSchema } = useStrrPlatformBusiness()
+
 watch(() => platformBusiness.value.hasCpbc, (val) => {
   if (val && platFeeWv.value) {
     removeFee(ConnectFeeCode.STR_PLAT_SM)

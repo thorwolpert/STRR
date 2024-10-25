@@ -55,11 +55,7 @@ export interface ApiBaseRegistration {
   platformDetails: ApiPlatformDetails
 }
 
-export interface PlatformApplicationPayload {
-  registration: ApiBaseRegistration
-}
-
-export interface PlatformRegistrationPayload extends ApiBaseRegistration {
+export interface PlatformRegistrationResp extends ApiBaseRegistration {
   expiryDate: Date
   id: number
   registration_number: string
@@ -68,4 +64,28 @@ export interface PlatformRegistrationPayload extends ApiBaseRegistration {
   status: 'ACTIVE' | 'CANCELLED' | 'EXPIRED' | 'SUSPENDED',
   updatedDate: Date
   user_id: number
+}
+
+export interface PlatformApplicationPayload {
+  registration: ApiBaseRegistration
+}
+
+export interface ApplicationHeader {
+  applicationDateTime: Date
+  applicationNumber: string
+  decisionDate: Date | undefined
+  examinerActions: string[]
+  examinerStatus: string
+  hostActions: string[] // SUBMIT_PAYMENT is currently the only case where this has anything
+  hostStatus: string
+  isCertificateIssued: boolean
+  name: string
+  paymentAccount: string
+  paymentStatus: string
+  paymentToken: string // invoice id
+  status: ApplicationStatus
+}
+
+export interface PlatformApplicationResp extends PlatformApplicationPayload {
+  header: ApplicationHeader
 }

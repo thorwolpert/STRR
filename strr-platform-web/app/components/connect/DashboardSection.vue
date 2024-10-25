@@ -1,10 +1,15 @@
 <script setup lang="ts">
-defineProps<{ title: string, loading: boolean }>()
+defineProps<{ title: string, titleNum?: number, loading: boolean }>()
 </script>
 <template>
   <div class="space-y-2">
     <slot name="header">
-      <ConnectTypographyH2 :text="title" />
+      <div class="flex gap-1">
+        <ConnectTypographyH2 custom-class="text-lg font-bold" :text="title" />
+        <p v-if="titleNum !== undefined" class="text-lg text-gray-900">
+          ({{ titleNum }})
+        </p>
+      </div>
     </slot>
     <div class="rounded bg-white">
       <slot v-if="loading" name="loading">
