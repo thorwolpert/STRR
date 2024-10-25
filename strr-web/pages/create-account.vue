@@ -274,6 +274,7 @@ const validateSteps = () => {
 
 const setNextStep = () => {
   if (activeStepIndex.value < steps.length - 1) {
+    validateSteps()
     const nextStep = activeStepIndex.value + 1
     activeStepIndex.value = nextStep
     activeStep.value = steps[activeStepIndex.value]
@@ -284,6 +285,7 @@ const setNextStep = () => {
 
 const setPreviousStep = () => {
   if (activeStepIndex.value > 0) {
+    validateSteps()
     const nextStep = activeStepIndex.value - 1
     activeStepIndex.value = nextStep
     activeStep.value = steps[activeStepIndex.value]
