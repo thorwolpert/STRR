@@ -1,11 +1,12 @@
 <template>
   <div class="relative h-full">
-    <div data-test-id="property-manager-radio-btn-group" class="desktop:mb-[180px] mobile:mb-[32px] rounded-[4px]">
+    <div class="desktop:mb-[180px] mobile:mb-[32px] rounded-[4px]">
       <div class="mb-[32px] mx-[8px]">
         <div class="mb-6">
           <URadioGroup
             id="role-property-manager-radio"
             v-model="formState.isPropertyManagerRole"
+            data-test-id="property-manager-is-pm"
             :legend="tPropertyManager('roleRadioLegend')"
             :options="roleRadioOptions"
             class="[&_legend]:font-bold [&_legend]:text-lg"
@@ -13,15 +14,22 @@
         </div>
         <div>
           <URadioGroup
+            v-if="!formState.isPropertyManagerRole"
             id="has-property-manager-radio"
             v-model="formState.hasPropertyManager"
+            data-test-id="property-manager-has-pm"
             :legend="tPropertyManager('propertyManagerRadioLegend')"
             :options="havePropertyManagerRadioOptions"
             class="[&_legend]:font-bold [&_legend]:text-lg"
           />
         </div>
       </div>
-      <div v-if="formState.hasPropertyManager" data-test-id="property-manager-form">
+      <div
+        v-if="
+          (!formState.isPropertyManagerRole && formState.hasPropertyManager) || formState.isPropertyManagerRole
+        "
+        data-test-id="property-manager-form"
+      >
         <div class="mb-132px bg-white rounded-[4px]">
           <div class="bg-bcGovColor-gray2 rounded-t-[4px]">
             <p class="px-[40px] py-[15px] font-bold">

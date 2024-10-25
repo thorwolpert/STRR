@@ -1,21 +1,21 @@
 export interface PropertyManagerContactI {
-    firstName: string | undefined
+    firstName: string
     middleName: string | undefined
-    lastName: string | undefined
+    lastName: string
     preferredName: string | undefined
-    phoneNumber: string | undefined
+    phoneNumber: string
     extension: string | undefined
     faxNumber: string | undefined
-    emailAddress: string | undefined
+    emailAddress: string
 }
 
 export interface PropertyManagerBusinessAddressI {
-    address: string | undefined
-    country: string | undefined
+    address: string
+    country: string
     addressLineTwo: string | undefined
-    city: string | undefined
-    province: string | undefined
-    postalCode: string | undefined
+    city: string
+    province: string
+    postalCode: string
   }
 
 export interface PropertyManagerI {

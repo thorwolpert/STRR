@@ -8,6 +8,7 @@
             :options="countryItems"
             option-attribute="name"
             class="w-full"
+            data-test-id="property-manager-country-select"
           />
         </UFormGroup>
       </div>
@@ -17,6 +18,7 @@
             :id="id"
             v-model="address"
             :placeholder="t('createAccount.propertyManagerForm.address')"
+            data-test-id="property-manager-address-input"
             @input="onAddressInput"
             @click="addressComplete()"
             @blur="emit('validateField', 'address')"
@@ -29,6 +31,7 @@
           <UInput
             v-model="addressLineTwo"
             :placeholder="t('createAccount.propertyManagerForm.addressLineTwo')"
+            data-test-id="property-manager-address-line-two-input"
           />
         </UFormGroup>
       </div>
@@ -41,6 +44,7 @@
           <UInput
             v-model="city"
             :placeholder="t('createAccount.propertyManagerForm.city')"
+            data-test-id="property-manager-city-input"
             @input="emit('resetFieldError', 'city')"
             @blur="emit('validateField', 'city')"
             @change="emit('validateField', 'city')"
@@ -53,11 +57,13 @@
             :options="provinceItems"
             option-attribute="name"
             :placeholder="t('createAccount.propertyManagerForm.province')"
+            data-test-id="property-manager-province-select"
           />
           <UInput
             v-else
             v-model="province"
             :placeholder="t('createAccount.propertyManagerForm.province')"
+            data-test-id="property-manager-province-input"
             @input="emit('resetFieldError', 'province')"
             @blur="emit('validateField', 'province')"
             @change="emit('validateField', 'province')"
@@ -67,6 +73,7 @@
           <UInput
             v-model="postalCode"
             :placeholder="t('createAccount.propertyManagerForm.postalCode')"
+            data-test-id="property-manager-postal-code-input"
             @input="emit('resetFieldError', 'postalCode')"
             @blur="emit('validateField', 'postalCode')"
             @change="emit('validateField', 'postalCode')"

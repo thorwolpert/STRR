@@ -6,6 +6,7 @@
           <UInput
             v-model="firstName"
             :placeholder="t('createAccount.propertyManagerForm.firstName')"
+            data-test-id="property-manager-first-name-input"
             @input="emit('resetFieldError', 'firstName')"
             @blur="emit('validateField', 'firstName')"
             @change="emit('validateField', 'firstName')"
@@ -15,12 +16,14 @@
           <UInput
             v-model="middleName"
             :placeholder="t('createAccount.propertyManagerForm.middleName')"
+            data-test-id="property-manager-middle-name-input"
           />
         </UFormGroup>
         <UFormGroup name="lastName" class="flex-grow mobile:mb-[16px]" :error="errors.lastName">
           <UInput
             v-model="lastName"
             :placeholder="t('createAccount.propertyManagerForm.lastName')"
+            data-test-id="property-manager-last-name-input"
             @input="emit('resetFieldError', 'lastName')"
             @blur="emit('validateField', 'lastName')"
             @change="emit('validateField', 'lastName')"
@@ -33,6 +36,7 @@
             v-model="preferredName"
             type="name"
             :placeholder="t('createAccount.propertyManagerForm.preferredName')"
+            data-test-id="property-manager-preferred-name-input"
           />
         </UFormGroup>
       </div>

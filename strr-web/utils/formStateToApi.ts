@@ -112,7 +112,9 @@ export const formStateToApi = (
   }
 
   const setPropertyManager = () => {
-    if (formState.hasPropertyManager && formState.propertyManager) {
+    const shouldHavePropertyManager = formState.isPropertyManagerRole ||
+    (!formState.isPropertyManagerRole && formState.hasPropertyManager)
+    if (shouldHavePropertyManager && formState.propertyManager) {
       formData.registration.propertyManager = {
         businessLegalName: formState.propertyManager.businessLegalName,
         businessNumber: formState.propertyManager.businessNumber,

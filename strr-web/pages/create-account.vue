@@ -203,7 +203,7 @@ const validateStep = (schema: any, state: any, index: number) => {
 }
 
 const validatePropertyManagerStep = () => {
-  if (!formState.hasPropertyManager) {
+  if (!formState.isPropertyManagerRole && !formState.hasPropertyManager) {
     steps[0].step.isValid = true
   } else {
     validateStep(propertyManagerSchema, formState.propertyManager, 0)

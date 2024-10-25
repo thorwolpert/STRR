@@ -1,3 +1,4 @@
+import { reactive } from 'vue'
 import axios from 'axios'
 import { z } from 'zod'
 import {
@@ -48,16 +49,17 @@ export const submitCreateAccountForm = (
 
 const numbersRegex = /^\d+$/
 // matches chars 123456789 ()
-const phoneRegex = /^[0-9*#+() -]+$/
 const httpRegex = /^(https?:\/\/)([\w-]+(\.[\w-]+)+\.?(:\d+)?(\/.*)?)$/i
-const emailRegex = /^\S+@\S+\.\S+$/
+const html5EmailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+const html5PhoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/
 const pidRegex = /^\d{3}(-)\d{3}(-)\d{3}$/
 const sinRegex = /^\d{3}( )\d{3}( )\d{3}$/
-const craBusinessNumberRegex = /^\d{9}$/
-const phoneError = { message: 'Valid characters are "()- 123457890" ' }
-const emailError = { message: 'Email must contain @ symbol and domain' }
-const requiredPhone = z.string().regex(phoneRegex, phoneError)
-const requiredEmail = z.string().regex(emailRegex, emailError)
+const craBusinessNumberRegex = /^\d{9}$|^\d{9}[A-Z]{2}\d{4}$/
+const phoneError = { message: 'Please enter a valid phone number' }
+const emailError = { message: 'Please enter a valid email' }
+const requiredPhone = z.string().regex(html5PhoneRegex, phoneError)
+const optionalPhone = z.string().regex(html5PhoneRegex, phoneError).optional()
+const requiredEmail = z.string().regex(html5EmailRegex, emailError)
 const requiredNumber = z.string().regex(numbersRegex, { message: 'Must be a number' })
 const optionalNumber = z
   .string()
@@ -116,7 +118,7 @@ export const propertyManagerSchema = z.object({
     preferredName: optionalOrEmptyString,
     phoneNumber: requiredPhone,
     extension: optionalOrEmptyString,
-    faxNumber: optionalOrEmptyString,
+    faxNumber: optionalPhone,
     emailAddress: requiredEmail
   })
 })
@@ -127,7 +129,7 @@ export const primaryContactSchema = z.object({
   businessNumber: optionalOrEmptyString,
   phoneNumber: requiredPhone,
   extension: optionalOrEmptyString,
-  faxNumber: optionalOrEmptyString,
+  faxNumber: optionalPhone,
   emailAddress: requiredNonEmptyString,
   address: requiredNonEmptyString,
   country: requiredNonEmptyString,
@@ -155,7 +157,7 @@ export const secondaryContactSchema = z.object({
   preferredName: optionalOrEmptyString,
   phoneNumber: requiredPhone,
   extension: optionalOrEmptyString,
-  faxNumber: optionalOrEmptyString,
+  faxNumber: optionalPhone,
   emailAddress: requiredNonEmptyString,
   address: requiredNonEmptyString,
   country: requiredNonEmptyString,
@@ -197,22 +199,22 @@ const propertyManager: PropertyManagerI = {
   businessLegalName: '',
   businessNumber: '',
   businessMailingAddress: {
-    address: undefined,
+    address: '',
     addressLineTwo: '',
-    city: undefined,
-    postalCode: undefined,
-    province: undefined,
-    country: undefined
+    city: '',
+    postalCode: '',
+    province: '',
+    country: ''
   },
   contact: {
-    firstName: undefined,
+    firstName: '',
     middleName: '',
-    lastName: undefined,
+    lastName: '',
     preferredName: '',
-    phoneNumber: undefined,
+    phoneNumber: '',
     extension: '',
     faxNumber: '',
-    emailAddress: undefined
+    emailAddress: ''
   }
 }
 

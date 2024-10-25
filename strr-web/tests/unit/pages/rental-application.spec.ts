@@ -1,5 +1,5 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import ApplicationDetails from '@/pages/create-account.vue'
+import CreateApplication from '@/pages/create-account.vue'
 import Stepper from '~/components/bcros/stepper/Stepper.vue'
 import InfoModal from '~/components/common/InfoModal.vue'
 import FeeWidget from '~/components/FeeWidget.vue'
@@ -25,7 +25,7 @@ describe('Rental Application', () => {
   }
 
   it('should render Rental Application page and form correctly', async () => {
-    wrapper = await mountSuspended(ApplicationDetails)
+    wrapper = await mountSuspended(CreateApplication)
 
     expect(wrapper.findTestId('create-account-page').exists()).toBe(true)
 
@@ -38,6 +38,7 @@ describe('Rental Application', () => {
     expect(stepper.exists()).toBeTruthy()
 
     expect(wrapper.findComponent(BcrosFormSectionPropertyManagerForm).exists()).toBeTruthy()
+    expect(wrapper.findComponent(H2).text()).toContain('Step 1')
 
     await goToStep(2)
     expect(wrapper.findComponent(BcrosFormSectionContactInformationForm).exists()).toBeTruthy()

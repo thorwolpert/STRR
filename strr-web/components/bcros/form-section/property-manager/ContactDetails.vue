@@ -11,6 +11,7 @@
             v-model="phoneNumber"
             type="tel"
             :placeholder="t('createAccount.propertyManagerForm.phoneNumber')"
+            data-test-id="property-manager-phone-number"
             @input="emit('resetFieldError', 'phoneNumber')"
             @blur="emit('validateField', 'phoneNumber')"
             @change="emit('validateField', 'phoneNumber')"
@@ -20,6 +21,7 @@
           <UInput
             v-model="extension"
             :placeholder="t('createAccount.propertyManagerForm.extension')"
+            data-test-id="property-manager-extension"
           />
         </UFormGroup>
       </div>
@@ -28,6 +30,7 @@
           <UInput
             v-model="faxNumber"
             :placeholder="t('createAccount.propertyManagerForm.faxNumber')"
+            data-test-id="property-manager-fax-number"
           />
         </UFormGroup>
       </div>
@@ -41,6 +44,7 @@
           <UInput
             v-model="emailAddress"
             :placeholder="t('createAccount.propertyManagerForm.emailAddress')"
+            data-test-id="property-manager-email-address"
             @input="emit('resetFieldError', 'emailAddress')"
             @blur="emit('validateField', 'emailAddress')"
             @change="emit('validateField', 'emailAddress')"
