@@ -153,6 +153,33 @@ watch(form, () => {
   if (form.value && isComplete) { form.value.validate() }
 })
 
+watch([() => formState.isPropertyManagerRole, () => formState.hasPropertyManager], () => {
+  if (!formState.isPropertyManagerRole && !formState.hasPropertyManager) {
+    formState.propertyManager = {
+      businessLegalName: '',
+      businessNumber: '',
+      businessMailingAddress: {
+        address: '',
+        addressLineTwo: '',
+        city: '',
+        postalCode: '',
+        province: '',
+        country: ''
+      },
+      contact: {
+        firstName: '',
+        middleName: '',
+        lastName: '',
+        preferredName: '',
+        phoneNumber: '',
+        extension: '',
+        faxNumber: '',
+        emailAddress: ''
+      }
+    }
+  }
+})
+
 onMounted(() => {
   if (isComplete) {
     Object.keys(errorRefs).forEach((field) => {

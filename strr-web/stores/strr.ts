@@ -50,8 +50,8 @@ export const submitCreateAccountForm = (
 const numbersRegex = /^\d+$/
 // matches chars 123456789 ()
 const httpRegex = /^(https?:\/\/)([\w-]+(\.[\w-]+)+\.?(:\d+)?(\/.*)?)$/i
-const html5EmailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-const html5PhoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/
+const html5EmailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/
+const html5PhoneRegex = /^(\+\d{1,3}[-\s.]?)?(\(?\d{3}\)?[-\s.]?\d{3}[-\s.]?\d{4,6})$/
 const pidRegex = /^\d{3}(-)\d{3}(-)\d{3}$/
 const sinRegex = /^\d{3}( )\d{3}( )\d{3}$/
 const craBusinessNumberRegex = /^\d{9}$|^\d{9}[A-Z]{2}\d{4}$/
@@ -130,7 +130,7 @@ export const primaryContactSchema = z.object({
   phoneNumber: requiredPhone,
   extension: optionalOrEmptyString,
   faxNumber: optionalPhone,
-  emailAddress: requiredNonEmptyString,
+  emailAddress: requiredEmail,
   address: requiredNonEmptyString,
   country: requiredNonEmptyString,
   addressLineTwo: optionalOrEmptyString,
@@ -158,7 +158,7 @@ export const secondaryContactSchema = z.object({
   phoneNumber: requiredPhone,
   extension: optionalOrEmptyString,
   faxNumber: optionalPhone,
-  emailAddress: requiredNonEmptyString,
+  emailAddress: requiredEmail,
   address: requiredNonEmptyString,
   country: requiredNonEmptyString,
   addressLineTwo: optionalOrEmptyString,
@@ -195,7 +195,7 @@ const primaryContact: PrimaryContactInformationI = {
   businessNumber: undefined
 }
 
-const propertyManager: PropertyManagerI = {
+export const propertyManager: PropertyManagerI = {
   businessLegalName: '',
   businessNumber: '',
   businessMailingAddress: {
