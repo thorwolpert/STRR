@@ -17,9 +17,9 @@
     </BcrosBanner>
     <div class="mt-[104px]">
       <div data-test-id="registration-status">
-        <p class="font-bold mb-6 mobile:mx-2">
+        <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
           {{ tApplicationDetails('registrationStatus') }}
-        </p>
+        </h2>
         <div class="bg-white py-[22px] px-[30px] mobile:px-2">
           <div class="flex flex-row justify-between w-full mobile:flex-col">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('status')">
@@ -29,14 +29,16 @@
         </div>
       </div>
       <div class="mt-10">
-        <p class="font-bold mb-6 mobile:mx-2">
+        <!-- Rental Unit Info -->
+        <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
           {{ tApplicationDetails('unitInfo') }}
-        </p>
+        </h2>
         <div class="bg-white py-[22px] px-[30px] mobile:px-2">
           <div class="flex flex-row justify-between w-full mobile:flex-col desktop:mb-6">
             <BcrosFormSectionReviewItem
               :title="tApplicationDetails('nickname')"
               :content="application?.unitAddress.nickname || '-'"
+              class="break-all"
             />
             <BcrosFormSectionReviewItem
               :title="tApplicationDetails('ownership')"
@@ -69,6 +71,7 @@
             <BcrosFormSectionReviewItem
               :title="tApplicationDetails('businessLicense')"
               :content="application?.unitDetails.businessLicense || '-'"
+              class="break-all"
             />
             <BcrosFormSectionReviewItem
               v-if="application?.unitDetails.businessLicenseExpiryDate"
@@ -79,10 +82,20 @@
             <div v-else class="flex-1" />
           </div>
         </div>
-        <div class="mt-10 relative overflow-x-scroll">
-          <p class="font-bold mb-6 mobile:mx-2">
+        <!-- Property Manager -->
+        <BcrosFormSectionPropertyManagerSummaryView
+          v-if="formState.hasPropertyManager"
+          :property-manager="formState.propertyManager"
+          header-tag="h2"
+          header-class="font-bold mb-6 mobile:mx-2 text-xl"
+          data-test-id="property-manager-details"
+          class="mt-10"
+        />
+        <!-- Primary Contact Info -->
+        <div class="mt-10">
+          <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('primaryContact') }}
-          </p>
+          </h2>
           <div class="d:hidden">
             <div class="bg-white py-[22px] px-[30px] mobile:px-2">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('name')">
@@ -99,14 +112,18 @@
               </BcrosFormSectionReviewItem>
             </div>
           </div>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-2 m:hidden overflow-x-scroll w-[150%]">
-            <UTable :rows="application ? getContactRows(application?.primaryContact): []" />
+          <div class="overflow-x-scroll">
+            <UTable
+              :rows="application ? getContactRows(application?.primaryContact): []"
+              class="bg-white py-[22px] px-[30px] mobile:px-5 m:hidden w-[150%]"
+            />
           </div>
         </div>
-        <div v-if="application && application?.secondaryContact" class="mt-10 relative overflow-x-scroll">
-          <p class="font-bold mb-6 mobile:mx-2">
+        <!-- Secondary Contact Info -->
+        <div v-if="application && application?.secondaryContact" class="mt-10">
+          <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('secondaryContact') }}
-          </p>
+          </h2>
           <div class="d:hidden">
             <div class="bg-white py-[22px] px-[30px] mobile:px-2">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('name')">
@@ -127,10 +144,11 @@
             <UTable :rows="getContactRows(application?.secondaryContact)" />
           </div>
         </div>
+        <!-- Documents -->
         <div v-if="documents.length" class="mt-10">
-          <p class="font-bold mb-6 mobile:mx-2">
+          <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('documents') }}
-          </p>
+          </h2>
           <div class="bg-white py-[22px] px-[30px] mobile:px-2">
             <div class="flex flex-row justify-between w-full mobile:flex-col">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
@@ -154,9 +172,9 @@
         </div>
         <template v-if="isExaminer">
           <div class="mt-10">
-            <p class="font-bold mb-6 mobile:mx-2">
+            <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
               {{ tApplicationDetails('ltsaInfo') }}
-            </p>
+            </h2>
             <a
               class="mobile:mx-2"
               :href="`/application-details/${registrationId}/ltsa`"
@@ -167,9 +185,9 @@
             </a>
           </div>
           <div class="mt-10">
-            <p class="font-bold mb-6 mobile:mx-2">
+            <h2 class="font-bold mb-6 mobile:mx-2">
               {{ tApplicationDetails('autoApprovalLogic') }}
-            </p>
+            </h2>
             <a
               class="mobile:mx-2"
               :href="`/application-details/${registrationId}/auto-approval`"
@@ -180,11 +198,11 @@
             </a>
           </div>
         </template>
-
+        <!-- Filing History -->
         <div class="mt-10">
-          <p class="font-bold mb-6 mobile:mx-2">
+          <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('filing') }}
-          </p>
+          </h2>
 
           <div class="bg-white py-[22px] px-[30px] mobile:px-2">
             <div class="flex flex-col justify-between w-full">

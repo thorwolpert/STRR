@@ -397,7 +397,7 @@
     },
     "review": {
       "propertyManager": {
-        "title": "Property Manager Information",
+        "header": "Property Manager Information",
         "businessLegalName": "Business Legal Name",
         "craBusinessNumber": "CRA Business Number",
         "businessMailingAddress": "Business Mailing Address",

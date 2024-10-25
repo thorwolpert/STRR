@@ -1,17 +1,29 @@
 <script setup lang="ts">
 const { t } = useTranslation()
 const tReviewPM = (translationKey: string) => t(`createAccount.review.propertyManager.${translationKey}`)
-const { propertyManager } = defineProps<{ propertyManager: PropertyManagerI }>()
+const props = defineProps<{
+  headerTag?: string,
+  headerClass?: string,
+  propertyManager: PropertyManagerI
+}>()
+
+// default values
+const {
+  headerTag = 'p',
+  headerClass = 'font-bold mb-6 mobile:mx-2',
+  propertyManager
+} = props
+
 const propertyManagerContact = computed((): PropertyManagerContactI => propertyManager.contact)
 </script>
 
 <template>
   <div>
-    <p class="font-bold mb-[24px] mobile:mx-[8px]">
-      {{ tReviewPM('title') }}
-    </p>
+    <component :is="headerTag" :class="headerClass">
+      {{ tReviewPM('header') }}
+    </component>
     <div
-      class="bg-white p-8 mobile:px-[8px] d:min-h-[250px]
+      class="bg-white p-8 mobile:px-2 d:min-h-[250px]
             grid d:grid-cols-3 d:grid-rows-3 d:grid-flow-col"
     >
       <BcrosFormSectionReviewItem
