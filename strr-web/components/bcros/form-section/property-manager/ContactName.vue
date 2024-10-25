@@ -12,11 +12,14 @@
             @change="emit('validateField', 'firstName')"
           />
         </UFormGroup>
-        <UFormGroup name="middleName" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
+        <UFormGroup name="middleName" class="d:pr-[16px] flex-grow mobile:mb-[16px]" :error="errors.middleName">
           <UInput
             v-model="middleName"
             :placeholder="t('createAccount.propertyManagerForm.middleName')"
             data-test-id="property-manager-middle-name-input"
+            @input="emit('resetFieldError', 'middleName')"
+            @blur="emit('validateField', 'middleName')"
+            @change="emit('validateField', 'middleName')"
           />
         </UFormGroup>
         <UFormGroup name="lastName" class="flex-grow mobile:mb-[16px]" :error="errors.lastName">
@@ -31,12 +34,15 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]">
-        <UFormGroup name="preferredName" class=" flex-grow">
+        <UFormGroup name="preferredName" class=" flex-grow" :error="errors.preferredName">
           <UInput
             v-model="preferredName"
             type="name"
             :placeholder="t('createAccount.propertyManagerForm.preferredName')"
             data-test-id="property-manager-preferred-name-input"
+            @input="emit('resetFieldError', 'preferredName')"
+            @blur="emit('validateField', 'preferredName')"
+            @change="emit('validateField', 'preferredName')"
           />
         </UFormGroup>
       </div>

@@ -17,20 +17,27 @@
             @change="emit('validateField', 'phoneNumber')"
           />
         </UFormGroup>
-        <UFormGroup name="extension" class="flex-grow">
+        <UFormGroup name="extension" class="flex-grow" :error="errors.extension">
           <UInput
             v-model="extension"
             :placeholder="t('createAccount.propertyManagerForm.extension')"
             data-test-id="property-manager-extension"
+            @input="emit('resetFieldError', 'extension')"
+            @blur="emit('validateField', 'extension')"
+            @change="emit('validateField', 'extension')"
           />
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]">
-        <UFormGroup name="faxNumber" class="flex-grow">
+        <UFormGroup name="faxNumber" class="flex-grow" :error="errors.faxNumber">
           <UInput
             v-model="faxNumber"
+            type="tel"
             :placeholder="t('createAccount.propertyManagerForm.faxNumber')"
             data-test-id="property-manager-fax-number"
+            @input="emit('resetFieldError', 'faxNumber')"
+            @blur="emit('validateField', 'faxNumber')"
+            @change="emit('validateField', 'faxNumber')"
           />
         </UFormGroup>
       </div>

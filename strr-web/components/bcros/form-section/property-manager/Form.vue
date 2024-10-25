@@ -40,6 +40,9 @@
             <BcrosFormSectionPropertyManagerBusinessDetails
               v-model:business-name="formState.propertyManager.businessLegalName"
               v-model:business-number="formState.propertyManager.businessNumber"
+              :errors="errorRefs"
+              @reset-field-error="resetFieldError"
+              @validate-field="validateField"
             />
             <BcrosFormSectionPropertyManagerBusinessMailingAddress
               id="propertyManagerBusinessAddress"
@@ -135,7 +138,13 @@ const errorRefs = reactive({
   emailAddress: '',
   phoneNumber: '',
   firstName: '',
-  lastName: ''
+  lastName: '',
+  businessLegalName: '',
+  businessNumber: '',
+  middleName: '',
+  preferredName: '',
+  extension: '',
+  faxNumber: ''
 })
 
 const resetFieldError = (field: keyof typeof errorRefs) => {
