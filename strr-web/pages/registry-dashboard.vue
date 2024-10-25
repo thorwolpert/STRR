@@ -68,14 +68,26 @@
       >
         <!-- Only way to do row clicks in NuxtUI currently -->
         <template #application-data="{ row }">
-          <div class="cursor-pointer w-full" @click="navigateToApplicationDetails(row.applicationNumber)">
-            {{ row.applicationNumber }}
+          <div class="flex items-center">
+            <span
+              class="cursor-pointer"
+              @click="navigateToApplicationDetails(row.applicationNumber)"
+            >
+              {{ row.applicationNumber }}
+            </span>
+            <UIcon
+              v-if="row.isPaid"
+              name="i-mdi-receipt-text-outline"
+              class="h-[20px] w-[20px] ml-3 text-blue-600 cursor-pointer"
+              alt="receipt download"
+              @click="downloadReceipt(row.applicationNumber)"
+            />
           </div>
         </template>
         <template #registrationNumber-data="{ row }">
           <div class="flex items-center">
             <span
-              class="cursor-pointer"
+              class="cursor-pointer min-w-[40px] text-center"
               @click="
                 row.registrationId
                   ? navigateToRegistrationDetails(row.registrationId)
@@ -99,9 +111,23 @@
           </div>
         </template>
         <template #address-data="{ row }">
-          <div class="cursor-pointer w-full" @click="navigateToApplicationDetails(row.applicationNumber)">
-            <div>{{ row.unitAddress }}</div>
-            <div>{{ row.unitAddressCity }} {{ row.unitAddressPostalCode }}</div>
+          <div class="flex items-center">
+            <div
+              class="cursor-pointer"
+              @click="navigateToApplicationDetails(row.applicationNumber)"
+            >
+              {{ row.propertyAddress }}
+            </div>
+          </div>
+        </template>
+        <template #applicant-name-data="{ row }">
+          <div class="flex items-center">
+            <div
+              class="cursor-pointer"
+              @click="navigateToApplicationDetails(row.applicationNumber)"
+            >
+              {{ row.applicantName }}
+            </div>
           </div>
         </template>
         <template #status-data="{ row }">
@@ -153,7 +179,7 @@ const { t } = useTranslation()
 const tRegistryDashboard = (translationKey: string) => t(`registryDashboard.${translationKey}`)
 const { getChipFlavour } = useChipFlavour()
 const { downloadCertificate } = useDownloadCertificate()
-
+const { downloadReceipt } = useDownloadReceipt()
 const { getApplications, getApplicationsByStatus, getPaginatedApplications } = useApplications()
 
 const statusFilter = ref<string>('')
@@ -245,9 +271,12 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
         examinerStatus,
         status,
         applicationDateTime,
-        isCertificateIssued
+        isCertificateIssued,
+        isPropertyManager,
+        propertyAddress,
+        applicantName
       },
-      registration: { registrationType, unitAddress }
+      registration: { registrationType }
     } = application
 
     const row: ExaminerDashboardRowI = {
@@ -255,22 +284,32 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
       registrationNumber: registrationNumber ?? '-',
       registrationId: registrationId ? registrationId.toString() : '',
       isCertificateIssued,
-      registrationType: getRegistrationTypeLabel(registrationType),
-      unitAddressCity: unitAddress.city,
-      unitAddressPostalCode: unitAddress.postalCode,
-      unitAddress: unitAddress.address,
+      registrationType: getRegistrationTypeLabel(registrationType, isPropertyManager),
+      propertyAddress,
+      applicantName,
       status: examinerStatus || status,
-      submissionDate: applicationDateTime
+      submissionDate: applicationDateTime,
+      isPaid: hasPaymentReceipt(status)
     }
     rows.push(row)
   }
   return rows
 }
 
-const getRegistrationTypeLabel = (type: RegistrationTypeE): string => {
+const hasPaymentReceipt = (status: string): boolean => {
+  return status !== ApplicationStatusE.DRAFT && status !== ApplicationStatusE.PAYMENT_DUE
+}
+
+const getRegistrationTypeLabel = (
+  type: RegistrationTypeE, isPropertyManager: boolean
+): string => {
   switch (type) {
     case RegistrationTypeE.HOST:
-      return 'Host'
+      if (isPropertyManager) {
+        return 'Property Manager'
+      } else {
+        return 'Host'
+      }
     case RegistrationTypeE.PLATFORM:
       return 'Platform'
   }
@@ -302,6 +341,7 @@ const columns = [
   { key: 'registrationNumber', label: tRegistryDashboard('registrationNumber'), sortable: true },
   { key: 'registrationType', label: tRegistryDashboard('registrationType'), sortable: true },
   { key: 'address', label: tRegistryDashboard('address'), sortable: true },
+  { key: 'applicantName', label: tRegistryDashboard('applicantName'), sortable: true },
   { key: 'status', label: tRegistryDashboard('status'), sortable: true },
   { key: 'submission', label: tRegistryDashboard('submissionDate'), sortable: true }
 ]

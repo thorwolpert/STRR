@@ -20,6 +20,9 @@ export interface ApplicationHeaderI {
   registrationNumber: string
   registrationStartDate: string
   isCertificateIssued: boolean,
+  isPropertyManager: boolean,
+  propertyAddress?: string,
+  applicantName?: string,
   registrationStatus: RegistrationStatusE
   reviewer: {
     displayName: string

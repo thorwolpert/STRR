@@ -3,10 +3,10 @@ export interface ExaminerDashboardRowI {
   registrationNumber: string;
   registrationId: string;
   isCertificateIssued: boolean;
+  applicantName?: string;
+  propertyAddress?: string;
   registrationType: string;
-  unitAddressCity: string;
-  unitAddressPostalCode: string;
-  unitAddress: string;
   status: string;
   submissionDate: string | Date;
+  isPaid: boolean;
 }

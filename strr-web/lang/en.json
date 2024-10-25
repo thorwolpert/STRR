@@ -18,7 +18,8 @@
     "registrationType": "Type",
     "contact": "Contact",
     "nickname": "Listing Nickname",
-    "address": "Listing Address",
+    "address": "Property Address",
+    "applicantName": "Applicant Name",
     "owner": "Owner",
     "submissionDate": "Submission Date",
     "columnsToShow": "Columns to Show",
@@ -181,6 +182,7 @@
     "download": "Download Certificate",
     "renewal": "Renewal",
     "strrCertificate": "Short Term Rental Registry Certificate",
+    "strrReceipt": "Short Term Rental Registry Receipt",
     "modal": {
       "contactInfo": {
         "header": "Need Help?",

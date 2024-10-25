@@ -86,6 +86,9 @@ export const mockApplicationApproved: ApplicationI = {
     registrationStartDate: '2024-08-16T11:08:40.935161+00:00',
     registrationStatus: RegistrationStatusE.ACTIVE,
     isCertificateIssued: true,
+    applicantName: 'BCREGTEST TWENTYFIVE',
+    propertyAddress: '555 Main St Victoria BC V3V2V2 CA',
+    isPropertyManager: true,
     reviewer: {
       displayName: 'Joe Smith',
       username: 'joes@idir'
@@ -121,6 +124,9 @@ export const mockApplicationPaymentDue: ApplicationI = {
     registrationStartDate: '2024-08-16T11:08:40.935161+00:00',
     registrationStatus: RegistrationStatusE.ACTIVE,
     isCertificateIssued: false,
+    applicantName: 'BCREGTEST TWENTYFIVE',
+    propertyAddress: '555 Main St Victoria BC V3V2V2 CA',
+    isPropertyManager: false,
     reviewer: {
       displayName: 'Joe Smith',
       username: 'joes@idir'
@@ -156,6 +162,9 @@ export const mockApplicationFullReview: ApplicationI = {
     registrationStartDate: '2024-08-16T11:08:40.935161+00:00',
     registrationStatus: RegistrationStatusE.ACTIVE,
     isCertificateIssued: false,
+    applicantName: 'BCREGTEST TWENTYFIVE',
+    propertyAddress: '555 Main St Victoria BC V3V2V2 CA',
+    isPropertyManager: true,
     reviewer: {
       displayName: 'Joe Smith',
       username: 'joes@idir'
