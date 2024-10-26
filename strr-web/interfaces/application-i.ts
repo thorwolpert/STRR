@@ -38,7 +38,7 @@ interface ListingDetailsI {
   url: string
 }
 
-export interface propertyManagerI {
+export interface PropertyManagerI {
   businessLegalName?: string
   businessNumber?: string
   businessMailingAddress: {
@@ -68,7 +68,7 @@ export interface ApplicationDetailsI {
   principalResidence: PrincipalResidenceI
   propertyManager?: PropertyManagerI
   unitAddress: RegistrationAddressI
-  propertyManager?: propertyManagerI
+  propertyManager?: PropertyManagerI
   unitDetails: {
     parcelIdentifier?: string
     businessLicense?: string
