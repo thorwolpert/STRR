@@ -22,7 +22,7 @@ export interface RegistrationI {
   primaryContact: ContactI
   secondaryContact: ContactI | null
   principalResidence: PrincipalResidenceI
-  propertyManager: PropertyManagerI
+  propertyManager?: PropertyManagerI
   sbc_account_id: number
   status: string
   submissionDate: string
