@@ -92,6 +92,18 @@ const optionalOrEmptyString = z
   .optional()
   .transform(e => (e === '' ? undefined : e))
 const requiredNonEmptyString = z.string().refine(e => e !== '', 'Field cannot be empty')
+const requiredNonEmptyString15 = z
+  .string()
+  .max(15, { message: 'Maximum length is 15 characters' })
+  .refine(e => e !== '', 'Field cannot be empty')
+const requiredNonEmptyString100 = z
+  .string()
+  .max(100, { message: 'Maximum length is 100 characters' })
+  .refine(e => e !== '', 'Field cannot be empty')
+const requiredNonEmptyString50 = z
+  .string()
+  .max(50, { message: 'Maximum length is 50 characters' })
+  .refine(e => e !== '', 'Field cannot be empty')
 
 export const finalizationSchema = z.object({
   phone: requiredPhone,
@@ -106,22 +118,46 @@ export const propertyManagerSchema = z.object({
   businessMailingAddress: z.object({
     address: requiredNonEmptyString,
     addressLineTwo: optionalOrEmptyString,
-    city: requiredNonEmptyString,
-    postalCode: requiredNonEmptyString,
+    city: requiredNonEmptyString100,
+    postalCode: requiredNonEmptyString15,
     province: requiredNonEmptyString,
     country: requiredNonEmptyString
   }),
   contact: z.object({
-    firstName: requiredNonEmptyString,
+    firstName: requiredNonEmptyString50,
     middleName: optionalOrEmptyString,
-    lastName: requiredNonEmptyString,
+    lastName: requiredNonEmptyString50,
     preferredName: optionalOrEmptyString,
     phoneNumber: requiredPhone,
     extension: optionalOrEmptyString,
     faxNumber: optionalPhone,
     emailAddress: requiredEmail
   })
-})
+}).refine(
+  data => !data.businessLegalName || data.businessLegalName.length <= 50,
+  {
+    message: 'Business Legal Name must not exceed 50 characters',
+    path: ['businessLegalName']
+  }
+).refine(
+  data => !data.contact.middleName || data.contact.middleName.length <= 50,
+  {
+    message: 'Middle Name must not exceed 50 characters',
+    path: ['contact', 'middleName']
+  }
+).refine(
+  data => !data.contact.preferredName || data.contact.preferredName.length <= 50,
+  {
+    message: 'Preferred Name must not exceed 50 characters',
+    path: ['contact', 'preferredName']
+  }
+).refine(
+  data => !data.contact.extension || data.contact.extension.length <= 15,
+  {
+    message: 'Extension must not exceed 15 characters',
+    path: ['contact', 'extension']
+  }
+)
 
 export const primaryContactSchema = z.object({
   preferredName: optionalOrEmptyString,
@@ -134,9 +170,9 @@ export const primaryContactSchema = z.object({
   address: requiredNonEmptyString,
   country: requiredNonEmptyString,
   addressLineTwo: optionalOrEmptyString,
-  city: requiredNonEmptyString,
+  city: requiredNonEmptyString100,
   province: requiredNonEmptyString,
-  postalCode: requiredNonEmptyString,
+  postalCode: requiredNonEmptyString15,
   birthDay: requiredNumber
     .refine(day => day.length === 2, 'Day must be two digits')
     .refine(day => Number(day) <= 31, 'Date must be less than or equal to 31')
@@ -149,9 +185,9 @@ export const primaryContactSchema = z.object({
 })
 
 export const secondaryContactSchema = z.object({
-  firstName: requiredNonEmptyString,
-  lastName: requiredNonEmptyString,
-  middleName: requiredNonEmptyString,
+  firstName: requiredNonEmptyString50,
+  lastName: requiredNonEmptyString50,
+  middleName: requiredNonEmptyString50,
   socialInsuranceNumber: optionalSin,
   businessNumber: optionalOrEmptyString,
   preferredName: optionalOrEmptyString,
@@ -162,9 +198,9 @@ export const secondaryContactSchema = z.object({
   address: requiredNonEmptyString,
   country: requiredNonEmptyString,
   addressLineTwo: optionalOrEmptyString,
-  city: requiredNonEmptyString,
+  city: requiredNonEmptyString100,
   province: requiredNonEmptyString,
-  postalCode: requiredNonEmptyString,
+  postalCode: requiredNonEmptyString15,
   birthDay: optionalNumber
     .refine(day => day?.length === 2, 'Day must be two digits')
     .refine(day => Number(day) <= 31, 'Must be less than or equal to 31')

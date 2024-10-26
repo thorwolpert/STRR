@@ -20,7 +20,7 @@ describe('BcrosFormSectionPropertyManagerForm', () => {
   })
 
   it('renders the component', () => {
-    expect(wrapper.find('[data-test-id="property-manager-is-pm"]').exists()).toBe(true)
+    expect(wrapper.findTestId('property-manager-is-pm').exists()).toBe(true)
   })
 
   it('shows property manager role radio buttons', () => {
@@ -32,17 +32,17 @@ describe('BcrosFormSectionPropertyManagerForm', () => {
   it('shows property manager radio when not in property manager role', async () => {
     await wrapper.find('[data-test-id="property-manager-is-pm"] input[value="false"]').setValue(true)
     await wrapper.find('[data-test-id="property-manager-is-pm"] input[value="true"]').setValue(true)
-    expect(wrapper.find('[data-test-id="property-manager-has-pm"]').exists()).toBe(false)
+    expect(wrapper.findTestId('property-manager-has-pm').exists()).toBe(false)
   })
 
   it('shows property manager form when has property manager', async () => {
     await wrapper.find('[data-test-id="property-manager-is-pm"] input[value="false"]').setValue(true)
     await wrapper.find('[data-test-id="property-manager-has-pm"] input[value="true"]').setValue(true)
-    expect(wrapper.find('[data-test-id="property-manager-form"]').exists()).toBe(true)
+    expect(wrapper.findTestId('property-manager-form').exists()).toBe(true)
   })
 
   it('shows property manager form when in property manager role', async () => {
     await wrapper.find('[data-test-id="property-manager-is-pm"] input[value="false"]').setValue(true)
-    expect(wrapper.find('[data-test-id="property-manager-form"]').exists()).toBe(true)
+    expect(wrapper.findTestId('property-manager-form').exists()).toBe(true)
   })
 })
