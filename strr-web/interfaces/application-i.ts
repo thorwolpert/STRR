@@ -5,6 +5,8 @@ import {
   ExaminerApplicationStatusE,
   RegistrationTypeE
 } from '#imports'
+import { PropertyManagerI } from '~/interfaces/property-manager-i'
+
 export interface ApplicationHeaderI {
   applicationDateTime: string
   decisionDate: string | null
@@ -36,28 +38,6 @@ export interface ApplicationHeaderI {
 
 interface ListingDetailsI {
   url: string
-}
-
-export interface PropertyManagerI {
-  businessLegalName?: string
-  businessNumber?: string
-  businessMailingAddress: {
-    address: string
-    city: string
-    postalCode: string
-    province: string
-    country: string
-  }
-  contact: {
-    firstName: string
-    lastName: string
-    middleName?: string
-    preferredName?: string
-    phoneNumber: string
-    extension?: string
-    faxNumber?: string
-    emailAddress: string
-  }
 }
 
 export interface ApplicationDetailsI {

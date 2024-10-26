@@ -63,6 +63,7 @@
         :loading="loading"
         :columns="selectedColumns"
         :rows="tableRows"
+        class="whitespace-nowrap"
         sort-mode="manual"
         @update:sort="sort"
       >
@@ -87,7 +88,7 @@
         <template #registrationNumber-data="{ row }">
           <div class="flex items-center">
             <div
-              class="cursor-pointer text-center"
+              class="cursor-pointer text-center min-w-[80px]"
               @click="
                 row.registrationId
                   ? navigateToRegistrationDetails(row.registrationId)
