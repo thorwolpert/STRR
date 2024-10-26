@@ -205,9 +205,9 @@ const {
   ownershipTypes: string[],
   ownershipTypeError: string,
   propertyTypeError: string,
-  rentalUnitSpaceTypeOptions: string[],
+  rentalUnitSpaceTypeOptions: { value: RentalUnitSpaceTypeE, label: string }[],
   rentalUnitSpaceTypeError: string,
   principalResidenceOptions: { value: boolean, label: string }[],
-  hostResidenceOptions: { value: string, label: string }[]
+  hostResidenceOptions: { value: HostResidenceE, label: string }[]
 }>()
 </script>

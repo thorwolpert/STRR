@@ -186,8 +186,8 @@
         </div>
         <!-- Property Manager -->
         <BcrosFormSectionPropertyManagerSummaryView
-          v-if="formState.hasPropertyManager"
-          :property-manager="formState.propertyManager"
+          v-if="applicationDetails.propertyManager"
+          :property-manager="applicationDetails.propertyManager"
           header-tag="h2"
           header-class="font-bold mb-6 mobile:mx-2 text-xl"
           data-test-id="property-manager-details"

@@ -17,7 +17,7 @@ const mockBusinessMailingAddress: PropertyManagerBusinessAddressI = {
   city: 'Vancouver',
   postalCode: 'V5K 0A1',
   province: 'BC',
-  country: 'Canada'
+  country: 'CA'
 }
 
 export const mockPropertyManager: PropertyManagerI = {

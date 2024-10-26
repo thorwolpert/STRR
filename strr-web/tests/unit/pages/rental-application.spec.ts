@@ -93,11 +93,15 @@ describe('Rental Application', () => {
     // extract the text from Property Manager section
     const propertyManagerReviewText = propertyManagerReview.text()
 
+    // update Country from CA to Canada
+    const updatePropertyManagerAddress: PropertyManagerBusinessAddressI =
+       set({ ...mockPropertyManager.businessMailingAddress }, 'country', 'Canada')
+
     // construct list of expected values from mocked Property Manager
     const expectedValues = [
       mockPropertyManager.businessLegalName,
       mockPropertyManager.businessNumber,
-      ...Object.values(mockPropertyManager.businessMailingAddress),
+      ...Object.values(updatePropertyManagerAddress),
       ...Object.values(mockPropertyManager.contact)
     ]
 

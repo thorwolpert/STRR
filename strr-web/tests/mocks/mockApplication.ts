@@ -1,3 +1,4 @@
+import { mockPropertyManager } from './mockPropertyManager'
 import { ExaminerActionsE } from '~/enums/host-examiner-actions-e'
 
 export const mockPrimaryContact: PrimaryContactInformationI = {
@@ -66,7 +67,8 @@ export const mockApplicationDetails: ApplicationDetailsI = {
     ownershipType: 'OWN',
     propertyType: 'SECONDARY'
   },
-  registrationType: RegistrationTypeE.HOST
+  registrationType: RegistrationTypeE.HOST,
+  propertyManager: mockPropertyManager
 }
 
 export const mockApplicationApproved: ApplicationI = {

@@ -67,6 +67,8 @@ export function displayPhoneAndExt (phoneNumber?: string, phoneExt?: string): st
   return displayFormattedPhone(phoneNumber) + extension
 }
 
+const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' })
+
 /**
  * Displays the full address based on the provided address object.
  *
@@ -87,9 +89,9 @@ export function displayFullAddress (mailingAddress?: MailingAddressAPII): string
   const addressPartTwo = address && addressLineTwo ? `, ${addressLineTwo}` : addressLineTwo || ''
 
   return `
-      ${address}${addressPartTwo}<br>
+      ${address || '-'}${addressPartTwo}<br>
       ${city} ${province} ${postalCode}<br>
-      ${country}
+      ${regionNamesInEnglish.of(country) || '-'}
     `
 }
 

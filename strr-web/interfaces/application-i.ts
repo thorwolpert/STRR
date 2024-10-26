@@ -44,6 +44,7 @@ export interface ApplicationDetailsI {
   primaryContact: ContactI
   secondaryContact?: ContactI
   principalResidence: PrincipalResidenceI
+  propertyManager: PropertyManagerI
   unitAddress: RegistrationAddressI
   unitDetails: {
     parcelIdentifier?: string
