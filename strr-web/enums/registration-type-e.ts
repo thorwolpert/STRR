@@ -1,4 +1,5 @@
 export enum RegistrationTypeE {
   HOST = 'HOST',
-  PLATFORM = 'PLATFORM'
+  PLATFORM = 'PLATFORM',
+  STRATA_HOTEL = 'STRATA_HOTEL'
 }

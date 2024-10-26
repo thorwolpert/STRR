@@ -86,8 +86,8 @@
         </template>
         <template #registrationNumber-data="{ row }">
           <div class="flex items-center">
-            <span
-              class="cursor-pointer min-w-[40px] text-center"
+            <div
+              class="cursor-pointer text-center"
               @click="
                 row.registrationId
                   ? navigateToRegistrationDetails(row.registrationId)
@@ -95,14 +95,7 @@
               "
             >
               {{ row.registrationNumber }}
-            </span>
-            <UIcon
-              v-if="row.isCertificateIssued"
-              name="i-mdi-file-document-outline"
-              class="h-[20px] w-[20px] ml-3 text-blue-600 cursor-pointer"
-              alt="certificate download"
-              @click="downloadCertificate(row.registrationId)"
-            />
+            </div>
           </div>
         </template>
         <template #registrationType-data="{ row }">
@@ -173,12 +166,12 @@
 <script setup lang="ts">
 import { ApplicationStatusE, RegistrationTypeE } from '#imports'
 import { ExaminerDashboardRowI } from '~/interfaces/examiner-dashboard-row-i'
+import { ApplicationDetailsI, PlatformApplicationDetailsI } from '~/interfaces/application-i'
 import InfoModal from '~/components/common/InfoModal.vue'
 
 const { t } = useTranslation()
 const tRegistryDashboard = (translationKey: string) => t(`registryDashboard.${translationKey}`)
 const { getChipFlavour } = useChipFlavour()
-const { downloadCertificate } = useDownloadCertificate()
 const { downloadReceipt } = useDownloadReceipt()
 const { getApplications, getApplicationsByStatus, getPaginatedApplications } = useApplications()
 
@@ -270,21 +263,43 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
         registrationId,
         examinerStatus,
         status,
-        applicationDateTime,
-        isCertificateIssued,
-        isPropertyManager,
-        propertyAddress,
-        applicantName
+        applicationDateTime
       },
       registration: { registrationType }
     } = application
-
+    let applicationType = ''
+    let applicantName = ''
+    let propertyAddress = ''
+    if (registrationType === RegistrationTypeE.HOST) {
+      const hostApplication: ApplicationDetailsI = application.registration
+      if (hostApplication.propertyManager) {
+        applicationType = 'Property Manager'
+      } else {
+        applicationType = 'Host'
+      }
+      applicantName = `${hostApplication.primaryContact.name.firstName} \
+                       ${hostApplication.primaryContact.name.middleName || ''} \
+                       ${hostApplication.primaryContact.name.lastName}`.trim()
+      propertyAddress = `${hostApplication.unitAddress.address}, \
+                         ${hostApplication.unitAddress.city} ${hostApplication.unitAddress.postalCode}`
+    } else if (registrationType === RegistrationTypeE.PLATFORM) {
+      const platformApplication: PlatformApplicationDetailsI = application.registration
+      applicationType = 'Platform'
+      applicantName = platformApplication.businessDetails.legalName
+      propertyAddress = `${platformApplication.businessDetails.mailingAddress.address}, \
+                         ${platformApplication.businessDetails.mailingAddress.city}, \
+                         ${platformApplication.businessDetails.mailingAddress.province} \
+                         ${platformApplication.businessDetails.mailingAddress.country} \
+                         ${platformApplication.businessDetails.mailingAddress.postalCode}`
+    } else if (registrationType === RegistrationTypeE.STRATA_HOTEL) {
+      applicationType = 'Strata Hotel'
+      // Implement this once the backend supports it
+    }
     const row: ExaminerDashboardRowI = {
       applicationNumber,
       registrationNumber: registrationNumber ?? '-',
       registrationId: registrationId ? registrationId.toString() : '',
-      isCertificateIssued,
-      registrationType: getRegistrationTypeLabel(registrationType, isPropertyManager),
+      registrationType: applicationType,
       propertyAddress,
       applicantName,
       status: examinerStatus || status,
@@ -298,21 +313,6 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
 
 const hasPaymentReceipt = (status: string): boolean => {
   return status !== ApplicationStatusE.DRAFT && status !== ApplicationStatusE.PAYMENT_DUE
-}
-
-const getRegistrationTypeLabel = (
-  type: RegistrationTypeE, isPropertyManager: boolean
-): string => {
-  switch (type) {
-    case RegistrationTypeE.HOST:
-      if (isPropertyManager) {
-        return 'Property Manager'
-      } else {
-        return 'Host'
-      }
-    case RegistrationTypeE.PLATFORM:
-      return 'Platform'
-  }
 }
 
 watch(statusFilter, () => updateTableRows())

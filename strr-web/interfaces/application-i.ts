@@ -20,9 +20,6 @@ export interface ApplicationHeaderI {
   registrationNumber: string
   registrationStartDate: string
   isCertificateIssued: boolean,
-  isPropertyManager: boolean,
-  propertyAddress?: string,
-  applicantName?: string,
   registrationStatus: RegistrationStatusE
   reviewer: {
     displayName: string
@@ -41,6 +38,28 @@ interface ListingDetailsI {
   url: string
 }
 
+export interface propertyManagerI {
+  businessLegalName?: string
+  businessNumber?: string
+  businessMailingAddress: {
+    address: string
+    city: string
+    postalCode: string
+    province: string
+    country: string
+  }
+  contact: {
+    firstName: string
+    lastName: string
+    middleName?: string
+    preferredName?: string
+    phoneNumber: string
+    extension?: string
+    faxNumber?: string
+    emailAddress: string
+  }
+}
+
 export interface ApplicationDetailsI {
   registrationType: RegistrationTypeE,
   listingDetails: ListingDetailsI[]
@@ -49,6 +68,7 @@ export interface ApplicationDetailsI {
   principalResidence: PrincipalResidenceI
   propertyManager?: PropertyManagerI
   unitAddress: RegistrationAddressI
+  propertyManager?: propertyManagerI
   unitDetails: {
     parcelIdentifier?: string
     businessLicense?: string
@@ -59,9 +79,37 @@ export interface ApplicationDetailsI {
   documents?: DocumentUploadI[]
 }
 
+export interface PlatformApplicationDetailsI {
+  registrationType: RegistrationTypeE.PLATFORM,
+  completingParty?: ContactI,
+  platformRepresentatives: ContactI[],
+  businessDetails: {
+    legalName: string,
+    homeJurisdiction: string,
+    businessNumber?: string,
+    consumerProtectionBCLicenceNumber?: string,
+    noticeOfNonComplianceEmail: string,
+    noticeOfNonComplianceOptionalEmail?: string,
+    takeDownRequestEmail: string,
+    takeDownRequestOptionalEmail?: string,
+    mailingAddress: RegistrationAddressI & { locationDescription?: string },
+    registeredOfficeOrAttorneyForServiceDetails?: {
+      attorneyName: string,
+      mailingAddress: RegistrationAddressI & { locationDescription?: string }
+    }
+  },
+  platformDetails: {
+    brands: {
+      name: string,
+      website: string
+    }[],
+    listingSize: 'GREATER_THAN_THOUSAND' | 'LESS_THAN_THOUSAND'
+  }
+}
+
 export interface ApplicationI {
   header: ApplicationHeaderI
-  registration: ApplicationDetailsI
+  registration: ApplicationDetailsI | PlatformApplicationDetailsI
   selectedAccount: {
     sbc_account_id: string
   }
