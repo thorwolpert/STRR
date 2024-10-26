@@ -159,7 +159,7 @@ const validateField = (field: keyof typeof errorRefs) => {
 
 const form = ref()
 watch(form, () => {
-  if (form.value && isComplete) { form.value.validate() }
+  if (form.value && isComplete) { form.value.validate({ silent: true }) }
 })
 
 watch([() => formState.isPropertyManagerRole, () => formState.hasPropertyManager], () => {
