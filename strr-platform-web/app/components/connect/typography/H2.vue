@@ -1,8 +1,8 @@
 <script setup lang="ts">
-defineProps<{ text: string }>()
+defineProps<{ text: string, customClass?: string }>()
 </script>
 <template>
-  <h2 :class="`font-bold text-lg`" data-testid="h2">
+  <h2 :class="customClass || 'text-[1.5rem] font-bold'" data-testid="h2">
     {{ text }}
   </h2>
 </template>

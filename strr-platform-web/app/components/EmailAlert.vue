@@ -1,7 +1,3 @@
-<script setup>
-const { t } = useI18n()
-
-</script>
 <template>
   <UAlert
     class="max-w-bcGovInput"
@@ -15,8 +11,8 @@ const { t } = useI18n()
   >
     <template #description>
       <p>
-        <b>{{ t('label.note') }}:</b>
-        {{ t('platform.text.emailNote') }}
+        <b>{{ $t('label.note') }}:</b>
+        {{ $t('platform.text.emailNote') }}
       </p>
     </template>
   </UAlert>
