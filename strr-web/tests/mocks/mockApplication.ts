@@ -1,4 +1,24 @@
+import { mockPropertyManager } from './mockPropertyManager'
 import { ExaminerActionsE } from '~/enums/host-examiner-actions-e'
+
+export const mockPrimaryContact: PrimaryContactInformationI = {
+  preferredName: 'John Doe',
+  phoneNumber: '123-456-7890',
+  extension: '7653',
+  faxNumber: '123-456-7891',
+  emailAddress: 'john.doe@example.com',
+  address: '123 Main St',
+  country: 'CA',
+  addressLineTwo: 'Apt 4B',
+  city: 'Victoria',
+  province: 'BC',
+  postalCode: 'V4V 1A1',
+  birthDay: '15',
+  birthMonth: '6',
+  birthYear: '1980',
+  businessNumber: '987654321',
+  socialInsuranceNumber: '123 456 789'
+}
 
 export const mockApplicationDetails: ApplicationDetailsI = {
   listingDetails: [],
@@ -47,7 +67,8 @@ export const mockApplicationDetails: ApplicationDetailsI = {
     ownershipType: 'OWN',
     propertyType: 'SECONDARY'
   },
-  registrationType: RegistrationTypeE.HOST
+  registrationType: RegistrationTypeE.HOST,
+  propertyManager: mockPropertyManager
 }
 
 export const mockApplicationApproved: ApplicationI = {

@@ -230,7 +230,7 @@ const validateRentalUnitSpaceType = () => {
 const form = ref()
 
 watch(form, () => {
-  if (form.value && isComplete) { form.value.validate() }
+  if (form.value && isComplete) { form.value.validate({ silent: true }) }
 })
 
 onMounted(() => {

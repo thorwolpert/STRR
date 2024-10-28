@@ -1,5 +1,8 @@
 <template>
-  <div data-test-id="application-details">
+  <div
+    data-test-id="application-details"
+    class="application-details-page"
+  >
     <BcrosBanner
       :application="application"
       class="mobile:h-auto"
@@ -28,9 +31,9 @@
     </BcrosBanner>
     <div class="mt-[104px] mobile:pt-[70px]">
       <div data-test-id="application-status">
-        <p class="font-bold mb-6 mobile:mx-2 text-xl">
+        <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
           {{ tApplicationDetails('applicationStatus') }}
-        </p>
+        </h2>
         <div class="bg-white py-[22px] px-[30px] mobile:px-5">
           <div class="flex flex-row justify-between w-full mobile:flex-col">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('status')">
@@ -42,15 +45,17 @@
         </div>
       </div>
       <div class="mt-10">
-        <p class="font-bold mb-6 mobile:mx-2 text-xl">
+        <!-- Rental Unit Info -->
+        <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
           {{ tApplicationDetails('unitInfo') }}
-        </p>
+        </h2>
         <div class="bg-white py-[22px] px-[30px] mobile:px-5" data-test-id="rental-unit-info">
           <div class="flex flex-row justify-between w-full mobile:flex-col desktop:mb-6">
             <BcrosFormSectionReviewItem
               :title="tApplicationDetails('nickname')"
               :content="applicationDetails?.unitAddress.nickname || '-'"
               data-test-id="unit-nickname"
+              class="break-all"
             />
             <BcrosFormSectionReviewItem
               :title="tApplicationDetails('ownership')"
@@ -91,6 +96,7 @@
               :title="tApplicationDetails('businessLicense')"
               :content="applicationDetails?.unitDetails.businessLicense || '-'"
               data-test-id="business-license"
+              class="break-all"
             />
             <div class="flex-1 d:max-w-[33.33%]">
               <template v-if="applicationDetails?.listingDetails && applicationDetails.listingDetails.length > 0">
@@ -146,10 +152,52 @@
             </div>
           </div>
         </div>
-        <div class="mt-10 relative overflow-x-scroll" data-test-id="primary-contact">
-          <p class="font-bold mb-6 mobile:mx-2 text-xl">
+        <!-- Principal Residence -->
+        <div class="mt-10" data-test-id="principal-residence">
+          <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
+            {{ tApplicationDetails('principalResidence') }}
+          </h2>
+          <div class="bg-white py-[22px] px-[30px] mobile:px-5">
+            <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
+              <p data-test-id="principal-residence-proof">
+                {{
+                  applicationDetails.principalResidence.isPrincipalResidence
+                    ? tApplicationDetails('principalResidenceApplies')
+                    : tApplicationDetails('principalResidenceNotApplies')
+                }}
+              </p>
+            </BcrosFormSectionReviewItem>
+            <BcrosFormSectionReviewItem
+              v-if="applicationDetails.principalResidence.nonPrincipalOption"
+              :title="tApplicationDetails('principalResidenceReason')"
+              class="mt-4"
+            >
+              <p>{{ applicationDetails.principalResidence.nonPrincipalOption }}</p>
+            </BcrosFormSectionReviewItem>
+            <BcrosFormSectionReviewItem
+              v-if="applicationDetails.principalResidence.specifiedServiceProvider &&
+                applicationDetails.principalResidence.specifiedServiceProvider !== 'n/a'"
+              :title="tApplicationDetails('principalResidenceServiceProvider')"
+              class="mt-4"
+            >
+              <p>{{ applicationDetails.principalResidence.specifiedServiceProvider }}</p>
+            </BcrosFormSectionReviewItem>
+          </div>
+        </div>
+        <!-- Property Manager -->
+        <BcrosFormSectionPropertyManagerSummaryView
+          v-if="applicationDetails.propertyManager"
+          :property-manager="applicationDetails.propertyManager"
+          header-tag="h2"
+          header-class="font-bold mb-6 mobile:mx-2 text-xl"
+          data-test-id="property-manager-details"
+          class="mt-10"
+        />
+        <!-- Primary Contact -->
+        <div class="mt-10" data-test-id="primary-contact">
+          <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('primaryContact') }}
-          </p>
+          </h2>
           <div class="d:hidden">
             <div class="bg-white py-[22px] px-[30px] mobile:px-5">
               <BcrosFormSectionReviewItem
@@ -176,18 +224,22 @@
               />
             </div>
           </div>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-5 m:hidden overflow-x-scroll w-[150%]">
-            <UTable :rows="applicationDetails ? getContactRows(applicationDetails?.primaryContact): []" />
+          <div class="overflow-x-scroll">
+            <UTable
+              :rows="applicationDetails ? getContactRows(applicationDetails?.primaryContact): []"
+              class="bg-white py-[22px] px-[30px] mobile:px-5 m:hidden w-[150%]"
+            />
           </div>
         </div>
+        <!-- Secondary Contact -->
         <div
           v-if="applicationDetails && applicationDetails?.secondaryContact"
-          class="mt-10 relative overflow-x-scroll"
+          class="mt-10"
           data-test-id="secondary-contact"
         >
-          <p class="font-bold mb-6 mobile:mx-2 text-xl">
+          <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('secondaryContact') }}
-          </p>
+          </h2>
           <div class="d:hidden">
             <div class="bg-white py-[22px] px-[30px] mobile:px-5">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('name')">
@@ -220,41 +272,10 @@
             <UTable :rows="getContactRows(applicationDetails?.secondaryContact)" />
           </div>
         </div>
-        <div class="mt-10 relative overflow-x-scroll" data-test-id="principal-residence">
-          <p class="font-bold mb-6 mobile:mx-2 text-xl">
-            {{ tApplicationDetails('principalResidence') }}
-          </p>
-          <div class="bg-white py-[22px] px-[30px] mobile:px-5">
-            <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
-              <p data-test-id="principal-residence-proof">
-                {{
-                  applicationDetails.principalResidence.isPrincipalResidence
-                    ? tApplicationDetails('principalResidenceApplies')
-                    : tApplicationDetails('principalResidenceNotApplies')
-                }}
-              </p>
-            </BcrosFormSectionReviewItem>
-            <BcrosFormSectionReviewItem
-              v-if="applicationDetails.principalResidence.nonPrincipalOption"
-              :title="tApplicationDetails('principalResidenceReason')"
-              class="mt-4"
-            >
-              <p>{{ applicationDetails.principalResidence.nonPrincipalOption }}</p>
-            </BcrosFormSectionReviewItem>
-            <BcrosFormSectionReviewItem
-              v-if="applicationDetails.principalResidence.specifiedServiceProvider &&
-                applicationDetails.principalResidence.specifiedServiceProvider !== 'n/a'"
-              :title="tApplicationDetails('principalResidenceServiceProvider')"
-              class="mt-4"
-            >
-              <p>{{ applicationDetails.principalResidence.specifiedServiceProvider }}</p>
-            </BcrosFormSectionReviewItem>
-          </div>
-        </div>
         <div v-if="documents.length" class="mt-10" data-test-id="documents-section">
-          <p class="font-bold mb-6 mobile:mx-2 text-xl">
+          <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('documents') }}
-          </p>
+          </h2>
           <div class="bg-white py-[22px] px-[30px] mobile:px-5">
             <div class="flex flex-row justify-between w-full mobile:flex-col">
               <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
@@ -435,11 +456,7 @@ const getContactRows = (contactBlock: ContactI) => [{
     ${contactBlock.mailingAddress.postalCode}
   `,
   'Email Address': contactBlock.details.emailAddress,
-  'Phone Number':
-    `
-      ${contactBlock.details.phoneNumber}
-      ${contactBlock.details.extension || ''}
-    `,
+  'Phone Number': displayPhoneAndExt(contactBlock.details.phoneNumber, contactBlock.details.extension) || '',
   SIN: contactBlock.socialInsuranceNumber,
   'BN (GST)': contactBlock.businessNumber
 }]

@@ -431,6 +431,7 @@ export const formDataForAPI: CreateAccountFormAPII = {
       nonPrincipalOption: '',
       specifiedServiceProvider: '',
       agreedToSubmit: false
-    }
+    },
+    registrationType: undefined
   }
 }

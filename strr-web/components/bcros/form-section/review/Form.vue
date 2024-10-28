@@ -6,6 +6,12 @@
         <p>{{ tReview('reviewInstructionsContinued') }}</p>
       </div>
       <div>
+        <BcrosFormSectionPropertyManagerSummaryView
+          v-if="formState.hasPropertyManager"
+          :property-manager="formState.propertyManager"
+          data-test-id="property-manager-review"
+          class="mt-[48px]"
+        />
         <div class="mt-[48px]">
           <p class="font-bold mb-[24px] mobile:mx-[8px]">
             {{ tReview('primaryContact') }}
@@ -13,6 +19,7 @@
           <BcrosFormSectionReviewSubsection
             :state="formState.primaryContact"
             :primary="true"
+            data-test-id="primary-contact-review"
           />
         </div>
         <div v-if="secondaryContact" class="mt-[48px]">
@@ -55,8 +62,8 @@
                 </p>
                 <p>
                   {{ `
-                    ${formState.propertyDetails.country !== 'CAN'
-                    && formState.propertyDetails.country
+                  ${formState.propertyDetails.country !== 'CAN'
+                      && formState.propertyDetails.country
                       ? regionNamesInEnglish.of(formState.propertyDetails.country)
                   : '-'}`
                   }}
