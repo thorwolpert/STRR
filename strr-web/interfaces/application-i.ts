@@ -6,7 +6,6 @@ import {
   RegistrationTypeE,
   ListingSizeE
 } from '#imports'
-import { PropertyManagerI } from '~/interfaces/property-manager-i'
 
 export interface ApplicationHeaderI {
   applicationDateTime: string
