@@ -21,7 +21,7 @@ export const useStrrPlatformStore = defineStore('strr/platform', () => {
 
   const getAccountRegistrations = async () => {
     // TODO: add error handling / modal popup?
-    const resp = await $strrApi('/registrations', { method: 'GET' }) as { registrations: PlatformRegistrationResp[] }
+    const resp = await $strrApi<{ registrations: PlatformRegistrationResp[] }>('/registrations')
     return resp?.registrations
   }
 
