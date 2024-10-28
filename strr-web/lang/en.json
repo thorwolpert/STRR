@@ -12,8 +12,8 @@
     "phoneExt": "Ext."
   },
   "registryDashboard": {
-    "applicationNumber": "Application #",
-    "registrationNumber": "Registration #",
+    "applicationNumber": "Application Number",
+    "registrationNumber": "Registration Number",
     "status": "Status",
     "registrationType": "Type",
     "contact": "Contact",

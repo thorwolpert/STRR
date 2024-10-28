@@ -63,7 +63,6 @@
         :loading="loading"
         :columns="selectedColumns"
         :rows="tableRows"
-        class="whitespace-nowrap"
         sort-mode="manual"
         @update:sort="sort"
       >
@@ -72,7 +71,7 @@
           <div class="flex items-center">
             <span
               :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
-              @click="handleRowClick(row.registrationType, () => navigateToApplicationDetails(row.applicationNumber))"
+              @click="handleRowClick(row.registrationType, row.applicationNumber)"
             >
               {{ row.applicationNumber }}
             </span>
@@ -92,11 +91,10 @@
             <div
               :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
               class="text-center min-w-[80px]"
-              @click="handleRowClick(row.registrationType, () =>
-                row.registrationId
-                  ? navigateToRegistrationDetails(row.registrationId)
-                  : navigateToApplicationDetails(row.applicationNumber)
-              )"
+              @click="row.registrationId
+                ? handleRowClick(row.registrationType, row.registrationId, false)
+                : handleRowClick(row.registrationType, row.applicationNumber)
+              "
             >
               {{ row.registrationNumber }}
             </div>
@@ -107,18 +105,9 @@
             :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
             class="w-full"
             tabindex="0"
-            @click="handleRowClick(
-              row.registrationType,
-              () => navigateToApplicationDetails(row.applicationNumber)
-            )"
-            @keydown.enter="handleRowClick(
-              row.registrationType,
-              () => navigateToApplicationDetails(row.applicationNumber)
-            )"
-            @keydown.space.prevent="handleRowClick(
-              row.registrationType,
-              () => navigateToApplicationDetails(row.applicationNumber)
-            )"
+            @click="handleRowClick(row.registrationType, row.applicationNumber)"
+            @keydown.enter="handleRowClick(row.registrationType, row.applicationNumber)"
+            @keydown.space.prevent="handleRowClick(row.registrationType, row.applicationNumber)"
           >
             {{ row.registrationType }}
           </div>
@@ -128,18 +117,9 @@
             <div
               :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
               tabindex="0"
-              @click="handleRowClick(
-                row.registrationType,
-                () => navigateToApplicationDetails(row.applicationNumber)
-              )"
-              @keydown.enter="handleRowClick(
-                row.registrationType,
-                () => navigateToApplicationDetails(row.applicationNumber)
-              )"
-              @keydown.space.prevent="handleRowClick(
-                row.registrationType,
-                () => navigateToApplicationDetails(row.applicationNumber)
-              )"
+              @click="handleRowClick(row.registrationType, row.applicationNumber)"
+              @keydown.enter="handleRowClick(row.registrationType, row.applicationNumber)"
+              @keydown.space.prevent="handleRowClick(row.registrationType, row.applicationNumber)"
             >
               {{ row.propertyAddress }}
             </div>
@@ -150,15 +130,9 @@
             <div
               :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
               tabindex="0"
-              @click="handleRowClick(row.registrationType, () => navigateToApplicationDetails(row.applicationNumber))"
-              @keydown.enter="handleRowClick(
-                row.registrationType,
-                () => navigateToApplicationDetails(row.applicationNumber)
-              )"
-              @keydown.space.prevent="handleRowClick(
-                row.registrationType,
-                () => navigateToApplicationDetails(row.applicationNumber)
-              )"
+              @click="handleRowClick(row.registrationType, row.applicationNumber)"
+              @keydown.enter="handleRowClick(row.registrationType, row.applicationNumber)"
+              @keydown.space.prevent="handleRowClick(row.registrationType, row.applicationNumber)"
             >
               {{ row.applicantName }}
             </div>
@@ -175,15 +149,9 @@
             :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
             class="w-full"
             tabindex="0"
-            @click="handleRowClick(row.registrationType, () => navigateToApplicationDetails(row.applicationNumber))"
-            @keydown.enter="handleRowClick(
-              row.registrationType,
-              () => navigateToApplicationDetails(row.applicationNumber)
-            )"
-            @keydown.space.prevent="handleRowClick(
-              row.registrationType,
-              () => navigateToApplicationDetails(row.applicationNumber)
-            )"
+            @click="handleRowClick(row.registrationType, row.applicationNumber)"
+            @keydown.enter="handleRowClick(row.registrationType, row.applicationNumber)"
+            @keydown.space.prevent="handleRowClick(row.registrationType, row.applicationNumber)"
           >
             {{ new Date(row.submissionDate).toLocaleDateString('en-US', { dateStyle: 'medium'}) }}
           </div>
@@ -242,9 +210,14 @@ const DEFAULT_STATUS: ApplicationStatusE = ApplicationStatusE.FULL_REVIEW
 
 const isClickableRow = (registrationType: string) => registrationType !== 'Platform'
 
-const handleRowClick = (registrationType: string, callback: () => void) => {
-  if (isClickableRow(registrationType)) {
-    callback()
+const handleRowClick = (registrationType: string, identfier: string, isApplication: boolean = true) => {
+  if (!isClickableRow(registrationType)) {
+    return
+  }
+  if (isApplication) {
+    navigateToApplicationDetails(identfier)
+  } else {
+    navigateToRegistrationDetails(identfier)
   }
 }
 
@@ -397,13 +370,13 @@ watch(currentPage, () => {
 const selectedColumns = ref<{ key: string; label: string; }[]>([])
 
 const columns = [
-  { key: 'application', label: tRegistryDashboard('applicationNumber'), sortable: true },
-  { key: 'registrationNumber', label: tRegistryDashboard('registrationNumber'), sortable: true },
-  { key: 'registrationType', label: tRegistryDashboard('registrationType'), sortable: true },
-  { key: 'address', label: tRegistryDashboard('address'), sortable: true },
-  { key: 'applicantName', label: tRegistryDashboard('applicantName'), sortable: true },
-  { key: 'status', label: tRegistryDashboard('status'), sortable: true },
-  { key: 'submission', label: tRegistryDashboard('submissionDate'), sortable: true }
+  { key: 'application', label: tRegistryDashboard('applicationNumber'), sortable: false },
+  { key: 'registrationNumber', label: tRegistryDashboard('registrationNumber'), sortable: false },
+  { key: 'registrationType', label: tRegistryDashboard('registrationType'), sortable: false },
+  { key: 'address', label: tRegistryDashboard('address'), sortable: false },
+  { key: 'applicantName', label: tRegistryDashboard('applicantName'), sortable: false },
+  { key: 'status', label: tRegistryDashboard('status'), sortable: false },
+  { key: 'submission', label: tRegistryDashboard('submissionDate'), sortable: false }
 ]
 
 onMounted(async () => {
