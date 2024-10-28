@@ -138,7 +138,7 @@ const { setupBreadcrumbData } = useBreadcrumb()
 const application = await getApplication(applicationNumber)
 const formatDate = (date: Date) => date.toLocaleDateString('en-US')
 const data: LtsaDataI[] = await getLtsa(applicationNumber) || {} as LtsaDataI[]
-const applicationDetails: ApplicationDetailsI = application.registration
+const applicationDetails: HostApplicationDetailsI = application.registration
 
 setupBreadcrumbData(application)
 

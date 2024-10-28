@@ -20,7 +20,7 @@ export const mockPrimaryContact: PrimaryContactInformationI = {
   socialInsuranceNumber: '123 456 789'
 }
 
-export const mockApplicationDetails: ApplicationDetailsI = {
+export const mockApplicationDetails: HostApplicationDetailsI = {
   listingDetails: [],
   primaryContact: {
     businessNumber: '',

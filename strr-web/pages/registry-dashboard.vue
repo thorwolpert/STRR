@@ -71,16 +71,18 @@
         <template #application-data="{ row }">
           <div class="flex items-center">
             <span
-              class="cursor-pointer"
-              @click="navigateToApplicationDetails(row.applicationNumber)"
+              :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+              @click="handleRowClick(row.registrationType, () => navigateToApplicationDetails(row.applicationNumber))"
             >
               {{ row.applicationNumber }}
             </span>
-            <UIcon
+            <UButton
               v-if="row.isPaid"
-              name="i-mdi-receipt-text-outline"
-              class="h-[20px] w-[20px] ml-3 text-blue-600 cursor-pointer"
-              alt="receipt download"
+              :icon="downloadingReceipts.has(row.applicationNumber) ? 'i-mdi-download' : 'i-mdi-receipt-text-outline'"
+              variant="ghost"
+              :disabled="downloadingReceipts.has(row.applicationNumber)"
+              :aria-label="tRegistryDashboard('downloadReceipt')"
+              class="h-[20px] w-[20px] ml-3 !p-0 text-blue-600"
               @click="downloadReceipt(row.applicationNumber)"
             />
           </div>
@@ -88,27 +90,56 @@
         <template #registrationNumber-data="{ row }">
           <div class="flex items-center">
             <div
-              class="cursor-pointer text-center min-w-[80px]"
-              @click="
+              :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+              class="text-center min-w-[80px]"
+              @click="handleRowClick(row.registrationType, () =>
                 row.registrationId
                   ? navigateToRegistrationDetails(row.registrationId)
                   : navigateToApplicationDetails(row.applicationNumber)
-              "
+              )"
             >
               {{ row.registrationNumber }}
             </div>
           </div>
         </template>
         <template #registrationType-data="{ row }">
-          <div class="cursor-pointer w-full" @click="navigateToApplicationDetails(row.applicationNumber)">
+          <div
+            :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+            class="w-full"
+            tabindex="0"
+            @click="handleRowClick(
+              row.registrationType,
+              () => navigateToApplicationDetails(row.applicationNumber)
+            )"
+            @keydown.enter="handleRowClick(
+              row.registrationType,
+              () => navigateToApplicationDetails(row.applicationNumber)
+            )"
+            @keydown.space.prevent="handleRowClick(
+              row.registrationType,
+              () => navigateToApplicationDetails(row.applicationNumber)
+            )"
+          >
             {{ row.registrationType }}
           </div>
         </template>
         <template #address-data="{ row }">
           <div class="flex items-center">
             <div
-              class="cursor-pointer"
-              @click="navigateToApplicationDetails(row.applicationNumber)"
+              :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+              tabindex="0"
+              @click="handleRowClick(
+                row.registrationType,
+                () => navigateToApplicationDetails(row.applicationNumber)
+              )"
+              @keydown.enter="handleRowClick(
+                row.registrationType,
+                () => navigateToApplicationDetails(row.applicationNumber)
+              )"
+              @keydown.space.prevent="handleRowClick(
+                row.registrationType,
+                () => navigateToApplicationDetails(row.applicationNumber)
+              )"
             >
               {{ row.propertyAddress }}
             </div>
@@ -117,8 +148,17 @@
         <template #applicant-name-data="{ row }">
           <div class="flex items-center">
             <div
-              class="cursor-pointer"
-              @click="navigateToApplicationDetails(row.applicationNumber)"
+              :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+              tabindex="0"
+              @click="handleRowClick(row.registrationType, () => navigateToApplicationDetails(row.applicationNumber))"
+              @keydown.enter="handleRowClick(
+                row.registrationType,
+                () => navigateToApplicationDetails(row.applicationNumber)
+              )"
+              @keydown.space.prevent="handleRowClick(
+                row.registrationType,
+                () => navigateToApplicationDetails(row.applicationNumber)
+              )"
             >
               {{ row.applicantName }}
             </div>
@@ -132,8 +172,18 @@
         </template>
         <template #submission-data="{ row }">
           <div
-            class="cursor-pointer w-full"
-            @click="navigateToApplicationDetails(row.applicationNumber)"
+            :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+            class="w-full"
+            tabindex="0"
+            @click="handleRowClick(row.registrationType, () => navigateToApplicationDetails(row.applicationNumber))"
+            @keydown.enter="handleRowClick(
+              row.registrationType,
+              () => navigateToApplicationDetails(row.applicationNumber)
+            )"
+            @keydown.space.prevent="handleRowClick(
+              row.registrationType,
+              () => navigateToApplicationDetails(row.applicationNumber)
+            )"
           >
             {{ new Date(row.submissionDate).toLocaleDateString('en-US', { dateStyle: 'medium'}) }}
           </div>
@@ -167,13 +217,13 @@
 <script setup lang="ts">
 import { ApplicationStatusE, RegistrationTypeE } from '#imports'
 import { ExaminerDashboardRowI } from '~/interfaces/examiner-dashboard-row-i'
-import { ApplicationDetailsI, PlatformApplicationDetailsI } from '~/interfaces/application-i'
+import { HostApplicationDetailsI, PlatformApplicationDetailsI } from '~/interfaces/application-i'
 import InfoModal from '~/components/common/InfoModal.vue'
 
 const { t } = useTranslation()
 const tRegistryDashboard = (translationKey: string) => t(`registryDashboard.${translationKey}`)
 const { getChipFlavour } = useChipFlavour()
-const { downloadReceipt } = useDownloadReceipt()
+const { downloadReceipt, downloadingReceipts } = useDownloadReceipt()
 const { getApplications, getApplicationsByStatus, getPaginatedApplications } = useApplications()
 
 const statusFilter = ref<string>('')
@@ -189,6 +239,14 @@ const filterOptions = ref()
 const searchAppInput = ref<string>('')
 
 const DEFAULT_STATUS: ApplicationStatusE = ApplicationStatusE.FULL_REVIEW
+
+const isClickableRow = (registrationType: string) => registrationType !== 'Platform'
+
+const handleRowClick = (registrationType: string, callback: () => void) => {
+  if (isClickableRow(registrationType)) {
+    callback()
+  }
+}
 
 const sort = ({ column, direction }: { column: string, direction: string }) => {
   sortBy.value = column.replace(' ', '_').toLocaleUpperCase()
@@ -272,26 +330,19 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
     let applicantName = ''
     let propertyAddress = ''
     if (registrationType === RegistrationTypeE.HOST) {
-      const hostApplication: ApplicationDetailsI = application.registration
+      const hostApplication: HostApplicationDetailsI = application.registration
       if (hostApplication.propertyManager) {
         applicationType = 'Property Manager'
       } else {
         applicationType = 'Host'
       }
-      applicantName = `${hostApplication.primaryContact.name.firstName} \
-                       ${hostApplication.primaryContact.name.middleName || ''} \
-                       ${hostApplication.primaryContact.name.lastName}`.trim()
-      propertyAddress = `${hostApplication.unitAddress.address}, \
-                         ${hostApplication.unitAddress.city} ${hostApplication.unitAddress.postalCode}`
+      applicantName = displayContactFullName(hostApplication.primaryContact.name) || ''
+      propertyAddress = formatPropertyAddress(hostApplication.unitAddress)
     } else if (registrationType === RegistrationTypeE.PLATFORM) {
       const platformApplication: PlatformApplicationDetailsI = application.registration
       applicationType = 'Platform'
       applicantName = platformApplication.businessDetails.legalName
-      propertyAddress = `${platformApplication.businessDetails.mailingAddress.address}, \
-                         ${platformApplication.businessDetails.mailingAddress.city}, \
-                         ${platformApplication.businessDetails.mailingAddress.province} \
-                         ${platformApplication.businessDetails.mailingAddress.country} \
-                         ${platformApplication.businessDetails.mailingAddress.postalCode}`
+      propertyAddress = formatPropertyAddress(platformApplication.businessDetails.mailingAddress)
     } else if (registrationType === RegistrationTypeE.STRATA_HOTEL) {
       applicationType = 'Strata Hotel'
       // Implement this once the backend supports it
@@ -310,6 +361,14 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
     rows.push(row)
   }
   return rows
+}
+
+const formatPropertyAddress = (propertyAddress: RegistrationAddressI): string => {
+  const { address, addressLineTwo, city, postalCode, province, country } = propertyAddress
+  const addressPartTwo = address && addressLineTwo ? `, ${addressLineTwo}` : addressLineTwo || ''
+  return `
+    ${address || '-'}${addressPartTwo} ${city} ${province} ${postalCode} ${country || '-'}
+  `
 }
 
 const hasPaymentReceipt = (status: string): boolean => {

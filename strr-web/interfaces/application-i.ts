@@ -3,7 +3,8 @@ import {
   ApplicationStatusE,
   HostApplicationStatusE,
   ExaminerApplicationStatusE,
-  RegistrationTypeE
+  RegistrationTypeE,
+  ListingSizeE
 } from '#imports'
 import { PropertyManagerI } from '~/interfaces/property-manager-i'
 
@@ -40,7 +41,7 @@ interface ListingDetailsI {
   url: string
 }
 
-export interface ApplicationDetailsI {
+export interface HostApplicationDetailsI {
   registrationType: RegistrationTypeE,
   listingDetails: ListingDetailsI[]
   primaryContact: ContactI
@@ -72,10 +73,10 @@ export interface PlatformApplicationDetailsI {
     noticeOfNonComplianceOptionalEmail?: string,
     takeDownRequestEmail: string,
     takeDownRequestOptionalEmail?: string,
-    mailingAddress: RegistrationAddressI & { locationDescription?: string },
+    mailingAddress: RegistrationAddressI,
     registeredOfficeOrAttorneyForServiceDetails?: {
       attorneyName: string,
-      mailingAddress: RegistrationAddressI & { locationDescription?: string }
+      mailingAddress: RegistrationAddressI
     }
   },
   platformDetails: {
@@ -83,13 +84,15 @@ export interface PlatformApplicationDetailsI {
       name: string,
       website: string
     }[],
-    listingSize: 'GREATER_THAN_THOUSAND' | 'LESS_THAN_THOUSAND'
+    listingSize: ListingSizeE
   }
 }
 
+export type ApplicationDetailsI = HostApplicationDetailsI | PlatformApplicationDetailsI
+
 export interface ApplicationI {
   header: ApplicationHeaderI
-  registration: ApplicationDetailsI | PlatformApplicationDetailsI
+  registration: ApplicationDetailsI
   selectedAccount: {
     sbc_account_id: string
   }

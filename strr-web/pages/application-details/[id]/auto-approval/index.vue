@@ -59,7 +59,7 @@ const applicationNumber = route.params.id.toString()
 
 const application = await getApplication(applicationNumber)
 const data: AutoApprovalDataI[] = await getAutoApproval(applicationNumber) || {} as AutoApprovalDataI[]
-const applicationDetails: ApplicationDetailsI = application.registration
+const applicationDetails: HostApplicationDetailsI = application.registration
 
 setupBreadcrumbData(application)
 
