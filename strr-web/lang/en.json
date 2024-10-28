@@ -12,13 +12,14 @@
     "phoneExt": "Ext."
   },
   "registryDashboard": {
-    "applicationNumber": "Application #",
-    "registrationNumber": "Registration #",
+    "applicationNumber": "Application Number",
+    "registrationNumber": "Registration Number",
     "status": "Status",
     "registrationType": "Type",
     "contact": "Contact",
     "nickname": "Listing Nickname",
-    "address": "Listing Address",
+    "address": "Property Address",
+    "applicantName": "Applicant Name",
     "owner": "Owner",
     "submissionDate": "Submission Date",
     "columnsToShow": "Columns to Show",
@@ -31,6 +32,7 @@
     "results": "Results",
     "location": "Location",
     "approved": "Approved",
+    "downloadReceipt": "Download Receipt",
     "modal": {
       "contactInfo": {
         "header": "Need Help?",
@@ -181,6 +183,7 @@
     "download": "Download Certificate",
     "renewal": "Renewal",
     "strrCertificate": "Short Term Rental Registry Certificate",
+    "strrReceipt": "Short Term Rental Registry Receipt",
     "modal": {
       "contactInfo": {
         "header": "Need Help?",

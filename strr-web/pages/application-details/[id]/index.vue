@@ -378,7 +378,7 @@ const [application, applicationHistory]: [ApplicationI, FilingHistoryEventI[]] =
 
 setupBreadcrumbData(application)
 
-const applicationDetails: ApplicationDetailsI = application.registration
+const applicationDetails: HostApplicationDetailsI = application.registration
 
 // Get Supporting Documents from the Application response
 const documents: DocumentUploadI[] = applicationDetails.documents || []

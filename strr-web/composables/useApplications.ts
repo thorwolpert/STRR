@@ -73,6 +73,18 @@ export const useApplications = () => {
   }
 
   /**
+   * GET STR Receipt by Application number.
+   *
+   * @param {string} appNum - The application number.
+   */
+  const getReceipt = async (appNum: string): Promise<Blob> => {
+    const { data } = await axiosInstance.get<Blob>(`${apiURL}/applications/${appNum}/payment/receipt`, {
+      responseType: 'blob'
+    })
+    return data
+  }
+
+  /**
    * Get all STR Applications from the API and sorts them by status and city.
    * If no applications are found, the user is redirected to the create account page.
    */
@@ -176,6 +188,7 @@ export const useApplications = () => {
 
   return {
     getApplication,
+    getReceipt,
     getApplications,
     getApplicationsByStatus,
     getPaginatedApplications,

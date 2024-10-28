@@ -68,40 +68,74 @@
       >
         <!-- Only way to do row clicks in NuxtUI currently -->
         <template #application-data="{ row }">
-          <div class="cursor-pointer w-full" @click="navigateToApplicationDetails(row.applicationNumber)">
-            {{ row.applicationNumber }}
+          <div class="flex items-center">
+            <span
+              :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+              @click="handleRowClick(row.registrationType, row.applicationNumber)"
+            >
+              {{ row.applicationNumber }}
+            </span>
+            <UButton
+              v-if="row.isPaid"
+              :icon="downloadingReceipts.has(row.applicationNumber) ? 'i-mdi-download' : 'i-mdi-receipt-text-outline'"
+              variant="ghost"
+              :disabled="downloadingReceipts.has(row.applicationNumber)"
+              :aria-label="tRegistryDashboard('downloadReceipt')"
+              class="h-[20px] w-[20px] ml-3 !p-0 text-blue-600"
+              @click="downloadReceipt(row.applicationNumber)"
+            />
           </div>
         </template>
         <template #registrationNumber-data="{ row }">
           <div class="flex items-center">
-            <span
-              class="cursor-pointer"
-              @click="
-                row.registrationId
-                  ? navigateToRegistrationDetails(row.registrationId)
-                  : navigateToApplicationDetails(row.applicationNumber)
+            <div
+              :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+              class="text-center min-w-[80px]"
+              @click="row.registrationId
+                ? handleRowClick(row.registrationType, row.registrationId, false)
+                : handleRowClick(row.registrationType, row.applicationNumber)
               "
             >
               {{ row.registrationNumber }}
-            </span>
-            <UIcon
-              v-if="row.isCertificateIssued"
-              name="i-mdi-file-document-outline"
-              class="h-[20px] w-[20px] ml-3 text-blue-600 cursor-pointer"
-              alt="certificate download"
-              @click="downloadCertificate(row.registrationId)"
-            />
+            </div>
           </div>
         </template>
         <template #registrationType-data="{ row }">
-          <div class="cursor-pointer w-full" @click="navigateToApplicationDetails(row.applicationNumber)">
+          <div
+            :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+            class="w-full"
+            tabindex="0"
+            @click="handleRowClick(row.registrationType, row.applicationNumber)"
+            @keydown.enter="handleRowClick(row.registrationType, row.applicationNumber)"
+            @keydown.space.prevent="handleRowClick(row.registrationType, row.applicationNumber)"
+          >
             {{ row.registrationType }}
           </div>
         </template>
         <template #address-data="{ row }">
-          <div class="cursor-pointer w-full" @click="navigateToApplicationDetails(row.applicationNumber)">
-            <div>{{ row.unitAddress }}</div>
-            <div>{{ row.unitAddressCity }} {{ row.unitAddressPostalCode }}</div>
+          <div class="flex items-center">
+            <div
+              :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+              tabindex="0"
+              @click="handleRowClick(row.registrationType, row.applicationNumber)"
+              @keydown.enter="handleRowClick(row.registrationType, row.applicationNumber)"
+              @keydown.space.prevent="handleRowClick(row.registrationType, row.applicationNumber)"
+            >
+              {{ row.propertyAddress }}
+            </div>
+          </div>
+        </template>
+        <template #applicant-name-data="{ row }">
+          <div class="flex items-center">
+            <div
+              :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+              tabindex="0"
+              @click="handleRowClick(row.registrationType, row.applicationNumber)"
+              @keydown.enter="handleRowClick(row.registrationType, row.applicationNumber)"
+              @keydown.space.prevent="handleRowClick(row.registrationType, row.applicationNumber)"
+            >
+              {{ row.applicantName }}
+            </div>
           </div>
         </template>
         <template #status-data="{ row }">
@@ -112,8 +146,12 @@
         </template>
         <template #submission-data="{ row }">
           <div
-            class="cursor-pointer w-full"
-            @click="navigateToApplicationDetails(row.applicationNumber)"
+            :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+            class="w-full"
+            tabindex="0"
+            @click="handleRowClick(row.registrationType, row.applicationNumber)"
+            @keydown.enter="handleRowClick(row.registrationType, row.applicationNumber)"
+            @keydown.space.prevent="handleRowClick(row.registrationType, row.applicationNumber)"
           >
             {{ new Date(row.submissionDate).toLocaleDateString('en-US', { dateStyle: 'medium'}) }}
           </div>
@@ -147,13 +185,13 @@
 <script setup lang="ts">
 import { ApplicationStatusE, RegistrationTypeE } from '#imports'
 import { ExaminerDashboardRowI } from '~/interfaces/examiner-dashboard-row-i'
+import { HostApplicationDetailsI, PlatformApplicationDetailsI } from '~/interfaces/application-i'
 import InfoModal from '~/components/common/InfoModal.vue'
 
 const { t } = useTranslation()
 const tRegistryDashboard = (translationKey: string) => t(`registryDashboard.${translationKey}`)
 const { getChipFlavour } = useChipFlavour()
-const { downloadCertificate } = useDownloadCertificate()
-
+const { downloadReceipt, downloadingReceipts } = useDownloadReceipt()
 const { getApplications, getApplicationsByStatus, getPaginatedApplications } = useApplications()
 
 const statusFilter = ref<string>('')
@@ -169,6 +207,19 @@ const filterOptions = ref()
 const searchAppInput = ref<string>('')
 
 const DEFAULT_STATUS: ApplicationStatusE = ApplicationStatusE.FULL_REVIEW
+
+const isClickableRow = (registrationType: string) => registrationType !== 'Platform'
+
+const handleRowClick = (registrationType: string, identfier: string, isApplication: boolean = true) => {
+  if (!isClickableRow(registrationType)) {
+    return
+  }
+  if (isApplication) {
+    navigateToApplicationDetails(identfier)
+  } else {
+    navigateToRegistrationDetails(identfier)
+  }
+}
 
 const sort = ({ column, direction }: { column: string, direction: string }) => {
   sortBy.value = column.replace(' ', '_').toLocaleUpperCase()
@@ -244,36 +295,57 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
         registrationId,
         examinerStatus,
         status,
-        applicationDateTime,
-        isCertificateIssued
+        applicationDateTime
       },
-      registration: { registrationType, unitAddress }
+      registration: { registrationType }
     } = application
-
+    let applicationType = ''
+    let applicantName = ''
+    let propertyAddress = ''
+    if (registrationType === RegistrationTypeE.HOST) {
+      const hostApplication: HostApplicationDetailsI = application.registration
+      if (hostApplication.propertyManager) {
+        applicationType = 'Property Manager'
+      } else {
+        applicationType = 'Host'
+      }
+      applicantName = displayContactFullName(hostApplication.primaryContact.name) || ''
+      propertyAddress = formatPropertyAddress(hostApplication.unitAddress)
+    } else if (registrationType === RegistrationTypeE.PLATFORM) {
+      const platformApplication: PlatformApplicationDetailsI = application.registration
+      applicationType = 'Platform'
+      applicantName = platformApplication.businessDetails.legalName
+      propertyAddress = formatPropertyAddress(platformApplication.businessDetails.mailingAddress)
+    } else if (registrationType === RegistrationTypeE.STRATA_HOTEL) {
+      applicationType = 'Strata Hotel'
+      // Implement this once the backend supports it
+    }
     const row: ExaminerDashboardRowI = {
       applicationNumber,
       registrationNumber: registrationNumber ?? '-',
       registrationId: registrationId ? registrationId.toString() : '',
-      isCertificateIssued,
-      registrationType: getRegistrationTypeLabel(registrationType),
-      unitAddressCity: unitAddress.city,
-      unitAddressPostalCode: unitAddress.postalCode,
-      unitAddress: unitAddress.address,
+      registrationType: applicationType,
+      propertyAddress,
+      applicantName,
       status: examinerStatus || status,
-      submissionDate: applicationDateTime
+      submissionDate: applicationDateTime,
+      isPaid: hasPaymentReceipt(status)
     }
     rows.push(row)
   }
   return rows
 }
 
-const getRegistrationTypeLabel = (type: RegistrationTypeE): string => {
-  switch (type) {
-    case RegistrationTypeE.HOST:
-      return 'Host'
-    case RegistrationTypeE.PLATFORM:
-      return 'Platform'
-  }
+const formatPropertyAddress = (propertyAddress: RegistrationAddressI): string => {
+  const { address, addressLineTwo, city, postalCode, province, country } = propertyAddress
+  const addressPartTwo = address && addressLineTwo ? `, ${addressLineTwo}` : addressLineTwo || ''
+  return `
+    ${address || '-'}${addressPartTwo} ${city} ${province} ${postalCode} ${country || '-'}
+  `
+}
+
+const hasPaymentReceipt = (status: string): boolean => {
+  return status !== ApplicationStatusE.DRAFT && status !== ApplicationStatusE.PAYMENT_DUE
 }
 
 watch(statusFilter, () => updateTableRows())
@@ -298,12 +370,13 @@ watch(currentPage, () => {
 const selectedColumns = ref<{ key: string; label: string; }[]>([])
 
 const columns = [
-  { key: 'application', label: tRegistryDashboard('applicationNumber'), sortable: true },
-  { key: 'registrationNumber', label: tRegistryDashboard('registrationNumber'), sortable: true },
-  { key: 'registrationType', label: tRegistryDashboard('registrationType'), sortable: true },
-  { key: 'address', label: tRegistryDashboard('address'), sortable: true },
-  { key: 'status', label: tRegistryDashboard('status'), sortable: true },
-  { key: 'submission', label: tRegistryDashboard('submissionDate'), sortable: true }
+  { key: 'application', label: tRegistryDashboard('applicationNumber'), sortable: false },
+  { key: 'registrationNumber', label: tRegistryDashboard('registrationNumber'), sortable: false },
+  { key: 'registrationType', label: tRegistryDashboard('registrationType'), sortable: false },
+  { key: 'address', label: tRegistryDashboard('address'), sortable: false },
+  { key: 'applicantName', label: tRegistryDashboard('applicantName'), sortable: false },
+  { key: 'status', label: tRegistryDashboard('status'), sortable: false },
+  { key: 'submission', label: tRegistryDashboard('submissionDate'), sortable: false }
 ]
 
 onMounted(async () => {

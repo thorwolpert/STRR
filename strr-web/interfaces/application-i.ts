@@ -3,8 +3,10 @@ import {
   ApplicationStatusE,
   HostApplicationStatusE,
   ExaminerApplicationStatusE,
-  RegistrationTypeE
+  RegistrationTypeE,
+  ListingSizeE
 } from '#imports'
+
 export interface ApplicationHeaderI {
   applicationDateTime: string
   decisionDate: string | null
@@ -38,7 +40,7 @@ interface ListingDetailsI {
   url: string
 }
 
-export interface ApplicationDetailsI {
+export interface HostApplicationDetailsI {
   registrationType: RegistrationTypeE,
   listingDetails: ListingDetailsI[]
   primaryContact: ContactI
@@ -46,6 +48,7 @@ export interface ApplicationDetailsI {
   principalResidence: PrincipalResidenceI
   propertyManager?: PropertyManagerI
   unitAddress: RegistrationAddressI
+  propertyManager?: PropertyManagerI
   unitDetails: {
     parcelIdentifier?: string
     businessLicense?: string
@@ -55,6 +58,36 @@ export interface ApplicationDetailsI {
   }
   documents?: DocumentUploadI[]
 }
+
+export interface PlatformApplicationDetailsI {
+  registrationType: RegistrationTypeE.PLATFORM,
+  completingParty?: ContactI,
+  platformRepresentatives: ContactI[],
+  businessDetails: {
+    legalName: string,
+    homeJurisdiction: string,
+    businessNumber?: string,
+    consumerProtectionBCLicenceNumber?: string,
+    noticeOfNonComplianceEmail: string,
+    noticeOfNonComplianceOptionalEmail?: string,
+    takeDownRequestEmail: string,
+    takeDownRequestOptionalEmail?: string,
+    mailingAddress: RegistrationAddressI,
+    registeredOfficeOrAttorneyForServiceDetails?: {
+      attorneyName: string,
+      mailingAddress: RegistrationAddressI
+    }
+  },
+  platformDetails: {
+    brands: {
+      name: string,
+      website: string
+    }[],
+    listingSize: ListingSizeE
+  }
+}
+
+export type ApplicationDetailsI = HostApplicationDetailsI | PlatformApplicationDetailsI
 
 export interface ApplicationI {
   header: ApplicationHeaderI

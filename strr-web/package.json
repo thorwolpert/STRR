@@ -1,6 +1,6 @@
 {
   "name": "strr-web",
-  "version": "0.1.40",
+  "version": "0.1.41",
   "description": "Short Term Rental Registration UI - Mono repo workspace",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
