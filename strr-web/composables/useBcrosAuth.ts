@@ -23,8 +23,10 @@ export const useBcrosAuth = () => {
 
   /** Logout and then redirect to given page (if redirect provided). */
   async function logout (redirect: string) {
-    localStorage.clear()
+    account.setCurrentAccount({} as AccountI)
+    account.userOrgs = []
     await keycloak.logout(redirect)
+    localStorage.removeItem(SessionStorageKeyE.CURRENT_ACCOUNT)
   }
 
   /** redirect if account status is suspended */
@@ -66,13 +68,14 @@ export const useBcrosAuth = () => {
           // verify account status
           verifyAccountStatus()
 
-          console.info('Checking Terms of Service acceptance...')
-          const isToSAccepted = await checkTermsOfService()
-
-          // if Terms not accepted - redirect TOS page
-          if (!isToSAccepted) {
-            goToTermsOfService()
-            return
+          // do not show Terms for IDIR users
+          if (keycloak.kcUser.loginSource !== 'IDIR') {
+            const isToSAccepted = await checkTermsOfService()
+            // if Terms not accepted - redirect TOS page
+            if (!isToSAccepted) {
+              goToTermsOfService()
+              return
+            }
           }
 
           // if user has not picked an account - go to Account Select
