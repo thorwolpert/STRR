@@ -50,7 +50,7 @@
           {{ tApplicationDetails('unitInfo') }}
         </h2>
         <div class="bg-white py-[22px] px-[30px] mobile:px-5" data-test-id="rental-unit-info">
-          <div class="flex flex-row justify-between w-full mobile:flex-col desktop:mb-6">
+          <div class="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6 desktop:mb-6">
             <BcrosFormSectionReviewItem
               :title="tApplicationDetails('nickname')"
               :content="applicationDetails?.unitAddress.nickname || '-'"
@@ -61,6 +61,26 @@
               :title="tApplicationDetails('ownership')"
               :content="getOwnershipTypeDisplay(applicationDetails?.unitDetails.ownershipType, tApplicationDetails)"
               data-test-id="ownership-type"
+            />
+            <BcrosFormSectionReviewItem
+              :title="tApplicationDetails('rentalUnitSpaceType')"
+              :content="tApplicationDetails(applicationDetails?.unitDetails.rentalUnitSpaceType)|| '-'"
+              data-test-id="rentalUnitSpaceType-type"
+            />
+            <BcrosFormSectionReviewItem
+              :title="tApplicationDetails('isUnitOnPrincipalResidenceProperty')"
+              :content="tApplicationDetails(applicationDetails?.unitDetails.isUnitOnPrincipalResidenceProperty?
+                'true':'false')|| '-'"
+              data-test-id="isUnitOnPrincipalResidenceProperty-type"
+            />
+            <BcrosFormSectionReviewItem
+              :title="tApplicationDetails('hostResidence')"
+              :content="tApplicationDetails(applicationDetails?.unitDetails.hostResidence)|| '-'"
+              data-test-id="hostResidence-type"
+            />
+            <BcrosFormSectionReviewItem
+              :title="tApplicationDetails('numberOfRoomsForRent')"
+              :content="applicationDetails?.unitDetails.numberOfRoomsForRent.toString() || '-'"
             />
             <BcrosFormSectionReviewItem :title="tApplicationDetails('propertyType')">
               <p data-test-id="property-type">
@@ -341,13 +361,15 @@
 </template>
 
 <script setup lang="ts">
+import { ApplicationStatusE, ExaminerApplicationStatusE, HostApplicationStatusE } from '#imports'
+import {
+  getOwnershipTypeDisplay
+} from '@/utils/common'
 import FilingHistory from '~/components/FilingHistory.vue'
 import { useApplications } from '~/composables/useApplications'
 import { useBreadcrumb } from '~/composables/useBreadcrumb'
 import { useChipFlavour } from '~/composables/useChipFlavour'
 import { propertyTypeMap } from '~/utils/propertyTypeMap'
-import { getOwnershipTypeDisplay } from '@/utils/common'
-import { ApplicationStatusE, HostApplicationStatusE, ExaminerApplicationStatusE } from '#imports'
 
 const route = useRoute()
 const { t } = useTranslation()
@@ -449,10 +471,10 @@ const getContactRows = (contactBlock: ContactI) => [{
      ${contactBlock.name.lastName}
   `,
   address: `
-    ${contactBlock.mailingAddress.address} 
+    ${contactBlock.mailingAddress.address}
     ${contactBlock.mailingAddress.addressLineTwo || ''}
-    ${contactBlock.mailingAddress.city} 
-    ${contactBlock.mailingAddress.province} 
+    ${contactBlock.mailingAddress.city}
+    ${contactBlock.mailingAddress.province}
     ${contactBlock.mailingAddress.postalCode}
   `,
   'Email Address': contactBlock.details.emailAddress,
@@ -460,4 +482,5 @@ const getContactRows = (contactBlock: ContactI) => [{
   SIN: contactBlock.socialInsuranceNumber,
   'BN (GST)': contactBlock.businessNumber
 }]
+
 </script>

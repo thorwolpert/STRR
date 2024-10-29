@@ -1,7 +1,9 @@
+import { PropertyManagerI } from './property-manager-i'
+import { RegistrationTypeE } from '#imports'
 import { AccountStatusE } from '~/enums/account-status-e'
 import { AccountTypeE } from '~/enums/account-type-e'
 import { UserSettingsTypeE } from '~/enums/user-settings-type-e'
-import { RegistrationTypeE, type PropertyManagerI } from '#imports'
+
 export interface DateOfBirthI {
   day: string
   month: string
@@ -167,8 +169,8 @@ export interface CreateAccountFormStateI {
     postalCode: string | undefined
     listingDetails: { url: string }[]
     rentalUnitSpaceType: string
-    isUnitOnPrincipalResidenceProperty: boolean
-    hostResidence: string
+    isUnitOnPrincipalResidenceProperty: boolean | undefined
+    hostResidence: string | undefined
     numberOfRoomsForRent: number
   }
   selectedAccount: OrgI

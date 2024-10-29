@@ -25,10 +25,16 @@
           :ownership-type-error="ownershipTypeError"
           :property-type-error="propertyTypeError"
           :rental-unit-space-type-error="rentalUnitSpaceTypeError"
+          :principal-residence-error="principalResidenceError"
+          :host-residence-error="hostResidenceError"
+          :number-of-rooms-for-rent-error="numberOfRoomsForRentError"
           @validate-ownership="validateOwnershipType"
           @validate-property="validatePropertyType"
           @validate-business-license-expiry-date="validateBusinessLicenseExpiryDate"
           @validate-rental-unit-space-type="validateRentalUnitSpaceType"
+          @validate-principal-residence="validatePrincipalResidenceOptions"
+          @validate-host-residence="validateHostResidence"
+          @validate-number-of-rooms-for-rent="validateNumberOfRoomsForRent"
         />
         <BcrosFormSectionPropertyAddress
           id="propertyAddress"
@@ -59,6 +65,7 @@
 <script setup lang="ts">
 import { sanitizeUrl } from '@braintree/sanitize-url'
 import { HostResidenceE } from '~/enums/host-residence-e'
+import { RentalUnitSpaceTypeE } from '~/enums/rental-unit-space-type-e'
 
 const { isComplete } = defineProps<{
   isComplete: boolean
@@ -85,6 +92,13 @@ watch(canadaPostAddress, (newAddress) => {
       addressNotInBC.value = true
     }
   }
+})
+
+watch(() => formState.propertyDetails.isUnitOnPrincipalResidenceProperty, (newValue) => {
+  if (!newValue) {
+    formState.propertyDetails.hostResidence = null // Reset if not required
+  }
+  validateHostResidence() // Ensure validation reflects changes
 })
 
 const { t } = useTranslation()
@@ -200,6 +214,9 @@ const propertyTypeError = ref('')
 const ownershipTypeError = ref('')
 const businessLicenseExpiryDate = ref('')
 const rentalUnitSpaceTypeError = ref('')
+const principalResidenceError = ref('')
+const hostResidenceError = ref('')
+const numberOfRoomsForRentError = ref('')
 
 const validatePropertyType = () => {
   const parsed = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
@@ -227,6 +244,29 @@ const validateRentalUnitSpaceType = () => {
   }
 }
 
+const validatePrincipalResidenceOptions = () => {
+  if (formState.propertyDetails.isUnitOnPrincipalResidenceProperty === undefined) {
+    principalResidenceError.value = t('createAccount.propertyForm.principalResidenceRequired')
+  } else {
+    principalResidenceError.value = ''
+  }
+}
+
+const validateHostResidence = () => {
+  hostResidenceError.value =
+    formState.propertyDetails.isUnitOnPrincipalResidenceProperty && !formState.propertyDetails.hostResidence
+      ? 'Please specify where the host lives on the property.'
+      : ''
+}
+
+const validateNumberOfRoomsForRent = () => {
+  if (!formState.propertyDetails.numberOfRoomsForRent || formState.propertyDetails.numberOfRoomsForRent <= 0) {
+    numberOfRoomsForRentError.value = t('createAccount.propertyForm.numberOfRoomsForRentRequired')
+  } else {
+    numberOfRoomsForRentError.value = ''
+  }
+}
+
 const form = ref()
 
 watch(form, () => {
@@ -241,6 +281,9 @@ onMounted(() => {
     validatePropertyType()
     validateOwnershipType()
     validateRentalUnitSpaceType()
+    validatePrincipalResidenceOptions()
+    validateHostResidence()
+    validateNumberOfRoomsForRent()
   }
 })
 </script>

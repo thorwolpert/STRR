@@ -36,7 +36,7 @@
             {{ tReview('rentalUnitInfo') }}
           </p>
           <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
-            <div class="flex flex-row justify-between w-full desktop:mb-[24px] mobile:flex-col">
+            <div class="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6 desktop:mb-6">
               <BcrosFormSectionReviewItem
                 :title="tReview('nickname')"
                 :content="formState.propertyDetails.nickname || '-'"
@@ -48,6 +48,23 @@
               <BcrosFormSectionReviewItem
                 :title="tReview('ownershipType')"
                 :content="getOwnershipTypeDisplay(formState.propertyDetails.ownershipType, tReview)"
+              />
+              <BcrosFormSectionReviewItem
+                :title="tReview('rentalUnitSpaceType')"
+                :content="tReview(formState.propertyDetails.rentalUnitSpaceType)|| '-'"
+              />
+              <BcrosFormSectionReviewItem
+                :title="tReview('isUnitOnPrincipalResidenceProperty')"
+                :content="tReview(formState.propertyDetails.isUnitOnPrincipalResidenceProperty)|| '-'"
+              />
+              <BcrosFormSectionReviewItem
+                v-if="formState.propertyDetails.isUnitOnPrincipalResidenceProperty"
+                :title="tReview('hostResidence')"
+                :content="tReview(formState.propertyDetails.hostResidence)|| '-'"
+              />
+              <BcrosFormSectionReviewItem
+                :title="tReview('numberOfRoomsForRent')"
+                :content="formState.propertyDetails.numberOfRoomsForRent.toString() || '-'"
               />
             </div>
             <div class="flex flex-row justify-between w-full desktop:mb-[24px] mobile:flex-col">
@@ -177,8 +194,10 @@
 </template>
 
 <script setup lang="ts">
-import { getOwnershipTypeDisplay } from '@/utils/common'
 import { formState } from '@/stores/strr'
+import {
+  getOwnershipTypeDisplay
+} from '@/utils/common'
 
 const { t } = useTranslation()
 

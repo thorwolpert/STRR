@@ -100,7 +100,11 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]">
-        <UFormGroup name="isUnitOnPrincipalResidenceProperty" class="d:pr-[16px] flex-grow">
+        <UFormGroup
+          name="isUnitOnPrincipalResidenceProperty"
+          class="d:pr-[16px] flex-grow"
+          :error="principalResidenceError"
+        >
           <USelect
             v-model="isUnitOnPrincipalResidenceProperty"
             :placeholder="t('createAccount.propertyForm.isUnitOnPrincipalResidenceProperty')"
@@ -117,17 +121,26 @@
         :key="isUnitOnPrincipalResidenceProperty ? 'withDropdown' : 'withoutDropdown'"
         class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]"
       >
-        <UFormGroup name="hostResidence" class="d:pr-[16px] flex-grow">
+        <UFormGroup
+          name="hostResidence"
+          class="d:pr-[16px] flex-grow"
+          :error="hostResidenceError"
+        >
           <USelect
-            v-model="hostResidence"
+            v-model="hostResidenceComputed"
             :placeholder="t('createAccount.propertyForm.hostResidence')"
             :options="hostResidenceOptions"
             class="w-full"
             style="color: #1a202c; /* text-gray-900 */ dark:text-white; /* Override with dark mode text color */"
+            @change="emit('validateHostResidence')"
           />
         </UFormGroup>
       </div>
-      <UFormGroup name="numberOfRoomsForRent" class="d:pr-[16px] flex-grow">
+      <UFormGroup
+        name="numberOfRoomsForRent"
+        class="d:pr-[16px] flex-grow"
+        :error="numberOfRoomsForRentError"
+      >
         <label class="block mb-2">{{ t('createAccount.propertyForm.numberOfRoomsForRent') }}</label>
         <div class="flex items-center border border-gray-300 rounded-md p-2 max-w-[200px]">
           <button
@@ -189,17 +202,30 @@ const emit = defineEmits([
   'validateProperty',
   'validateBusinessLicenseExpiryDate',
   'validateRentalUnitSpaceType',
-  'validateIsUnitOnPrincipalResidenceProperty'
+  'validateIsUnitOnPrincipalResidenceProperty',
+  'validatePrincipalResidenceOptions',
+  'validateHostResidence',
+  'validateNumberOfRoomsForRent'
 ])
+
+const hostResidenceComputed = computed({
+  get: () => formState.propertyDetails.hostResidence ?? '', // Ensure string return
+  set: (value: string) => {
+    formState.propertyDetails.hostResidence = value || null // Set to null if empty
+  }
+})
 
 const {
   propertyTypes,
   ownershipTypes,
   ownershipTypeError,
   propertyTypeError,
+  principalResidenceError,
   rentalUnitSpaceTypeOptions,
   principalResidenceOptions,
-  hostResidenceOptions
+  hostResidenceOptions,
+  hostResidenceError,
+  numberOfRoomsForRentError
 } = defineProps<{
   propertyTypes: string[],
   ownershipTypes: string[],
@@ -208,6 +234,9 @@ const {
   rentalUnitSpaceTypeOptions: { value: RentalUnitSpaceTypeE, label: string }[],
   rentalUnitSpaceTypeError: string,
   principalResidenceOptions: { value: boolean, label: string }[],
-  hostResidenceOptions: { value: HostResidenceE, label: string }[]
+  principalResidenceError: string,
+  hostResidenceOptions: { value: HostResidenceE, label: string }[],
+  hostResidenceError: string,
+  numberOfRoomsForRentError: string;
 }>()
 </script>

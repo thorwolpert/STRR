@@ -1,5 +1,5 @@
-import { reactive } from 'vue'
 import axios from 'axios'
+import { reactive } from 'vue'
 import { z } from 'zod'
 import {
   CreateAccountFormStateI,
@@ -18,7 +18,11 @@ export const submitCreateAccountForm = (
   userLastName: string,
   hasSecondaryContact: boolean,
   propertyType: string,
-  ownershipType: string
+  ownershipType: string,
+  rentalUnitSpaceType: string,
+  isUnitOnPrincipalResidenceProperty: boolean,
+  hostResidence: string,
+  numberOfRoomsForRent: number
 ) => {
   const formData: CreateAccountFormAPII = formStateToApi(
     formState,
@@ -26,7 +30,11 @@ export const submitCreateAccountForm = (
     userLastName,
     hasSecondaryContact,
     propertyType,
-    ownershipType
+    ownershipType,
+    rentalUnitSpaceType,
+    isUnitOnPrincipalResidenceProperty,
+    isUnitOnPrincipalResidenceProperty ? hostResidence : '',
+    numberOfRoomsForRent
   )
   axiosInstance.post(`${apiURL}/registrations`,
     { ...formData }
@@ -301,7 +309,7 @@ export const propertyDetailsSchema = z.object({
   propertyType: requiredNonEmptyString,
   rentalUnitSpaceType: requiredNonEmptyString,
   isUnitOnPrincipalResidenceProperty: z.boolean(),
-  hostResidence: optionalOrEmptyString,
+  hostResidence: z.string().nullable(),
   numberOfRoomsForRent: z.number().min(1),
   province: requiredNonEmptyString.refine(province => province === 'BC', { message: 'Province must be set to BC' })
 }).refine((data) => {
@@ -310,6 +318,15 @@ export const propertyDetailsSchema = z.object({
 }, {
   message: 'Business License Expiry Date is required',
   path: ['businessLicenseExpiryDate']
+}).superRefine((data, ctx) => {
+  // Only check when explicitly `true`
+  if (data.isUnitOnPrincipalResidenceProperty === true && !data.hostResidence) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Host Residence is required when the unit is on the principal residence property',
+      path: ['hostResidence']
+    })
+  }
 })
 
 export const formState: CreateAccountFormStateI = reactive({
@@ -336,8 +353,8 @@ export const formState: CreateAccountFormStateI = reactive({
     listingDetails: [{ url: '' }],
     numberOfRoomsForRent: 1,
     rentalUnitSpaceType: '',
-    isUnitOnPrincipalResidenceProperty: false,
-    hostResidence: ''
+    isUnitOnPrincipalResidenceProperty: null,
+    hostResidence: undefined
   },
   selectedAccount: {} as OrgI,
   principal: {

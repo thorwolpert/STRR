@@ -106,8 +106,8 @@
 
 <script setup lang="ts">
 import steps from '../page-data/create-account/steps'
-import { FormPageI } from '~/interfaces/form/form-page-i'
 import InfoModal from '~/components/common/InfoModal.vue'
+import { FormPageI } from '~/interfaces/form/form-page-i'
 
 const hasSecondaryContact: Ref<boolean> = ref(false)
 const activeStepIndex: Ref<number> = ref(0)
@@ -180,7 +180,10 @@ const submit = () => {
       userLastName,
       hasSecondaryContact.value,
       propertyToApiType(formState.propertyDetails.propertyType),
-      ownershipToApiType(formState.propertyDetails.ownershipType)
+      ownershipToApiType(formState.propertyDetails.ownershipType),
+      formState.propertyDetails.rentalUnitSpaceType,
+      formState.propertyDetails.isUnitOnPrincipalResidenceProperty || false,
+      formState.propertyDetails.numberOfRoomsForRent
     )
   } else {
     scrollToTop()

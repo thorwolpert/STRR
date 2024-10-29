@@ -48,7 +48,9 @@ export const formStateToApi = (
 
   const setListingDetails = () => {
     formData.registration.listingDetails =
-      formState.propertyDetails.listingDetails[0].url !== '' ? formState.propertyDetails.listingDetails : []
+      formState.propertyDetails.listingDetails[0].url !== ''
+        ? formState.propertyDetails.listingDetails
+        : []
   }
 
   const setUnitAddress = () => {
@@ -81,9 +83,9 @@ export const formStateToApi = (
       businessLicense,
       rentalUnitSpaceType,
       isUnitOnPrincipalResidenceProperty,
-      hostResidence,
       numberOfRoomsForRent,
-      ...(businessLicense ? { businessLicenseExpiryDate } : {}) // include exp date only if business license exists
+      ...(businessLicense ? { businessLicenseExpiryDate } : {}), // include exp date only if business license exists
+      ...(isUnitOnPrincipalResidenceProperty ? { hostResidence } : {})
     }
   }
 
@@ -112,8 +114,9 @@ export const formStateToApi = (
   }
 
   const setPropertyManager = () => {
-    const shouldHavePropertyManager = formState.isPropertyManagerRole ||
-    (!formState.isPropertyManagerRole && formState.hasPropertyManager)
+    const shouldHavePropertyManager =
+      formState.isPropertyManagerRole ||
+      (!formState.isPropertyManagerRole && formState.hasPropertyManager)
     if (shouldHavePropertyManager && formState.propertyManager) {
       formData.registration.propertyManager = {
         businessLegalName: formState.propertyManager.businessLegalName,
