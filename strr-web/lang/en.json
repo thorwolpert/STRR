@@ -451,6 +451,7 @@
       "listing": "Online Listing Details",
       "confirm": "I confirm that the information contained in the application for registration is accurate and true. I understand that, if I have provided inaccurate or false information, I may be the subject of enforcement action under Part 4 of the Short-Term Rental Accommodations Act. Enforcement action may include being ordered to pay an administrative penalty.",
       "coOwn": "Co-own",
+      "confirmHostAuthorization": "I am authorized by the property host to act as the supplier host and to submit this short-term rental listing on their behalf, making all required declarations as per Section 6 of the Short-Term Rental Accommodations Act, and ensuring compliance with all applicable provisions of the Act.",
       "owner": "Own",
       "rent": "Rent",
       "rentalUnitSpaceType": "Type of Space",

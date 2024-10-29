@@ -113,6 +113,8 @@ describe('Rental Application', () => {
     expectedValues.forEach((value) => {
       expect(propertyManagerReviewText).toContain(value)
     })
+
+    expect(wrapper.findTestId('host-auth-checkbox').exists()).toBe(true)
   })
 
   // Utility function to filter only string values from an object

@@ -186,6 +186,7 @@ watch([() => formState.isPropertyManagerRole, () => formState.hasPropertyManager
         emailAddress: ''
       }
     }
+    formState.hasHostAuthorization = false
   }
 })
 
