@@ -191,7 +191,7 @@
               />
             </div>
             <div
-              v-if="formState.hasPropertyManager"
+              v-if="formState.isPropertyManagerRole"
               class="bg-white p-8 mb-6"
               data-test-id="host-auth-checkbox"
             >
