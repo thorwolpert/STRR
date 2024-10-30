@@ -206,7 +206,7 @@ const validateStep = (schema: any, state: any, index: number) => {
 }
 
 const validatePropertyManagerStep = () => {
-  if (!formState.isPropertyManagerRole && !formState.hasPropertyManager) {
+  if (!formState.isPropertyManagerRole) {
     steps[0].step.isValid = true
   } else {
     validateStep(propertyManagerSchema, formState.propertyManager, 0)
@@ -247,7 +247,7 @@ const validateProofPage = () => {
 
 const validateReviewPage = () => {
   setStepValid(4, formState.principal.agreeToSubmit &&
-    (formState.hasPropertyManager ? formState.hasHostAuthorization : true))
+    (formState.isPropertyManagerRole ? formState.hasHostAuthorization : true))
   steps[4].step.complete = true
 }
 

@@ -51,7 +51,7 @@
               />
               <BcrosFormSectionReviewItem
                 :title="tReview('rentalUnitSpaceType')"
-                :content="tReview(formState.propertyDetails.rentalUnitSpaceType)|| '-'"
+                :content="tReview(formState.propertyDetails.rentalUnitSpaceType) || '-'"
               />
               <BcrosFormSectionReviewItem
                 :title="tReview('isUnitOnPrincipalResidenceProperty')"
@@ -78,7 +78,8 @@
                 </p>
                 <p>
                   <!-- eslint-disable-next-line max-len -->
-                  {{ `${formState.propertyDetails.city ?? '-'} ${formState.propertyDetails.province ?? '-'} ${formState.propertyDetails.postalCode ?? '-'}` }}
+                  {{ `${formState.propertyDetails.city ?? '-'} ${formState.propertyDetails.province ?? '-'}
+                  ${formState.propertyDetails.postalCode ?? '-'}` }}
                 </p>
                 <p>
                   {{ `
