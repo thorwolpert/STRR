@@ -163,12 +163,11 @@ const handlePlatformSubmit = async () => {
         return navigateTo(localePath('/platform/dashboard'))
       }
     } else {
-      // TODO: display form errors better
-      strrModal.openAppSubmitError(formErrors)
+      stepperRef.value?.buttonRefs[activeStepIndex.value]?.focus() // move focus to stepper on form validation errors
     }
   } catch (e) {
     logFetchError(e, 'Error creating platform application')
-    // TODO: handle backend errors
+    strrModal.openAppSubmitError(e)
   } finally {
     // set buttons back to non loading state
     setButtonControl({
@@ -210,7 +209,6 @@ watch(activeStepIndex, (val) => {
   })
 
   setButtonControl({ leftButtons: [], rightButtons: buttons })
-  window.scrollTo({ top: 0, behavior: 'smooth' })
 }, { immediate: true })
 
 // page stuff
@@ -238,6 +236,7 @@ setBreadcrumbs([
       v-model:steps="steps"
       v-model:active-step-index="activeStepIndex"
       v-model:active-step="activeStep"
+      :stepper-label="$t('label.platAppStepLabel')"
     />
     <div v-if="activeStepIndex === 0" key="contact-information">
       <FormPlatformContactInfo :is-complete="activeStep.complete" />

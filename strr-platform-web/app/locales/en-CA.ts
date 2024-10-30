@@ -181,7 +181,13 @@ export default {
     faxNumberOpt: 'Fax Number (Optional)',
     positionTitle: 'Position/Title',
     todo: 'To Do',
-    bcregDash: 'BC Registries Dashboard'
+    bcregDash: 'BC Registries Dashboard',
+    stepCount: 'Step {current} of {max}:',
+    stepValid: 'Step Valid',
+    stepInvalid: 'Step Invalid',
+    platAppStepLabel: 'Platform Application Step Navigation',
+    stepUnfinished: 'This step is unfinished.',
+    returnStepToFinish: 'Return to this step to finish it'
   },
   word: {
     i: 'i',
