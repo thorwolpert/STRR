@@ -157,7 +157,7 @@ const ownershipToApiType = (type: string | undefined): string => {
       return 'RENT'
     case t('createAccount.propertyForm.own'):
       return 'OWN'
-    case t('createAccount.propertyForm.other'):
+    case t('createAccount.propertyForm.coOwn'):
       return 'CO_OWN'
   }
   return ''
