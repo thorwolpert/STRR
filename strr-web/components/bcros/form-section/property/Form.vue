@@ -96,7 +96,7 @@ watch(canadaPostAddress, (newAddress) => {
 
 watch(() => formState.propertyDetails.isUnitOnPrincipalResidenceProperty, (newValue) => {
   if (!newValue) {
-    formState.propertyDetails.hostResidence = null // Reset if not required
+    formState.propertyDetails.hostResidence = undefined // Reset if not required
   }
   validateHostResidence() // Ensure validation reflects changes
 })

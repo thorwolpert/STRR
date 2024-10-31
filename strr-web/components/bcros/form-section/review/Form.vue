@@ -51,7 +51,7 @@
               />
               <BcrosFormSectionReviewItem
                 :title="tReview('rentalUnitSpaceType')"
-                :content="tReview(formState.propertyDetails.rentalUnitSpaceType)|| '-'"
+                :content="tReview(formState.propertyDetails.rentalUnitSpaceType) || '-'"
               />
               <BcrosFormSectionReviewItem
                 :title="tReview('isUnitOnPrincipalResidenceProperty')"
@@ -78,7 +78,8 @@
                 </p>
                 <p>
                   <!-- eslint-disable-next-line max-len -->
-                  {{ `${formState.propertyDetails.city ?? '-'} ${formState.propertyDetails.province ?? '-'} ${formState.propertyDetails.postalCode ?? '-'}` }}
+                  {{ `${formState.propertyDetails.city ?? '-'} ${formState.propertyDetails.province ?? '-'}
+                  ${formState.propertyDetails.postalCode ?? '-'}` }}
                 </p>
                 <p>
                   {{ `
@@ -179,14 +180,25 @@
             </div>
           </div>
           <div class="mt-[48px]">
-            <p class="font-bold mb-[24px] mobile:mx-[8px]">
+            <p class="font-bold mb-[24px] mobile:mx-2">
               {{ tReview('review') }}
             </p>
-            <div class="bg-white py-[22px] px-[30px] mobile:px-[8px] mb-[24px]">
+            <div class="bg-white p-8 mb-6">
               <UCheckbox
                 v-model="formState.principal.agreeToSubmit"
                 :label="tReview('confirm')"
                 :ui="{ label: isComplete && !formState.principal.agreeToSubmit ? 'text-bcGovColor-error' : '' }"
+              />
+            </div>
+            <div
+              v-if="formState.isPropertyManagerRole"
+              class="bg-white p-8 mb-6"
+              data-test-id="host-auth-checkbox"
+            >
+              <UCheckbox
+                v-model="formState.hasHostAuthorization"
+                :label="tReview('confirmHostAuthorization')"
+                :ui="{ label: isComplete && !formState.hasHostAuthorization ? 'text-bcGovColor-error' : '' }"
               />
             </div>
           </div>

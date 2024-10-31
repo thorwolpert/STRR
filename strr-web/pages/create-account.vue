@@ -246,7 +246,8 @@ const validateProofPage = () => {
 }
 
 const validateReviewPage = () => {
-  setStepValid(4, formState.principal.agreeToSubmit)
+  setStepValid(4, formState.principal.agreeToSubmit &&
+    (formState.isPropertyManagerRole ? formState.hasHostAuthorization : true))
   steps[4].step.complete = true
 }
 

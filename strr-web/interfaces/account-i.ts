@@ -175,7 +175,8 @@ export interface CreateAccountFormStateI {
   }
   selectedAccount: OrgI
   principal: PrincipalResidenceI
-  supportingDocuments: File[]
+  supportingDocuments: File[],
+  hasHostAuthorization: boolean
 }
 
 export interface MailingAddressAPII {
