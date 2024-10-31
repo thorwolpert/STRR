@@ -617,10 +617,7 @@ def get_payment_receipt(application_number):
 
     try:
         account_id = request.headers.get("Account-Id", None)
-        application = ApplicationService.get_application(
-            application_number=application_number,
-            account_id=account_id
-        )
+        application = ApplicationService.get_application(application_number=application_number, account_id=account_id)
         if not application:
             raise AuthException()
 
