@@ -390,7 +390,7 @@
       "chooseSupportDocs": "Choose Supporting Documents",
       "removeSupportDoc": "Remove",
       "supporting": "Supporting Documents",
-      "fileRequirements": "File must be a .pdf, .jpg, .doc, or .png. Maximum file size 50 MB.",
+      "fileRequirements": "File must be a .pdf. Maximum file size is 50 MB.",
       "declaration": "Declaration",
       "declare": "As required by section 14 (2) of the Short-Term Accommodations Rental Act (the Act), I declare the property host will comply with the principal residence restriction in the Act and provide the short-term rental accommodation services described in this registration in one or both of: \n a. the property host’s principal residence, \n b.not more than one secondary suite or other accessory dwelling unit that is on the land parcel associated with the property host's principal residence. \n I understand that if the property host does not comply with the requirement to provide the short-term rental accommodation services in the principal residence, I may be subject to enforcement action under Part 4 of the Act, including being ordered to pay an administrative penalty.",
       "consent": "I consent to the Ministry of Finance sharing data and information about me with the Short-Term Rental Branch. I understand the information will be shared to confirm that the property being registered is my principal residence or a secondary suite or accessory dwelling unit on the same land parcel as my principal residence. If you provide consent, it may speed our review and approval of your registration.",
@@ -408,7 +408,7 @@
       "strataGuest": "Strata corporation guest suite",
       "service": "Service Provider",
       "fileSizeError": "File must be less than 50MB in size",
-      "fileTypeError": "File must be of type pdf, doc, jpg, png",
+      "fileTypeError": "File must be of type pdf",
       "fileRequiredError": "Please upload a supporting document"
     },
     "review": {
