@@ -13,8 +13,8 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
   const keycloak = useBcrosKeycloak()
   const isTosAccepted = ref(false)
   const tos = ref<TermsOfServiceI>()
-  // selected user account, need to store in localStorage to be available across open tabs
-  const currentAccount = ref<AccountI>(JSON.parse(localStorage.getItem(SessionStorageKeyE.CURRENT_ACCOUNT) || '{}'))
+  // selected user account
+  const currentAccount: Ref<AccountI> = ref({} as AccountI)
   const currentAccountName = computed((): string => currentAccount.value?.label || '')
   // user info
   const user = computed(() => keycloak.kcUser)
@@ -34,8 +34,6 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
   const apiURL = useRuntimeConfig().public.authApiURL
 
   // GETTERS
-
-  const getCurrentAccount = computed(() => currentAccount.value)
 
   /** Get user information from AUTH */
   async function getAuthUserProfile (identifier: string) {
@@ -132,11 +130,6 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
     userLastName.value = user.value?.lastName || ''
   }
 
-  const setCurrentAccount = (account: AccountI) => {
-    currentAccount.value = account
-    localStorage.setItem(SessionStorageKeyE.CURRENT_ACCOUNT, JSON.stringify(account))
-  }
-
   /** Set the user account list and current account */
   async function setAccountInfo (currentAccountId?: string) {
     if (user.value?.keycloakGuid) {
@@ -173,7 +166,8 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
   function switchCurrentAccount (accountId: string) {
     const account = userAccounts.value.find(account => account.id === accountId)
     if (account) {
-      setCurrentAccount(account)
+      currentAccount.value = account
+      sessionStorage.setItem(SessionStorageKeyE.CURRENT_ACCOUNT, JSON.stringify(account))
     } else {
       console.error(`Error switching account: account with id ${accountId} not found.`)
     }
@@ -184,7 +178,7 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
     me,
     tos,
     isTosAccepted,
-    currentAccount: getCurrentAccount,
+    currentAccount,
     currentAccountName,
     userAccounts,
     userOrgs,
@@ -195,7 +189,6 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
     userLastName,
     updateAuthUserInfo,
     setUserName,
-    setCurrentAccount,
     setAccountInfo,
     switchCurrentAccount
   }

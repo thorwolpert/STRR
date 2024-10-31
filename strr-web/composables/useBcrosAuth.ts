@@ -23,10 +23,7 @@ export const useBcrosAuth = () => {
 
   /** Logout and then redirect to given page (if redirect provided). */
   async function logout (redirect: string) {
-    account.setCurrentAccount({} as AccountI)
-    account.userOrgs = []
     await keycloak.logout(redirect)
-    localStorage.removeItem(SessionStorageKeyE.CURRENT_ACCOUNT)
   }
 
   /** redirect if account status is suspended */

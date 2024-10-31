@@ -115,6 +115,14 @@ const tRegistrationStatus = (translationKey: string) => useTranslation().t(`regi
 const { getApplications } = useApplications()
 const applications = ref<(ApplicationI | undefined)[]>()
 const res = await getApplications()
+const { isExaminer } = storeToRefs(useBcrosKeycloak())
+
+onBeforeMount(() => {
+  // redirect Examiners to their own Dashboard
+  if (isExaminer.value) {
+    navigateTo({ path: '/' + RouteNamesE.REGISTRY_DASHBOARD })
+  }
+})
 
 if (res.total === 0) {
   navigateTo('/' + RouteNamesE.CREATE_ACCOUNT)
