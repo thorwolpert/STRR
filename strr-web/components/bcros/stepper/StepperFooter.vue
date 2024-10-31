@@ -24,6 +24,10 @@
         :icon="isLastStep ? '': 'i-mdi-chevron-right'"
         :trailing="true"
         :loading="submitInProgress"
+        :class-name="submitInProgress
+          ? 'desktop:min-w-[160px] mobile:min-w-[200px] min-h-[45px]'
+          : ''
+        "
         data-test-id="stepper-footer-btn-right"
       />
     </div>
