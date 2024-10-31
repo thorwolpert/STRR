@@ -16,12 +16,15 @@
         :trailing="false"
         variant="outline"
         :class-name="`${isFirstStep ? 'hidden': ''} mr-[20px] mobile:mr-[8px]`"
+        data-test-id="stepper-footer-btn-left"
       />
       <BcrosButtonsPrimary
-        :label="isLastStep ? t('general.submitAndPay') : t('general.next')"
+        :label="submitInProgress ? '' : (isLastStep ? t('general.submitAndPay') : t('general.next'))"
         :action="isLastStep ? submit : setNextStep"
         :icon="isLastStep ? '': 'i-mdi-chevron-right'"
         :trailing="true"
+        :loading="submitInProgress"
+        data-test-id="stepper-footer-btn-right"
       />
     </div>
   </div>
@@ -35,13 +38,15 @@ const {
   isLastStep,
   setNextStep,
   submit,
-  setPreviousStep
+  setPreviousStep,
+  submitInProgress
 } = defineProps<{
   isFirstStep: boolean,
   isLastStep: boolean,
   setNextStep:() => void,
   submit: () => void,
   setPreviousStep:() => void,
+  submitInProgress: boolean
 }>()
 
 </script>
