@@ -294,7 +294,7 @@ const {
 
 const getDownloadText = (eventType: string) => {
   if (eventType === 'CERTIFICATE_ISSUED') {
-    return tRegistrationStatus('download')
+    return tRegistrationStatus('downloadCertificate')
   }
 }
 
