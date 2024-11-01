@@ -64,12 +64,12 @@ export const setSideHeaderDetails = () => {
       label: t('label.busNum'),
       value: platformBusiness.businessNumber ?? t('text.notEntered')
     },
-    { label: t('platform.label.cpbcNum'), value: platformBusiness.cpbcLicenceNumber ?? t('text.notEntered') },
+    { label: t('strr.label.cpbcNum'), value: platformBusiness.cpbcLicenceNumber ?? t('text.notEntered') },
     {
-      label: t('platform.label.noncomplianceEmail'),
+      label: t('strr.label.noncomplianceEmail'),
       value: platformBusiness.nonComplianceEmail
     },
-    { label: t('platform.label.takedownEmail'), value: platformBusiness.takeDownEmail }
+    { label: t('strr.label.takedownEmail'), value: platformBusiness.takeDownEmail }
   ]
   if (isRegistration) {
     // add edit buttons to noncompliance / takedown emails
@@ -105,10 +105,9 @@ export const setSideHeaderDetails = () => {
   sideDetails.value = sideDetailsList
 }
 
-export const getDashboardAddresses = () => {
+export const getDashboardAddresses = (business: StrrBusiness) => {
   // NOTE: even though this function is called within 'setup', useNuxtApp is required for the app context
   const { t } = useNuxtApp().$i18n
-  const { platformBusiness } = useStrrPlatformBusiness()
 
   const addresses: ConnectAccordionItem[] = [{
     defaultOpen: true,
@@ -117,24 +116,24 @@ export const getDashboardAddresses = () => {
     values: [
       {
         icon: 'i-mdi-email-outline',
-        address: platformBusiness.mailingAddress
+        address: business.mailingAddress
       }
     ]
   }]
-  if (platformBusiness.hasRegOffAtt) {
+  if (business.hasRegOffAtt) {
     addresses.push({
       showAvatar: false,
-      label: t('platform.label.registeredOfficeAttorney'),
+      label: t('strr.label.registeredOfficeAttorney'),
       values: [
         {
           class: 'pl-7',
-          label: t('platform.label.attName'),
-          text: platformBusiness.regOfficeOrAtt.attorneyName ?? t('label.notAvailable')
+          label: t('strr.label.attName'),
+          text: business.regOfficeOrAtt.attorneyName ?? t('label.notAvailable')
         },
         {
           class: 'pl-7',
           label: t('label.registeredOffice'),
-          address: platformBusiness.regOfficeOrAtt.mailingAddress
+          address: business.regOfficeOrAtt.mailingAddress
         }
       ]
     })
@@ -142,7 +141,7 @@ export const getDashboardAddresses = () => {
   return addresses
 }
 
-export const getRepItem = (rep: PlatformContact): ConnectAccordionItem => {
+export const getRepItem = (rep: StrrContact): ConnectAccordionItem => {
   // NOTE: even though this function is called within 'setup', useNuxtApp is required for the app context
   const { t } = useNuxtApp().$i18n
   return {
@@ -173,7 +172,7 @@ export const getRepItem = (rep: PlatformContact): ConnectAccordionItem => {
 }
 
 export const getDashboardRepresentives = (): ConnectAccordionItem[] => {
-  const { primaryRep, secondaryRep } = useStrrPlatformContact()
+  const { primaryRep, secondaryRep } = useStrrContactStore()
   if (!primaryRep) {
     return []
   }

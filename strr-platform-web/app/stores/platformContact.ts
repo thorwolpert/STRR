@@ -1,11 +1,12 @@
+// TODO: rename / move to strr-base-web layer
 import { z } from 'zod'
-import type { Contact, PlatformContact } from '#imports'
+import type { Contact, StrrContact } from '#imports'
 import {
   optionalOrEmptyString, getRequiredEmail, getRequiredNonEmptyString, getRequiredPhone
 } from '~/utils/connect-validation'
 import type { MultiFormValidationResult } from '~/interfaces/validation'
 
-export const useStrrPlatformContact = defineStore('strr/platformContact', () => {
+export const useStrrContactStore = defineStore('strr/contact', () => {
   const { t } = useI18n()
   const { userFullName } = storeToRefs(useConnectAccountStore())
   const getContactSchema = (completingParty = false) => {
@@ -60,7 +61,7 @@ export const useStrrPlatformContact = defineStore('strr/platformContact', () => 
 
   const completingParty = ref<Contact>(getNewContact(true))
 
-  const getNewRepresentative = (isActiveUser = false): PlatformContact => {
+  const getNewRepresentative = (isActiveUser = false): StrrContact => {
     let contact = getNewContact(false)
     if (isActiveUser) {
       contact = JSON.parse(JSON.stringify(completingParty.value))
@@ -72,7 +73,7 @@ export const useStrrPlatformContact = defineStore('strr/platformContact', () => 
   }
 
   const isCompletingPartyRep = ref<boolean | undefined>(undefined)
-  const primaryRep = ref<PlatformContact | undefined>(undefined)
+  const primaryRep = ref<StrrContact | undefined>(undefined)
   watch(primaryRep, (val) => {
     if (val && isCompletingPartyRep.value) {
       completingParty.value.emailAddress = val?.emailAddress
@@ -80,13 +81,13 @@ export const useStrrPlatformContact = defineStore('strr/platformContact', () => 
     }
   }, { deep: true })
 
-  const secondaryRep = ref<PlatformContact | undefined>(undefined)
+  const secondaryRep = ref<StrrContact | undefined>(undefined)
 
   const compPartySchema = getContactSchema(true)
   const primaryRepSchema = getContactSchema(false)
   const secondaryRepSchema = getContactSchema(false)
 
-  const validatePlatformContact = async (returnBool = false): Promise<MultiFormValidationResult | boolean> => {
+  const validateContact = async (returnBool = false): Promise<MultiFormValidationResult | boolean> => {
     const validations = [
       validateSchemaAgainstState(compPartySchema, completingParty.value, 'completing-party-form'),
       validateSchemaAgainstState(primaryRepSchema, primaryRep.value, 'primary-rep-form')
@@ -124,6 +125,6 @@ export const useStrrPlatformContact = defineStore('strr/platformContact', () => 
     getContactSchema,
     getNewContact,
     getNewRepresentative,
-    validatePlatformContact
+    validateContact
   }
 })
