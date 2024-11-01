@@ -42,8 +42,17 @@
                 :content="formState.propertyDetails.nickname || '-'"
               />
               <BcrosFormSectionReviewItem
+                :title="tReview('parcelIdentifier')"
+                :content="formState.propertyDetails.parcelIdentifier || '-'"
+              />
+              <BcrosFormSectionReviewItem
                 :title="tReview('businessLicense')"
                 :content="formState.propertyDetails.businessLicense || '-'"
+              />
+              <BcrosFormSectionReviewItem
+                v-if="formState.propertyDetails.businessLicenseExpiryDate"
+                :title="tReview('businessLicenseExpiryDate')"
+                :content="convertDateToLongFormat(formState.propertyDetails.businessLicenseExpiryDate)"
               />
               <BcrosFormSectionReviewItem
                 :title="tReview('ownershipType')"
@@ -69,8 +78,10 @@
                 :title="tReview('numberOfRoomsForRent')"
                 :content="formState.propertyDetails.numberOfRoomsForRent.toString() || '-'"
               />
-            </div>
-            <div class="flex flex-row justify-between w-full desktop:mb-[24px] mobile:flex-col">
+              <BcrosFormSectionReviewItem
+                :title="tReview('propertyType')"
+                :content="formState.propertyDetails.propertyType ?? '-'"
+              />
               <BcrosFormSectionReviewItem :title="tReview('address')">
                 <p>{{ formState.propertyDetails.address }}</p>
                 <p v-if="formState.propertyDetails.addressLineTwo">
@@ -90,37 +101,27 @@
                   }}
                 </p>
               </BcrosFormSectionReviewItem>
-              <BcrosFormSectionReviewItem
-                v-if="formState.propertyDetails.businessLicenseExpiryDate"
-                :title="tReview('businessLicenseExpiryDate')"
-                :content="convertDateToLongFormat(formState.propertyDetails.businessLicenseExpiryDate)"
-              />
-              <BcrosFormSectionReviewItem
-                :title="tReview('propertyType')"
-                :content="formState.propertyDetails.propertyType ?? '-'"
-              />
-              <div v-if="!formState.propertyDetails.businessLicenseExpiryDate" class="flex-1" />
-            </div>
-            <div
-              v-if="
-                formState.propertyDetails.listingDetails.length > 0
-                  && formState.propertyDetails.listingDetails[0].url !== ''
-              "
-            >
-              <BcrosFormSectionReviewItem
-                :title="tReview('listing')"
+              <div
+                v-if="
+                  formState.propertyDetails.listingDetails.length > 0
+                    && formState.propertyDetails.listingDetails[0].url !== ''
+                "
               >
-                <a
-                  v-for="listing in formState.propertyDetails.listingDetails"
-                  :key="listing.url"
-                  :href="listing.url"
-                  target="_blank"
-                  class="my-[4px]"
-                  rel="noopener"
+                <BcrosFormSectionReviewItem
+                  :title="tReview('listing')"
                 >
-                  {{ listing.url }}
-                </a>
-              </BcrosFormSectionReviewItem>
+                  <a
+                    v-for="listing in formState.propertyDetails.listingDetails"
+                    :key="listing.url"
+                    :href="listing.url"
+                    target="_blank"
+                    class="my-[4px]"
+                    rel="noopener"
+                  >
+                    {{ listing.url }}
+                  </a>
+                </BcrosFormSectionReviewItem>
+              </div>
             </div>
           </div>
           <div class="mt-[48px]">

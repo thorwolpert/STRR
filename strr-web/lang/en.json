@@ -164,7 +164,8 @@
     "hostResidence": "Host Residence",
     "SAME_UNIT":"The host lives in this unit when it's not being rented",
     "ANOTHER_UNIT":"The host lives in another unit on the same property",
-    "numberOfRoomsForRent":"Number of Rooms for Rent"
+    "numberOfRoomsForRent":"Number of Rooms for Rent",
+    "parcelIdentifier": "Parcel Identifier",
   },
   "banner": {
     "SUBMIT_PAYMENT": "Submit Payment",
@@ -365,13 +366,15 @@
       "own": "Own",
       "coOwn": "Co-own",
       "isUnitOnPrincipalResidenceProperty": "Is the rental unit on the same property as the principal residence?",
+      "isUnitOnPrincipalResidencePropertyRequired": "This field is required.",
       "yes": "Yes",
       "no": "No",
       "hostResidence": "Where does the property host live on the property?",
       "numberOfRoomsForRent": "Number of Rooms for Rent",
       "numberOfRoomsForRentHelp": "Enter the number of rooms available for rent in this unit.",
       "principalResidenceRequired": "Please select if the rental unit is on the same property as the principal residence.",
-      "numberOfRoomsForRentRequired": "Please specify the number of rooms available for rent."
+      "numberOfRoomsForRentRequired": "Please specify the number of rooms available for rent.",
+      "numberOfRoomsForRentMaxExceeded": "The maximum allowed number of rooms for rent is 5000."
     },
     "principalResidence": {
       "property": "Property",
@@ -436,6 +439,7 @@
       "contactDetails": "Contact Details",
       "mailingAddress": "Mailing Address",
       "nickname": "Nickname",
+      "parcelIdentifier": "Parcel Identifier",
       "businessLicense": "Business License",
       "businessLicenseExpiryDate": "Business License Expiry Date",
       "address": "Address",
