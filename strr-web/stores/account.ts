@@ -158,6 +158,10 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
       // if a current account id is provided, switch to that account
       if (currentAccountId) {
         switchCurrentAccount(currentAccountId)
+      } else if (sessionStorage.getItem(SessionStorageKeyE.CURRENT_ACCOUNT)) {
+        // otherwise get account from session storage (to prevent account select showing again)
+        const account = sessionStorage.getItem(SessionStorageKeyE.CURRENT_ACCOUNT)
+        currentAccount.value = JSON.parse(account || '{}')
       }
     }
   }

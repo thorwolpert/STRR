@@ -10,7 +10,7 @@ export const useBcrosAuth = () => {
     useBcrosNavigate()
   const { checkTermsOfService } = useTermsOfService()
 
-  const { currentAccount, userOrgs } = storeToRefs(account)
+  const { currentAccount, userOrgs, userAccounts } = storeToRefs(account)
 
   /** redirect to the correct creation screen based on auth state */
   function createAccount () {
@@ -65,8 +65,8 @@ export const useBcrosAuth = () => {
           // verify account status
           verifyAccountStatus()
 
-          // do not show Terms for IDIR users
-          if (keycloak.kcUser.loginSource !== 'IDIR') {
+          // do not show Terms for IDIR users (Examiners)
+          if (!keycloak.isExaminer) {
             const isToSAccepted = await checkTermsOfService()
             // if Terms not accepted - redirect TOS page
             if (!isToSAccepted) {
@@ -76,9 +76,13 @@ export const useBcrosAuth = () => {
           }
 
           // if user has not picked an account - go to Account Select
-          if (isEmpty(currentAccount.value) && userOrgs.value.length > 0) {
+          // Examiners will skip the account select page
+          if (isEmpty(currentAccount.value) && userOrgs.value.length > 0 && !keycloak.isExaminer) {
             goToAccountSelect()
             return
+          } else if (keycloak.isExaminer && userOrgs.value.length === 1) {
+            currentAccount.value = userAccounts.value[0]
+            sessionStorage.setItem(SessionStorageKeyE.CURRENT_ACCOUNT, JSON.stringify(userAccounts.value[0]))
           }
 
           // if user has no accounts - go to account finalization page

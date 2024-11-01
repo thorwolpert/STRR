@@ -5,7 +5,6 @@ const { isExaminer } = storeToRefs(useBcrosKeycloak())
 const redirectUrl = isExaminer.value ? RouteNamesE.REGISTRY_DASHBOARD : RouteNamesE.APPLICATION_STATUS
 
 // redirect to Host or Examiner Dashboard
-// useRouter().replace(redirectUrl)
 navigateTo({ path: '/' + redirectUrl })
 
 </script>
