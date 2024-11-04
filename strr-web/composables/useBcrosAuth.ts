@@ -54,7 +54,6 @@ export const useBcrosAuth = () => {
           // set user and account info
           console.info('Setting user account information...')
           const accountInfoPromise = account.setAccountInfo(currentAccountId)
-          console.info('Setting user name...')
           const userNamePromise = account.setUserName()
 
           // Wait for all promises to resolve

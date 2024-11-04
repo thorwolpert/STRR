@@ -33,7 +33,7 @@
           <div class="mb-[16px] text-[14px] leading-[22px]">
             {{ userFullName }}
           </div>
-          <div ref="testRef" class="mb-[16px] text-[14px] leading-[22px]">
+          <div class="mb-[16px] text-[14px] leading-[22px]">
             {{ t('createAccount.contact.disclaimer') }}
           </div>
         </BcrosFormSection>
