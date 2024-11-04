@@ -127,14 +127,18 @@
             />
             <BcrosFormSectionReviewItem :title="tApplicationDetails('listingLink')">
               <a
-                :href="applicationDetails?.listingDetails[0].url"
+                v-if="applicationDetails?.listingDetails[0]?.url"
+                :href="applicationDetails?.listingDetails[0]?.url"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-ellipsis overflow-hidden break-words"
                 data-test-id="platform-url-1"
               >
-                {{ applicationDetails?.listingDetails[0].url }}
+                {{ applicationDetails?.listingDetails[0]?.url }}
               </a>
+              <div v-else>
+                -
+              </div>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem
               v-if="applicationDetails?.unitDetails.businessLicenseExpiryDate"
