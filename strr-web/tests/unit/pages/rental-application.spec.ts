@@ -1,6 +1,7 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { set } from 'lodash'
 import {
+  BcrosFormSectionBusinessDetails,
   BcrosFormSectionContactInformationForm,
   BcrosFormSectionPropertyManagerForm,
   BcrosFormSectionReviewForm,
@@ -12,7 +13,7 @@ import H1 from '~/components/bcros/typography/H1.vue'
 import H2 from '~/components/bcros/typography/H2.vue'
 import InfoModal from '~/components/common/InfoModal.vue'
 import FeeWidget from '~/components/FeeWidget.vue'
-import { mockPrimaryContact } from '~/tests/mocks/mockApplication'
+import { mockPrimaryContact, mockPrimaryContactBusinessType } from '~/tests/mocks/mockApplication'
 import { mockPropertyManager } from '~/tests/mocks/mockPropertyManager'
 
 const { t } = useTranslation()
@@ -67,6 +68,29 @@ describe('Rental Application', () => {
 
     const rentalUnitReview = reviewForm.findTestId('rental-unit-review')
     expect(rentalUnitReview.exists()).toBe(true)
+  })
+
+  it('Step 2 - Host Information - should render Individual or Business Host type', async () => {
+    wrapper = await mountSuspended(CreateApplication)
+    await goToStep(2)
+
+    const hostContactTypeRadio = wrapper.findTestId('host-contact-type-radio')
+    expect(hostContactTypeRadio.exists()).toBe(true)
+
+    // Business Details should not exists because default is Individual
+    expect(wrapper.findTestId('host-type-business').exists()).toBe(false)
+
+    // select a Business type radio button
+    hostContactTypeRadio.findAll('input[type="radio"]')[1].setValue(true)
+    await nextTick()
+
+    // Business Details should now exists
+    expect(wrapper.findTestId('host-type-business').exists()).toBe(true)
+    expect(wrapper.findComponent(BcrosFormSectionBusinessDetails).exists()).toBe(true)
+
+    // reset Host Contact type
+    hostContactTypeRadio.findAll('input[type="radio"]')[0].setValue(true)
+    await nextTick()
   })
 
   it('Review Step - should render Property Manager Information section', async () => {
@@ -137,7 +161,7 @@ describe('Rental Application', () => {
   // Utility function to filter only string values from an object
   const filterValues = (obj: any) => Object.values(obj).filter(val => typeof val === 'string')
 
-  it('Review Step - should render Primary Contact Information section', async () => {
+  it('Review Step - should render Primary Contact Information (Host) section', async () => {
     wrapper = await mountSuspended(CreateApplication)
     await goToStep(5)
 
@@ -145,25 +169,49 @@ describe('Rental Application', () => {
     expect(primaryContactReview.exists()).toBe(true)
 
     // Check number of fields displayed in primary contact section
-    const primaryContactFields = primaryContactReview.findAll('[data-test-id=form-item]')
-    expect(primaryContactFields).toHaveLength(9)
+    expect(primaryContactReview.findAll('[data-test-id=form-item]')).toHaveLength(10)
 
-    // Update Property Manager state with mock data
+    // Update Primary Contact (Host) state with mock data
     formState.primaryContact = mockPrimaryContact
     await nextTick()
 
-    // update Country from CA to Canada
-    const updatedPrimaryContact = set({ ...mockPrimaryContact }, 'country', 'Canada')
+    // remove business related fields for Individual Host Type
+    const updatedPrimaryContact = {
+      ...mockPrimaryContact,
+      contactType: 'Individual',
+      businessLegalName: '',
+      businessNumber: '',
+      country: 'Canada' // update Country from CA to Canada (as it displays full names in Review)
+    }
 
     // Construct list of expected values by filtering only string values
-    const expectedValues = filterValues(updatedPrimaryContact)
+    const expectedValuesIndividual = Object.values(updatedPrimaryContact)
+    // const expectedValuesIndividual = omit(filterValues(updatedPrimaryContact), 'businessLegalName', 'businessNumber')
 
     // Extract text from the rendered Primary Contact section
     const primaryContactReviewText = primaryContactReview.text()
 
     // Verify that each expected value appears in the rendered text
-    expectedValues.forEach((value) => {
+    expectedValuesIndividual.forEach((value) => {
       expect(primaryContactReviewText).toContain(value)
+    })
+
+    // change contact type from default Individual to Business type
+    formState.primaryContact = mockPrimaryContactBusinessType
+    await nextTick()
+
+    expect(primaryContactReview.findAll('[data-test-id=form-item]')).toHaveLength(9)
+
+    const expectedValuesBusiness = filterValues({
+      ...mockPrimaryContactBusinessType,
+      country: 'Canada',
+      contactType: 'Business'
+    })
+
+    const primaryContactReviewTextBusiness = primaryContactReview.text()
+
+    expectedValuesBusiness.forEach((value: string) => {
+      expect(primaryContactReviewTextBusiness).toContain(value)
     })
   })
 

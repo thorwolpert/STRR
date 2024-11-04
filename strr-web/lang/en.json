@@ -15,7 +15,7 @@
       "businessLegalName": "Business Legal Name",
       "businessLegalNameOptional" : "Business Legal Name (Optional)",
       "craBusinessNumber": "CRA Business Number",
-      "craBusinessNumberOptional" : "Canada Revenue Agency Business Number (Optional)",
+      "craBusinessNumberOptional" : "Canada Revenue Agency Business Number (Optional)"
     },
     "loadingState": "Loading, please wait...",
     "phoneExt": "Ext."

@@ -2,6 +2,11 @@ import { mockPropertyManager } from './mockPropertyManager'
 import { ExaminerActionsE } from '~/enums/host-examiner-actions-e'
 
 export const mockPrimaryContact: PrimaryContactInformationI = {
+  firstName: 'John',
+  middleName: 'Michael',
+  lastName: 'Doe',
+  businessLegalName: 'ABC Rentals Inc.',
+  contactType: HostContactTypeE.INDIVIDUAL,
   preferredName: 'John Doe',
   phoneNumber: '123-456-7890',
   extension: '7653',
@@ -18,6 +23,30 @@ export const mockPrimaryContact: PrimaryContactInformationI = {
   birthYear: '1980',
   businessNumber: '987654321',
   socialInsuranceNumber: '123 456 789'
+}
+
+export const mockPrimaryContactBusinessType: PrimaryContactInformationI = {
+  firstName: 'John',
+  middleName: 'Michael',
+  lastName: 'Doe',
+  businessLegalName: 'ABC Rentals Inc.',
+  contactType: HostContactTypeE.BUSINESS,
+  preferredName: 'John Doe',
+  phoneNumber: '123-456-7890',
+  extension: '7653',
+  faxNumber: '123-456-7891',
+  emailAddress: 'john.doe@example.com',
+  address: '123 Main St',
+  country: 'CA',
+  addressLineTwo: 'Apt 4B',
+  city: 'Victoria',
+  province: 'BC',
+  postalCode: 'V4V 1A1',
+  businessNumber: '987654321',
+  socialInsuranceNumber: '',
+  birthDay: '',
+  birthMonth: '',
+  birthYear: ''
 }
 
 export const mockApplicationDetails: HostApplicationDetailsI = {
@@ -65,7 +94,11 @@ export const mockApplicationDetails: HostApplicationDetailsI = {
   },
   unitDetails: {
     ownershipType: 'OWN',
-    propertyType: 'SECONDARY'
+    propertyType: 'SECONDARY',
+    rentalUnitSpaceType: '',
+    isUnitOnPrincipalResidenceProperty: false,
+    hostResidence: undefined,
+    numberOfRoomsForRent: 0
   },
   registrationType: RegistrationTypeE.HOST,
   propertyManager: mockPropertyManager
