@@ -125,7 +125,7 @@ const updateFees = async () => {
 }
 
 const { t } = useTranslation()
-const { userFullName, userFirstName, userLastName, me } = useBcrosAccount()
+const { userFullName, me } = useBcrosAccount()
 
 const { createApplication } = useApplications()
 const submitInProgress = ref(false)
@@ -179,8 +179,6 @@ const submit = async () => {
     submitInProgress.value = true
     try {
       await createApplication(
-        userFirstName,
-        userLastName,
         hasSecondaryContact.value,
         propertyToApiType(formState.propertyDetails.propertyType),
         ownershipToApiType(formState.propertyDetails.ownershipType),

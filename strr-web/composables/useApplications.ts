@@ -11,8 +11,6 @@ export const useApplications = () => {
    * Create a new STR Application and redirect user to the payment page.
    */
   const createApplication = async (
-    userFirstName: string,
-    userLastName: string,
     hasSecondaryContact: boolean,
     propertyType: string,
     ownershipType: string,
@@ -24,8 +22,6 @@ export const useApplications = () => {
   ) => {
     const submitApplicationPayload: CreateAccountFormAPII = formStateToApi(
       formState,
-      userFirstName,
-      userLastName,
       hasSecondaryContact,
       propertyType,
       ownershipType,

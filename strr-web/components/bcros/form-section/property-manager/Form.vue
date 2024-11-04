@@ -37,7 +37,7 @@
             </p>
           </div>
           <UForm ref="form" :schema="propertyManagerSchema" :state="formState.propertyManager">
-            <BcrosFormSectionPropertyManagerBusinessDetails
+            <BcrosFormSectionBusinessDetails
               v-model:business-name="formState.propertyManager.businessLegalName"
               v-model:business-number="formState.propertyManager.businessNumber"
               :errors="errorRefs"
@@ -58,7 +58,7 @@
               @reset-field-error="resetFieldError"
               @validate-field="validateField"
             />
-            <BcrosFormSectionPropertyManagerContactName
+            <BcrosFormSectionContactName
               v-model:preferred-name="formState.propertyManager.contact.preferredName"
               v-model:first-name="formState.propertyManager.contact.firstName"
               v-model:last-name="formState.propertyManager.contact.lastName"

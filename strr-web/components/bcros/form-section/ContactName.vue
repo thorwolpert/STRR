@@ -1,44 +1,48 @@
 <template>
-  <div data-test-id="property-manager-contact-name" class="with-divider">
-    <BcrosFormSection :title="t('createAccount.propertyManagerForm.contactName')">
-      <div class="flex flex-row justify-between w-full mb-[40px] mobile:flex-col mobile:mb-[16px]">
-        <UFormGroup name="firstName" class="d:pr-[16px] flex-grow mobile:mb-[16px]" :error="errors.firstName">
+  <div data-test-id="contact-name" class="with-divider">
+    <BcrosFormSection :title="t('common.formLabels.contactName')">
+      <div class="flex flex-row justify-between w-full mb-10 m:flex-col m:mb-4">
+        <UFormGroup
+          name="firstName"
+          class="d:pr-4 flex-grow m:mb-4"
+          :error="errors.firstName"
+        >
           <UInput
             v-model="firstName"
-            :placeholder="t('createAccount.propertyManagerForm.firstName')"
-            data-test-id="property-manager-first-name-input"
+            :placeholder="t('createAccount.contactForm.firstName')"
+            data-test-id="contact-first-name-input"
             @input="emit('resetFieldError', 'firstName')"
             @blur="emit('validateField', 'firstName')"
             @change="emit('validateField', 'firstName')"
           />
         </UFormGroup>
-        <UFormGroup name="middleName" class="d:pr-[16px] flex-grow mobile:mb-[16px]" :error="errors.middleName">
+        <UFormGroup name="middleName" class="d:pr-4 flex-grow m:mb-4" :error="errors.middleName">
           <UInput
             v-model="middleName"
-            :placeholder="t('createAccount.propertyManagerForm.middleName')"
-            data-test-id="property-manager-middle-name-input"
+            :placeholder="t('createAccount.contactForm.middleName')"
+            data-test-id="contact-middle-name-input"
             @input="emit('resetFieldError', 'middleName')"
             @blur="emit('validateField', 'middleName')"
             @change="emit('validateField', 'middleName')"
           />
         </UFormGroup>
-        <UFormGroup name="lastName" class="flex-grow mobile:mb-[16px]" :error="errors.lastName">
+        <UFormGroup name="lastName" class="flex-grow m:mb-4" :error="errors.lastName">
           <UInput
             v-model="lastName"
-            :placeholder="t('createAccount.propertyManagerForm.lastName')"
-            data-test-id="property-manager-last-name-input"
+            :placeholder="t('createAccount.contactForm.lastName')"
+            data-test-id="contact-last-name-input"
             @input="emit('resetFieldError', 'lastName')"
             @blur="emit('validateField', 'lastName')"
             @change="emit('validateField', 'lastName')"
           />
         </UFormGroup>
       </div>
-      <div class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]">
+      <div class="flex flex-row justify-between w-full mb-10 m:mb-4">
         <UFormGroup name="preferredName" class=" flex-grow" :error="errors.preferredName">
           <UInput
             v-model="preferredName"
             type="name"
-            :placeholder="t('createAccount.propertyManagerForm.preferredName')"
+            :placeholder="t('createAccount.contactForm.preferredName')"
             data-test-id="property-manager-preferred-name-input"
             @input="emit('resetFieldError', 'preferredName')"
             @blur="emit('validateField', 'preferredName')"
@@ -57,12 +61,14 @@ const preferredName = defineModel<string>('preferredName')
 const firstName = defineModel<string>('firstName')
 const middleName = defineModel<string>('middleName')
 const lastName = defineModel<string>('lastName')
-const emit = defineEmits<{
-    validateField: [field: string]
-    resetFieldError: [field: string]
-}>()
 
 const { errors = {} } = defineProps<{
   errors: Record<string, string>
 }>()
+
+const emit = defineEmits<{
+  validateField: [field: string]
+  resetFieldError: [field: keyof typeof errors]
+}>()
+
 </script>

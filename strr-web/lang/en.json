@@ -8,6 +8,15 @@
     "baseModal": {
       "closeButtonLabel": "Close"
     },
+    "formLabels": {
+      "hostType": "Host Type",
+      "contactName": "Contact Name",
+      "businessDetails": "Business Details",
+      "businessLegalName": "Business Legal Name",
+      "businessLegalNameOptional" : "Business Legal Name (Optional)",
+      "craBusinessNumber": "CRA Business Number",
+      "craBusinessNumberOptional" : "Canada Revenue Agency Business Number (Optional)",
+    },
     "loadingState": "Loading, please wait...",
     "phoneExt": "Ext."
   },
@@ -264,9 +273,6 @@
       "noOption": "No"
     },
     "propertyManagerForm": {
-      "businessDetails": "Business Details",
-      "businessName" : "Business Legal Name (Optional)",
-      "businessNumber" : "Canada Revenue Agency Business Number (Optional)",
       "businessMailingAddress": "Business Mailing Address",
       "country": "Country",
       "address": "Address",
@@ -279,7 +285,6 @@
       "firstName": "First Name",
       "lastName": "Last Name",
       "middleName": "Middle Name (Optional)",
-      "preferredName": "Preferred Name (Optional)",
       "phoneNumber": "Phone Number",
       "extension":"Extension (Optional)",
       "faxNumber":"Fax Number (Optional)",
@@ -288,10 +293,14 @@
       "warning": "Email will be default method of communication. Information sent via email will be considered \"received\" on the third day after the email is sent."
     },
     "contact": {
-      "title": "Step 2 - Contact Information",
-      "subtitle": "Primary Contact Information",
-      "secondaryContactInfo": "Secondary Contact Information",
-      "primary": "Primary Contact Information",
+      "title": "Step 2 - Host Information",
+      "subtitle": "Provide the contact information of the property host.",
+      "primary": "Property Host Information",
+      "secondaryContactInfo": "Co-Host Information",
+      "backupContactInfo": "Back-Up Contact Information",
+      "individualOrBusinessQuestion": "Is the short-term rental unit hosted by an individual or a business?",
+      "individualRadioOption": "Individual (including sole-proprietorships and partnerships)",
+      "businessRadioOption": "Business (including corporations and cooperatives)",
       "disclaimer": "This is your legal name as it appears on your BC Services Card.",
       "yourName": "Your Name",
       "addSecondaryContact": "Add Another Contact",
@@ -303,6 +312,8 @@
       "firstName": "First Name",
       "middleName": "Middle Name",
       "lastName": "Last Name",
+      "hostTypeIndividual": "Individual",
+      "hostTypeBusiness": "Business",
       "faxNumberReview": "Fax Number",
       "preferredName": "Preferred Name (Optional)",
       "phoneNumber": "Phone Number",
@@ -432,8 +443,8 @@
       "rentalUnitInfo": "Rental Unit Information",
       "principal": "Principal Residence",
       "review": "Review and Confirm",
-      "primaryContact": "Primary Contact Information",
-      "secondaryContact": "Secondary Contact Information",
+      "hostInformation": "Host Information",
+      "secondaryContact": "Back-Up Contact Information",
       "contactName": "Contact Name",
       "dob": "Date of Birth",
       "contactDetails": "Contact Details",
