@@ -5,6 +5,7 @@ export const useStrrModals = () => {
   const modal = useModal()
   const { t } = useI18n()
   const connectNav = useConnectNav()
+  const config = useRuntimeConfig().public
 
   function openAppSubmitError (e: any) {
     modal.open(ModalBase, {
@@ -37,6 +38,33 @@ export const useStrrModals = () => {
     })
   }
 
+  function openConfirmDeclineTosModal () {
+    modal.open(ModalBase, {
+      title: t('modal.declineTos.title'),
+      content: t('modal.declineTos.content'),
+      actions: [
+        { label: t('btn.cancel'), variant: 'outline', handler: () => close() },
+        {
+          label: t('modal.declineTos.declineBtn'),
+          handler: () => navigateTo(config.declineTosRedirectUrl as string, { external: true })
+        }
+      ]
+    })
+  }
+
+  function openPatchTosErrorModal () {
+    modal.open(ModalBase, {
+      error: {
+        title: t('error.generic.title'),
+        description: t('error.generic.description'),
+        showContactInfo: true
+      },
+      actions: [
+        { label: t('btn.close'), handler: () => close() }
+      ]
+    })
+  }
+
   function close () {
     modal.close()
   }
@@ -44,6 +72,8 @@ export const useStrrModals = () => {
   return {
     openAppSubmitError,
     openCreateAccountModal,
+    openConfirmDeclineTosModal,
+    openPatchTosErrorModal,
     close
   }
 }
