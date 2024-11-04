@@ -129,6 +129,13 @@ const formState = reactive({
   name: ''
 })
 
+onBeforeMount(() => {
+  const { isExaminer } = storeToRefs(useBcrosKeycloak())
+  if (isExaminer.value) {
+    useBcrosNavigate().goToExaminerDashboard()
+  }
+})
+
 const validateAndSubmit = async () => {
   if (form.value.validate({ silent: true })) {
     const result: SbcCreationResponseE = await createSbcRegistration(formState)
