@@ -329,7 +329,7 @@ export const formState: CreateAccountFormStateI = reactive({
     listingDetails: [{ url: '' }],
     numberOfRoomsForRent: 1,
     rentalUnitSpaceType: '',
-    isUnitOnPrincipalResidenceProperty: undefined,
+    isUnitOnPrincipalResidenceProperty: null,
     hostResidence: undefined
   },
   selectedAccount: {} as OrgI,
