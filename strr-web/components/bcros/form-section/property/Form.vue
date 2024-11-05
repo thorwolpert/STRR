@@ -206,7 +206,7 @@ const principalResidenceOptions = [
 ]
 
 const hostResidenceOptions = [
-  { value: HostResidenceE.SAME_UNIT, label: "The host lives in this unit when it's not being rented" },
+  { value: HostResidenceE.SAME_UNIT, label: 'The host lives in this unit' },
   { value: HostResidenceE.ANOTHER_UNIT, label: 'The host lives in another unit on the same property' }
 ]
 
@@ -273,10 +273,17 @@ const validateHostResidence = () => {
 }
 
 const validateNumberOfRoomsForRent = () => {
-  if (formState.propertyDetails?.numberOfRoomsForRent < 1) {
+  let value = formState.propertyDetails?.numberOfRoomsForRent
+
+  if (!Number.isInteger(Number(value))) {
+    value = Math.floor(Number(value))
+    formState.propertyDetails.numberOfRoomsForRent = value
+  }
+
+  if (value < 1) {
     numberOfRoomsForRentError.value = t('createAccount.propertyForm.numberOfRoomsForRentRequired')
-  } else if (formState.propertyDetails?.numberOfRoomsForRent > 5000) {
-    numberOfRoomsForRentError.value = t('createAccount.propertyForm.numberOfRoomsForRentMaxExceeded', { max: 5000 })
+  } else if (value > 5000) {
+    numberOfRoomsForRentError.value = t('createAccount.propertyForm.numberOfRoomsForRentMaxExceeded')
   } else {
     numberOfRoomsForRentError.value = ''
   }
