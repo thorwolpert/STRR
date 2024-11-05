@@ -224,6 +224,6 @@ describe('Rental Application', () => {
 
     // check number of fields displayed in rental unit section
     const rentalUnitReviewFields = rentalUnitReview.findAll("[data-test-id='form-item']")
-    expect(rentalUnitReviewFields.length).toBe(9)
+    expect(rentalUnitReviewFields.length).toBe(10)
   })
 })

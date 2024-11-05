@@ -173,7 +173,7 @@
     "hostResidence": "Host Residence",
     "SAME_UNIT": "The host lives in this unit",
     "ANOTHER_UNIT": "The host lives in another unit on the same property",
-    "numberOfRoomsForRent": "Number of Rooms for Rent",
+    "numberOfRoomsForRent": "Number of Rooms",
     "parcelIdentifier": "Parcel Identifier"
   },
   "banner": {
