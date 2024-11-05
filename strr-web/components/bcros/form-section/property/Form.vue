@@ -247,8 +247,8 @@ const validatePrincipalResidenceOptions = () => {
 
 const validateHostResidence = () => {
   hostResidenceError.value =
-    formState.propertyDetails.isUnitOnPrincipalResidenceProperty && !formState.propertyDetails.hostResidence
-      ? 'Please specify where the host lives on the property.'
+    (formState.propertyDetails.isUnitOnPrincipalResidenceProperty && !formState.propertyDetails.hostResidence)
+      ? t('createAccount.propertyForm.hostResidenceRequiredError')
       : ''
 }
 

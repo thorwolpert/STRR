@@ -66,7 +66,8 @@
               <BcrosFormSectionReviewItem
                 :title="tReview('isUnitOnPrincipalResidenceProperty')"
                 :content="
-                  tReview(formState.propertyDetails.isUnitOnPrincipalResidenceProperty ? 'true' : 'false') || '-'
+                  formState.propertyDetails.isUnitOnPrincipalResidenceProperty !== null
+                    ? tReview(String(formState.propertyDetails.isUnitOnPrincipalResidenceProperty)) : '-'
                 "
               />
               <BcrosFormSectionReviewItem

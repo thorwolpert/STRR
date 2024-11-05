@@ -43,7 +43,7 @@
           <USelect
             v-model="hostResidenceComputed"
             :placeholder="t('createAccount.propertyForm.hostResidence')"
-            :options="isEntireHome ? hostResidenceOptions2 : hostResidenceOptions"
+            :options="hostResidenceOptions"
             class="w-full"
             style="color: #1a202c; /* text-gray-900 */"
             @change="emit('validateHostResidence')"
@@ -221,15 +221,15 @@ const rentalUnitSpaceTypeOptions = [
   { value: RentalUnitSpaceTypeE.SHARED_ACCOMMODATION, label: t('createAccount.propertyForm.sharedAccommodation') }
 ]
 
-const hostResidenceOptions = [
-  { value: HostResidenceE.SAME_UNIT, label: "The host lives in this unit when it's not being rented" },
-  { value: HostResidenceE.ANOTHER_UNIT, label: 'The host lives in another unit on the same property' }
-]
-
-const hostResidenceOptions2 = [
-  { value: HostResidenceE.SAME_UNIT, label: 'The host lives in this unit' },
-  { value: HostResidenceE.ANOTHER_UNIT, label: 'The host lives in another unit on the same property' }
-]
+const hostResidenceOptions = computed(() => [
+  {
+    value: HostResidenceE.SAME_UNIT,
+    label: rentalUnitSpaceType.value === RentalUnitSpaceTypeE.ENTIRE_HOME
+      ? t('createAccount.propertyForm.sameUnitAltOption')
+      : t('createAccount.propertyForm.sameUnitOption')
+  },
+  { value: HostResidenceE.ANOTHER_UNIT, label: t('createAccount.propertyForm.anotherUnitOption') }
+])
 
 const decrementRooms = () => {
   if (formState.propertyDetails.numberOfRoomsForRent > 1) {
@@ -242,10 +242,6 @@ const incrementRooms = () => {
     formState.propertyDetails.numberOfRoomsForRent++
   }
 }
-
-const isEntireHome = computed((): boolean =>
-  rentalUnitSpaceType.value === RentalUnitSpaceTypeE.ENTIRE_HOME
-)
 
 const hostResidenceComputed = computed({
   get: () => formState.propertyDetails.hostResidence ?? '', // Ensure string return
