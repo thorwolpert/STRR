@@ -19,9 +19,6 @@
           v-model:number-of-rooms-for-rent="formState.propertyDetails.numberOfRoomsForRent"
           :property-types="propertyTypes"
           :ownership-types="ownershipTypes"
-          :rental-unit-space-type-options="rentalUnitSpaceTypeOptions"
-          :principal-residence-options="principalResidenceOptions"
-          :host-residence-options="hostResidenceOptions"
           :ownership-type-error="ownershipTypeError"
           :property-type-error="propertyTypeError"
           :rental-unit-space-type-error="rentalUnitSpaceTypeError"
@@ -64,8 +61,6 @@
 
 <script setup lang="ts">
 import { sanitizeUrl } from '@braintree/sanitize-url'
-import { HostResidenceE } from '~/enums/host-residence-e'
-import { RentalUnitSpaceTypeE } from '~/enums/rental-unit-space-type-e'
 
 const { isComplete } = defineProps<{
   isComplete: boolean
@@ -193,21 +188,6 @@ const ownershipTypes: string[] = [
   t('createAccount.propertyForm.rent'),
   t('createAccount.propertyForm.own'),
   t('createAccount.propertyForm.coOwn')
-]
-
-const rentalUnitSpaceTypeOptions = [
-  { value: RentalUnitSpaceTypeE.ENTIRE_HOME, label: t('createAccount.propertyForm.entireHome') },
-  { value: RentalUnitSpaceTypeE.SHARED_ACCOMMODATION, label: t('createAccount.propertyForm.sharedAccommodation') }
-]
-
-const principalResidenceOptions = [
-  { value: true, label: t('createAccount.propertyForm.yes') },
-  { value: false, label: t('createAccount.propertyForm.no') }
-]
-
-const hostResidenceOptions = [
-  { value: HostResidenceE.SAME_UNIT, label: 'The host lives in this unit' },
-  { value: HostResidenceE.ANOTHER_UNIT, label: 'The host lives in another unit on the same property' }
 ]
 
 const propertyTypeError = ref('')

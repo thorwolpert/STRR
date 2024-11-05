@@ -176,7 +176,7 @@ export interface CreateAccountFormStateI {
     listingDetails: { url: string }[]
     rentalUnitSpaceType: string
     isUnitOnPrincipalResidenceProperty: boolean | undefined
-    hostResidence: string | undefined
+    hostResidence: string | null
     numberOfRoomsForRent: number
   }
   selectedAccount: OrgI
