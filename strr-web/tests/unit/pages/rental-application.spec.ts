@@ -169,7 +169,7 @@ describe('Rental Application', () => {
     expect(primaryContactReview.exists()).toBe(true)
 
     // Check number of fields displayed in primary contact section
-    expect(primaryContactReview.findAll('[data-test-id=form-item]')).toHaveLength(10)
+    expect(primaryContactReview.findAll('[data-test-id=form-item]')).toHaveLength(11)
 
     // Update Primary Contact (Host) state with mock data
     formState.primaryContact = mockPrimaryContact

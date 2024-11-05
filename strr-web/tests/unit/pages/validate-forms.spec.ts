@@ -1,25 +1,45 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import Stepper from '~/components/bcros/stepper/Stepper.vue'
 import CreateApplication from '@/pages/create-account.vue'
-import { BcrosFormSectionBusinessDetails, BcrosFormSectionContactName } from '#components'
+import {
+  BcrosFormSectionBusinessDetails,
+  BcrosFormSectionContactDetails,
+  BcrosFormSectionContactName,
+  BcrosFormSectionPropertyManagerBusinessMailingAddress
+} from '#components'
 
 const FIELD_ERROR = '.data-field-error' // css of the field error
 
-// explicitly define which fields are required for Individual Host Type
+// Define required fields for Property Manager
+const PROPERTY_MANAGER_REQUIRED_FIELDS = [
+  'address',
+  'city',
+  'province',
+  'postal code',
+  'first name',
+  'last name',
+  'phone number',
+  'email address'
+]
+
+// Define required fields for Individual Host Type
 const INDIVIDUAL_HOST_REQUIRED_FIELDS = [
   'first name',
   'last name',
   'dob day',
   'dob month',
-  'dob year'
+  'dob year',
+  'phone number',
+  'email'
 ]
 
-// explicitly define which fields are required for Business Host Type
+// Define required fields for Business Host Type
 const BUSINESS_HOST_REQUIRED_FIELDS = [
   'business legal name',
   'first name',
-  'last name'
-]
+  'last name',
+  'phone number',
+  'email']
 
 describe('Rental Application Validations', () => {
   let wrapper: any
@@ -40,10 +60,41 @@ describe('Rental Application Validations', () => {
     await goToStep(5)
   })
 
+  it('should validate Step 1 - Property Manager', async () => {
+    await goToStep(1)
+
+    const propertyManagerForm = wrapper.findTestId('property-manager-form')
+
+    expect(propertyManagerForm.findAll(FIELD_ERROR)).toHaveLength(PROPERTY_MANAGER_REQUIRED_FIELDS.length)
+
+    // business mailing address
+    expect(propertyManagerForm.findComponent(BcrosFormSectionPropertyManagerBusinessMailingAddress).exists()).toBe(true)
+    wrapper.findTestId('property-manager-address-input').setValue('123 Main St')
+    wrapper.findTestId('property-manager-city-input').setValue('Vancouver')
+    wrapper.findTestId('property-manager-province-select').setValue({ value: 'BC', name: 'British Columbia' })
+    wrapper.findTestId('property-manager-postal-code-input').setValue('V6A1A1')
+
+    // contact name
+    expect(propertyManagerForm.findComponent(BcrosFormSectionContactName).exists()).toBe(true)
+    wrapper.findTestId('contact-first-name-input').setValue('John')
+    wrapper.findTestId('contact-last-name-input').setValue('Doe')
+
+    // contact details
+    expect(propertyManagerForm.findComponent(BcrosFormSectionContactDetails).exists()).toBe(true)
+    wrapper.findTestId('phone-number').setValue('123-456-7890')
+    wrapper.findTestId('email-address').setValue('abc@abc.com')
+
+    // await for validations to complete
+    await nextTick()
+
+    // there should be no errors after all required fields populated
+    expect(wrapper.findTestId('property-manager-form').findAll(FIELD_ERROR)).toHaveLength(0)
+  })
+
   it('should validate Step 2 - Host Information', async () => {
     await goToStep(2)
 
-    const hostInformation = wrapper.findTestId('host-information')
+    const hostInformation = wrapper.findTestId('host-information-form')
 
     expect(hostInformation.findAll(FIELD_ERROR)).toHaveLength(INDIVIDUAL_HOST_REQUIRED_FIELDS.length)
 
@@ -63,16 +114,18 @@ describe('Rental Application Validations', () => {
     expect(hostInformation.findAll(FIELD_ERROR)).toHaveLength(BUSINESS_HOST_REQUIRED_FIELDS.length)
 
     // populate fields to trigger validations and reset errors
-    wrapper.findTestId('business-legal-name-input').setValue('abc')
-    wrapper.findTestId('business-legal-name-input').setValue('abc')
+    wrapper.findTestId('business-legal-name-input').setValue('Acme Corporation')
 
-    wrapper.findTestId('contact-first-name-input').setValue('abc')
-    wrapper.findTestId('contact-last-name-input').setValue('abc')
+    wrapper.findTestId('contact-first-name-input').setValue('John')
+    wrapper.findTestId('contact-last-name-input').setValue('Doe')
+
+    wrapper.findTestId('phone-number').setValue('1234567890')
+    wrapper.findTestId('email-address').setValue('john.doe@example.com')
 
     // await for validations to complete
     await nextTick()
 
     // there should be no errors after all required fields populated
-    expect(wrapper.findTestId('host-information').findAll(FIELD_ERROR)).toHaveLength(0)
+    expect(wrapper.findTestId('host-information-form').findAll(FIELD_ERROR)).toHaveLength(0)
   })
 })

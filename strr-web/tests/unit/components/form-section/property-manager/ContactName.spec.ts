@@ -17,7 +17,7 @@ it('can mount Contact Name component', async () => {
       }
     }
   )
-  expect(wrapper.findTestId('contact-name').exists()).toBe(true)
+  expect(wrapper.findTestId('form-section-contact-name').exists()).toBe(true)
   expect(wrapper.findTestId('contact-first-name-input').exists()).toBe(true)
   expect(wrapper.findTestId('contact-middle-name-input').exists()).toBe(true)
   expect(wrapper.findTestId('contact-last-name-input').exists()).toBe(true)

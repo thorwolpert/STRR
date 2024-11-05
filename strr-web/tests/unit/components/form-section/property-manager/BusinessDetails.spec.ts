@@ -13,7 +13,7 @@ it('can mount Business Details component', async () => {
     {
       global: { plugins: [i18n] }
     })
-  expect(wrapper.findTestId('business-details').exists()).toBe(true)
+  expect(wrapper.findTestId('form-section-business-details').exists()).toBe(true)
   expect(wrapper.findTestId('business-legal-name-input').exists()).toBe(true)
   expect(wrapper.findTestId('cra-business-number-input').exists()).toBe(true)
 })
