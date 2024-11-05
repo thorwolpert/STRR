@@ -284,16 +284,13 @@ watch(secondaryContactForm, () => {
 })
 
 watch(isHostIndividual, () => {
-  if (isHostIndividual.value) {
-    // clean up fields when Individual Type checked
-    formState.primaryContact.businessLegalName = ''
-    formState.primaryContact.businessNumber = ''
-  } else if (isComplete) {
+  if (isComplete) {
     const parsed = primaryContactSchema.safeParse(formState.primaryContact).error?.errors
     parsed?.forEach((error: any) => {
       primaryContactErrors[error.path[0]] = error.message
     })
   }
+  validateField('businessLegalName')
 })
 
 watch(canadaPostAddress, (newAddress) => {
