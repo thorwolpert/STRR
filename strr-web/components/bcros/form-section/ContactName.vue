@@ -1,6 +1,12 @@
 <template>
-  <div data-test-id="contact-name" class="with-divider">
+  <div data-test-id="form-section-contact-name">
     <BcrosFormSection :title="t('common.formLabels.contactName')">
+      <p
+        v-if="contactInfoDescription"
+        class="mb-10 text-sm text-bcGovColor-darkGray"
+      >
+        {{ contactInfoDescription }}
+      </p>
       <div class="flex flex-row justify-between w-full mb-10 m:flex-col m:mb-4">
         <UFormGroup
           name="firstName"
@@ -63,6 +69,7 @@ const middleName = defineModel<string>('middleName')
 const lastName = defineModel<string>('lastName')
 
 const { errors = {} } = defineProps<{
+  contactInfoDescription?: string,
   errors: Record<string, string>
 }>()
 

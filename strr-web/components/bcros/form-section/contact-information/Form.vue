@@ -1,5 +1,5 @@
 <template>
-  <div data-test-id="host-information" class="relative h-full">
+  <div data-test-id="host-information-form" class="relative h-full">
     <UFormGroup name="hostContactType">
       <URadioGroup
         v-model="formState.primaryContact.contactType"
@@ -60,16 +60,18 @@
         <BcrosFormSectionContactInformationCraInfo
           v-if="isHostIndividual"
           v-model:social-insurance-number="formState.primaryContact.socialInsuranceNumber"
+          v-model:business-legal-name="formState.primaryContact.businessLegalName"
           v-model:business-number="formState.primaryContact.businessNumber"
           is-primary
         />
-        <BcrosFormSectionContactInformationContactDetails
+        <BcrosFormSectionContactDetails
           v-model:phone-number="formState.primaryContact.phoneNumber"
-          v-model:preferred-name="formState.primaryContact.preferredName"
           v-model:extension="formState.primaryContact.extension"
           v-model:fax-number="formState.primaryContact.faxNumber"
           v-model:email-address="formState.primaryContact.emailAddress"
-          is-primary
+          :errors="primaryContactErrors"
+          @reset-field-error="resetFieldError"
+          @validate-field="validateField"
         />
         <BcrosFormSectionContactInformationMailingAddress
           id="primaryContactAddress"
@@ -112,6 +114,16 @@
           />
         </div>
         <UForm ref="secondaryContactForm" :schema="secondaryContactSchema" :state="formState.secondaryContact">
+          <BcrosFormSectionContactName
+            v-model:first-name="formState.secondaryContact.firstName"
+            v-model:middle-name="formState.secondaryContact.middleName"
+            v-model:last-name="formState.secondaryContact.lastName"
+            v-model:preferred-name="formState.secondaryContact.preferredName"
+            :contact-info-description="t('createAccount.contact.backupContactInfoDescription')"
+            :errors="secondaryContactErrors"
+            @reset-field-error="resetFieldErrorSecondary"
+            @validate-field="validateFieldSecondary"
+          />
           <BcrosFormSectionContactInformationContactInfo
             v-model:day="formState.secondaryContact.birthDay"
             v-model:month="formState.secondaryContact.birthMonth"
@@ -123,18 +135,15 @@
           <BcrosFormSectionContactInformationCraInfo
             v-model:social-insurance-number="formState.secondaryContact.socialInsuranceNumber"
             v-model:business-number="formState.secondaryContact.businessNumber"
-            is-primary
           />
-          <BcrosFormSectionContactInformationContactDetails
+          <BcrosFormSectionContactDetails
             v-model:phone-number="formState.secondaryContact.phoneNumber"
-            v-model:preferred-name="formState.secondaryContact.preferredName"
             v-model:extension="formState.secondaryContact.extension"
             v-model:fax-number="formState.secondaryContact.faxNumber"
             v-model:email-address="formState.secondaryContact.emailAddress"
-            v-model:first-name="formState.secondaryContact.firstName"
-            v-model:last-name="formState.secondaryContact.lastName"
-            v-model:middle-name="formState.secondaryContact.middleName"
-            is-primary
+            :errors="secondaryContactErrors"
+            @reset-field-error="resetFieldErrorSecondary"
+            @validate-field="validateFieldSecondary"
           />
           <BcrosFormSectionContactInformationMailingAddress
             id="secondaryContactAddress"

@@ -28,15 +28,15 @@
       <BcrosFormSectionReviewItem :title="tContact('preferred')" :content="state.preferredName || '-'" />
 
       <BcrosFormSectionReviewItem
-        v-if="primary && isHostTypeBusiness"
+        v-if="primary"
         :title="t('common.formLabels.businessLegalName')"
-        :content="(state as PrimaryContactInformationI).businessLegalName"
+        :content="(state as PrimaryContactInformationI).businessLegalName || '-'"
       />
 
       <BcrosFormSectionReviewItem
         v-if="primary"
         :title="t('common.formLabels.craBusinessNumber')"
-        :content="state.businessNumber"
+        :content="state.businessNumber || '-'"
       />
 
       <BcrosFormSectionReviewItem :title="tContact('emailAddress')" :content="state.emailAddress || '-'" />
