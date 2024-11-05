@@ -298,7 +298,6 @@
             <a
               class="mobile:mx-2"
               :href="`/application-details/${applicationNumber}/ltsa`"
-              target="_blank"
               rel="noopener"
               data-test-id="ltsa-details-link"
             >
@@ -312,7 +311,6 @@
             <a
               class="mobile:mx-2"
               :href="`/application-details/${applicationNumber}/auto-approval`"
-              target="_blank"
               rel="noopener"
               data-test-id="auto-approval-details-link"
             >
