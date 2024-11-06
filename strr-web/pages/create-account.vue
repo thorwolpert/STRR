@@ -181,10 +181,7 @@ const submit = async () => {
       await createApplication(
         hasSecondaryContact.value,
         propertyToApiType(formState.propertyDetails.propertyType),
-        ownershipToApiType(formState.propertyDetails.ownershipType),
-        formState.propertyDetails.rentalUnitSpaceType,
-        formState.propertyDetails.isUnitOnPrincipalResidenceProperty || false,
-        formState.propertyDetails.numberOfRoomsForRent
+        ownershipToApiType(formState.propertyDetails.ownershipType)
       )
     } finally {
       submitInProgress.value = false
@@ -234,6 +231,8 @@ watch(formState.propertyDetails, () => {
 })
 
 const validateProofPage = () => {
+  console.log(formState.principal)
+
   if (formState.principal.isPrincipal && formState.principal.declaration && formState.supportingDocuments.length > 0) {
     setStepValid(3, true)
   } else if (
