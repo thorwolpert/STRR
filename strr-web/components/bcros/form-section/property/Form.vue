@@ -233,6 +233,10 @@ watch(
     } else if (newValue === 'false') {
       formState.propertyDetails.isUnitOnPrincipalResidenceProperty = false
     }
+
+    if (isComplete) {
+      validatePrincipalResidenceOptions()
+    }
   }
 )
 

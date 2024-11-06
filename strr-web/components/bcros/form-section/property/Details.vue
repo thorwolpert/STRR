@@ -23,8 +23,6 @@
             v-model="isUnitOnPrincipalResidenceProperty"
             :placeholder="t('createAccount.propertyForm.isUnitOnPrincipalResidenceProperty')"
             :options="principalResidenceOptions"
-            option-attribute="label"
-            opt
             class="w-full"
             style="color: #1a202c; /* text-gray-900 */"
             @blur="emit('validatePrincipalResidenceOptions')"

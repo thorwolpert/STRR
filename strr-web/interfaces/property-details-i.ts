@@ -16,6 +16,6 @@ export interface PropertyDetailsI {
     listingDetails: { url: string }[]
     rentalUnitSpaceType: string
     isUnitOnPrincipalResidenceProperty: boolean | undefined
-    hostResidence: string | null
+    hostResidence: string | undefined
     numberOfRoomsForRent: number
   }
