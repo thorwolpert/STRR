@@ -90,7 +90,7 @@ onMounted(() => {
 })
 
 const { t } = useTranslation()
-const { userFullName, userFirstName, userLastName } = useBcrosAccount()
+const { userFullName } = useBcrosAccount()
 
 const toggleAddSecondary = () => {
   hasSecondaryContact.value = !hasSecondaryContact.value
@@ -128,8 +128,6 @@ const submit = () => {
   headerUpdateKey.value++
   formState.principal.agreeToSubmit
     ? submitCreateAccountForm(
-      userFirstName,
-      userLastName,
       hasSecondaryContact.value,
       propertyToApiType(formState.propertyDetails.propertyType),
       ownershipToApiType(formState.propertyDetails.ownershipType)

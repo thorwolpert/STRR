@@ -14,7 +14,7 @@
         />
         <div class="mt-[48px]">
           <p class="font-bold mb-[24px] mobile:mx-[8px]">
-            {{ tReview('primaryContact') }}
+            {{ tReview('hostInformation') }}
           </p>
           <BcrosFormSectionReviewSubsection
             :state="formState.primaryContact"
@@ -60,7 +60,8 @@
               />
               <BcrosFormSectionReviewItem
                 :title="tReview('rentalUnitSpaceType')"
-                :content="tReview(formState.propertyDetails.rentalUnitSpaceType) || '-'"
+                :content="formState.propertyDetails.rentalUnitSpaceType
+                  ? tReview(formState.propertyDetails.rentalUnitSpaceType) : '-'"
               />
               <BcrosFormSectionReviewItem
                 :title="tReview('isUnitOnPrincipalResidenceProperty')"

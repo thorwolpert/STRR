@@ -7,7 +7,7 @@
             v-model="rentalUnitSpaceType"
             :placeholder="t('createAccount.propertyForm.rentalUnitSpaceType')"
             :options="rentalUnitSpaceTypeOptions"
-            style="color: #1a202c; /* text-gray-900 */ dark:text-white; /* Override with dark mode text color */"
+            style="color: #1a202c; /* text-gray-900 */"
             @blur="emit('validateRentalUnitSpaceType')"
             @change="emit('validateRentalUnitSpaceType')"
           />
@@ -24,7 +24,7 @@
             :placeholder="t('createAccount.propertyForm.isUnitOnPrincipalResidenceProperty')"
             :options="principalResidenceOptions"
             class="w-full"
-            style="color: #1a202c; /* text-gray-900 */ dark:text-white; /* Override with dark mode text color */"
+            style="color: #1a202c; /* text-gray-900 */"
             @blur="emit('validatePrincipalResidenceOptions')"
             @change="emit('validatePrincipalResidenceOptions')"
           />
@@ -43,7 +43,7 @@
             :placeholder="t('createAccount.propertyForm.hostResidence')"
             :options="hostResidenceOptions"
             class="w-full"
-            style="color: #1a202c; /* text-gray-900 */ dark:text-white; /* Override with dark mode text color */"
+            style="color: #1a202c; /* text-gray-900 */"
             @change="emit('validateHostResidence')"
           />
         </UFormGroup>
@@ -88,7 +88,7 @@
             :placeholder="t('createAccount.propertyForm.propertyType')"
             :options="propertyTypes"
             class="w-full"
-            style="color: #1a202c; /* text-gray-900 */ dark:text-white; /* Override with dark mode text color */"
+            style="color: #1a202c; /* text-gray-900 */"
             @blur="emit('validateProperty')"
             @change="emit('validateProperty')"
           />
@@ -101,7 +101,7 @@
             :placeholder="t('createAccount.propertyForm.ownershipType')"
             :options="ownershipTypes"
             class="w-full"
-            style="color: #1a202c; /* text-gray-900 */ dark:text-white; /* Override with dark mode text color */"
+            style="color: #1a202c; /* text-gray-900 */"
             @blur="emit('validateOwnership')"
             @change="emit('validateOwnership')"
           />
