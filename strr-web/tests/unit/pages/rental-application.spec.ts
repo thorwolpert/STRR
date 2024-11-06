@@ -4,6 +4,7 @@ import {
   BcrosFormSectionBusinessDetails,
   BcrosFormSectionContactInformationForm,
   BcrosFormSectionPropertyManagerForm,
+  BcrosFormSectionPropertySummaryView,
   BcrosFormSectionReviewForm,
   BcrosFormSectionReviewSubsection
 } from '#components'
@@ -66,7 +67,7 @@ describe('Rental Application', () => {
     const primaryContactReview = reviewForm.findComponent(BcrosFormSectionReviewSubsection)
     expect(primaryContactReview.exists()).toBe(true)
 
-    const rentalUnitReview = reviewForm.findTestId('rental-unit-review')
+    const rentalUnitReview = reviewForm.findTestId('property-details-review')
     expect(rentalUnitReview.exists()).toBe(true)
   })
 
@@ -146,7 +147,7 @@ describe('Rental Application', () => {
     formState.isPropertyManagerRole = true
     await goToStep(5)
 
-    const rentalUnitReview = wrapper.findTestId('rental-unit-review')
+    const rentalUnitReview = wrapper.findTestId('property-details-review')
     expect(rentalUnitReview.exists()).toBe(true)
     expect(wrapper.findTestId('host-auth-checkbox').exists()).toBe(true)
 
@@ -219,7 +220,8 @@ describe('Rental Application', () => {
     wrapper = await mountSuspended(CreateApplication)
     await goToStep(5)
 
-    const rentalUnitReview = wrapper.findTestId('rental-unit-review')
+    expect(wrapper.findComponent(BcrosFormSectionPropertySummaryView).exists()).toBe(true)
+    const rentalUnitReview = wrapper.findTestId('property-details-review')
     expect(rentalUnitReview.exists()).toBe(true)
 
     // check number of fields displayed in rental unit section
