@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { t } = useI18n()
+const accountStore = useConnectAccountStore()
 
 const { loading, title, subtitles } = storeToRefs(useConnectDetailsHeaderStore())
 const { loadPlatform } = useStrrPlatformStore()
@@ -15,6 +16,13 @@ const { platformDetails } = storeToRefs(useStrrPlatformDetails())
 const todos = ref<Todo[]>([])
 const addresses = ref<ConnectAccordionItem[]>([])
 const representatives = ref<ConnectAccordionItem[]>([])
+
+watch(() => accountStore.currentAccount.id,
+  () => {
+    const { redirect } = useNavigate()
+    redirect(useRuntimeConfig().public.registryHomeURL + 'dashboard')
+  }
+)
 
 onMounted(async () => {
   loading.value = true

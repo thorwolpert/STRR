@@ -20,6 +20,7 @@ export default defineNuxtConfig({
   ],
 
   extends: [
+    // ['../strr-base-web', { install: true }] // dev only
     ['github:bcgov/STRR/strr-base-web', { install: true }]
   ],
 

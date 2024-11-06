@@ -1,4 +1,15 @@
 export default defineAppConfig({
+  strrBaseLayer: {
+    page: {
+      login: {
+        redirectPath: '',
+        options: {
+          createAccount: true,
+          idps: ['bcsc', 'bceid', 'idir']
+        }
+      }
+    }
+  },
   ui: {
     strategy: 'merge',
     button: {
@@ -64,3 +75,19 @@ export default defineAppConfig({
     }
   }
 })
+
+declare module 'nuxt/schema' {
+  interface AppConfig {
+    strrBaseLayer: {
+      page: {
+        login: {
+          redirectPath: string,
+          options: {
+            createAccount: boolean,
+            idps: Array<'bcsc' | 'bceid' | 'idir'>
+          }
+        }
+      }
+    }
+  }
+}

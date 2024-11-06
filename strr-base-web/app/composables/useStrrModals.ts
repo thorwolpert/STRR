@@ -5,6 +5,8 @@ export const useStrrModals = () => {
   const modal = useModal()
   const { t } = useI18n()
   const connectNav = useConnectNav()
+  const { redirect } = useNavigate()
+  const accountStore = useConnectAccountStore()
   const config = useRuntimeConfig().public
 
   function openAppSubmitError (e: any) {
@@ -21,7 +23,7 @@ export const useStrrModals = () => {
   function openCreateAccountModal () {
     modal.open(ModalBase, {
       title: t('label.createNewAccount'),
-      content: t('platform.text.onlyPremiumAccountModalContent'),
+      content: t('strr.text.onlyPremiumAccountModalContent'),
       actions: [
         { label: t('btn.cancel'), variant: 'outline', handler: () => close() },
         {
@@ -65,6 +67,32 @@ export const useStrrModals = () => {
     })
   }
 
+  function openConfirmSwitchAccountModal (oldAccountId: string) {
+    modal.open(ModalBase, {
+      title: t('modal.changeAccountConfirm.title'),
+      content: t('modal.changeAccountConfirm.content'),
+      persist: true,
+      closeFn: () => {
+        accountStore.switchCurrentAccount(oldAccountId)
+        modal.close()
+      },
+      actions: [
+        {
+          label: t('modal.changeAccountConfirm.leaveBtn'),
+          handler: () => redirect(config.registryHomeURL + 'dashboard')
+        },
+        {
+          label: t('btn.cancel'),
+          variant: 'outline',
+          handler: () => {
+            accountStore.switchCurrentAccount(oldAccountId)
+            modal.close()
+          }
+        }
+      ]
+    })
+  }
+
   function close () {
     modal.close()
   }
@@ -74,6 +102,7 @@ export const useStrrModals = () => {
     openCreateAccountModal,
     openConfirmDeclineTosModal,
     openPatchTosErrorModal,
+    openConfirmSwitchAccountModal,
     close
   }
 }
