@@ -45,7 +45,6 @@ export default {
       subTitle: {
         brand: 'Platform Brand',
         noticeNonCompliance: 'Notice of Non-Compliance',
-        regOfficeAttSvcAddrress: 'Registered Office or Attorney for Service Address',
         size: 'Platform Size',
         takedownRequest: 'Takedown Request'
       }
