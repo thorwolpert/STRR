@@ -320,7 +320,7 @@ export const formState: CreateAccountFormStateI = reactive({
     primaryResidence: undefined,
     whichPlatform: undefined,
     nickname: '',
-    country: 'CAN',
+    country: 'CA',
     address: undefined,
     addressLineTwo: undefined,
     city: undefined,
