@@ -32,7 +32,7 @@
       >
         <div class="d:pr-5 mb-132px bg-white rounded-1">
           <div class="bg-bcGovColor-gray2 d:-mr-5">
-            <p class="px-7 py-[15px] font-bold">
+            <p class="px-10 py-[15px] font-bold">
               {{ t('createAccount.propertyManager.primary') }}
             </p>
           </div>
@@ -44,7 +44,7 @@
               @reset-field-error="resetFieldError"
               @validate-field="validateField"
             />
-            <div class="m:hidden h-[1px] ml-7 mr-5 bg-bcGovGray-300" />
+            <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
             <BcrosFormSectionPropertyManagerBusinessMailingAddress
               id="propertyManagerBusinessAddress"
               v-model:country="formState.propertyManager.businessMailingAddress.country"
@@ -59,7 +59,7 @@
               @reset-field-error="resetFieldError"
               @validate-field="validateField"
             />
-            <div class="m:hidden h-[1px] ml-7 mr-5 bg-bcGovGray-300" />
+            <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
             <BcrosFormSectionContactName
               v-model:preferred-name="formState.propertyManager.contact.preferredName"
               v-model:first-name="formState.propertyManager.contact.firstName"
@@ -69,7 +69,7 @@
               @reset-field-error="resetFieldError"
               @validate-field="validateField"
             />
-            <div class="m:hidden h-[1px] ml-7 mr-5 bg-bcGovGray-300" />
+            <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
             <BcrosFormSectionContactDetails
               v-model:phone-number="formState.propertyManager.contact.phoneNumber"
               v-model:extension="formState.propertyManager.contact.extension"
