@@ -1,6 +1,6 @@
 <template>
   <div data-test-id="form-section-contact-details">
-    <BcrosFormSection :title="t('createAccount.contactForm.contactDetails')">
+    <BcrosFormSection :title="t('createAccount.contactForm.contactDetails')" class="!ml-3">
       <div class="flex flex-row justify-between w-full mb-10 m:flex-col m:mb-4">
         <UFormGroup name="phoneNumber" class="d:pr-4 flex-grow m:mb-4" :error="errors.phoneNumber">
           <UInput

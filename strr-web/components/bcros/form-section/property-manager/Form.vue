@@ -32,7 +32,7 @@
       >
         <div class="d:pr-5 mb-132px bg-white rounded-1">
           <div class="bg-bcGovColor-gray2 d:-mr-5">
-            <p class="px-10 py-[15px] font-bold">
+            <p class="px-9 py-[15px] font-bold">
               {{ t('createAccount.propertyManager.primary') }}
             </p>
           </div>

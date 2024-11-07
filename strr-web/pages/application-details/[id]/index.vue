@@ -28,7 +28,22 @@
         </div>
       </div>
     </BcrosBanner>
-    <div class="mt-[104px] mobile:pt-[70px]">
+    <div
+      v-if="isPaymentDue"
+      class="bg-red-50 border border-red-200 mt-[104px] mobile:pt-[70px]"
+      data-test-id="payment-due-banner"
+    >
+      <div class="flex items-center py-5">
+        <UIcon name="i-mdi-alert" class="text-red-500 ml-5" />
+        <span class="font-bold ml-2">{{ tApplicationDetails('paymentDueBannerTitle') }}:</span>
+        <span class="ml-1">{{ tApplicationDetails('paymentDueBannerMessage') }}</span>
+      </div>
+    </div>
+    <div
+      :class="[
+        isPaymentDue ? 'mt-10 mobile:pt-7' : 'mt-[104px] mobile:pt-[70px]'
+      ]"
+    >
       <div data-test-id="application-status">
         <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
           {{ tApplicationDetails('applicationStatus') }}
@@ -353,12 +368,13 @@ const tApplicationDetails = (translationKey: string) => t(`applicationDetails.${
 const tStatuses = (translationKey: string) => t(`statuses.${translationKey}`)
 const tPropertyForm = (translationKey: string) => t(`createAccount.propertyForm.${translationKey}`)
 const tReview = (translationKey: string) => t(`createAccount.review.${translationKey}`)
-const { isExaminer } = useBcrosKeycloak()
+const { isExaminer } = storeToRefs(useBcrosKeycloak())
 const { getChipFlavour } = useChipFlavour()
 
 const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' })
 
-const applicationNumber = route.params.id.toString()
+// Modified for unit tests, unable to mock route params in tests
+const applicationNumber = route.params.id?.toString() || ''
 
 const {
   getApplication,
@@ -366,9 +382,7 @@ const {
   getDocument
 } = useApplications()
 
-const {
-  setupBreadcrumbData
-} = useBreadcrumb()
+const { setupBreadcrumbData } = useBreadcrumb()
 
 const [application, applicationHistory]: [ApplicationI, FilingHistoryEventI[]] = await Promise.all([
   getApplication(applicationNumber),
@@ -382,7 +396,7 @@ const applicationDetails: HostApplicationDetailsI = application.registration
 // Get Supporting Documents from the Application response
 const documents: DocumentUploadI[] = applicationDetails.documents || []
 const examinerOrHostStatus = computed(() => {
-  if (isExaminer) {
+  if (isExaminer.value) {
     return application?.header.examinerStatus
   } else {
     return application?.header.hostStatus
@@ -390,6 +404,7 @@ const examinerOrHostStatus = computed(() => {
 })
 const applicationStatus = application?.header.status
 const flavour = application ? getChipFlavour(examinerOrHostStatus.value || applicationStatus) : null
+const isPaymentDue = computed(() => applicationStatus === ApplicationStatusE.PAYMENT_DUE)
 
 const getApplicationStatusTranslation = (status) => {
   const commonStatusMap = {

@@ -94,40 +94,44 @@ export const mockApplicationDetails: HostApplicationDetailsI = {
   },
   unitDetails: {
     ownershipType: 'OWN',
-    propertyType: 'SECONDARY',
-    rentalUnitSpaceType: '',
-    isUnitOnPrincipalResidenceProperty: false,
-    hostResidence: undefined,
-    numberOfRoomsForRent: 0
+    propertyType: 'SINGLE_FAMILY_HOME',
+    rentalUnitSpaceType: 'ENTIRE_HOME',
+    isUnitOnPrincipalResidenceProperty: true,
+    hostResidence: 'SAME_UNIT',
+    numberOfRoomsForRent: 1
   },
   registrationType: RegistrationTypeE.HOST,
   propertyManager: mockPropertyManager
 }
 
+const mockApplicationHeader = {
+  applicationNumber: '41447512384286',
+  applicationDateTime: '2024-08-14T22:24:42.006030+00:00',
+  decisionDate: '2024-08-16T11:08:40.948148+00:00',
+  name: 'registration',
+  paymentAccount: '1699',
+  paymentStatus: 'CREATED',
+  paymentToken: 39363,
+  registrationEndDate: '2025-08-16T11:08:40.935161',
+  registrationId: 1,
+  registrationNumber: 'BCH24527283787',
+  registrationStartDate: '2024-08-16T11:08:40.935161+00:00',
+  reviewer: {
+    displayName: 'Joe Smith',
+    username: 'joes@idir'
+  },
+  submitter: {
+    displayName: 'BCREGTEST TWENTYFIVE',
+    username: 'bcsc/sdfasdfasdf'
+  }
+}
+
 export const mockApplicationApproved: ApplicationI = {
   header: {
-    applicationNumber: '41447512384286',
-    applicationDateTime: '2024-08-14T22:24:42.006030+00:00',
-    decisionDate: '2024-08-16T11:08:40.948148+00:00',
-    name: 'registration',
-    paymentAccount: '1699',
-    paymentStatus: 'CREATED',
-    paymentToken: 39363,
-    registrationEndDate: '2025-08-16T11:08:40.935161',
-    registrationId: 1,
-    registrationNumber: 'BCH24527283787',
-    registrationStartDate: '2024-08-16T11:08:40.935161+00:00',
+    ...mockApplicationHeader,
     registrationStatus: RegistrationStatusE.ACTIVE,
-    isCertificateIssued: true,
-    reviewer: {
-      displayName: 'Joe Smith',
-      username: 'joes@idir'
-    },
     status: ApplicationStatusE.AUTO_APPROVED,
-    submitter: {
-      displayName: 'BCREGTEST TWENTYFIVE',
-      username: 'bcsc/sdfasdfasdf'
-    },
+    isCertificateIssued: true,
     hostActions: [],
     examinerActions: [ExaminerActionsE.ISSUE_CERTIFICATE],
     hostStatus: HostApplicationStatusE.AUTO_APPROVED,
@@ -139,30 +143,82 @@ export const mockApplicationApproved: ApplicationI = {
   }
 }
 
+export const mockApplicationApprovedWithSecondaryContact: ApplicationI = {
+  header: {
+    ...mockApplicationHeader,
+    registrationStatus: RegistrationStatusE.ACTIVE,
+    status: ApplicationStatusE.AUTO_APPROVED,
+    isCertificateIssued: true,
+    hostActions: [],
+    examinerActions: [ExaminerActionsE.ISSUE_CERTIFICATE],
+    hostStatus: HostApplicationStatusE.AUTO_APPROVED,
+    examinerStatus: ExaminerApplicationStatusE.FULL_REVIEW_APPROVED
+  },
+  registration: {
+    ...mockApplicationDetails,
+    secondaryContact: {
+      details: {
+        emailAddress: 'secondary@email.com',
+        faxNumber: '',
+        phoneNumber: '2505551234',
+        preferredName: 'Jane Smith',
+        extension: ''
+      },
+      name: {
+        firstName: 'Jane',
+        lastName: 'Smith',
+        middleName: ''
+      },
+      socialInsuranceNumber: '',
+      businessNumber: '',
+      dateOfBirth: '1990-01-01',
+      mailingAddress: {
+        address: '789 Test',
+        addressLineTwo: '',
+        city: 'Victoria',
+        country: 'CA',
+        postalCode: 'V8V3V3',
+        province: 'BC'
+      }
+    }
+  },
+  selectedAccount: {
+    sbc_account_id: '12345'
+  }
+}
+
+export const mockApplicationApprovedWithDocuments: ApplicationI = {
+  header: {
+    ...mockApplicationHeader,
+    registrationStatus: RegistrationStatusE.ACTIVE,
+    status: ApplicationStatusE.AUTO_APPROVED,
+    isCertificateIssued: true,
+    hostActions: [],
+    examinerActions: [ExaminerActionsE.ISSUE_CERTIFICATE],
+    hostStatus: HostApplicationStatusE.AUTO_APPROVED,
+    examinerStatus: ExaminerApplicationStatusE.FULL_REVIEW_APPROVED
+  },
+  registration: {
+    ...mockApplicationDetails,
+    documents: [
+      {
+        fileKey: '809bf24f-a2b9-4740-af84-8297bc346f1d',
+        fileName: 'Test_test',
+        fileType: 'application/octet-stream'
+      }
+    ]
+  },
+  selectedAccount: {
+    sbc_account_id: '12345'
+  }
+}
+
 export const mockApplicationPaymentDue: ApplicationI = {
   header: {
-    applicationNumber: '41447512384286',
-    applicationDateTime: '2024-08-14T22:24:42.006030+00:00',
-    decisionDate: '2024-08-16T11:08:40.948148+00:00',
-    name: 'registration',
-    paymentAccount: '1699',
-    paymentStatus: 'CREATED',
-    paymentToken: 39363,
-    registrationEndDate: '2025-08-16T11:08:40.935161',
-    registrationId: 1,
-    registrationNumber: 'BCH24527283787',
-    registrationStartDate: '2024-08-16T11:08:40.935161+00:00',
+    ...mockApplicationHeader,
     registrationStatus: RegistrationStatusE.ACTIVE,
-    isCertificateIssued: false,
-    reviewer: {
-      displayName: 'Joe Smith',
-      username: 'joes@idir'
-    },
     status: ApplicationStatusE.PAYMENT_DUE,
-    submitter: {
-      displayName: 'BCREGTEST TWENTYFIVE',
-      username: 'bcsc/sdfasdfasdf'
-    },
+    isCertificateIssued: false,
     hostActions: [HostActionsE.SUBMIT_PAYMENT],
     examinerActions: [],
     hostStatus: HostApplicationStatusE.PAYMENT_DUE,
@@ -176,28 +232,10 @@ export const mockApplicationPaymentDue: ApplicationI = {
 
 export const mockApplicationFullReview: ApplicationI = {
   header: {
-    applicationNumber: '41447512384286',
-    applicationDateTime: '2024-08-14T22:24:42.006030+00:00',
-    decisionDate: '2024-08-16T11:08:40.948148+00:00',
-    name: 'registration',
-    paymentAccount: '1699',
-    paymentStatus: 'COMPLETED',
-    paymentToken: 34253,
-    registrationEndDate: '2025-08-16T11:08:40.935161',
-    registrationId: 1,
-    registrationNumber: 'BCH24527283787',
-    registrationStartDate: '2024-08-16T11:08:40.935161+00:00',
+    ...mockApplicationHeader,
     registrationStatus: RegistrationStatusE.ACTIVE,
+    status: ApplicationStatusE.FULL_REVIEW,
     isCertificateIssued: false,
-    reviewer: {
-      displayName: 'Joe Smith',
-      username: 'joes@idir'
-    },
-    status: ApplicationStatusE.PAYMENT_DUE,
-    submitter: {
-      displayName: 'BCREGTEST TWENTYFIVE',
-      username: 'bcsc/sdfasdfasdf'
-    },
     hostActions: [],
     examinerActions: [ExaminerActionsE.APPROVE, ExaminerActionsE.REJECT],
     hostStatus: HostApplicationStatusE.FULL_REVIEW,
