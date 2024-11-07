@@ -300,27 +300,25 @@
         </div>
         <template v-if="isExaminer">
           <div class="mt-10" data-test-id="ltsa-info-section">
-            <p class="font-bold mb-6 mobile:mx-2 text-xl">
+            <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
               {{ tApplicationDetails('ltsaInfo') }}
-            </p>
+            </h2>
             <a
               class="mobile:mx-2"
-              :href="`/application-details/${applicationNumber}/ltsa`"
-              rel="noopener"
               data-test-id="ltsa-details-link"
+              @click="navigateTo(`/application-details/${applicationNumber}/ltsa`)"
             >
               {{ tApplicationDetails('ltsaDetails') }}
             </a>
           </div>
           <div class="mt-10" data-test-id="auto-approval-section">
-            <p class="font-bold mb-6 mobile:mx-2">
+            <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
               {{ tApplicationDetails('autoApprovalLogic') }}
-            </p>
+            </h2>
             <a
               class="mobile:mx-2"
-              :href="`/application-details/${applicationNumber}/auto-approval`"
-              rel="noopener"
               data-test-id="auto-approval-details-link"
+              @click="navigateTo(`/application-details/${applicationNumber}/auto-approval`)"
             >
               {{ tApplicationDetails('autoApprovalDetails') }}
             </a>
