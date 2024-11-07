@@ -104,7 +104,7 @@ export const mockApplicationDetails: HostApplicationDetailsI = {
   propertyManager: mockPropertyManager
 }
 
-const mockApplicationHeader = {
+const mockApplicationHeader: ApplicationHeaderI = {
   applicationNumber: '41447512384286',
   applicationDateTime: '2024-08-14T22:24:42.006030+00:00',
   decisionDate: '2024-08-16T11:08:40.948148+00:00',
@@ -123,20 +123,18 @@ const mockApplicationHeader = {
   submitter: {
     displayName: 'BCREGTEST TWENTYFIVE',
     username: 'bcsc/sdfasdfasdf'
-  }
+  },
+  registrationStatus: RegistrationStatusE.ACTIVE,
+  status: ApplicationStatusE.AUTO_APPROVED,
+  isCertificateIssued: true,
+  hostActions: [],
+  examinerActions: [ExaminerActionsE.ISSUE_CERTIFICATE],
+  hostStatus: HostApplicationStatusE.AUTO_APPROVED,
+  examinerStatus: ExaminerApplicationStatusE.FULL_REVIEW_APPROVED
 }
 
 export const mockApplicationApproved: ApplicationI = {
-  header: {
-    ...mockApplicationHeader,
-    registrationStatus: RegistrationStatusE.ACTIVE,
-    status: ApplicationStatusE.AUTO_APPROVED,
-    isCertificateIssued: true,
-    hostActions: [],
-    examinerActions: [ExaminerActionsE.ISSUE_CERTIFICATE],
-    hostStatus: HostApplicationStatusE.AUTO_APPROVED,
-    examinerStatus: ExaminerApplicationStatusE.FULL_REVIEW_APPROVED
-  },
+  header: mockApplicationHeader,
   registration: mockApplicationDetails,
   selectedAccount: {
     sbc_account_id: '12345'
@@ -144,16 +142,7 @@ export const mockApplicationApproved: ApplicationI = {
 }
 
 export const mockApplicationApprovedWithSecondaryContact: ApplicationI = {
-  header: {
-    ...mockApplicationHeader,
-    registrationStatus: RegistrationStatusE.ACTIVE,
-    status: ApplicationStatusE.AUTO_APPROVED,
-    isCertificateIssued: true,
-    hostActions: [],
-    examinerActions: [ExaminerActionsE.ISSUE_CERTIFICATE],
-    hostStatus: HostApplicationStatusE.AUTO_APPROVED,
-    examinerStatus: ExaminerApplicationStatusE.FULL_REVIEW_APPROVED
-  },
+  header: mockApplicationHeader,
   registration: {
     ...mockApplicationDetails,
     secondaryContact: {
@@ -188,16 +177,7 @@ export const mockApplicationApprovedWithSecondaryContact: ApplicationI = {
 }
 
 export const mockApplicationApprovedWithDocuments: ApplicationI = {
-  header: {
-    ...mockApplicationHeader,
-    registrationStatus: RegistrationStatusE.ACTIVE,
-    status: ApplicationStatusE.AUTO_APPROVED,
-    isCertificateIssued: true,
-    hostActions: [],
-    examinerActions: [ExaminerActionsE.ISSUE_CERTIFICATE],
-    hostStatus: HostApplicationStatusE.AUTO_APPROVED,
-    examinerStatus: ExaminerApplicationStatusE.FULL_REVIEW_APPROVED
-  },
+  header: mockApplicationHeader,
   registration: {
     ...mockApplicationDetails,
     documents: [

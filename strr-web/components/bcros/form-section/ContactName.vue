@@ -1,6 +1,6 @@
 <template>
   <div data-test-id="form-section-contact-name">
-    <BcrosFormSection :title="t('common.formLabels.contactName')" class="!ml-7">
+    <BcrosFormSection :title="t('common.formLabels.contactName')">
       <p
         v-if="contactInfoDescription"
         class="mb-10 text-sm text-bcGovColor-darkGray"

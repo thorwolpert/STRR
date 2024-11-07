@@ -1,6 +1,6 @@
 <template>
   <div data-test-id="form-section-business-details">
-    <BcrosFormSection :title="t('common.formLabels.businessDetails')" class="!ml-7">
+    <BcrosFormSection :title="t('common.formLabels.businessDetails')">
       <div class="flex flex-row justify-between w-full mb-10 m:flex-col m:mb-4">
         <UFormGroup name="businessName" class="flex-grow" :error="errors.businessLegalName">
           <UInput
