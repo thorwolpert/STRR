@@ -69,11 +69,11 @@ describe('Application Details Page', () => {
 
   it('displays rental unit information correctly', async () => {
     wrapper = await mountSuspended(ApplicationDetails)
-    const unitInfo = wrapper.findTestId('rental-unit-info')
-    expect(unitInfo.exists()).toBe(true)
     expect(wrapper.findTestId('unit-nickname').exists()).toBe(true)
     expect(wrapper.findTestId('ownership-type').exists()).toBe(true)
     expect(wrapper.findTestId('unit-address').exists()).toBe(true)
+    expect(wrapper.findTestId('parcel-identifier').exists()).toBe(true)
+    expect(wrapper.findTestId('property-type').exists()).toBe(true)
     const statusText = wrapper.findTestId('application-status-text')
     expect(statusText.text()).toBe(tStatuses('hostStatuses.fullReviewApproved'))
   })
