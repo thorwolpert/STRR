@@ -1,120 +1,86 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const localePath = useLocalePath()
+const accountStore = useConnectAccountStore()
+const strataStore = useStrrStrataStore()
+const strataModal = useStrataModals()
 
 const columns = [
   {
     key: 'hotelName',
-    label: 'Hotel Name',
+    label: t('label.hotelName'),
     sortable: true
   },
   {
     key: 'number',
-    label: 'Number',
+    label: t('label.number'),
     sortable: true
   },
   {
     key: 'type',
-    label: 'Type',
+    label: t('label.type'),
     sortable: true
   },
   {
-    key: 'location',
-    label: 'Location',
-    sortable: true
-  },
-  {
-    key: 'completingParty',
-    label: 'Completing Party',
-    sortable: true
-  },
-  {
-    key: 'dateRegistered',
-    label: 'Date Registered',
+    key: 'expiryDate',
+    label: t('label.expiryDate'),
     sortable: true
   },
   {
     key: 'status',
-    label: 'Status',
+    label: t('label.status'),
     sortable: true
   },
   {
     key: 'actions',
-    label: 'Actions'
+    label: t('label.actions')
   }
 ]
 
 const selectedColumns = ref([...columns])
 
-const people = [
-  {
-    id: Math.random(),
-    hotelName: 'The Manor',
-    number: 'RP12345678',
-    type: 'Registration',
-    location: 'Kelowna',
-    completingParty: 'James Halpert',
-    dateRegistered: '2024-11-29',
-    status: 'Active'
-  },
-  {
-    id: Math.random(),
-    hotelName: 'The Parkview',
-    number: 'AP134234',
-    type: 'Application',
-    location: 'Vancouver',
-    completingParty: 'Andrew Bernard',
-    dateRegistered: '2024-11-29',
-    status: 'Pending adjudication'
-  }
-]
-
 // page stuff
 useHead({
-  title: t('strr.title.default')
+  title: t('page.dashboardList.title')
 })
 
 definePageMeta({
-  middleware: ['auth']
+  middleware: ['auth', 'require-account']
 })
 
 setBreadcrumbs([
   { label: t('label.bcregDash'), to: useRuntimeConfig().public.registryHomeURL + 'dashboard' },
-  { label: t('strr.title.default') }
+  { label: t('page.dashboardList.h1') }
 ])
 
-const strataStore = useStrrStrataStore()
-onMounted(async () => {
-  await strataStore.loadStrataHotelList()
-})
+// can use watch param to handle pagination in future
+const { data: strataHotelList, status } = await useAsyncData(
+  'strata-hotel-list',
+  () => strataStore.loadStrataHotelList(),
+  { watch: [() => accountStore.currentAccount.id] }
+)
 
-// Make row selectable with @select event?
-// function select (row) {
-//   console.log('handle select: ', row)
-//   // const index = selected.value.findIndex(item => item.id === row.id)
-//   // if (index === -1) {
-//   //   selected.value.push(row)
-//   // } else {
-//   //   selected.value.splice(index, 1)
-//   // }
-// }
+async function handleItemSelect (row: any) {
+  const identifier = row.id ?? row.number // id only exists in the registration objects
+  await navigateTo(localePath('/strata-hotel/dashboard/' + identifier))
+}
 </script>
 <template>
   <div class="space-y-8 py-8 sm:space-y-10 sm:py-10">
     <div class="space-y-4">
-      <ConnectTypographyH1 text="My Short Term Rental Registry" />
-      <p>Register and keep short-term rental unit information up to date.</p>
+      <ConnectTypographyH1 :text="$t('page.dashboardList.h1')" />
+      <p>{{ $t('page.dashboardList.subtitle') }}</p>
       <UButton
-        label="Help with registering and managing short-term rentals"
+        :label="$t('modal.helpRegisteringStrata.triggerBtn')"
         :padded="false"
         variant="link"
-        @click="() => console.log('help text clicked')"
+        @click="strataModal.openhelpRegisteringStrataModal()"
       />
     </div>
 
     <div class="space-y-4">
       <UButton
-        label="Add a strata hotel"
+        :label="$t('btn.addStrataHotel')"
         icon="i-mdi-plus"
         :to="localePath('/strata-hotel/application')"
       />
@@ -122,7 +88,9 @@ onMounted(async () => {
       <ConnectPageSection>
         <template #header>
           <div class="flex items-center justify-between">
-            <h2>My Strata Hotel List (2)</h2>
+            <h2 class="font-normal">
+              <ConnectI18nBold translation-path="table.strataHotelList.title" :count="strataHotelList.length" />
+            </h2>
             <!-- TODO: filtering post-mvp ? -->
             <!-- <UInput
               placeholder="Find"
@@ -152,8 +120,9 @@ onMounted(async () => {
         </template>
         <UTable
           :columns="selectedColumns"
-          :rows="[...people, ...people, ...people, ...people, ...people, ...people]"
-          :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: $t('labels.noAffiliationRecords') }"
+          :rows="strataHotelList"
+          :loading="status === 'pending'"
+          :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: $t('table.strataHotelList.emptyText') }"
           :ui="{
             wrapper: 'relative overflow-x-auto h-[512px]',
             thead: 'sticky top-0 bg-white z-10',
@@ -171,8 +140,8 @@ onMounted(async () => {
         >
           <template #actions-data="{ row }">
             <UButton
-              label="View Details"
-              @click="navigateTo(localePath('/strata-hotel/dashboard/' + row.id))"
+              :label="$t('btn.view')"
+              @click="handleItemSelect(row)"
             />
           </template>
         </UTable>
