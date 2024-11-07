@@ -6,8 +6,15 @@ export const useBcrosAuth = () => {
   const config = useRuntimeConfig()
   const keycloak = useBcrosKeycloak()
   const account = useBcrosAccount()
-  const { redirect, goToSetupAccount, goToCreateAccount, goToAccountSelect, goToTermsOfService, goToCreateSbcAccount } =
-    useBcrosNavigate()
+  const {
+    redirect,
+    goToSetupAccount,
+    goToCreateAccount,
+    goToAccountSelect,
+    goToTermsOfService,
+    goToCreateSbcAccount,
+    goToExaminerDashboard
+  } = useBcrosNavigate()
   const { checkTermsOfService } = useTermsOfService()
 
   const { currentAccount, userOrgs, userAccounts } = storeToRefs(account)
@@ -82,6 +89,8 @@ export const useBcrosAuth = () => {
           } else if (keycloak.isExaminer && userOrgs.value.length === 1) {
             currentAccount.value = userAccounts.value[0]
             sessionStorage.setItem(SessionStorageKeyE.CURRENT_ACCOUNT, JSON.stringify(userAccounts.value[0]))
+            // redirect Examiner to Dashboard
+            goToExaminerDashboard()
           }
 
           // if user has no accounts - go to account finalization page

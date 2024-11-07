@@ -233,20 +233,18 @@
             </h2>
             <a
               class="mobile:mx-2"
-              :href="`/application-details/${registrationId}/ltsa`"
-              rel="noopener"
+              @click="navigateTo(`/application-details/${registrationId}/ltsa`)"
             >
               {{ tApplicationDetails('ltsaDetails') }}
             </a>
           </div>
           <div class="mt-10">
-            <h2 class="font-bold mb-6 mobile:mx-2">
+            <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
               {{ tApplicationDetails('autoApprovalLogic') }}
             </h2>
             <a
               class="mobile:mx-2"
-              :href="`/application-details/${registrationId}/auto-approval`"
-              rel="noopener"
+              @click="navigateTo(`/application-details/${registrationId}/auto-approval`)"
             >
               {{ tApplicationDetails('autoApprovalDetails') }}
             </a>
