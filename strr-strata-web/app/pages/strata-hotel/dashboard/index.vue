@@ -22,8 +22,8 @@ const columns = [
     sortable: true
   },
   {
-    key: 'expiryDate',
-    label: t('label.expiryDate'),
+    key: 'date',
+    label: t('label.date'),
     sortable: true
   },
   {
@@ -138,6 +138,11 @@ async function handleItemSelect (row: any) {
             },
           }"
         >
+          <!-- using a slot for this so the nuxtui sort will still sort by datetime -->
+          <template #date-data="{ row }">
+            {{ dateToStringPacific(row.date, 'MMMM Do, YYYY') }}
+          </template>
+
           <template #actions-data="{ row }">
             <UButton
               :label="$t('btn.view')"
