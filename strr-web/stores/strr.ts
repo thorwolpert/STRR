@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { reactive } from 'vue'
 import { z } from 'zod'
 import type {
@@ -10,40 +9,6 @@ import type {
 import type { PropertyManagerI } from '~/interfaces/property-manager-i'
 import { RegistrationTypeE } from '#imports'
 import { HostContactTypeE } from '~/enums/host-contact-type-e'
-
-const apiURL = useRuntimeConfig().public.strrApiURL
-const axiosInstance = addAxiosInterceptors(axios.create())
-const { handlePaymentRedirect } = useFees()
-
-export const submitCreateAccountForm = (
-  hasSecondaryContact: boolean,
-  propertyType: string,
-  ownershipType: string
-) => {
-  const formData: CreateAccountFormAPII = formStateToApi(
-    formState,
-    hasSecondaryContact,
-    propertyType,
-    ownershipType
-  )
-  axiosInstance.post(`${apiURL}/registrations`,
-    { ...formData }
-  )
-    .then((response) => {
-      const data = response?.data
-      if (!data) { throw new Error('Invalid AUTH API response') }
-      return data
-    })
-    .then((data) => {
-      const { invoices } = data
-      handlePaymentRedirect(invoices[0].invoice_id, data.id)
-      return data
-    })
-    .catch((error: string) => {
-      console.warn('Error creating account.')
-      console.error(error)
-    })
-}
 
 const numbersRegex = /^\d+$/
 // matches chars 123456789 ()
