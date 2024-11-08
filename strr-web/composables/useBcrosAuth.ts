@@ -84,8 +84,7 @@ export const useBcrosAuth = () => {
           // if user has not picked an account - go to Account Select
           // Examiners will skip the account select page
           if (isEmpty(currentAccount.value) && userOrgs.value.length > 0 && !keycloak.isExaminer) {
-            goToAccountSelect()
-            return
+            return goToAccountSelect()
           } else if (keycloak.isExaminer && userOrgs.value.length === 1) {
             currentAccount.value = userAccounts.value[0]
             sessionStorage.setItem(SessionStorageKeyE.CURRENT_ACCOUNT, JSON.stringify(userAccounts.value[0]))
