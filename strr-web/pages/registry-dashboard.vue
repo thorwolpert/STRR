@@ -305,7 +305,7 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
     let propertyAddress = ''
     if (registrationType === RegistrationTypeE.HOST) {
       const hostApplication: HostApplicationDetailsI = application.registration
-      if (hostApplication.propertyManager) {
+      if (hostApplication.propertyManager && hostApplication.propertyManager.initiatedByPropertyManager) {
         applicationType = 'Property Manager'
       } else {
         applicationType = 'Host'

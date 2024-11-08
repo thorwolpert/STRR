@@ -92,6 +92,9 @@
           "type": "string",
           "description": "Business Legal Name"
         },
+        "initiatedByPropertyManager": {
+          "type": "boolean"
+        },
         "businessNumber": {
           "type": "string",
           "description": "CRA Business Number"

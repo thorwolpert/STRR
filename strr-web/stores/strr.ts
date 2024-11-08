@@ -216,6 +216,7 @@ const primaryContact: PrimaryContactInformationI = {
 }
 
 export const propertyManager: PropertyManagerI = {
+  initiatedByPropertyManager: undefined,
   businessLegalName: '',
   businessNumber: '',
   businessMailingAddress: {
