@@ -91,11 +91,13 @@ export const useBcrosAuth = () => {
             sessionStorage.setItem(SessionStorageKeyE.CURRENT_ACCOUNT, JSON.stringify(userAccounts.value[0]))
             // redirect Examiner to Dashboard
             goToExaminerDashboard()
+            return
           }
 
           // if user has no accounts - go to account finalization page
           if (userOrgs.value.length === 0) {
             goToCreateSbcAccount()
+            return
           }
 
           console.info('Auth setup complete.')

@@ -5,23 +5,7 @@ import { PaginationI } from '~/interfaces/pagination-i'
 export const useRegistrations = () => {
   const apiURL = useRuntimeConfig().public.strrApiURL
   const axiosInstance = addAxiosInterceptors(axios.create())
-
-  // TODO: possibly not needed anymore
-  const getRegistrations = () => axiosInstance.get<PaginatedRegistrationsI>(`${apiURL}/registrations`)
-    .then((res) => {
-      if (res.data.count === 0) {
-        navigateTo('/' + RouteNamesE.CREATE_ACCOUNT)
-      }
-      return res.data.results
-        .sort(
-          (registrationA, registrationB) =>
-            getStatusPriority(registrationA.status) - getStatusPriority(registrationB.status)
-        )
-        .sort(
-          (registrationA, registrationB) =>
-            registrationA.unitAddress.city.localeCompare(registrationB.unitAddress.city)
-        )
-    })
+  const { goToCreateAccount } = useBcrosNavigate()
 
   const getPaginatedRegistrations = (paginationObject: PaginationI): Promise<PaginatedRegistrationsI | void> => {
     const params = new URLSearchParams(paginationObject as unknown as Record<string, string>)
@@ -106,7 +90,7 @@ export const useRegistrations = () => {
         if (res.data) {
           const { setAccountInfo } = useBcrosAccount()
           await setAccountInfo(res.data.sbc_account_id)
-          navigateTo('/' + RouteNamesE.CREATE_ACCOUNT)
+          goToCreateAccount()
           return SbcCreationResponseE.SUCCESS
         }
         return SbcCreationResponseE.ERROR
@@ -123,7 +107,6 @@ export const useRegistrations = () => {
     issueCertificate,
     getCountsByStatus,
     createSbcRegistration,
-    getRegistrations,
     getPaginatedRegistrations,
     getRegistration,
     getRegistrationHistory,
