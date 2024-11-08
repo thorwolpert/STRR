@@ -56,6 +56,7 @@ class PropertyManager:
         self.businessNumber = businessNumber
         self.initiatedByPropertyManager = initiatedByPropertyManager
 
+
 class PropertyManagerContact:
     """Property Manager Contact object."""
 
