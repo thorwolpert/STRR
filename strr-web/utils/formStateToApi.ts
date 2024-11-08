@@ -151,7 +151,8 @@ export const formStateToApi = (
           extension: formState.propertyManager.contact.extension,
           faxNumber: formState.propertyManager.contact.faxNumber,
           emailAddress: formState.propertyManager.contact.emailAddress ?? ''
-        }
+        },
+        initiatedByPropertyManager: formState.isPropertyManagerRole
       }
     } else {
       delete formData.registration.propertyManager
