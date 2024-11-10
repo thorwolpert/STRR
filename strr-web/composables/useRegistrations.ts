@@ -58,20 +58,6 @@ export const useRegistrations = () => {
     )
       .then(res => res.data)
 
-  // TODO: possibly not needed anymore
-  const getStatusPriority = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return 4
-      case 'EXPIRED':
-        return 3
-      case 'SUSPENDED':
-        return 2
-      default:
-        return 1
-    }
-  }
-
   const createSbcRegistration = (registration:
     {
       email: string,

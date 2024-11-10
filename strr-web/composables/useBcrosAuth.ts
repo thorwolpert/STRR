@@ -9,11 +9,7 @@ export const useBcrosAuth = () => {
   const {
     redirect,
     goToSetupAccount,
-    goToCreateAccount,
-    goToAccountSelect,
-    goToTermsOfService,
-    goToCreateSbcAccount,
-    goToExaminerDashboard
+    goToCreateAccount
   } = useBcrosNavigate()
   const { checkTermsOfService } = useTermsOfService()
 

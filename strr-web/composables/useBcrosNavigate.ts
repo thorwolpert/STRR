@@ -1,8 +1,6 @@
-import { useRouter } from 'vue-router'
 export const useBcrosNavigate = () => {
   const config = useRuntimeConfig()
   const account = useBcrosAccount()
-  const router = useRouter()
 
   /** Redirect to the given URL with necessary BCROS args */
   function redirect (url: string) {

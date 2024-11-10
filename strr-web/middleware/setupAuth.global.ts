@@ -1,4 +1,4 @@
-export default defineNuxtRouteMiddleware(async (to, from) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   // setup auth
   if (!to.query.error && !process.env.VITEST_WORKER_ID) {
     // keycloak redirects with the error param when not logged in (nuxt/keycloak issue)
@@ -28,15 +28,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       await account.setAccountInfo()
     }
 
-    console.log(redirect)
-
     if (redirect) {
       abortNavigation()
       return navigateTo('/' + redirect)
     } else {
       // remove query params in url added by keycloak
-      console.log('continue')
-
       const params = new URLSearchParams(to.fullPath.split('?')[1])
       params.delete('state')
       params.delete('session_state')
