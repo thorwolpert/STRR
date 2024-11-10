@@ -47,7 +47,15 @@ export const useBcrosAuth = () => {
   }
 
   /** Setup keycloak / user auth pieces */
-  async function setupAuth (kcConfig: KeycloakConfig, currentAccountId?: string) {
+  async function setupAuth (currentAccountId?: string): Promise<RouteNamesE | undefined> {
+    const { kcURL, kcRealm, kcClient } = useRuntimeConfig().public
+
+    const kcConfig: KeycloakConfig = {
+      url: kcURL,
+      realm: kcRealm,
+      clientId: kcClient
+    }
+
     if (!keycloak.kc.authenticated) {
       try {
         console.info('Initializing auth setup...')
@@ -76,27 +84,30 @@ export const useBcrosAuth = () => {
             const isToSAccepted = await checkTermsOfService()
             // if Terms not accepted - redirect TOS page
             if (!isToSAccepted) {
-              goToTermsOfService()
-              return
+              // goToTermsOfService()
+              return RouteNamesE.TERMS_OF_SERVICE
             }
           }
 
           // if user has not picked an account - go to Account Select
           // Examiners will skip the account select page
           if (isEmpty(currentAccount.value) && userOrgs.value.length > 0 && !keycloak.isExaminer) {
-            return goToAccountSelect()
+            // return goToAccountSelect()
+            return RouteNamesE.ACCOUNT_SELECT
           } else if (keycloak.isExaminer && userOrgs.value.length === 1) {
             currentAccount.value = userAccounts.value[0]
             sessionStorage.setItem(SessionStorageKeyE.CURRENT_ACCOUNT, JSON.stringify(userAccounts.value[0]))
             // redirect Examiner to Dashboard
-            goToExaminerDashboard()
-            return
+            // goToExaminerDashboard()
+            // return
+            return RouteNamesE.REGISTRY_DASHBOARD
           }
 
           // if user has no accounts - go to account finalization page
           if (userOrgs.value.length === 0) {
-            goToCreateSbcAccount()
-            return
+            // goToCreateSbcAccount()
+            // return
+            return RouteNamesE.FINALIZATION
           }
 
           console.info('Auth setup complete.')

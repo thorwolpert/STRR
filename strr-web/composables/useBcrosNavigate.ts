@@ -52,7 +52,7 @@ export const useBcrosNavigate = () => {
     navigateTo('/' + RouteNamesE.TERMS_OF_SERVICE)
   }
   function goToAccountSelect () {
-    return navigateTo('/' + RouteNamesE.ACCOUNT_SELECT)
+    navigateTo('/' + RouteNamesE.ACCOUNT_SELECT)
   }
 
   return {
