@@ -6,7 +6,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
     const { setupAuth } = useBcrosAuth()
     const currentAccountId: string = to.params.currentAccountId as string || to.query.currentAccountId as string
 
-    const redirect = await setupAuth(currentAccountId)
+    // setup auth and if required redirect user to a specific route
+    const redirectRoute = await setupAuth(currentAccountId)
 
     // For e2e testing, leave for now
     if (process.client && sessionStorage?.getItem('FAKE_LOGIN')) {
@@ -28,9 +29,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
       await account.setAccountInfo()
     }
 
-    if (redirect) {
+    if (redirectRoute) {
       abortNavigation()
-      return navigateTo('/' + redirect)
+      return navigateTo('/' + redirectRoute)
     } else {
       // remove query params in url added by keycloak
       const params = new URLSearchParams(to.fullPath.split('?')[1])
