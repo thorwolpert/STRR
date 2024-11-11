@@ -80,7 +80,6 @@ export const useBcrosAuth = () => {
             const isToSAccepted = await checkTermsOfService()
             // if Terms not accepted - redirect TOS page
             if (!isToSAccepted) {
-              // goToTermsOfService()
               return RouteNamesE.TERMS_OF_SERVICE
             }
           }
@@ -88,21 +87,15 @@ export const useBcrosAuth = () => {
           // if user has not picked an account - go to Account Select
           // Examiners will skip the account select page
           if (isEmpty(currentAccount.value) && userOrgs.value.length > 0 && !keycloak.isExaminer) {
-            // return goToAccountSelect()
             return RouteNamesE.ACCOUNT_SELECT
           } else if (keycloak.isExaminer && userOrgs.value.length === 1) {
             currentAccount.value = userAccounts.value[0]
             sessionStorage.setItem(SessionStorageKeyE.CURRENT_ACCOUNT, JSON.stringify(userAccounts.value[0]))
-            // redirect Examiner to Dashboard
-            // goToExaminerDashboard()
-            // return
             return RouteNamesE.REGISTRY_DASHBOARD
           }
 
           // if user has no accounts - go to account finalization page
           if (userOrgs.value.length === 0) {
-            // goToCreateSbcAccount()
-            // return
             return RouteNamesE.FINALIZATION
           }
 

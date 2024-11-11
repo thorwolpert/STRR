@@ -134,7 +134,6 @@ onMounted(() => {
   // if no SBC accounts exist redirect to SBC account creation
   if (!me?.settings.length) {
     goToCreateSbcAccount()
-    return
   }
   updateFees()
 })
