@@ -29,7 +29,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
       await account.setAccountInfo()
     }
 
-    if (redirectRoute) {
+    if (redirectRoute && !to.path.startsWith('/' + RouteNamesE.APPLICATION_SUBMITTED)) {
       abortNavigation()
       return navigateTo('/' + redirectRoute)
     } else {
