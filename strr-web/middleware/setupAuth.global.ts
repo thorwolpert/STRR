@@ -29,6 +29,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
       await account.setAccountInfo()
     }
 
+    // allow to navigate to application submitted page after the payment
     if (redirectRoute && !to.path.startsWith('/' + RouteNamesE.APPLICATION_SUBMITTED)) {
       abortNavigation()
       return navigateTo('/' + redirectRoute)
