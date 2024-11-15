@@ -91,8 +91,7 @@
                 class="text-bcGovColor-activeBlue"
                 target="_blank"
                 :href="`
-                  https://www2.gov.bc.ca/gov/content/housing-tenancy/\
-                    short-term-rentals/principal-residence-requirement
+                  https://www2.gov.bc.ca/gov/content/housing-tenancy/short-term-rentals/principal-residence-requirement
                 `"
                 rel="noopener noreferrer"
               >
