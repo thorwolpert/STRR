@@ -93,8 +93,7 @@
                     class="text-bcGovColor-activeBlue"
                     target="_blank"
                     :href="`
-                      https://www2.gov.bc.ca/gov/content/housing-tenancy/\
-                        short-term-rentals/terms-and-conditions
+                      https://www2.gov.bc.ca/gov/content/housing-tenancy/short-term-rentals/registry/registry-toc-hosts
                     `"
                     rel="noopener noreferrer"
                   >
@@ -127,7 +126,7 @@
               </div>
               <UCheckbox
                 v-model="confirmationCheckboxValue"
-                label="I confirm that I understand and agree to the above."
+                :label="tReview('confirmAll')"
                 :ui="{
                   label: isComplete && (
                     !formState.principal.agreedToSubmit ||
