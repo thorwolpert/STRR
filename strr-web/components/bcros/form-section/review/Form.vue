@@ -92,7 +92,7 @@
                   <a
                     class="text-bcGovColor-activeBlue"
                     target="_blank"
-                    :href="`
+                    href="`
                       https://www2.gov.bc.ca/gov/content/housing-tenancy/short-term-rentals/registry/registry-toc-hosts
                     `"
                     rel="noopener noreferrer"
