@@ -93,7 +93,7 @@ const propertyAddressDetails = computed((): UnitAddressAPII => {
               :key="listing.url"
               :href="listing.url"
               target="_blank"
-              class="my-1"
+              class="my-1 truncate max-w-[350px]"
               rel="noopener noreferrer"
             >
               {{ listing.url }}

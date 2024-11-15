@@ -58,7 +58,7 @@
               </p>
             </div>
           </div>
-          <div v-if="formState.principal.isPrincipalResidence && formState.principal.agreedToRentalAct">
+          <div v-if="formState.principal.isPrincipalResidence">
             <div class="bg-white py-[22px] px-[30px] m:px-2">
               <p class="font-bold mb-2">
                 {{ tReview('proof') }}
@@ -75,46 +75,67 @@
                   </div>
                 </div>
               </div>
-              <div class="mb-6">
-                <p class="font-bold">
-                  {{ tReview('declaration') }}
-                </p>
-                <div class="mt-2">
-                  <div class="mb-[12px] flex flex-row">
-                    <img
-                      class="mr-2 self-start"
-                      src="/icons/create-account/gray_check.svg"
-                      alt="Confirmation checkmark"
-                    >
-                    <BcrosFormSectionReviewDeclaration />
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
         <!-- Review and Confirm -->
         <div class="mt-12">
           <p class="font-bold mb-6 m:mx-2">
-            {{ tReview('review') }}
+            {{ tReview('confirmation') }}
           </p>
           <div class="bg-white p-8 mb-6">
-            <UCheckbox
-              v-model="formState.principal.agreedToSubmit"
-              :label="tReview('confirm')"
-              :ui="{ label: isComplete && !formState.principal.agreedToSubmit ? 'text-bcGovColor-error' : '' }"
-            />
-          </div>
-          <div
-            v-if="formState.isPropertyManagerRole"
-            class="bg-white p-8 mb-6"
-            data-test-id="host-auth-checkbox"
-          >
-            <UCheckbox
-              v-model="formState.hasHostAuthorization"
-              :label="tReview('confirmHostAuthorization')"
-              :ui="{ label: isComplete && !formState.hasHostAuthorization ? 'text-bcGovColor-error' : '' }"
-            />
+            <div class="space-y-6">
+              <div data-test-id="terms-and-conditions-confirmation">
+                <p>
+                  <span class="font-bold">{{ tReview('confirmTermsAndConditionsLabel') }}</span>
+                  {{ tReview('confirmTermsAndConditionsFirst') }}
+                  <a
+                    class="text-bcGovColor-activeBlue"
+                    target="_blank"
+                    :href="`
+                      https://www2.gov.bc.ca/gov/content/housing-tenancy/\
+                        short-term-rentals/terms-and-conditions
+                    `"
+                    rel="noopener noreferrer"
+                  >
+                    {{ tReview('confirmTermsAndConditionsLink') }}
+                  </a>
+                  {{ tReview('confirmTermsAndConditionsSecond') }}
+                </p>
+                <hr class="mt-4 border-gray-500">
+              </div>
+              <div data-test-id="tax-auditing-confirmation">
+                <p>
+                  <span class="font-bold">{{ tReview('confirmTaxAuditingLabel') }}</span>
+                  {{ tReview('confirmTaxAuditing') }}
+                </p>
+                <hr class="mt-4 border-gray-500">
+              </div>
+              <div data-test-id="info-accuracy-confirmation">
+                <p>
+                  <span class="font-bold">{{ tReview('confirmInfoAccuracyLabel') }}</span>
+                  {{ tReview('confirmInfoAccuracy') }}
+                </p>
+                <hr class="mt-4 border-gray-500">
+              </div>
+              <div v-if="formState.isPropertyManagerRole" data-test-id="host-auth-confirmation">
+                <p>
+                  <span class="font-bold">{{ tReview('confirmHostAuthorizationLabel') }}</span>
+                  {{ tReview('confirmHostAuthorization') }}
+                </p>
+                <hr class="mt-4 border-gray-500">
+              </div>
+              <UCheckbox
+                v-model="confirmationCheckboxValue"
+                label="I confirm that I understand and agree to the above."
+                :ui="{
+                  label: isComplete && (
+                    !formState.principal.agreedToSubmit ||
+                    (formState.isPropertyManagerRole && !formState.hasHostAuthorization)
+                  ) ? 'text-bcGovColor-error' : ''
+                }"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -129,4 +150,13 @@ const { secondaryContact, isComplete } = defineProps<{ secondaryContact: boolean
 
 const tReview = (translationKey: string) => t(`createAccount.review.${translationKey}`)
 const tPrincipal = (translationKey: string) => t(`createAccount.principalResidence.${translationKey}`)
+const confirmationCheckboxValue = computed({
+  get: () => formState.principal.agreedToSubmit,
+  set: (value: boolean) => {
+    formState.principal.agreedToSubmit = value
+    if (formState.isPropertyManagerRole) {
+      formState.hasHostAuthorization = value
+    }
+  }
+})
 </script>

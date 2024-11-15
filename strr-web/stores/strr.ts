@@ -232,8 +232,9 @@ const listingDetailsSchema = z.array(
   z.object({
     url: z
       .string()
-      .refine(value => httpRegex.test(value ?? ''), 'Invalid URL format')
-      .or(z.string().refine(value => value === ''))
+      .regex(httpRegex, { message: 'Invalid URL format' })
+      .optional()
+      .or(z.literal(''))
   })
 )
 

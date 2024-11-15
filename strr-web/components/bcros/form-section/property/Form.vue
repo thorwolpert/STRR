@@ -147,6 +147,19 @@ const removeDetailAtIndex = (index: number) => {
 const validateField = (index: number) => {
   const listingDetailsErrorsExist = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
     .find(error => error.path[0] === 'listingDetails')
+  const currentUrl = formState.propertyDetails.listingDetails[index]?.url
+  if (currentUrl) {
+    const sanitizedUrl = sanitizeUrl(currentUrl)
+    if (sanitizedUrl === 'about:blank' || sanitizedUrl === 'javascript:void(0)') {
+      listingURLErrors.value = listingURLErrors.value || []
+      listingURLErrors.value[index] = {
+        errorIndex: index,
+        message: 'Invalid URL format'
+      }
+      return
+    }
+    formState.propertyDetails.listingDetails[index].url = sanitizedUrl
+  }
   if (listingDetailsErrorsExist) {
     const invalidUrl = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
       .filter(error => error.path[0] === 'listingDetails' && error.path[1].toString() === index.toString())
@@ -175,10 +188,6 @@ const validateField = (index: number) => {
   } else {
     listingURLErrors.value = undefined
   }
-
-  formState.propertyDetails.listingDetails[index].url = sanitizeUrl(
-    formState.propertyDetails.listingDetails[index].url
-  )
 }
 
 const validateAllPropertyListingUrls = () => {

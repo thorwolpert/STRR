@@ -1,10 +1,7 @@
 <template>
   <div data-test-id="principal-residence-form" class="relative h-full">
     <div class="desktop:mb-[180px] mobile:mb-[32px] rounded-[4px]">
-      <div class="mb-[32px] mx-[8px]">
-        <p class="text-[18px] mb-[8px] font-bold">
-          {{ tPrincipalResidence('property') }}
-        </p>
+      <div class="mb-[16px] mx-[8px]">
         <p class="text-[16px] text-bcGovColor-midGray">
           <!-- eslint-disable-next-line max-len -->
           {{ `${formState.propertyDetails.nickname ?? '' }
@@ -78,15 +75,8 @@
           </p>
         </UFormGroup>
       </div>
-      <div v-if="formState.principal.isPrincipalResidence">
-        <div class="mt-[40px] mobile:mx-[8px]">
-          <p>{{ tPrincipalResidence('requiredDocs') }}</p>
-          <div class="p-[16px] flex flex-row text-blue-500 text-[16px]">
-            <img alt="Information icon" class="mr-[4px]" src="/icons/create-account/info.svg">
-            <p>{{ tPrincipalResidence('docRequirements') }}</p>
-          </div>
-        </div>
-        <div class="mb-[40px] bg-white rounded-[4px] pb-[40px]">
+      <div>
+        <div class="mt-[40px] mobile:mx-[8px] mb-[40px] bg-white rounded-[4px] pb-[40px]">
           <div class="bg-bcGovColor-gray2 rounded-t-[4px]">
             <p class="px-[40px] py-[15px] font-bold">
               {{ tPrincipalResidence('docDetails') }}
@@ -97,6 +87,18 @@
           >
             <p class="mb-[16px]">
               {{ tPrincipalResidence('uploadMultiple') }}
+              <a
+                class="text-bcGovColor-activeBlue"
+                target="_blank"
+                :href="`
+                  https://www2.gov.bc.ca/gov/content/housing-tenancy/\
+                    short-term-rentals/principal-residence-requirement
+                `"
+                rel="noopener noreferrer"
+              >
+                <span class="underline">{{ tPrincipalResidence('learnMoreLink') }}</span>
+                <UIcon name="i-mdi-open-in-new" class="ml-1 h-5 w-5" />
+              </a>
             </p>
             <div class="flex flex-row items-center relative">
               <img
@@ -153,33 +155,6 @@
             </div>
           </BcrosFormSection>
         </div>
-        <div class="desktop:mb-[180px] mobile:mb-[32px] bg-white rounded-[4px]">
-          <div class="bg-bcGovColor-gray2 rounded-t-[4px]">
-            <p class="px-[40px] py-[15px] font-bold">
-              {{ tPrincipalResidence('declaration') }}
-            </p>
-          </div>
-          <BcrosFormSection class="pb-[40px]">
-            <div
-              :class="`flex flex-row
-                  ${
-                isComplete
-                && !formState.principal.agreedToRentalAct
-                  ? 'outline outline-bcGovColor-error p-[5px]'
-                  : 'p-[5px]'
-              }
-                `"
-            >
-              <UCheckbox
-                v-model="formState.principal.agreedToRentalAct"
-                aria-label="Checkbox for primary residence declaration"
-                class="mb-[18px]"
-                name="declaration"
-              />
-              <BcrosFormSectionReviewDeclaration />
-            </div>
-          </BcrosFormSection>
-        </div>
       </div>
     </div>
   </div>
@@ -196,8 +171,8 @@ const fileInputKey = ref(0)
 
 const { isComplete } = defineProps<{ isComplete: boolean }>()
 
-watch(() => formState.principal.agreedToRentalAct, (ticked) => {
-  if (ticked && formState.supportingDocuments.length === 0) {
+watch(() => formState.principal.isPrincipalResidence, (principalRequirements) => {
+  if (principalRequirements && formState.supportingDocuments.length === 0) {
     fileError.value = tPrincipalResidence('fileRequiredError')
   } else {
     fileError.value = ''
@@ -230,7 +205,7 @@ const uploadFile = (file: FileList) => {
   const validType = ['pdf']
   const fileSize = file[0].size / 1024 / 1024 // in MiB
   const validFileType = validType.includes(extension)
-  const validFileSize = fileSize <= 50
+  const validFileSize = fileSize <= 10
   if (!validFileSize) {
     fileError.value = tPrincipalResidence('fileSizeError')
   } else if (!validFileType) {
@@ -244,7 +219,7 @@ const uploadFile = (file: FileList) => {
 
 const removeFile = (index: number) => {
   formState.supportingDocuments.splice(index, 1)
-  if (formState.principal.agreedToRentalAct && formState.supportingDocuments.length === 0) {
+  if (formState.principal.isPrincipalResidence && formState.supportingDocuments.length === 0) {
     fileError.value = tPrincipalResidence('fileRequiredError')
   }
 }
