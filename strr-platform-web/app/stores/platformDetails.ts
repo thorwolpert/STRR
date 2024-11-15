@@ -47,7 +47,6 @@ export const useStrrPlatformDetails = defineStore('strr/platformDetails', () => 
   return {
     platformDetails,
     platformDetailSchema,
-    getPlatformBrandSchema,
     getPlatformDetailsSchema,
     addNewEmptyBrand,
     removeBrandAtIndex,
