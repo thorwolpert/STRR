@@ -151,9 +151,10 @@ const { secondaryContact, isComplete } = defineProps<{ secondaryContact: boolean
 const tReview = (translationKey: string) => t(`createAccount.review.${translationKey}`)
 const tPrincipal = (translationKey: string) => t(`createAccount.principalResidence.${translationKey}`)
 const confirmationCheckboxValue = computed({
-  get: () => formState.principal.agreedToSubmit,
+  get: () => formState.principal.agreedToSubmit && formState.principal.agreedToRentalAct,
   set: (value: boolean) => {
     formState.principal.agreedToSubmit = value
+    formState.principal.agreedToRentalAct = value
     if (formState.isPropertyManagerRole) {
       formState.hasHostAuthorization = value
     }
