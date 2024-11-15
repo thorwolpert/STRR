@@ -7,18 +7,15 @@
             v-model="socialInsuranceNumber"
             type="text"
             aria-label="social insurance number"
-            :placeholder="
-              `${isPrimary
+            :placeholder="`${
+              isPrimary
                 ? t('createAccount.contactForm.socialInsuranceNumber')
                 : t('createAccount.contactForm.socialInsuranceNumberOptional')}`
             "
           />
         </UFormGroup>
       </div>
-      <div
-        v-if="isPrimary"
-        class="mb-10 m:mb-4"
-      >
+      <div v-if="isPrimary" class="mb-10 m:mb-4">
         <UFormGroup name="businessLegalName">
           <UInput
             v-model="businessLegalName"
@@ -49,6 +46,9 @@ const socialInsuranceNumber = defineModel<string>('socialInsuranceNumber')
 const businessLegalName = defineModel<string>('businessLegalName')
 const businessNumber = defineModel<string>('businessNumber')
 
-const { isPrimary } = defineProps<{ isPrimary?: boolean }>()
+defineProps<{
+  isPrimary?: boolean
+  contactInfoDescription?: string,
+}>()
 
 </script>

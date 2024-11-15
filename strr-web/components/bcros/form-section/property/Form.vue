@@ -6,7 +6,7 @@
           {{ t('createAccount.propertyForm.subtitle') }}
         </p>
       </div>
-      <UForm ref="form" :schema="propertyDetailsSchema" :state="formState.propertyDetails">
+      <UForm ref="propertyDetailsForm" :schema="propertyDetailsSchema" :state="formState.propertyDetails">
         <BcrosFormSectionPropertyDetails
           v-model:property-type="formState.propertyDetails.propertyType"
           v-model:ownership-type="formState.propertyDetails.ownershipType"
@@ -17,15 +17,8 @@
           v-model:is-unit-on-principal-residence-property="formState.propertyDetails.isUnitOnPrincipalResidenceProperty"
           v-model:host-residence="formState.propertyDetails.hostResidence"
           v-model:number-of-rooms-for-rent="formState.propertyDetails.numberOfRoomsForRent"
-          :property-types="propertyTypes"
-          :ownership-types="ownershipTypes"
-          :errors="errorRefs"
-          @reset-field-error="resetFieldError"
-          @validate-ownership="validateOwnershipType"
-          @validate-property="validatePropertyType"
-          @validate-business-license-expiry-date="validateBusinessLicenseExpiryDate"
-          @validate-rental-unit-space-type="validateRentalUnitSpaceType"
-          @validate-principal-residence="validatePrincipalResidenceOptions"
+          :host-residence-error="hostResidenceError"
+          :number-of-rooms-for-rent-error="numberOfRoomsForRentError"
           @validate-host-residence="validateHostResidence"
           @validate-number-of-rooms-for-rent="validateNumberOfRoomsForRent"
         />
@@ -43,9 +36,8 @@
           street-name-id="propertyAddressStreetName"
           :enable-address-complete="enableAddressComplete"
           default-country-iso2="CA"
-          :errors="errorRefs"
-          @reset-field-error="resetFieldError"
-          @validate-address-field="validateAddressField"
+          :address-in-b-c="isAddressInBC"
+          @auto-complete-selected="handleAutoCompleteSelected"
         />
         <BcrosFormSectionPropertyListingDetails
           v-model:listing-details="formState.propertyDetails.listingDetails"
@@ -66,33 +58,15 @@ const { isComplete } = defineProps<{
   isComplete: boolean
 }>()
 
-const errorRefs = reactive({
-  propertyType: '',
-  ownershipType: '',
-  businessLicenseExpiryDate: '',
-  rentalUnitSpaceType: '',
-  principalResidence: '',
-  hostResidence: '',
-  numberOfRoomsForRent: '',
-  streetNumber: '',
-  streetName: '',
-  unitNumber: '',
-  addressLineTwo: '',
-  city: '',
-  province: '',
-  postalCode: '',
-  addressNotInBC: ''
-})
-
-const resetFieldError = (field: keyof typeof errorRefs) => {
-  errorRefs[field] = ''
-}
-
 const {
   activeAddressField,
   addressWithStreetAttributes: canadaPostAddress,
   enableAddressComplete
 } = useCanadaPostAddress(true)
+
+const isAddressInBC = ref(false)
+const hostResidenceError = ref('')
+const numberOfRoomsForRentError = ref('')
 
 const getActiveAddressState = (): PropertyDetailsI | null => {
   if (activeAddressField.value === 'propertyAddressStreetNumber' ||
@@ -106,7 +80,7 @@ watch(canadaPostAddress, (newAddress) => {
   const activeAddressState = getActiveAddressState()
   if (newAddress && activeAddressState) {
     if (newAddress.province === 'BC') {
-      errorRefs.addressNotInBC = ''
+      isAddressInBC.value = true
       activeAddressState.streetNumber = newAddress.streetNumber
       activeAddressState.streetName = newAddress.streetName
       activeAddressState.addressLineTwo = newAddress.addressLineTwo
@@ -115,7 +89,7 @@ watch(canadaPostAddress, (newAddress) => {
       activeAddressState.province = newAddress.province
       activeAddressState.postalCode = newAddress.postalCode
     } else {
-      errorRefs.addressNotInBC = 'Address must be in BC'
+      isAddressInBC.value = false
     }
   }
 })
@@ -212,51 +186,6 @@ defineEmits<{
   validatePage: [isValid: boolean]
 }>()
 
-const propertyTypes = [
-  { value: PropertyTypeE.SINGLE_FAMILY_HOME, label: t('createAccount.propertyForm.singleFamilyHome') },
-  { value: PropertyTypeE.SECONDARY_SUITE, label: t('createAccount.propertyForm.secondarySuite') },
-  { value: PropertyTypeE.ACCESSORY_DWELLING, label: t('createAccount.propertyForm.accessoryDwelling') },
-  { value: PropertyTypeE.TOWN_HOME, label: t('createAccount.propertyForm.townhome') },
-  { value: PropertyTypeE.MULTI_UNIT_HOUSING, label: t('createAccount.propertyForm.multiUnitHousing') },
-  { value: PropertyTypeE.CONDO_OR_APT, label: t('createAccount.propertyForm.condoApartment') },
-  { value: PropertyTypeE.RECREATIONAL, label: t('createAccount.propertyForm.recreationalProperty') },
-  { value: PropertyTypeE.BED_AND_BREAKFAST, label: t('createAccount.propertyForm.bedAndBreakfast') },
-  { value: PropertyTypeE.STRATA_HOTEL, label: t('createAccount.propertyForm.strataHotel') },
-  { value: PropertyTypeE.FLOAT_HOME, label: t('createAccount.propertyForm.floatHome') }
-]
-
-const ownershipTypes = [
-  { value: OwnershipTypeE.RENT, label: t('createAccount.propertyForm.rent') },
-  { value: OwnershipTypeE.OWN, label: t('createAccount.propertyForm.own') },
-  { value: OwnershipTypeE.CO_OWN, label: t('createAccount.propertyForm.coOwn') }
-]
-
-const validatePropertyType = () => {
-  const parsed = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
-  const error = parsed?.find(error => error.path.includes('propertyType'))
-  errorRefs.propertyType = error?.message || ''
-}
-
-const validateOwnershipType = () => {
-  const parsed = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
-  const error = parsed?.find(error => error.path.includes('ownershipType'))
-  errorRefs.ownershipType = error?.message || ''
-}
-
-const validateBusinessLicenseExpiryDate = () => {
-  const parsed = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
-  const error = parsed?.find(error => error.path.includes('businessLicenseExpiryDate'))
-  errorRefs.businessLicenseExpiryDate = error?.message || ''
-}
-
-const validateRentalUnitSpaceType = () => {
-  if (!formState.propertyDetails.rentalUnitSpaceType) {
-    errorRefs.rentalUnitSpaceType = t('createAccount.propertyForm.rentalUnitSpaceTypeRequired')
-  } else {
-    errorRefs.rentalUnitSpaceType = ''
-  }
-}
-
 watch(
   () => formState.propertyDetails.isUnitOnPrincipalResidenceProperty,
   (newValue) => {
@@ -266,21 +195,8 @@ watch(
     } else if (newValue === 'false') {
       formState.propertyDetails.isUnitOnPrincipalResidenceProperty = false
     }
-
-    if (isComplete) {
-      validatePrincipalResidenceOptions()
-    }
   }
 )
-
-const validatePrincipalResidenceOptions = () => {
-  const value = formState.propertyDetails.isUnitOnPrincipalResidenceProperty
-  if (value === null || value === undefined) {
-    errorRefs.principalResidence = t('createAccount.propertyForm.isUnitOnPrincipalResidencePropertyRequired')
-  } else {
-    errorRefs.principalResidence = '' // Clear the error if a valid selection is made
-  }
-}
 
 const validateHostResidence = () => {
   errorRefs.hostResidence =
@@ -306,40 +222,21 @@ const validateNumberOfRoomsForRent = () => {
   }
 }
 
-const validateAddressField = (field: keyof typeof errorRefs) => {
-  const parsed = propertyDetailsSchema.safeParse(formState.propertyDetails)
-  const error = parsed.success ? null : parsed.error.issues.find(issue => issue.path.includes(field))
-  errorRefs[field] = error?.message || ''
+const propertyDetailsForm = ref()
+
+const handleAutoCompleteSelected = () => {
+  propertyDetailsForm.value.clear('address')
+  propertyDetailsForm.value.clear('addressLineTwo')
+  propertyDetailsForm.value.clear('city')
+  propertyDetailsForm.value.clear('postalCode')
 }
 
-const validateAddressFields = () => {
-  validateAddressField('streetNumber')
-  validateAddressField('streetName')
-  validateAddressField('unitNumber')
-  validateAddressField('addressLineTwo')
-  validateAddressField('city')
-  validateAddressField('province')
-  validateAddressField('postalCode')
-}
-
-const form = ref()
-
-watch(form, () => {
-  if (form.value && isComplete) { form.value.validate({ silent: true }) }
-})
-
-onMounted(() => {
-  if (isComplete && !isValid.value) {
-    validateAllPropertyListingUrls()
-  }
+onMounted(async () => {
   if (isComplete) {
-    validatePropertyType()
-    validateOwnershipType()
-    validateRentalUnitSpaceType()
-    validatePrincipalResidenceOptions()
+    await propertyDetailsForm.value.validate(null, { silent: true })
+    validateAllPropertyListingUrls()
     validateHostResidence()
     validateNumberOfRoomsForRent()
-    validateAddressFields()
   }
 })
 </script>

@@ -2,18 +2,15 @@
   <div data-test-id="form-section-contact">
     <BcrosFormSection :title="t('createAccount.contactForm.dateOfBirth')" :optional="!isPrimary">
       <div class="flex m:flex-col gap-4">
-        <UFormGroup name="birthDay" class="d:w-1/3" :error="errors.birthDay">
+        <UFormGroup name="birthDay" class="d:w-1/3">
           <UInput
             v-model="day"
             :placeholder="t('createAccount.contactForm.day')"
             aria-label="birth day"
             data-test-id="contact-info-birth-day"
-            @input="emit('resetFieldError', 'birthDay')"
-            @blur="isPrimary && emit('validateField', 'birthDay')"
-            @change="isPrimary && emit('validateField', 'birthDay')"
           />
         </UFormGroup>
-        <UFormGroup name="birthMonth" class="d:w-1/3" :error="errors.birthMonth">
+        <UFormGroup name="birthMonth" class="d:w-1/3">
           <USelect
             v-model="month"
             :placeholder="t('createAccount.contactForm.month')"
@@ -22,19 +19,14 @@
             aria-label="birth month"
             data-test-id="contact-info-birth-month"
             style="color: #1a202c; /* text-gray-900 */"
-            @input="emit('resetFieldError', 'birthMonth')"
-            @blur="isPrimary && emit('validateField', 'birthMonth')"
           />
         </UFormGroup>
-        <UFormGroup name="birthYear" class="d:w-1/3" :error="errors.birthYear">
+        <UFormGroup name="birthYear" class="d:w-1/3">
           <UInput
             v-model="year"
             :placeholder="t('createAccount.contactForm.year')"
             aria-label="birth year"
             data-test-id="contact-info-birth-year"
-            @input="emit('resetFieldError', 'birthYear')"
-            @blur="isPrimary && emit('validateField', 'birthYear')"
-            @change="isPrimary && emit('validateField', 'birthYear')"
           />
         </UFormGroup>
       </div>
@@ -45,18 +37,7 @@
 <script setup lang="ts">
 const { t } = useTranslation()
 
-const {
-  isPrimary,
-  errors = {}
-} = defineProps<{
-  isPrimary?: boolean
-  errors: Record<string, string>
-}>()
-
-const emit = defineEmits<{
-  validateField: [field: string]
-  resetFieldError: [field: keyof typeof errors]
-}>()
+defineProps<{ isPrimary?: boolean }>()
 
 const day = defineModel<string>('day')
 const month = defineModel<string>('month')

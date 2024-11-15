@@ -9,6 +9,7 @@
             :options="countryItems"
             option-attribute="name"
             class="w-full"
+            data-test-id="contact-info-country-select"
           />
         </UFormGroup>
       </div>
@@ -19,6 +20,7 @@
             v-model="address"
             aria-label="address"
             :placeholder="t('createAccount.contactForm.address')"
+            data-test-id="contact-info-address-input"
             @keypress.once="addressComplete()"
             @click="addressComplete()"
           />
@@ -30,21 +32,33 @@
             v-model="addressLineTwo"
             :placeholder="t('createAccount.contactForm.addressLineTwo')"
             aria-label="address line two"
+            data-test-id="contact-info-address-line-two-input"
           />
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:flex-col mobile:mb-[16px]">
         <UFormGroup name="city" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
-          <UInput v-model="city" :placeholder="t('createAccount.contactForm.city')" aria-label="city" />
+          <UInput
+            v-model="city"
+            :placeholder="t('createAccount.contactForm.city')"
+            aria-label="city"
+            data-test-id="contact-info-city-input"
+          />
         </UFormGroup>
         <UFormGroup name="province" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
-          <UInput v-model="province" :placeholder="t('createAccount.contactForm.province')" aria-label="province" />
+          <UInput
+            v-model="province"
+            :placeholder="t('createAccount.contactForm.province')"
+            aria-label="province"
+            data-test-id="contact-info-province-input"
+          />
         </UFormGroup>
         <UFormGroup name="postalCode" class="flex-grow mobile:mb-[16px]">
           <UInput
             v-model="postalCode"
             :placeholder="t('createAccount.contactForm.postalCode')"
             aria-label="postal code"
+            data-test-id="contact-info-postal-code-input"
           />
         </UFormGroup>
       </div>

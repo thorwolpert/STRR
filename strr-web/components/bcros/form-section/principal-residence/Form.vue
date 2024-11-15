@@ -82,9 +82,7 @@
               {{ tPrincipalResidence('docDetails') }}
             </p>
           </div>
-          <BcrosFormSection
-            :title="tPrincipalResidence('fileUpload')"
-          >
+          <BcrosFormSection :title="tPrincipalResidence('fileUpload')">
             <p class="mb-[16px]">
               {{ tPrincipalResidence('uploadMultiple') }}
               <a
@@ -104,7 +102,7 @@
                 src="/icons/create-account/attach.svg"
                 alt="Paperclip icon"
               >
-              <UFormGroup :error="fileError">
+              <UFormGroup :error="fileError" :ui="{ error: 'ml-10' }">
                 <UInput
                   :key="fileInputKey"
                   required
@@ -117,7 +115,7 @@
                 />
               </UFormGroup>
             </div>
-            <p class="text-[12px] ml-[58px] mt-[4px] mb-[12px] text-bcGovColor-midGray">
+            <p class="text-[12px] ml-[40px] mt-1 mb-2 text-bcGovColor-midGray">
               {{ tPrincipalResidence('fileRequirements') }}
             </p>
             <div
@@ -126,11 +124,7 @@
               class="flex items-center justify-between p-3 mb-1 bg-gray-100 rounded"
             >
               <div class="flex flex-row items-center">
-                <img
-                  class="mr-[4px] h-[18px] w-[18px]"
-                  src="/icons/create-account/attach_dark.svg"
-                  alt="Attach icon"
-                >
+                <img class="mr-[4px] h-[18px] w-[18px]" src="/icons/create-account/attach_dark.svg" alt="Attach icon">
                 <div class="mobile:max-w-[210px] desktop:max-w-[700px] max-h-auto">
                   <p
                     :class="[
@@ -192,6 +186,7 @@ if (isComplete) {
   if (!formState.principal.isPrincipalResidence) {
     validateReason(formState.principal.nonPrincipalOption ?? '')
   }
+
   if (!formState.principal.isPrincipalResidence &&
     formState.principal.specifiedServiceProvider === tPrincipalResidence('other')) {
     validateOtherReason(formState.principal.specifiedServiceProvider ?? '')
@@ -251,36 +246,36 @@ const hasSpaces = (str: string) => /\s/.test(str)
 </script>
 
 <style>
-  #primary-residence-radio legend {
-    font-weight: bold;
-  }
-  input[type="file"]::-webkit-file-upload-button {
-    display: none;
-  }
-  input[type="file"]::file-selector-button {
-    display: none;
-  }
-  input[type="file"] {
-    color: transparent;
-    position: relative;
-  }
-  input[type="file"]:hover {
-    cursor: pointer;
-  }
-  input[type="file"]::before {
-    content: attr(placeholder);
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    color: #6B7280;
-    pointer-events: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  input[type="file"]:focus::before {
-    content: attr(placeholder);
-  }
-  </style>
+#primary-residence-radio legend {
+  font-weight: bold;
+}
+input[type="file"]::-webkit-file-upload-button {
+  display: none;
+}
+input[type="file"]::file-selector-button {
+  display: none;
+}
+input[type="file"] {
+  color: transparent;
+  position: relative;
+}
+input[type="file"]:hover {
+  cursor: pointer;
+}
+input[type="file"]::before {
+  content: attr(placeholder);
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: #6B7280;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+input[type="file"]:focus::before {
+  content: attr(placeholder);
+}
+</style>

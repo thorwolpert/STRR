@@ -30,9 +30,6 @@
             v-model:business-name="formState.primaryContact.businessLegalName"
             v-model:business-number="formState.primaryContact.businessNumber"
             is-business-name-required
-            :errors="primaryContactErrors"
-            @reset-field-error="resetFieldError"
-            @validate-field="validateField"
           />
           <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
         </div>
@@ -41,9 +38,6 @@
           v-model:middle-name="formState.primaryContact.middleName"
           v-model:last-name="formState.primaryContact.lastName"
           v-model:preferred-name="formState.primaryContact.preferredName"
-          :errors="primaryContactErrors"
-          @reset-field-error="resetFieldError"
-          @validate-field="validateField"
         />
 
         <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
@@ -53,9 +47,6 @@
           v-model:month="formState.primaryContact.birthMonth"
           v-model:year="formState.primaryContact.birthYear"
           is-primary
-          :errors="primaryContactErrors"
-          @reset-field-error="resetFieldError"
-          @validate-field="validateField"
         />
         <BcrosFormSectionContactInformationCraInfo
           v-if="isHostIndividual"
@@ -69,9 +60,6 @@
           v-model:extension="formState.primaryContact.extension"
           v-model:fax-number="formState.primaryContact.faxNumber"
           v-model:email-address="formState.primaryContact.emailAddress"
-          :errors="primaryContactErrors"
-          @reset-field-error="resetFieldError"
-          @validate-field="validateField"
         />
         <BcrosFormSectionContactInformationMailingAddress
           id="primaryContactAddress"
@@ -120,17 +108,11 @@
             v-model:last-name="formState.secondaryContact.lastName"
             v-model:preferred-name="formState.secondaryContact.preferredName"
             :contact-info-description="t('createAccount.contact.backupContactInfoDescription')"
-            :errors="secondaryContactErrors"
-            @reset-field-error="resetFieldErrorSecondary"
-            @validate-field="validateFieldSecondary"
           />
           <BcrosFormSectionContactInformationContactInfo
             v-model:day="formState.secondaryContact.birthDay"
             v-model:month="formState.secondaryContact.birthMonth"
             v-model:year="formState.secondaryContact.birthYear"
-            :errors="secondaryContactErrors"
-            @reset-field-error="resetFieldErrorSecondary"
-            @validate-field="validateFieldSecondary"
           />
           <BcrosFormSectionContactInformationCraInfo
             v-model:social-insurance-number="formState.secondaryContact.socialInsuranceNumber"
@@ -141,9 +123,6 @@
             v-model:extension="formState.secondaryContact.extension"
             v-model:fax-number="formState.secondaryContact.faxNumber"
             v-model:email-address="formState.secondaryContact.emailAddress"
-            :errors="secondaryContactErrors"
-            @reset-field-error="resetFieldErrorSecondary"
-            @validate-field="validateFieldSecondary"
           />
           <BcrosFormSectionContactInformationMailingAddress
             id="secondaryContactAddress"
@@ -191,9 +170,6 @@ const { me, currentAccount } = useBcrosAccount()
 const primaryContactForm = ref()
 const secondaryContactForm = ref()
 
-const primaryContactErrors = reactive<Record<string, string>>({})
-const secondaryContactErrors = reactive<Record<string, string>>({})
-
 const hostContactTypeOptions = [
   { value: HostContactTypeE.INDIVIDUAL, label: t('createAccount.contact.individualRadioOption') },
   { value: HostContactTypeE.BUSINESS, label: t('createAccount.contact.businessRadioOption') }
@@ -201,18 +177,11 @@ const hostContactTypeOptions = [
 
 const isHostIndividual = computed((): boolean => formState.primaryContact.contactType === HostContactTypeE.INDIVIDUAL)
 
-onMounted(() => {
+onMounted(async () => {
   if (isComplete) {
-    const parsed = primaryContactSchema.safeParse(formState.primaryContact).error?.errors
-    parsed?.forEach((error: any) => {
-      primaryContactErrors[error.path[0]] = error.message
-    })
-
+    await primaryContactForm.value.validate(null, { silent: true })
     if (hasSecondaryContact) {
-      const parsed = secondaryContactSchema.safeParse(formState.secondaryContact).error?.errors
-      parsed?.forEach((error: any) => {
-        secondaryContactErrors[error.path[0]] = error.message
-      })
+      await secondaryContactForm.value.validate(null, { silent: true })
     }
   }
 
@@ -253,44 +222,16 @@ const getActiveAddressState = (): ContactInformationI | CreateAccountFormStateI[
   }
 }
 
-// reset errors for Primary Contact
-const resetFieldError = (field: keyof typeof primaryContactErrors) => {
-  primaryContactErrors[field] = ''
-}
-
-// reset errors for Primary Contact
-const validateField = (field: keyof typeof primaryContactErrors) => {
-  const { error } = primaryContactSchema.safeParse(formState.primaryContact)
-  const errorMessage = error?.errors.find(error => error.path.includes(field))?.message
-  primaryContactErrors[field] = errorMessage || ''
-}
-
-// reset errors for Secondary Contact
-const resetFieldErrorSecondary = (field: keyof typeof secondaryContactErrors) => {
-  secondaryContactErrors[field] = ''
-}
-
-// validate fields for Secondary Contact
-const validateFieldSecondary = (field: keyof typeof secondaryContactErrors) => {
-  const { error } = secondaryContactSchema.safeParse(formState.secondaryContact)
-  const errorMessage = error?.errors.find(error => error.path.includes(field))?.message
-  secondaryContactErrors[field] = errorMessage || ''
-}
-
-watch(secondaryContactForm, () => {
+watch(secondaryContactForm, async () => {
   if (secondaryContactForm.value && secondFormIsComplete) {
-    secondaryContactForm.value.validate({ silent: true })
+    await secondaryContactForm.value.validate(null, { silent: true })
   }
 })
 
-watch(isHostIndividual, () => {
+watch(isHostIndividual, async () => {
   if (isComplete) {
-    const parsed = primaryContactSchema.safeParse(formState.primaryContact).error?.errors
-    parsed?.forEach((error: any) => {
-      primaryContactErrors[error.path[0]] = error.message
-    })
+    await primaryContactForm.value.validate(null, { silent: true })
   }
-  validateField('businessLegalName')
 })
 
 watch(canadaPostAddress, (newAddress) => {

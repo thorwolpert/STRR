@@ -2,40 +2,32 @@
   <div data-test-id="property-details">
     <BcrosFormSection :title="t('createAccount.propertyForm.rentalUnitDetails')">
       <div class="flex flex-row justify-between w-full mb-[40px] m:mb-4">
-        <UFormGroup name="rentalUnitSpaceType" class="d:pr-4 flex-grow" :error="errors.rentalUnitSpaceType">
+        <UFormGroup name="rentalUnitSpaceType" class="d:pr-4 flex-grow">
           <USelect
             v-model="rentalUnitSpaceType"
             :placeholder="t('createAccount.propertyForm.rentalUnitSpaceType')"
             :options="rentalUnitSpaceTypeOptions"
             style="color: #1a202c; /* text-gray-900 */"
-            @blur="emit('validateRentalUnitSpaceType')"
-            @change="emit('validateRentalUnitSpaceType')"
+            data-test-id="rental-unit-space-type-select"
           />
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] m:mb-4">
-        <UFormGroup
-          name="isUnitOnPrincipalResidenceProperty"
-          class="d:pr-4 flex-grow"
-          :error="errors.principalResidence"
-        >
+        <UFormGroup name="isUnitOnPrincipalResidenceProperty" class="d:pr-4 flex-grow">
           <USelect
             v-model="isUnitOnPrincipalResidenceProperty"
             :placeholder="t('createAccount.propertyForm.isUnitOnPrincipalResidenceProperty')"
             :options="principalResidenceOptions"
             class="w-full"
             style="color: #1a202c; /* text-gray-900 */"
-            @blur="emit('validatePrincipalResidenceOptions')"
-            @change="emit('validatePrincipalResidenceOptions')"
+            data-test-id="rental-unit-principal-residence-select"
           />
         </UFormGroup>
       </div>
       <div
         v-if="isUnitOnPrincipalResidenceProperty"
-        :key="isUnitOnPrincipalResidenceProperty
-          ? 'withDropdown' : 'withoutDropdown'"
-        class="flex flex-row justify-between
-        w-full mb-[40px] m:mb-4"
+        :key="isUnitOnPrincipalResidenceProperty ? 'withDropdown' : 'withoutDropdown'"
+        class="flex flex-row justify-between w-full mb-[40px] m:mb-4"
       >
         <UFormGroup name="hostResidence" class="d:pr-4 flex-grow" :error="errors.hostResidence">
           <USelect
@@ -44,6 +36,7 @@
             :options="hostResidenceOptions"
             class="w-full"
             style="color: #1a202c; /* text-gray-900 */"
+            data-test-id="rental-unit-host-residence-select"
             @change="emit('validateHostResidence')"
           />
         </UFormGroup>
@@ -84,28 +77,26 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] m:mb-4">
-        <UFormGroup name="propertyType" class="d:pr-4 flex-grow" :error="errors.propertyType">
+        <UFormGroup name="propertyType" class="d:pr-4 flex-grow">
           <USelect
             v-model="propertyType"
             :placeholder="t('createAccount.propertyForm.propertyType')"
-            :options="propertyTypes"
+            :options="propertyTypeOptions"
             class="w-full"
             style="color: #1a202c; /* text-gray-900 */"
-            @blur="emit('validateProperty')"
-            @change="emit('validateProperty')"
+            data-test-id="rental-unit-type-select"
           />
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] m:mb-4">
-        <UFormGroup name="ownershipType" class="d:pr-4 flex-grow" :error="errors.ownershipType">
+        <UFormGroup name="ownershipType" class="d:pr-4 flex-grow">
           <USelect
             v-model="ownershipType"
             :placeholder="t('createAccount.propertyForm.ownershipType')"
-            :options="ownershipTypes"
+            :options="ownershipTypeOptions"
             class="w-full"
             style="color: #1a202c; /* text-gray-900 */"
-            @blur="emit('validateOwnership')"
-            @change="emit('validateOwnership')"
+            data-test-id="rental-unit-ownership-type-select"
           />
         </UFormGroup>
       </div>
@@ -115,6 +106,7 @@
             v-model="parcelIdentifier"
             aria-label="parcel identifier"
             :placeholder="t('createAccount.propertyForm.parcelIdentifier')"
+            data-test-id="rental-unit-pid"
           />
           <template #help>
             <div class="flex">
@@ -181,22 +173,14 @@ const isUnitOnPrincipalResidenceProperty = defineModel<boolean>('isUnitOnPrincip
 const hostResidence = defineModel<string | null>('hostResidence')
 
 const {
-  propertyTypes,
-  ownershipTypes,
-  errors = {}
+  hostResidenceError,
+  numberOfRoomsForRentError
 } = defineProps<{
-  propertyTypes: string[],
-  ownershipTypes: string[],
-  errors: Record<string, string>
+  hostResidenceError: string,
+  numberOfRoomsForRentError: string;
 }>()
 
 const emit = defineEmits([
-  'validateOwnership',
-  'validateProperty',
-  'validateBusinessLicenseExpiryDate',
-  'validateRentalUnitSpaceType',
-  'validateIsUnitOnPrincipalResidenceProperty',
-  'validatePrincipalResidenceOptions',
   'validateHostResidence',
   'validateNumberOfRoomsForRent',
   'resetFieldError'
@@ -222,6 +206,25 @@ const hostResidenceOptions = computed(() => [
   { value: HostResidenceE.ANOTHER_UNIT, label: t('createAccount.propertyForm.anotherUnitOption') }
 ])
 
+const propertyTypeOptions = [
+  { value: PropertyTypeE.SINGLE_FAMILY_HOME, label: t('createAccount.propertyForm.singleFamilyHome') },
+  { value: PropertyTypeE.SECONDARY_SUITE, label: t('createAccount.propertyForm.secondarySuite') },
+  { value: PropertyTypeE.ACCESSORY_DWELLING, label: t('createAccount.propertyForm.accessoryDwelling') },
+  { value: PropertyTypeE.TOWN_HOME, label: t('createAccount.propertyForm.townhome') },
+  { value: PropertyTypeE.MULTI_UNIT_HOUSING, label: t('createAccount.propertyForm.multiUnitHousing') },
+  { value: PropertyTypeE.CONDO_OR_APT, label: t('createAccount.propertyForm.condoApartment') },
+  { value: PropertyTypeE.RECREATIONAL, label: t('createAccount.propertyForm.recreationalProperty') },
+  { value: PropertyTypeE.BED_AND_BREAKFAST, label: t('createAccount.propertyForm.bedAndBreakfast') },
+  { value: PropertyTypeE.STRATA_HOTEL, label: t('createAccount.propertyForm.strataHotel') },
+  { value: PropertyTypeE.FLOAT_HOME, label: t('createAccount.propertyForm.floatHome') }
+]
+
+const ownershipTypeOptions = [
+  { value: OwnershipTypeE.RENT, label: t('createAccount.propertyForm.rent') },
+  { value: OwnershipTypeE.OWN, label: t('createAccount.propertyForm.own') },
+  { value: OwnershipTypeE.CO_OWN, label: t('createAccount.propertyForm.coOwn') }
+]
+
 const decrementRooms = () => {
   if (formState.propertyDetails.numberOfRoomsForRent > 1) {
     formState.propertyDetails.numberOfRoomsForRent--
@@ -237,7 +240,7 @@ const incrementRooms = () => {
 const hostResidenceComputed = computed({
   get: () => formState.propertyDetails.hostResidence ?? '', // Ensure string return
   set: (value: string) => {
-    formState.propertyDetails.hostResidence = value || null // Set to null if empty
+    formState.propertyDetails.hostResidence = value || undefined // Set to null if empty
   }
 })
 
