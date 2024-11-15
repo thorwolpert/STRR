@@ -238,8 +238,8 @@ export interface CreateAccountFormAPII {
       propertyType: string
       ownershipType: string
       rentalUnitSpaceType: string
-      isUnitOnPrincipalResidenceProperty: boolean | undefined
-      hostResidence: string | undefined
+      isUnitOnPrincipalResidenceProperty: boolean
+      hostResidence?: string
       numberOfRoomsForRent: number
     }
     listingDetails?: { url: string }[]
