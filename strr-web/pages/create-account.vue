@@ -188,7 +188,27 @@ const validatePropertyManagerStep = () => {
   if (!formState.isPropertyManagerRole && !formState.hasPropertyManager) {
     steps[0].step.isValid = true
   } else {
-    validateStep(propertyManagerSchema, formState.propertyManager, 0)
+    // create a flat form state to match the schema
+    const flatFormState = {
+      businessLegalName: formState.propertyManager.businessLegalName,
+      businessNumber: formState.propertyManager.businessNumber,
+      address: formState.propertyManager.businessMailingAddress.address,
+      addressLineTwo: formState.propertyManager.businessMailingAddress.addressLineTwo,
+      city: formState.propertyManager.businessMailingAddress.city,
+      postalCode: formState.propertyManager.businessMailingAddress.postalCode,
+      province: formState.propertyManager.businessMailingAddress.province,
+      country: formState.propertyManager.businessMailingAddress.country,
+      firstName: formState.propertyManager.contact.firstName,
+      middleName: formState.propertyManager.contact.middleName,
+      lastName: formState.propertyManager.contact.lastName,
+      preferredName: formState.propertyManager.contact.preferredName,
+      phoneNumber: formState.propertyManager.contact.phoneNumber,
+      extension: formState.propertyManager.contact.extension,
+      faxNumber: formState.propertyManager.contact.faxNumber,
+      emailAddress: formState.propertyManager.contact.emailAddress
+    }
+
+    validateStep(propertyManagerSchema, flatFormState, 0)
   }
 }
 

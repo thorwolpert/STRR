@@ -20,7 +20,7 @@ const pidRegex = /^\d{3}(-)\d{3}(-)\d{3}$/
 
 // not allowed: all 0s, starting with 8, letters; allowed: 111 222 333 or 111222333
 const sinRegex = /^(?!00000000|000 000 000)(?!8)(?:\d{9}|\d{3} \d{3} \d{3})$/
-const craBusinessNumberRegex = /^\d{9}$|^\d{9}[A-Z]{2}\d{4}$/
+const craBusinessNumberRegex = /^\d{9}$/
 const phoneError = { message: 'Please enter a valid phone number' }
 const emailError = { message: 'Please enter a valid email' }
 
