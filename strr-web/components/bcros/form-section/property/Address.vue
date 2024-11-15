@@ -174,9 +174,9 @@ const resetAddressFields = () => {
 const addressComplete = (initiatedFromStreetName: boolean) => {
   if (typeof country.value === 'string') {
     if (initiatedFromStreetName) {
-      enableAddressComplete(streetNameId, 'CA', false, 'BC')
+      enableAddressComplete(streetNameId, 'CA', false)
     } else {
-      enableAddressComplete(streetNumberId, 'CA', false, 'BC')
+      enableAddressComplete(streetNumberId, 'CA', false)
     }
   }
 }
