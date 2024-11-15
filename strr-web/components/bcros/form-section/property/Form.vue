@@ -216,10 +216,10 @@ const propertyTypes = [
   { value: PropertyTypeE.SINGLE_FAMILY_HOME, label: t('createAccount.propertyForm.singleFamilyHome') },
   { value: PropertyTypeE.SECONDARY_SUITE, label: t('createAccount.propertyForm.secondarySuite') },
   { value: PropertyTypeE.ACCESSORY_DWELLING, label: t('createAccount.propertyForm.accessoryDwelling') },
-  { value: PropertyTypeE.TOWNHOME, label: t('createAccount.propertyForm.townhome') },
+  { value: PropertyTypeE.TOWN_HOME, label: t('createAccount.propertyForm.townhome') },
   { value: PropertyTypeE.MULTI_UNIT_HOUSING, label: t('createAccount.propertyForm.multiUnitHousing') },
-  { value: PropertyTypeE.CONDO_APARTMENT, label: t('createAccount.propertyForm.condoApartment') },
-  { value: PropertyTypeE.RECREATIONAL_PROPERTY, label: t('createAccount.propertyForm.recreationalProperty') },
+  { value: PropertyTypeE.CONDO_OR_APT, label: t('createAccount.propertyForm.condoApartment') },
+  { value: PropertyTypeE.RECREATIONAL, label: t('createAccount.propertyForm.recreationalProperty') },
   { value: PropertyTypeE.BED_AND_BREAKFAST, label: t('createAccount.propertyForm.bedAndBreakfast') },
   { value: PropertyTypeE.STRATA_HOTEL, label: t('createAccount.propertyForm.strataHotel') },
   { value: PropertyTypeE.FLOAT_HOME, label: t('createAccount.propertyForm.floatHome') }
