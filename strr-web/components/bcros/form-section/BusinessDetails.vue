@@ -38,14 +38,14 @@ const { t } = useTranslation()
 
 const businessName = defineModel<string>('businessName')
 const businessNumber = defineModel<string>('businessNumber')
-const emit = defineEmits<{
-  validateField: [field: string]
-  resetFieldError: [field: string]
-}>()
 
 const { isBusinessNameRequired = false, errors = {} } = defineProps<{
   isBusinessNameRequired?: boolean,
   errors: Record<string, string>
 }>()
 
+const emit = defineEmits<{
+  validateField: [field: string]
+  resetFieldError: [field: keyof typeof errors]
+}>()
 </script>

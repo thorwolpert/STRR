@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { getOwnershipTypeDisplay } from '@/utils/common'
+import { getOwnershipTypeDisplay, getPropertyTypeDisplay } from '@/utils/common'
 const { t } = useTranslation()
 const tReview = (translationKey: string) => t(`createAccount.review.${translationKey}`)
+const tPropertyForm = (translationKey: string) => t(`createAccount.propertyForm.${translationKey}`)
 
 const props = defineProps<{
   headerTag?: string,
@@ -15,10 +16,12 @@ const {
   headerClass = 'font-bold mb-6 m:mx-2',
   propertyDetails
 } = props
-
-const propertyAddressDetails = computed((): MailingAddressAPII => {
+console.log(getPropertyTypeDisplay(propertyDetails.propertyType, tPropertyForm))
+const propertyAddressDetails = computed((): UnitAddressAPII => {
   return {
-    address: propertyDetails.address,
+    streetName: propertyDetails.streetName,
+    streetNumber: propertyDetails.streetNumber,
+    unitNumber: propertyDetails.unitNumber,
     addressLineTwo: propertyDetails.addressLineTwo,
     city: propertyDetails.city,
     postalCode: propertyDetails.postalCode,
@@ -54,7 +57,7 @@ const propertyAddressDetails = computed((): MailingAddressAPII => {
           :title="tReview('address')"
         >
           <!-- eslint-disable-next-line vue/no-v-html -->
-          <p v-html="displayFullAddress(propertyAddressDetails) || '-'" />
+          <p v-html="displayFullAddressWithStreetAttributes(propertyAddressDetails) || '-'" />
         </BcrosFormSectionReviewItem>
       </div>
       <BcrosFormSectionReviewItem
@@ -103,7 +106,7 @@ const propertyAddressDetails = computed((): MailingAddressAPII => {
       </div>
       <BcrosFormSectionReviewItem
         :title="tReview('propertyType')"
-        :content="propertyDetails.propertyType ?? '-'"
+        :content="getPropertyTypeDisplay(propertyDetails.propertyType, tPropertyForm)"
       />
       <BcrosFormSectionReviewItem
         :title="tReview('ownershipType')"

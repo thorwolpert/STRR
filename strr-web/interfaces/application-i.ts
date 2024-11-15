@@ -45,7 +45,7 @@ export interface HostApplicationDetailsI {
   primaryContact: ContactI
   secondaryContact?: ContactI
   principalResidence: PrincipalResidenceI
-  unitAddress: RegistrationAddressI
+  unitAddress: UnitAddressAPII
   propertyManager?: PropertyManagerI
   unitDetails: {
     parcelIdentifier?: string
@@ -74,10 +74,10 @@ export interface PlatformApplicationDetailsI {
     noticeOfNonComplianceOptionalEmail?: string,
     takeDownRequestEmail: string,
     takeDownRequestOptionalEmail?: string,
-    mailingAddress: RegistrationAddressI,
+    mailingAddress: MailingAddressAPII,
     registeredOfficeOrAttorneyForServiceDetails?: {
       attorneyName: string,
-      mailingAddress: RegistrationAddressI
+      mailingAddress: MailingAddressAPII
     }
   },
   platformDetails: {

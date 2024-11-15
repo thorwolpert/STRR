@@ -2,7 +2,7 @@
   <div data-test-id="property-details">
     <BcrosFormSection :title="t('createAccount.propertyForm.rentalUnitDetails')">
       <div class="flex flex-row justify-between w-full mb-[40px] m:mb-4">
-        <UFormGroup name="rentalUnitSpaceType" class="d:pr-4 flex-grow" :error="rentalUnitSpaceTypeError">
+        <UFormGroup name="rentalUnitSpaceType" class="d:pr-4 flex-grow" :error="errors.rentalUnitSpaceType">
           <USelect
             v-model="rentalUnitSpaceType"
             :placeholder="t('createAccount.propertyForm.rentalUnitSpaceType')"
@@ -17,7 +17,7 @@
         <UFormGroup
           name="isUnitOnPrincipalResidenceProperty"
           class="d:pr-4 flex-grow"
-          :error="principalResidenceError"
+          :error="errors.principalResidence"
         >
           <USelect
             v-model="isUnitOnPrincipalResidenceProperty"
@@ -37,7 +37,7 @@
         class="flex flex-row justify-between
         w-full mb-[40px] m:mb-4"
       >
-        <UFormGroup name="hostResidence" class="d:pr-4 flex-grow" :error="hostResidenceError">
+        <UFormGroup name="hostResidence" class="d:pr-4 flex-grow" :error="errors.hostResidence">
           <USelect
             v-model="hostResidenceComputed"
             :placeholder="t('createAccount.propertyForm.hostResidence')"
@@ -49,7 +49,7 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] m:mb-4">
-        <UFormGroup name="numberOfRoomsForRent" class="d:pr-4 flex-grow" :error="numberOfRoomsForRentError">
+        <UFormGroup name="numberOfRoomsForRent" class="d:pr-4 flex-grow" :error="errors.numberOfRoomsForRent">
           <div class="mb-2">
             {{ t('createAccount.propertyForm.numberOfRoomsForRent') }}
           </div>
@@ -84,7 +84,7 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] m:mb-4">
-        <UFormGroup name="propertyType" class="d:pr-4 flex-grow" :error="propertyTypeError">
+        <UFormGroup name="propertyType" class="d:pr-4 flex-grow" :error="errors.propertyType">
           <USelect
             v-model="propertyType"
             :placeholder="t('createAccount.propertyForm.propertyType')"
@@ -97,7 +97,7 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] m:mb-4">
-        <UFormGroup name="ownershipType" class="d:pr-4 flex-grow" :error="ownershipTypeError">
+        <UFormGroup name="ownershipType" class="d:pr-4 flex-grow" :error="errors.ownershipType">
           <USelect
             v-model="ownershipType"
             :placeholder="t('createAccount.propertyForm.ownershipType')"
@@ -146,7 +146,7 @@
         </UFormGroup>
       </div>
       <div v-if="businessLicense" class="flex flex-row justify-between w-full mb-[40px] m:mb-4">
-        <UFormGroup name="businessLicenseExpiryDate" class="d:pr-4 flex-grow">
+        <UFormGroup name="businessLicenseExpiryDate" class="d:pr-4 flex-grow" :error="errors.businessLicenseExpiryDate">
           <UInput
             v-model="businessLicenseExpiryDate"
             :placeholder="t('createAccount.propertyForm.businessLicenseExpiryDate')"
@@ -154,6 +154,7 @@
             :min="new Date().toISOString().split('T')[0]"
             :max="new Date('2999-12-31').toISOString().split('T')[0]"
             :ui="{ base: 'uppercase' }"
+            @input="emit('resetFieldError', 'businessLicenseExpiryDate')"
             @blur="emit('validateBusinessLicenseExpiryDate')"
             @change="emit('validateBusinessLicenseExpiryDate')"
           />
@@ -182,20 +183,11 @@ const hostResidence = defineModel<string | null>('hostResidence')
 const {
   propertyTypes,
   ownershipTypes,
-  ownershipTypeError,
-  propertyTypeError,
-  principalResidenceError,
-  hostResidenceError,
-  numberOfRoomsForRentError
+  errors = {}
 } = defineProps<{
   propertyTypes: string[],
   ownershipTypes: string[],
-  ownershipTypeError: string,
-  propertyTypeError: string,
-  rentalUnitSpaceTypeError: string,
-  principalResidenceError: string,
-  hostResidenceError: string,
-  numberOfRoomsForRentError: string;
+  errors: Record<string, string>
 }>()
 
 const emit = defineEmits([
@@ -206,7 +198,8 @@ const emit = defineEmits([
   'validateIsUnitOnPrincipalResidenceProperty',
   'validatePrincipalResidenceOptions',
   'validateHostResidence',
-  'validateNumberOfRoomsForRent'
+  'validateNumberOfRoomsForRent',
+  'resetFieldError'
 ])
 
 const principalResidenceOptions = [

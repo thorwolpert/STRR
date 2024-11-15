@@ -64,13 +64,13 @@
 <script setup lang="ts">
 const { t } = useTranslation()
 
-const emit = defineEmits<{
-  validateField: [field: string]
-  resetFieldError: [field: string]
-}>()
-
 const { errors = {} } = defineProps<{
   errors: Record<string, string>
+}>()
+
+const emit = defineEmits<{
+  validateField: [field: string]
+  resetFieldError: [field: keyof typeof errors]
 }>()
 
 const phoneNumber = defineModel<string>('phoneNumber')

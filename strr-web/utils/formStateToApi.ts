@@ -68,8 +68,10 @@ export const formStateToApi = (
 
   const setUnitAddress = () => {
     formData.registration.unitAddress = {
-      address: formState.propertyDetails.address ?? '',
-      addressLineTwo: formState.propertyDetails.addressLineTwo,
+      streetNumber: formState.propertyDetails.streetNumber ?? '',
+      streetName: formState.propertyDetails.streetName ?? '',
+      unitNumber: formState.propertyDetails.unitNumber ?? '',
+      addressLineTwo: formState.propertyDetails.addressLineTwo ?? '',
       city: formState.propertyDetails.city ?? '',
       postalCode: formState.propertyDetails.postalCode ?? '',
       province: formState.propertyDetails.province ?? '',
@@ -94,6 +96,7 @@ export const formStateToApi = (
       propertyType,
       ownershipType,
       businessLicense,
+      hostResidence,
       rentalUnitSpaceType,
       isUnitOnPrincipalResidenceProperty,
       numberOfRoomsForRent,
@@ -103,17 +106,23 @@ export const formStateToApi = (
   }
 
   const setPrincipalResidence = () => {
-    const { isPrincipal, declaration, agreeToSubmit, reason, otherReason } = formState.principal
+    const {
+      isPrincipalResidence,
+      agreedToRentalAct,
+      agreedToSubmit,
+      nonPrincipalOption,
+      specifiedServiceProvider
+    } = formState.principal
 
     formData.registration.principalResidence = {
-      isPrincipalResidence: isPrincipal ?? false,
-      agreedToRentalAct: declaration,
-      agreedToSubmit: agreeToSubmit,
-      ...(isPrincipal
+      isPrincipalResidence,
+      agreedToRentalAct,
+      agreedToSubmit,
+      ...(isPrincipalResidence
         ? {}
         : {
-            nonPrincipalOption: reason ?? 'n/a',
-            specifiedServiceProvider: otherReason ?? 'n/a'
+            nonPrincipalOption: nonPrincipalOption ?? 'n/a',
+            specifiedServiceProvider: specifiedServiceProvider ?? 'n/a'
           })
     }
   }

@@ -142,29 +142,6 @@ const toggleAddSecondary = () => {
   hasSecondaryContact.value = !hasSecondaryContact.value
 }
 
-const propertyToApiType = (type: string | undefined): string => {
-  const tPropertyForm = (translationKey: string) => t(`createAccount.propertyForm.${translationKey}`)
-  for (const key in propertyTypeMap) {
-    const propertyKey = propertyTypeMap[key as keyof PropertyTypeMapI]
-    if (type && tPropertyForm(propertyKey) === type) {
-      return key
-    }
-  }
-  return ''
-}
-
-const ownershipToApiType = (type: string | undefined): string => {
-  switch (type) {
-    case t('createAccount.propertyForm.rent'):
-      return 'RENT'
-    case t('createAccount.propertyForm.own'):
-      return 'OWN'
-    case t('createAccount.propertyForm.coOwn'):
-      return 'CO_OWN'
-  }
-  return ''
-}
-
 const submit = async () => {
   validatePropertyManagerStep()
   validateStep(primaryContactSchema, formState.primaryContact, 1)
@@ -181,8 +158,8 @@ const submit = async () => {
     try {
       await createApplication(
         hasSecondaryContact.value,
-        propertyToApiType(formState.propertyDetails.propertyType),
-        ownershipToApiType(formState.propertyDetails.ownershipType)
+        formState.propertyDetails.propertyType,
+        formState.propertyDetails.ownershipType
       )
     } finally {
       submitInProgress.value = false
@@ -232,15 +209,23 @@ watch(formState.propertyDetails, () => {
 })
 
 const validateProofPage = () => {
-  if (formState.principal.isPrincipal && formState.principal.declaration && formState.supportingDocuments.length > 0) {
-    setStepValid(3, true)
-  } else if (
-    !formState.principal.isPrincipal &&
-    formState.principal.reason &&
-    formState.principal.reason !== tPrincipalResidence('other')
+  if (
+    formState.principal.isPrincipalResidence &&
+    formState.principal.agreedToRentalAct &&
+    formState.supportingDocuments.length > 0
   ) {
     setStepValid(3, true)
-  } else if (!formState.principal.isPrincipal && formState.principal.reason && formState.principal.otherReason) {
+  } else if (
+    !formState.principal.isPrincipalResidence &&
+    formState.principal.nonPrincipalOption &&
+    formState.principal.nonPrincipalOption !== tPrincipalResidence('other')
+  ) {
+    setStepValid(3, true)
+  } else if (
+    !formState.principal.isPrincipalResidence &&
+    formState.principal.nonPrincipalOption &&
+    formState.principal.specifiedServiceProvider
+  ) {
     setStepValid(3, true)
   } else {
     setStepValid(3, false)
@@ -248,7 +233,7 @@ const validateProofPage = () => {
 }
 
 const validateReviewPage = () => {
-  setStepValid(4, formState.principal.agreeToSubmit &&
+  setStepValid(4, formState.principal.agreedToSubmit &&
     (formState.isPropertyManagerRole ? formState.hasHostAuthorization : true))
   steps[4].step.complete = true
 }

@@ -19,10 +19,16 @@
             v-model="address"
             :placeholder="t('createAccount.propertyManagerForm.address')"
             data-test-id="property-manager-address-input"
-            @input="onAddressInput"
+            @keypress.once="addressComplete()"
             @click="addressComplete()"
-            @blur="emit('validateField', 'address')"
-            @change="emit('validateField', 'address')"
+            @blur="
+              emit('validateField', 'address');
+              resetAddressFields();
+            "
+            @change="
+              emit('validateField', 'address');
+              resetAddressFields();
+            "
           />
         </UFormGroup>
       </div>
@@ -114,29 +120,18 @@ const provinceItems = computed<ProvinceItem[]>(() => {
   return []
 })
 
+const resetAddressFields = () => {
+  emit('resetFieldError', 'address')
+  emit('resetFieldError', 'city')
+  emit('resetFieldError', 'province')
+  emit('resetFieldError', 'postalCode')
+}
+
 const addressComplete = () => {
   if (country.value === 'CA' || country.value === 'US') {
     enableAddressComplete(id, country.value, true)
   }
 }
-
-const onAddressInput = () => {
-  address.value = ''
-  province.value = ''
-  city.value = ''
-  postalCode.value = ''
-  emit('resetFieldError', 'address')
-  emit('resetFieldError', 'city')
-  emit('resetFieldError', 'province')
-  emit('resetFieldError', 'postalCode')
-  addressComplete()
-}
-
-const emit = defineEmits<{
-    setId: [id: string]
-    validateField: [field: string]
-    resetFieldError: [field: string]
-}>()
 
 const {
   id,
@@ -148,6 +143,12 @@ const {
     defaultCountryIso2: string,
     enableAddressComplete:(id: string, countryIso2: string, countrySelect: boolean) => void,
     errors: Record<string, string>
+}>()
+
+const emit = defineEmits<{
+    setId: [id: string]
+    validateField: [field: string]
+    resetFieldError: [field: keyof typeof errors]
 }>()
 
 country.value = defaultCountryIso2

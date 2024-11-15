@@ -114,7 +114,7 @@ const {
   enableAddressComplete
 } = useCanadaPostAddress()
 
-const getActiveAddressState = () => {
+const getActiveAddressState = (): PropertyManagerBusinessAddressI | null => {
   if (activeAddressField.value === 'propertyManagerBusinessAddress') {
     return formState.propertyManager.businessMailingAddress
   }
@@ -124,11 +124,11 @@ const getActiveAddressState = () => {
 watch(canadaPostAddress, (newAddress) => {
   const activeAddressState = getActiveAddressState()
   if (newAddress && activeAddressState) {
-    activeAddressState.address = newAddress.street
-    activeAddressState.addressLineTwo = newAddress.streetAdditional
+    activeAddressState.address = newAddress.address
+    activeAddressState.addressLineTwo = newAddress.addressLineTwo
     activeAddressState.country = newAddress.country
     activeAddressState.city = newAddress.city
-    activeAddressState.province = newAddress.region
+    activeAddressState.province = newAddress.province
     activeAddressState.postalCode = newAddress.postalCode
   }
 })

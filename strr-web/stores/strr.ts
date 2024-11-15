@@ -9,6 +9,7 @@ import type {
 import type { PropertyManagerI } from '~/interfaces/property-manager-i'
 import { RegistrationTypeE } from '#imports'
 import { HostContactTypeE } from '~/enums/host-contact-type-e'
+import { PropertyTypeE } from '~/enums/property-type-e'
 
 const numbersRegex = /^\d+$/
 // matches chars 123456789 ()
@@ -236,11 +237,10 @@ const listingDetailsSchema = z.array(
   })
 )
 
-export const propertyDetailsSchema = z.object({
-  address: requiredNonEmptyString,
+const basePropertyDetailsSchema = z.object({
+  streetNumber: requiredNonEmptyString,
+  streetName: requiredNonEmptyString,
   addressLineTwo: optionalOrEmptyString,
-  businessLicense: optionalOrEmptyString,
-  businessLicenseExpiryDate: optionalOrEmptyString,
   city: requiredNonEmptyString,
   country: requiredNonEmptyString,
   listingDetails: listingDetailsSchema,
@@ -251,25 +251,74 @@ export const propertyDetailsSchema = z.object({
   propertyType: requiredNonEmptyString,
   rentalUnitSpaceType: requiredNonEmptyString,
   isUnitOnPrincipalResidenceProperty: z.boolean(),
-  hostResidence: z.string().nullable(),
   numberOfRoomsForRent: z.number().min(1),
   province: requiredNonEmptyString.refine(province => province === 'BC', { message: 'Province must be set to BC' })
-}).refine((data) => {
-  // additional validation: businessLicenseExpiryDate is required if businessLicense present
-  return !data.businessLicense || (data.businessLicense && data.businessLicenseExpiryDate)
-}, {
-  message: 'Business License Expiry Date is required',
-  path: ['businessLicenseExpiryDate']
+})
+
+const withPrincipalResidenceSchema = z.object({
+  isUnitOnPrincipalResidenceProperty: z.literal(true),
+  hostResidence: requiredNonEmptyString
+})
+
+const withoutPrincipalResidenceSchema = z.object({
+  isUnitOnPrincipalResidenceProperty: z.literal(false),
+  hostResidence: z.string().nullable()
+})
+
+const unitNumberRequiredPropertyDetailsSchema = z.object({
+  propertyType: z.enum([
+    PropertyTypeE.CONDO_OR_APT,
+    PropertyTypeE.STRATA_HOTEL,
+    PropertyTypeE.SECONDARY_SUITE,
+    PropertyTypeE.ACCESSORY_DWELLING,
+    PropertyTypeE.TOWN_HOME,
+    PropertyTypeE.MULTI_UNIT_HOUSING
+  ]),
+  unitNumber: requiredNonEmptyString
+})
+
+const unitNumberOptionalPropertyDetailsSchema = z.object({
+  propertyType: z.enum([
+    PropertyTypeE.SINGLE_FAMILY_HOME,
+    PropertyTypeE.RECREATIONAL,
+    PropertyTypeE.BED_AND_BREAKFAST,
+    PropertyTypeE.FLOAT_HOME
+  ]),
+  unitNumber: optionalOrEmptyString
+})
+
+const businessLicensePropertyDetailsSchema = z.object({
+  businessLicense: optionalOrEmptyString,
+  businessLicenseExpiryDate: optionalOrEmptyString
 }).superRefine((data, ctx) => {
-  // Only check when explicitly `true`
-  if (data.isUnitOnPrincipalResidenceProperty === true && !data.hostResidence) {
+  const hasLicense = data.businessLicense?.trim()
+  const hasExpiryDate = data.businessLicenseExpiryDate?.trim()
+  if (hasLicense && !hasExpiryDate) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: 'Host Residence is required when the unit is on the principal residence property',
-      path: ['hostResidence']
+      message: 'Business License Expiry Date is required',
+      path: ['businessLicenseExpiryDate']
     })
   }
 })
+
+export const propertyDetailsSchema = z.preprocess(
+  data => data,
+  basePropertyDetailsSchema
+    .and(businessLicensePropertyDetailsSchema)
+    .and(
+      z.discriminatedUnion('propertyType', [
+        unitNumberRequiredPropertyDetailsSchema,
+        unitNumberOptionalPropertyDetailsSchema
+      ])
+    )
+    .and(
+      z.discriminatedUnion('isUnitOnPrincipalResidenceProperty', [
+        withPrincipalResidenceSchema,
+        withoutPrincipalResidenceSchema
+      ])
+    )
+)
 
 export const formState: CreateAccountFormStateI = reactive({
   primaryContact,
@@ -287,7 +336,9 @@ export const formState: CreateAccountFormStateI = reactive({
     whichPlatform: undefined,
     nickname: '',
     country: 'CA',
-    address: undefined,
+    streetNumber: undefined,
+    streetName: undefined,
+    unitNumber: undefined,
     addressLineTwo: undefined,
     city: undefined,
     province: 'BC',
@@ -300,10 +351,11 @@ export const formState: CreateAccountFormStateI = reactive({
   },
   selectedAccount: {} as OrgI,
   principal: {
-    isPrincipal: undefined,
-    reason: undefined,
-    declaration: false,
-    agreeToSubmit: false
+    isPrincipalResidence: undefined,
+    agreedToRentalAct: false,
+    agreedToSubmit: false,
+    nonPrincipalOption: undefined,
+    specifiedServiceProvider: undefined
   },
   supportingDocuments: [],
   hasHostAuthorization: false // if Property Manager is authorized by Host
@@ -371,7 +423,9 @@ export const formDataForAPI: CreateAccountFormAPII = {
     secondaryContact: secondaryContactAPI,
     propertyManager: undefined,
     unitAddress: {
-      address: '',
+      streetNumber: '',
+      streetName: '',
+      unitNumber: '',
       addressLineTwo: '',
       city: '',
       postalCode: '',
