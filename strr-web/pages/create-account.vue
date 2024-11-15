@@ -211,7 +211,6 @@ watch(formState.propertyDetails, () => {
 const validateProofPage = () => {
   if (
     formState.principal.isPrincipalResidence &&
-    formState.principal.agreedToRentalAct &&
     formState.supportingDocuments.length > 0
   ) {
     setStepValid(3, true)

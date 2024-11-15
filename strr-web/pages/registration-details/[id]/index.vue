@@ -113,7 +113,7 @@
                   :href="listing.url"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="mb-1 break-all w-5/6"
+                  class="mb-1 truncate max-w-[250px]"
                 >
                   {{ listing.url }}
                 </a>
