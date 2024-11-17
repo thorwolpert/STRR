@@ -243,6 +243,21 @@ watch(canadaPostAddress, (newAddress) => {
     activeAddressState.city = newAddress.city
     activeAddressState.province = newAddress.province
     activeAddressState.postalCode = newAddress.postalCode
+
+    // clear errors when address autocomplete was used
+    if (activeAddressField.value === 'primaryContactAddress') {
+      primaryContactForm.value.clear('address')
+      primaryContactForm.value.clear('addressLineTwo')
+      primaryContactForm.value.clear('city')
+      primaryContactForm.value.clear('province')
+      primaryContactForm.value.clear('postalCode')
+    } else if (activeAddressField.value === 'secondaryContactAddress') {
+      secondaryContactForm.value.clear('address')
+      secondaryContactForm.value.clear('addressLineTwo')
+      secondaryContactForm.value.clear('city')
+      secondaryContactForm.value.clear('province')
+      secondaryContactForm.value.clear('postalCode')
+    }
   }
 })
 
