@@ -34,7 +34,8 @@ export const formStateToApi = (
 
     // Contact Type Individual
     if (contactType === HostContactTypeE.INDIVIDUAL) {
-      dataContact.dateOfBirth = `${stateContact.birthYear}-${stateContact.birthMonth}-${stateContact.birthDay}`
+      dataContact.dateOfBirth =
+        `${stateContact.birthYear}-${stateContact.birthMonth}-${stateContact.birthDay?.padStart(2, '0')}` // birthDay should always be two digits
       dataContact.socialInsuranceNumber = stateContact.socialInsuranceNumber
     }
 

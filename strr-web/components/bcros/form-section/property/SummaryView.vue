@@ -16,7 +16,6 @@ const {
   headerClass = 'font-bold mb-6 m:mx-2',
   propertyDetails
 } = props
-console.log(getPropertyTypeDisplay(propertyDetails.propertyType, tPropertyForm))
 const propertyAddressDetails = computed((): UnitAddressAPII => {
   return {
     streetName: propertyDetails.streetName,
@@ -26,7 +25,8 @@ const propertyAddressDetails = computed((): UnitAddressAPII => {
     city: propertyDetails.city,
     postalCode: propertyDetails.postalCode,
     province: propertyDetails.province,
-    country: propertyDetails.country
+    country: propertyDetails.country,
+    nickname: propertyDetails.nickname
   }
 })
 
