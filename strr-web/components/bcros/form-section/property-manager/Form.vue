@@ -56,7 +56,6 @@
               v-model:postal-code="formState.propertyManager.businessMailingAddress.postalCode"
               :enable-address-complete="enableAddressComplete"
               default-country-iso2="CA"
-              @auto-complete-selected="handleAutoCompleteSelected"
             />
             <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
             <BcrosFormSectionContactName
@@ -116,6 +115,8 @@ const getActiveAddressState = (): PropertyManagerBusinessAddressI | null => {
 
 watch(canadaPostAddress, (newAddress) => {
   const activeAddressState = getActiveAddressState()
+  console.log(newAddress)
+
   if (newAddress && activeAddressState) {
     activeAddressState.address = newAddress.address
     activeAddressState.addressLineTwo = newAddress.addressLineTwo
@@ -123,6 +124,13 @@ watch(canadaPostAddress, (newAddress) => {
     activeAddressState.city = newAddress.city
     activeAddressState.province = newAddress.province
     activeAddressState.postalCode = newAddress.postalCode
+
+    // clear errors when address autocomplete was used
+    propertyManagerForm.value.clear('address')
+    propertyManagerForm.value.clear('addressLineTwo')
+    propertyManagerForm.value.clear('city')
+    propertyManagerForm.value.clear('province')
+    propertyManagerForm.value.clear('postalCode')
   }
 })
 
@@ -147,15 +155,6 @@ const flatFormState = computed(() => ({
   faxNumber: formState.propertyManager.contact.faxNumber,
   emailAddress: formState.propertyManager.contact.emailAddress
 }))
-
-// clear errors when address autocomplete was selected
-const handleAutoCompleteSelected = () => {
-  propertyManagerForm.value.clear('address')
-  propertyManagerForm.value.clear('addressLineTwo')
-  propertyManagerForm.value.clear('city')
-  propertyManagerForm.value.clear('province')
-  propertyManagerForm.value.clear('postalCode')
-}
 
 watch([() => formState.isPropertyManagerRole, () => formState.hasPropertyManager], () => {
   if (!formState.isPropertyManagerRole && !formState.hasPropertyManager) {

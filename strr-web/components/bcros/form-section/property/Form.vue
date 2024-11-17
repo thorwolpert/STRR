@@ -37,7 +37,6 @@
           :enable-address-complete="enableAddressComplete"
           default-country-iso2="CA"
           :address-in-b-c="isAddressInBC"
-          @auto-complete-selected="handleAutoCompleteSelected"
         />
         <BcrosFormSectionPropertyListingDetails
           v-model:listing-details="formState.propertyDetails.listingDetails"
@@ -64,46 +63,13 @@ const {
   enableAddressComplete
 } = useCanadaPostAddress(true)
 
-const isAddressInBC = ref(false)
+const isValid = ref(false)
+const propertyDetailsForm = ref()
+const isAddressInBC = ref(true)
 const hostResidenceError = ref('')
 const numberOfRoomsForRentError = ref('')
 
-const getActiveAddressState = (): PropertyDetailsI | null => {
-  if (activeAddressField.value === 'propertyAddressStreetNumber' ||
-      activeAddressField.value === 'propertyAddressStreetName') {
-    return formState.propertyDetails
-  }
-  return null
-}
-
-watch(canadaPostAddress, (newAddress) => {
-  const activeAddressState = getActiveAddressState()
-  if (newAddress && activeAddressState) {
-    if (newAddress.province === 'BC') {
-      isAddressInBC.value = true
-      activeAddressState.streetNumber = newAddress.streetNumber
-      activeAddressState.streetName = newAddress.streetName
-      activeAddressState.addressLineTwo = newAddress.addressLineTwo
-      activeAddressState.country = newAddress.country
-      activeAddressState.city = newAddress.city
-      activeAddressState.province = newAddress.province
-      activeAddressState.postalCode = newAddress.postalCode
-    } else {
-      isAddressInBC.value = false
-    }
-  }
-})
-
-watch(() => formState.propertyDetails.isUnitOnPrincipalResidenceProperty, (newValue) => {
-  if (!newValue) {
-    formState.propertyDetails.hostResidence = undefined // Reset if not required
-  }
-  validateHostResidence() // Ensure validation reflects changes
-})
-
 const { t } = useTranslation()
-
-const isValid = ref(false)
 
 const listingURLErrors = ref<(({
     errorIndex: string | number;
@@ -122,6 +88,7 @@ const validateField = (index: number) => {
   const listingDetailsErrorsExist = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
     .find(error => error.path[0] === 'listingDetails')
   const currentUrl = formState.propertyDetails.listingDetails[index]?.url
+
   if (currentUrl) {
     const sanitizedUrl = sanitizeUrl(currentUrl)
     if (sanitizedUrl === 'about:blank' || sanitizedUrl === 'javascript:void(0)') {
@@ -134,6 +101,7 @@ const validateField = (index: number) => {
     }
     formState.propertyDetails.listingDetails[index].url = sanitizedUrl
   }
+
   if (listingDetailsErrorsExist) {
     const invalidUrl = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
       .filter(error => error.path[0] === 'listingDetails' && error.path[1].toString() === index.toString())
@@ -178,28 +146,8 @@ const validateAllPropertyListingUrls = () => {
   }
 }
 
-watch(formState.propertyDetails, () => {
-  isValid.value = propertyDetailsSchema.safeParse(formState.propertyDetails).success
-})
-
-defineEmits<{
-  validatePage: [isValid: boolean]
-}>()
-
-watch(
-  () => formState.propertyDetails.isUnitOnPrincipalResidenceProperty,
-  (newValue) => {
-    // Coerce string "true"/"false" to boolean true/false
-    if (newValue === 'true') {
-      formState.propertyDetails.isUnitOnPrincipalResidenceProperty = true
-    } else if (newValue === 'false') {
-      formState.propertyDetails.isUnitOnPrincipalResidenceProperty = false
-    }
-  }
-)
-
 const validateHostResidence = () => {
-  errorRefs.hostResidence =
+  hostResidenceError.value =
     (formState.propertyDetails.isUnitOnPrincipalResidenceProperty && !formState.propertyDetails.hostResidence)
       ? t('createAccount.propertyForm.hostResidenceRequiredError')
       : ''
@@ -214,22 +162,70 @@ const validateNumberOfRoomsForRent = () => {
   }
 
   if (value < 1) {
-    errorRefs.numberOfRoomsForRent = t('createAccount.propertyForm.numberOfRoomsForRentRequired')
+    numberOfRoomsForRentError.value = t('createAccount.propertyForm.numberOfRoomsForRentRequired')
   } else if (value > 5000) {
-    errorRefs.numberOfRoomsForRent = t('createAccount.propertyForm.numberOfRoomsForRentMaxExceeded')
+    numberOfRoomsForRentError.value = t('createAccount.propertyForm.numberOfRoomsForRentMaxExceeded')
   } else {
-    errorRefs.numberOfRoomsForRent = ''
+    numberOfRoomsForRentError.value = ''
   }
 }
 
-const propertyDetailsForm = ref()
-
-const handleAutoCompleteSelected = () => {
-  propertyDetailsForm.value.clear('address')
-  propertyDetailsForm.value.clear('addressLineTwo')
-  propertyDetailsForm.value.clear('city')
-  propertyDetailsForm.value.clear('postalCode')
+const getActiveAddressState = (): PropertyDetailsI | null => {
+  if (activeAddressField.value === 'propertyAddressStreetNumber' ||
+      activeAddressField.value === 'propertyAddressStreetName') {
+    return formState.propertyDetails
+  }
+  return null
 }
+
+watch(() => formState.propertyDetails.isUnitOnPrincipalResidenceProperty, (newValue) => {
+  if (!newValue) {
+    formState.propertyDetails.hostResidence = undefined // Reset if not required
+  }
+  validateHostResidence() // Ensure validation reflects changes
+})
+
+watch(formState.propertyDetails, () => {
+  isValid.value = propertyDetailsSchema.safeParse(formState.propertyDetails).success
+})
+
+watch(
+  () => formState.propertyDetails.isUnitOnPrincipalResidenceProperty,
+  (newValue) => {
+    // Coerce string "true"/"false" to boolean true/false
+    if (newValue === 'true') {
+      formState.propertyDetails.isUnitOnPrincipalResidenceProperty = true
+    } else if (newValue === 'false') {
+      formState.propertyDetails.isUnitOnPrincipalResidenceProperty = false
+    }
+  }
+)
+
+watch(canadaPostAddress, (newAddress) => {
+  const activeAddressState = getActiveAddressState()
+  if (newAddress && activeAddressState) {
+    if (newAddress.province === 'BC') {
+      isAddressInBC.value = true
+      activeAddressState.streetNumber = newAddress.streetNumber
+      activeAddressState.streetName = newAddress.streetName
+      activeAddressState.addressLineTwo = newAddress.addressLineTwo
+      activeAddressState.country = newAddress.country
+      activeAddressState.city = newAddress.city
+      activeAddressState.province = newAddress.province
+      activeAddressState.postalCode = newAddress.postalCode
+    } else {
+      isAddressInBC.value = false
+    }
+    // clear errors when address autocomplete was used
+    propertyDetailsForm.value.clear('streetNumber')
+    propertyDetailsForm.value.clear('streetName')
+    propertyDetailsForm.value.clear('addressLineTwo')
+    propertyDetailsForm.value.clear('unitNumber')
+    propertyDetailsForm.value.clear('city')
+    propertyDetailsForm.value.clear('province')
+    propertyDetailsForm.value.clear('postalCode')
+  }
+})
 
 onMounted(async () => {
   if (isComplete) {

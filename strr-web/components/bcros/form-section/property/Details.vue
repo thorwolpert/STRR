@@ -29,7 +29,7 @@
         :key="isUnitOnPrincipalResidenceProperty ? 'withDropdown' : 'withoutDropdown'"
         class="flex flex-row justify-between w-full mb-[40px] m:mb-4"
       >
-        <UFormGroup name="hostResidence" class="d:pr-4 flex-grow" :error="errors.hostResidence">
+        <UFormGroup name="hostResidence" class="d:pr-4 flex-grow" :error="hostResidenceError">
           <USelect
             v-model="hostResidenceComputed"
             :placeholder="t('createAccount.propertyForm.hostResidence')"
@@ -42,7 +42,7 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] m:mb-4">
-        <UFormGroup name="numberOfRoomsForRent" class="d:pr-4 flex-grow" :error="errors.numberOfRoomsForRent">
+        <UFormGroup name="numberOfRoomsForRent" class="d:pr-4 flex-grow" :error="numberOfRoomsForRentError">
           <div class="mb-2">
             {{ t('createAccount.propertyForm.numberOfRoomsForRent') }}
           </div>
@@ -138,7 +138,7 @@
         </UFormGroup>
       </div>
       <div v-if="businessLicense" class="flex flex-row justify-between w-full mb-[40px] m:mb-4">
-        <UFormGroup name="businessLicenseExpiryDate" class="d:pr-4 flex-grow" :error="errors.businessLicenseExpiryDate">
+        <UFormGroup name="businessLicenseExpiryDate" class="d:pr-4 flex-grow">
           <UInput
             v-model="businessLicenseExpiryDate"
             :placeholder="t('createAccount.propertyForm.businessLicenseExpiryDate')"
@@ -146,9 +146,6 @@
             :min="new Date().toISOString().split('T')[0]"
             :max="new Date('2999-12-31').toISOString().split('T')[0]"
             :ui="{ base: 'uppercase' }"
-            @input="emit('resetFieldError', 'businessLicenseExpiryDate')"
-            @blur="emit('validateBusinessLicenseExpiryDate')"
-            @change="emit('validateBusinessLicenseExpiryDate')"
           />
           <template #help>
             {{ t('createAccount.propertyForm.businessLicenseExpiryDateHelp') }}

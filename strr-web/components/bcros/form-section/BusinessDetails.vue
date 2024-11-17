@@ -36,9 +36,4 @@ const businessNumber = defineModel<string>('businessNumber')
 defineProps<{
   isBusinessNameRequired?: boolean,
 }>()
-
-const emit = defineEmits<{
-  validateField: [field: string]
-  resetFieldError: [field: keyof typeof errors]
-}>()
 </script>

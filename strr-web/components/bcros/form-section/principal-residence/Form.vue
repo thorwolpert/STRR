@@ -1,7 +1,7 @@
 <template>
   <div data-test-id="principal-residence-form" class="relative h-full">
     <div class="desktop:mb-[180px] mobile:mb-[32px] rounded-[4px]">
-      <div class="mb-[16px] mx-[8px]">
+      <div class="mb-4 m:mx-2">
         <p class="text-[16px] text-bcGovColor-midGray">
           <!-- eslint-disable-next-line max-len -->
           {{ `${formState.propertyDetails.nickname ?? '' }
@@ -27,12 +27,14 @@
           </a>
           {{ tPrincipalResidence('provincialRulesContinued') }}
         </p>
-        <URadioGroup
-          id="primary-residence-radio"
-          v-model="formState.principal.isPrincipalResidence"
-          :legend="tPrincipalResidence('radioLegend')"
-          :options="primaryResidenceRadioOptions"
-        />
+        <UFormGroup :error="radioSelectError">
+          <URadioGroup
+            id="primary-residence-radio"
+            v-model="formState.principal.isPrincipalResidence"
+            :legend="tPrincipalResidence('radioLegend')"
+            :options="primaryResidenceRadioOptions"
+          />
+        </UFormGroup>
         <UFormGroup
           v-if="!formState.principal.isPrincipalResidence && formState.principal.isPrincipalResidence !== undefined"
           class="text-[16px] mt-[20px]"
@@ -44,7 +46,7 @@
             :options="exemptionReasons"
             option-attribute="key"
             class="w-full text-[16px]"
-            style="color: #1a202c; /* text-gray-900 */ dark:text-white; /* Override with dark mode text color */"
+            style="color: #1a202c; /* text-gray-900 */"
             aria-label="Exemption reason"
             @blur="(event: any, reason: string) => validateReason(reason, event)"
             @change="(reason: string) => validateReason(reason)"
@@ -65,7 +67,7 @@
             :options="otherExemptionReasons"
             option-attribute="key"
             class="w-full text-[16px]"
-            style="color: #1a202c; /* text-gray-900 */ dark:text-white; /* Override with dark mode text color */"
+            style="color: #1a202c; /* text-gray-900 */"
             aria-label="Other exemption reason"
             @blur="(event: any, reason: string) => validateOtherReason(reason, event)"
             @change="(reason: string) => validateOtherReason(reason)"
@@ -156,12 +158,17 @@
 const { t } = useTranslation()
 const tPrincipalResidence = (translationKey: string) => t(`createAccount.principalResidence.${translationKey}`)
 
+const radioSelectError = ref('')
 const reasonError = ref()
 const otherReasonError = ref()
 const fileError = ref()
 const fileInputKey = ref(0)
 
 const { isComplete } = defineProps<{ isComplete: boolean }>()
+
+watch(() => formState.principal.isPrincipalResidence, (val) => {
+  radioSelectError.value = val === undefined ? 'Required' : ''
+})
 
 watch(() => formState.principal.isPrincipalResidence, (principalRequirements) => {
   if (principalRequirements && formState.supportingDocuments.length === 0) {
@@ -174,7 +181,7 @@ watch(() => formState.principal.isPrincipalResidence, (principalRequirements) =>
 const validateReason = (reason: string, event?: any) => {
   reasonError.value = reason || event?.target?.value ? undefined : 'Reason required'
   if (reason !== tPrincipalResidence('other') && event === undefined) {
-    formState.principal.specifiedServiceProvider = undefined
+    formState.principal.specifiedServiceProvider = ''
   }
 }
 
@@ -183,6 +190,10 @@ const validateOtherReason = (otherReason: string, event?: any) => {
 }
 
 if (isComplete) {
+  if (formState.principal.isPrincipalResidence === undefined) {
+    radioSelectError.value = 'Required'
+  }
+
   if (!formState.principal.isPrincipalResidence) {
     validateReason(formState.principal.nonPrincipalOption ?? '')
   }

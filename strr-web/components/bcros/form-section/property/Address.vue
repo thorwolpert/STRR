@@ -27,6 +27,7 @@
             v-model="streetNumber"
             :aria-label="t('createAccount.contactForm.streetNumber')"
             :placeholder="t('createAccount.contactForm.streetNumber')"
+            data-test-id="address-street-number"
             @keypress.once="addressComplete(false)"
             @click="addressComplete(false)"
           />
@@ -40,6 +41,7 @@
             v-model="streetName"
             :aria-label="t('createAccount.contactForm.streetName')"
             :placeholder="t('createAccount.contactForm.streetName')"
+            data-test-id="address-street-name"
             @keypress.once="addressComplete(true)"
             @click="addressComplete(true)"
           />
@@ -52,6 +54,7 @@
             v-model="unitNumber"
             :aria-label="t('createAccount.contactForm.unitNumberRequired')"
             :placeholder="unitNumberPlaceholder"
+            data-test-id="address-unit-number"
           />
         </UFormGroup>
       </div>
@@ -61,7 +64,7 @@
             v-model="addressLineTwo"
             aria-label="address line two"
             :placeholder="t('createAccount.contactForm.addressLineTwo')"
-            data-test-id="address-line-two-input"
+            data-test-id="address-line-two"
           />
         </UFormGroup>
       </div>
@@ -74,7 +77,7 @@
             v-model="city"
             aria-label="city"
             :placeholder="t('createAccount.contactForm.city')"
-            data-test-id="address-city-input"
+            data-test-id="address-city"
           />
         </UFormGroup>
         <UFormGroup
@@ -95,7 +98,7 @@
             v-model="postalCode"
             aria-label="postal code"
             :placeholder="t('createAccount.contactForm.postalCode')"
-            data-test-id="address-postal-code-input"
+            data-test-id="address-postal-code"
           />
         </UFormGroup>
       </div>
