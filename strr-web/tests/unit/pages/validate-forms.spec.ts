@@ -158,7 +158,7 @@ describe('Rental Application Validations', () => {
     expect(hostInformation.findTestId('host-information-form').findAll(FIELD_ERROR)).toHaveLength(0)
   })
 
-  it.only('should validate Step 3 - Property Details', async () => {
+  it('should validate Step 3 - Property Details', async () => {
     await goToStep(3)
 
     const propertyDetails = wrapper.findComponent(BcrosFormSectionPropertyForm)
