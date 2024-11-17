@@ -12,7 +12,7 @@ it('can mount primary Contact Details Form Section component', async () => {
   const contactDetails = await mountSuspended(BcrosFormSectionContactDetails,
     {
       global: { plugins: [i18n] },
-      props: { errors: {} }
+      props: {}
     })
   expect(contactDetails.find('[data-test-id="form-section-contact-details"]').exists()).toBe(true)
   expect(contactDetails.find('[data-test-id="phone-number"]').exists()).toBe(true)

@@ -12,9 +12,7 @@ it('can mount Contact Name component', async () => {
   wrapper = await mountSuspended(BcrosFormSectionContactName,
     {
       global: { plugins: [i18n] },
-      props: {
-        errors: {}
-      }
+      props: {}
     }
   )
   expect(wrapper.findTestId('form-section-contact-name').exists()).toBe(true)

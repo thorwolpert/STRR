@@ -14,7 +14,7 @@ it('can mount primary Contact Form Section component', async () => {
   const contactDetails = await mountSuspended(BcrosFormSectionContactInformationContactInfo,
     {
       global: { plugins: [i18n] },
-      props: { isPrimary: true, errors: {} }
+      props: { isPrimary: true }
     })
   expect(contactDetails.find('[data-test-id="form-section-contact"]').exists()).toBe(true)
   expect(contactDetails.findComponent(BcrosFormSection).text()).not.toContain(t('general.optional'))
@@ -25,7 +25,7 @@ it('can mount secondary Contact Form Section component', async () => {
   const contactDetails = await mountSuspended(BcrosFormSectionContactInformationContactInfo,
     {
       global: { plugins: [i18n] },
-      props: { isPrimary: false, errors: {} }
+      props: { isPrimary: false }
     })
   expect(contactDetails.find('[data-test-id="form-section-contact"]').exists()).toBe(true)
   expect(contactDetails.findComponent(BcrosFormSection).text()).toContain(t('general.optional'))

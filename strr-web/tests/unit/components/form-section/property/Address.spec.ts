@@ -13,9 +13,11 @@ it('can mount address section component', async () => {
     {
       global: { plugins: [i18n] },
       props: {
-        id: '123',
+        streetNumberId: '',
+        streetNameId: '',
         defaultCountryIso2: 'CA',
-        enableAddressComplete: () => {}
+        enableAddressComplete: () => {},
+        addressInBC: true
       }
     })
   expect(addressSection.find('[data-test-id="form-section-address"]').exists()).toBe(true)

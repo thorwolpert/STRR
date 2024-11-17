@@ -16,8 +16,7 @@ it('can mount Business Mailing Address component', async () => {
       props: {
         id: 'propertyManagerBusinessAddress',
         defaultCountryIso2: 'CA',
-        enableAddressComplete: mockFn,
-        errors: {}
+        enableAddressComplete: mockFn
       }
     })
   expect(wrapper.findTestId('property-manager-business-address').exists()).toBe(true)
@@ -35,8 +34,7 @@ it('shows province select for CA and US', async () => {
       props: {
         id: 'propertyManagerBusinessAddress',
         defaultCountryIso2: 'CA',
-        enableAddressComplete: mockFn,
-        errors: {}
+        enableAddressComplete: mockFn
       }
     })
   expect(wrapper.findTestId('property-manager-province-select').exists()).toBe(true)
@@ -50,8 +48,7 @@ it('shows province input for other countries', async () => {
       props: {
         id: 'propertyManagerBusinessAddress',
         defaultCountryIso2: 'FR',
-        enableAddressComplete: mockFn,
-        errors: {}
+        enableAddressComplete: mockFn
       }
     })
   expect(wrapper.findTestId('property-manager-province-select').exists()).toBe(false)

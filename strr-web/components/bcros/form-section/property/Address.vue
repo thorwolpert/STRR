@@ -107,7 +107,6 @@
 </template>
 
 <script setup lang="ts">
-import type { UInput } from '#build/components'
 import { CountryItem } from '@/interfaces/address-i'
 import { PropertyTypeE } from '@/enums/property-type-e'
 import countries from '@/utils/countries.json'
@@ -148,16 +147,6 @@ const {
   enableAddressComplete:(id: string, countryIso2: string, countrySelect: boolean) => void,
   addressInBC?: boolean
 }>()
-
-// const emit = defineEmits([
-//   'autoCompleteSelected'
-// ])
-
-// const onAddressInput = () => {
-//   addressComplete()
-//   // reset errors for the fields by calling input event on them
-//   emit('autoCompleteSelected')
-// }
 
 country.value = defaultCountryIso2
 

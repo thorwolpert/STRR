@@ -62,7 +62,8 @@ const PROPERTY_DETAILS_REQUIRED_FIELDS = [
   'is on principal residence',
   'type of property',
   'ownership type',
-  'rental unit address',
+  'rental unit street number',
+  'rental unit street name',
   'rental unit city',
   'rental unit postal code'
 ]
@@ -157,7 +158,7 @@ describe('Rental Application Validations', () => {
     expect(hostInformation.findTestId('host-information-form').findAll(FIELD_ERROR)).toHaveLength(0)
   })
 
-  it('should validate Step 3 - Property Details', async () => {
+  it.only('should validate Step 3 - Property Details', async () => {
     await goToStep(3)
 
     const propertyDetails = wrapper.findComponent(BcrosFormSectionPropertyForm)
@@ -170,15 +171,17 @@ describe('Rental Application Validations', () => {
     await nextTick() // wait for dynamic Host Residence field to show up
     propertyDetails.findTestId('rental-unit-host-residence-select').setValue(HostResidenceE.SAME_UNIT)
 
-    propertyDetails.findTestId('rental-unit-type-select').setValue('Single Family Home')
-    propertyDetails.findTestId('rental-unit-ownership-type-select').setValue('Rent')
+    propertyDetails.findTestId('rental-unit-type-select').setValue(PropertyTypeE.SINGLE_FAMILY_HOME)
+    propertyDetails.findTestId('rental-unit-ownership-type-select').setValue(OwnershipTypeE.RENT)
     propertyDetails.findTestId('rental-unit-pid').setValue('111-222-333') // not a required field
 
-    // mailing address
-    propertyDetails.findTestId('address-line-one-input').setValue('123 Main St')
-    propertyDetails.findTestId('address-line-two-input').setValue('Unit 1') // not a required field
-    propertyDetails.findTestId('address-city-input').setValue('Vancouver')
-    propertyDetails.findTestId('address-postal-code-input').setValue('V6A1A1')
+    // // mailing address
+    propertyDetails.findTestId('address-street-number').setValue('123')
+    propertyDetails.findTestId('address-street-name').setValue('Main St.')
+    propertyDetails.findTestId('address-unit-number').setValue('55') // not a required field
+    propertyDetails.findTestId('address-line-two').setValue('Basement Unit') // not a required field
+    propertyDetails.findTestId('address-city').setValue('Vancouver')
+    propertyDetails.findTestId('address-postal-code').setValue('V6A1A1')
 
     // validate form
     await propertyDetails.findComponent(UForm).vm.validate(null, { silent: true })

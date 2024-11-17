@@ -179,8 +179,7 @@ const {
 
 const emit = defineEmits([
   'validateHostResidence',
-  'validateNumberOfRoomsForRent',
-  'resetFieldError'
+  'validateNumberOfRoomsForRent'
 ])
 
 const principalResidenceOptions = [

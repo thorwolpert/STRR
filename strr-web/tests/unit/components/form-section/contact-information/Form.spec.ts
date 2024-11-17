@@ -14,11 +14,10 @@ it('can mount Property Details Form Section component', async () => {
     {
       global: { plugins: [i18n] },
       props: {
-        fullName: '',
         hasSecondaryContact: false,
+        toggleAddSecondary: mockFn,
         isComplete: false,
-        secondFormIsComplete: false,
-        toggleAddSecondary: mockFn
+        secondFormIsComplete: false
       }
     })
   expect(addressSection.find('[data-test-id="host-information-form"]').exists()).toBe(true)
