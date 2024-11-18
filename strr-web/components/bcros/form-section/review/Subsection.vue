@@ -75,9 +75,6 @@ const getDateOfBirth = () => {
   return date.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
-const isHostTypeBusiness = computed((): boolean =>
-  (state as PrimaryContactInformationI).contactType === HostContactTypeE.BUSINESS)
-
 const displayHostType = {
   [HostContactTypeE.INDIVIDUAL]: tContact('hostTypeIndividual'),
   [HostContactTypeE.BUSINESS]: tContact('hostTypeBusiness')
