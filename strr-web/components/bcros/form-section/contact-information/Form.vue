@@ -188,7 +188,7 @@ const isPrimaryHostIndividual = computed((): boolean =>
 onMounted(async () => {
   if (isComplete) {
     await primaryContactForm.value.validate(null, { silent: true })
-    if (hasSecondaryContact) {
+    if (hasSecondaryContact && secondaryContactForm.value) {
       await secondaryContactForm.value.validate(null, { silent: true })
     }
   }
