@@ -2,7 +2,7 @@
   <div data-test-id="form-subsection" class="bg-white p-8 mobile:px-[8px]">
     <div class="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6 desktop:mb-6">
       <BcrosFormSectionReviewItem
-        v-if="isPrimary || isPrimaryHostIndividual"
+        v-if="isPrimary || isIndividualCoHost"
         :title="t('common.formLabels.hostType')"
         :content="isPrimary
           ? displayHostType[(state as PrimaryContactInformationI).contactType]
@@ -17,12 +17,12 @@
         :content="displayPhoneAndExt(state.phoneNumber, state.extension) || '-'"
       />
       <BcrosFormSectionReviewItem
-        v-if="isPrimaryHostIndividual"
+        v-if="isIndividualCoHost"
         :title="tContact('dateOfBirth')"
         :content="getDateOfBirth()"
       />
       <BcrosFormSectionReviewItem
-        v-if="isPrimaryHostIndividual"
+        v-if="isIndividualCoHost"
         :title="tContact('socialInsuranceNumber')"
         :content="state.socialInsuranceNumber || '-'"
       />
@@ -62,7 +62,7 @@ const tContact = (translationKey: string) => t(`createAccount.contactForm.${tran
 const { state, isPrimary = false } = defineProps<{
   state: PrimaryContactInformationI | SecondaryContactInformationI
   isPrimary?: boolean,
-  isPrimaryHostIndividual: boolean
+  isIndividualCoHost: boolean // is Secondary/Co-Host Individual contact
 }>()
 
 const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' })

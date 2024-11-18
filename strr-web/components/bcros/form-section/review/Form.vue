@@ -19,7 +19,7 @@
           </p>
           <BcrosFormSectionReviewSubsection
             :state="formState.primaryContact"
-            :is-primary-host-individual="formState.primaryContact.contactType === HostContactTypeE.INDIVIDUAL"
+            :is-individual-co-host="formState.primaryContact.contactType === HostContactTypeE.INDIVIDUAL"
             is-primary
             data-test-id="primary-contact-review"
           />
@@ -31,7 +31,7 @@
           </p>
           <BcrosFormSectionReviewSubsection
             :state="formState.secondaryContact"
-            :is-primary-host-individual="formState.primaryContact.contactType === HostContactTypeE.INDIVIDUAL"
+            :is-individual-co-host="formState.primaryContact.contactType === HostContactTypeE.INDIVIDUAL"
             data-test-id="secondary-contact-review"
           />
         </div>
