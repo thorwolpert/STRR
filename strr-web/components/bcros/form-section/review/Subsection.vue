@@ -2,25 +2,27 @@
   <div data-test-id="form-subsection" class="bg-white p-8 mobile:px-[8px]">
     <div class="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6 desktop:mb-6">
       <BcrosFormSectionReviewItem
-        v-if="primary"
+        v-if="isPrimary || isIndividualCoHost"
         :title="t('common.formLabels.hostType')"
-        :content="displayHostType[(state as PrimaryContactInformationI).contactType]"
+        :content="isPrimary
+          ? displayHostType[(state as PrimaryContactInformationI).contactType]
+          : displayHostType[HostContactTypeE.INDIVIDUAL]"
       />
       <BcrosFormSectionReviewItem
         :title="t('common.formLabels.contactName')"
-        :content="displayContactFullName(state)"
+        :content="displayContactFullName(state) || '-'"
       />
       <BcrosFormSectionReviewItem
         :title="tContact('phoneNumber')"
         :content="displayPhoneAndExt(state.phoneNumber, state.extension) || '-'"
       />
       <BcrosFormSectionReviewItem
-        v-if="!isHostTypeBusiness"
+        v-if="isIndividualCoHost"
         :title="tContact('dateOfBirth')"
         :content="getDateOfBirth()"
       />
       <BcrosFormSectionReviewItem
-        v-if="primary && !isHostTypeBusiness"
+        v-if="isIndividualCoHost"
         :title="tContact('socialInsuranceNumber')"
         :content="state.socialInsuranceNumber || '-'"
       />
@@ -28,13 +30,13 @@
       <BcrosFormSectionReviewItem :title="tContact('preferred')" :content="state.preferredName || '-'" />
 
       <BcrosFormSectionReviewItem
-        v-if="primary"
+        v-if="isPrimary"
         :title="t('common.formLabels.businessLegalName')"
         :content="(state as PrimaryContactInformationI).businessLegalName || '-'"
       />
 
       <BcrosFormSectionReviewItem
-        v-if="primary"
+        v-if="isPrimary"
         :title="t('common.formLabels.craBusinessNumber')"
         :content="state.businessNumber || '-'"
       />
@@ -57,9 +59,10 @@
 const { t } = useTranslation()
 const tContact = (translationKey: string) => t(`createAccount.contactForm.${translationKey}`)
 
-const { state, primary } = defineProps<{
+const { state, isPrimary = false } = defineProps<{
   state: PrimaryContactInformationI | SecondaryContactInformationI
-  primary: boolean
+  isPrimary?: boolean,
+  isIndividualCoHost: boolean // is Secondary/Co-Host Individual contact
 }>()
 
 const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' })
@@ -72,11 +75,9 @@ const getDateOfBirth = () => {
   return date.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
-const isHostTypeBusiness = computed((): boolean =>
-  (state as PrimaryContactInformationI).contactType === HostContactTypeE.BUSINESS)
-
 const displayHostType = {
   [HostContactTypeE.INDIVIDUAL]: tContact('hostTypeIndividual'),
   [HostContactTypeE.BUSINESS]: tContact('hostTypeBusiness')
 }
+
 </script>

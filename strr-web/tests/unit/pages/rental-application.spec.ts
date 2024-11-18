@@ -14,7 +14,7 @@ import H1 from '~/components/bcros/typography/H1.vue'
 import H2 from '~/components/bcros/typography/H2.vue'
 import InfoModal from '~/components/common/InfoModal.vue'
 import FeeWidget from '~/components/FeeWidget.vue'
-import { mockPrimaryContact, mockPrimaryContactBusinessType } from '~/tests/mocks/mockApplication'
+import { mockPrimaryContact, mockPrimaryContactBusinessType, mockSecondaryContact } from '~/tests/mocks/mockApplication'
 import { mockPropertyManager } from '~/tests/mocks/mockPropertyManager'
 
 const { t } = useTranslation()
@@ -222,6 +222,31 @@ describe('Rental Application', () => {
     expectedValuesBusiness.forEach((value: string) => {
       expect(primaryContactReviewTextBusiness).toContain(value)
     })
+  })
+
+  it('Review Step - should render Secondary Contact Information (Co-Host) section', async () => {
+    wrapper = await mountSuspended(CreateApplication)
+
+    // Open Secondary Contact form
+    wrapper.vm.toggleAddSecondary()
+
+    // Set Primary Contact as Individual type and set Secondary Contact
+    formState.primaryContact = mockPrimaryContact
+    formState.secondaryContact = mockSecondaryContact
+    await goToStep(5)
+
+    const secondaryContactReview = wrapper.findTestId('secondary-contact-review')
+    expect(secondaryContactReview.exists()).toBe(true)
+
+    // Check number of fields displayed in secondary co-host contact section
+    expect(secondaryContactReview.findAll('[data-test-id=form-item]')).toHaveLength(9)
+
+    await goToStep(2)
+    // Set Primary Contact as Business type
+    formState.primaryContact = mockPrimaryContactBusinessType
+
+    await goToStep(5)
+    expect(wrapper.findTestId('secondary-contact-review').findAll('[data-test-id=form-item]')).toHaveLength(6)
   })
 
   it('Review Step - should render Rental Unit Information section', async () => {
