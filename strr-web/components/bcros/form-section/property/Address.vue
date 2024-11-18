@@ -2,11 +2,7 @@
   <div data-test-id="form-section-address">
     <BcrosFormSection :title="t('createAccount.propertyForm.rentalUnitAddress')">
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]">
-        <UFormGroup
-          name="nickname"
-          class="d:pr-[16px] flex-grow"
-          :help="t('createAccount.propertyForm.nicknameHelp')"
-        >
+        <UFormGroup name="nickname" class="d:pr-[16px] flex-grow" :help="t('createAccount.propertyForm.nicknameHelp')">
           <UInput v-model="nickname" aria-label="nickname" :placeholder="t('createAccount.propertyForm.nickname')" />
         </UFormGroup>
       </div>
@@ -25,74 +21,50 @@
         <UFormGroup
           name="streetNumber"
           class="d:pr-[16px] flex-grow"
-          :error="errors.streetNumber"
         >
           <UInput
             :id="streetNumberId"
             v-model="streetNumber"
             :aria-label="t('createAccount.contactForm.streetNumber')"
             :placeholder="t('createAccount.contactForm.streetNumber')"
+            data-test-id="address-street-number"
             @keypress.once="addressComplete(false)"
             @click="addressComplete(false)"
-            @blur="
-              emit('validateAddressField', 'streetNumber');
-              resetAddressFields();
-            "
-            @change="
-              emit('validateAddressField', 'streetNumber');
-              resetAddressFields();
-            "
           />
         </UFormGroup>
         <UFormGroup
           name="streetName"
           class="d:pr-[16px] flex-grow"
-          :error="errors.streetName"
         >
           <UInput
             :id="streetNameId"
             v-model="streetName"
             :aria-label="t('createAccount.contactForm.streetName')"
             :placeholder="t('createAccount.contactForm.streetName')"
+            data-test-id="address-street-name"
             @keypress.once="addressComplete(true)"
             @click="addressComplete(true)"
-            @blur="
-              emit('validateAddressField', 'streetName');
-              resetAddressFields();
-            "
-            @change="
-              emit('validateAddressField', 'streetName');
-              resetAddressFields();
-            "
           />
         </UFormGroup>
         <UFormGroup
           name="unitNumber"
           class="d:pr-[16px] flex-grow"
-          :error="errors.unitNumber"
         >
           <UInput
             v-model="unitNumber"
             :aria-label="t('createAccount.contactForm.unitNumberRequired')"
             :placeholder="unitNumberPlaceholder"
-            @input="emit('resetFieldError', 'unitNumber')"
-            @blur="emit('validateAddressField', 'unitNumber')"
-            @change="emit('validateAddressField', 'unitNumber')"
+            data-test-id="address-unit-number"
           />
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]">
-        <UFormGroup
-          name="AddressLineTwo"
-          class="d:pr-[16px] flex-grow"
-          :error="errors.addressLineTwo"
-        >
+        <UFormGroup name="AddressLineTwo" class="d:pr-[16px] flex-grow">
           <UInput
             v-model="addressLineTwo"
             aria-label="address line two"
             :placeholder="t('createAccount.contactForm.addressLineTwo')"
-            @blur="emit('validateAddressField', 'addressLineTwo')"
-            @change="emit('validateAddressField', 'addressLineTwo')"
+            data-test-id="address-line-two"
           />
         </UFormGroup>
       </div>
@@ -100,44 +72,33 @@
         <UFormGroup
           name="city"
           class="d:pr-[16px] flex-grow mobile:mb-[16px]"
-          :error="errors.city"
         >
           <UInput
             v-model="city"
             aria-label="city"
             :placeholder="t('createAccount.contactForm.city')"
-            @input="emit('resetFieldError', 'city')"
-            @blur="emit('validateAddressField', 'city')"
-            @change="emit('validateAddressField', 'city')"
+            data-test-id="address-city"
           />
         </UFormGroup>
         <UFormGroup
           name="province"
           class="d:pr-[16px] flex-grow mobile:mb-[16px]"
-          :error="errors.addressNotInBC"
+          :error="addressInBC ? '' : 'Address must be in BC'"
         >
           <UInput
             v-model="province"
             aria-label="province"
             :placeholder="t('createAccount.contactForm.province')"
             disabled
-            @input="emit('resetFieldError', 'province')"
-            @blur="emit('validateAddressField', 'province')"
-            @change="emit('validateAddressField', 'province')"
           />
         </UFormGroup>
-        <UFormGroup
-          name="postalCode"
-          class="d:pr-[16px] flex-grow mobile:mb-[16px]"
-          :error="errors.postalCode"
-        >
+        <UFormGroup name="postalCode" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
           <UInput
+            ref="inputRef"
             v-model="postalCode"
             aria-label="postal code"
             :placeholder="t('createAccount.contactForm.postalCode')"
-            @input="emit('resetFieldError', 'postalCode')"
-            @blur="emit('validateAddressField', 'postalCode')"
-            @change="emit('validateAddressField', 'postalCode')"
+            data-test-id="address-postal-code"
           />
         </UFormGroup>
       </div>
@@ -163,14 +124,6 @@ const postalCode = defineModel<string>('postalCode')
 const nickname = defineModel<string>('nickname')
 const countryItems = ref<CountryItem[]>([])
 
-const resetAddressFields = () => {
-  emit('resetFieldError', 'streetNumber')
-  emit('resetFieldError', 'streetName')
-  emit('resetFieldError', 'city')
-  emit('resetFieldError', 'province')
-  emit('resetFieldError', 'postalCode')
-}
-
 const addressComplete = (initiatedFromStreetName: boolean) => {
   if (typeof country.value === 'string') {
     if (initiatedFromStreetName) {
@@ -186,18 +139,13 @@ const {
   streetNameId,
   defaultCountryIso2,
   enableAddressComplete,
-  errors = {}
+  addressInBC
 } = defineProps<{
   streetNumberId: string,
   streetNameId: string,
   defaultCountryIso2: string,
-  enableAddressComplete:(id: string, countryIso2: string, countrySelect: boolean, province?: string) => void,
-  errors: Record<string, string>
-}>()
-
-const emit = defineEmits<{
-  validateAddressField: [field: string]
-  resetFieldError: [field: keyof typeof errors]
+  enableAddressComplete:(id: string, countryIso2: string, countrySelect: boolean) => void,
+  addressInBC?: boolean
 }>()
 
 country.value = defaultCountryIso2

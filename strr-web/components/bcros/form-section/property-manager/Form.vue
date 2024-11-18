@@ -36,13 +36,14 @@
               {{ t('createAccount.propertyManager.primary') }}
             </p>
           </div>
-          <UForm ref="form" :schema="propertyManagerSchema" :state="formState.propertyManager">
+          <UForm
+            ref="propertyManagerForm"
+            :schema="propertyManagerSchema"
+            :state="flatFormState"
+          >
             <BcrosFormSectionBusinessDetails
               v-model:business-name="formState.propertyManager.businessLegalName"
               v-model:business-number="formState.propertyManager.businessNumber"
-              :errors="errorRefs"
-              @reset-field-error="resetFieldError"
-              @validate-field="validateField"
             />
             <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
             <BcrosFormSectionPropertyManagerBusinessMailingAddress
@@ -55,9 +56,6 @@
               v-model:postal-code="formState.propertyManager.businessMailingAddress.postalCode"
               :enable-address-complete="enableAddressComplete"
               default-country-iso2="CA"
-              :errors="errorRefs"
-              @reset-field-error="resetFieldError"
-              @validate-field="validateField"
             />
             <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
             <BcrosFormSectionContactName
@@ -65,9 +63,6 @@
               v-model:first-name="formState.propertyManager.contact.firstName"
               v-model:last-name="formState.propertyManager.contact.lastName"
               v-model:middle-name="formState.propertyManager.contact.middleName"
-              :errors="errorRefs"
-              @reset-field-error="resetFieldError"
-              @validate-field="validateField"
             />
             <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
             <BcrosFormSectionContactDetails
@@ -75,9 +70,6 @@
               v-model:extension="formState.propertyManager.contact.extension"
               v-model:fax-number="formState.propertyManager.contact.faxNumber"
               v-model:email-address="formState.propertyManager.contact.emailAddress"
-              :errors="errorRefs"
-              @reset-field-error="resetFieldError"
-              @validate-field="validateField"
             />
           </UForm>
         </div>
@@ -123,6 +115,8 @@ const getActiveAddressState = (): PropertyManagerBusinessAddressI | null => {
 
 watch(canadaPostAddress, (newAddress) => {
   const activeAddressState = getActiveAddressState()
+  console.log(newAddress)
+
   if (newAddress && activeAddressState) {
     activeAddressState.address = newAddress.address
     activeAddressState.addressLineTwo = newAddress.addressLineTwo
@@ -130,40 +124,37 @@ watch(canadaPostAddress, (newAddress) => {
     activeAddressState.city = newAddress.city
     activeAddressState.province = newAddress.province
     activeAddressState.postalCode = newAddress.postalCode
+
+    // clear errors when address autocomplete was used
+    propertyManagerForm.value.clear('address')
+    propertyManagerForm.value.clear('addressLineTwo')
+    propertyManagerForm.value.clear('city')
+    propertyManagerForm.value.clear('province')
+    propertyManagerForm.value.clear('postalCode')
   }
 })
 
-const errorRefs = reactive({
-  address: '',
-  city: '',
-  province: '',
-  postalCode: '',
-  emailAddress: '',
-  phoneNumber: '',
-  firstName: '',
-  lastName: '',
-  businessLegalName: '',
-  businessNumber: '',
-  middleName: '',
-  preferredName: '',
-  extension: '',
-  faxNumber: ''
-})
+const propertyManagerForm = ref()
 
-const resetFieldError = (field: keyof typeof errorRefs) => {
-  errorRefs[field] = ''
-}
-
-const validateField = (field: keyof typeof errorRefs) => {
-  const parsed = propertyManagerSchema.safeParse(formState.propertyManager).error?.errors
-  const error = parsed?.find(error => error.path.includes(field))
-  errorRefs[field] = error ? error.message : ''
-}
-
-const form = ref()
-watch(form, () => {
-  if (form.value && isComplete) { form.value.validate({ silent: true }) }
-})
+// create a flat form state for validation
+const flatFormState = computed(() => ({
+  businessLegalName: formState.propertyManager.businessLegalName,
+  businessNumber: formState.propertyManager.businessNumber,
+  address: formState.propertyManager.businessMailingAddress.address,
+  addressLineTwo: formState.propertyManager.businessMailingAddress.addressLineTwo,
+  city: formState.propertyManager.businessMailingAddress.city,
+  postalCode: formState.propertyManager.businessMailingAddress.postalCode,
+  province: formState.propertyManager.businessMailingAddress.province,
+  country: formState.propertyManager.businessMailingAddress.country,
+  firstName: formState.propertyManager.contact.firstName,
+  middleName: formState.propertyManager.contact.middleName,
+  lastName: formState.propertyManager.contact.lastName,
+  preferredName: formState.propertyManager.contact.preferredName,
+  phoneNumber: formState.propertyManager.contact.phoneNumber,
+  extension: formState.propertyManager.contact.extension,
+  faxNumber: formState.propertyManager.contact.faxNumber,
+  emailAddress: formState.propertyManager.contact.emailAddress
+}))
 
 watch([() => formState.isPropertyManagerRole, () => formState.hasPropertyManager], () => {
   if (!formState.isPropertyManagerRole && !formState.hasPropertyManager) {
@@ -187,7 +178,8 @@ watch([() => formState.isPropertyManagerRole, () => formState.hasPropertyManager
         extension: '',
         faxNumber: '',
         emailAddress: ''
-      }
+      },
+      initiatedByPropertyManager: undefined
     }
   }
   // reset Host Authorization flag if role is not Property manager
@@ -196,11 +188,9 @@ watch([() => formState.isPropertyManagerRole, () => formState.hasPropertyManager
   }
 })
 
-onMounted(() => {
+onMounted(async () => {
   if (isComplete) {
-    Object.keys(errorRefs).forEach((field) => {
-      validateField(field as keyof typeof errorRefs)
-    })
+    await propertyManagerForm.value.validate(null, { silent: true })
   }
 })
 </script>

@@ -6,15 +6,15 @@ export interface PropertyDetailsI {
     businessLicenseExpiryDate: string | undefined
     propertyType: string | undefined
     ownershipType: string | undefined
-    nickname: string | undefined
-    country: string | undefined
-    streetNumber: string | undefined
-    streetName: string | undefined
-    unitNumber: string | undefined
-    addressLineTwo: string | undefined
-    city: string | undefined
-    province: string | undefined
-    postalCode: string | undefined
+    nickname: string
+    country: string
+    streetNumber: string
+    streetName: string
+    unitNumber: string
+    addressLineTwo: string
+    city: string
+    province: string
+    postalCode: string
     listingDetails: { url: string }[]
     rentalUnitSpaceType: string
     isUnitOnPrincipalResidenceProperty: boolean | undefined

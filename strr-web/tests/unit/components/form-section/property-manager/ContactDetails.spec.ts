@@ -12,9 +12,7 @@ it('can mount Contact Details component', async () => {
   wrapper = await mountSuspended(BcrosFormSectionContactDetails,
     {
       global: { plugins: [i18n] },
-      props: {
-        errors: {}
-      }
+      props: {}
     })
   expect(wrapper.findTestId('form-section-contact-details').exists()).toBe(true)
   expect(wrapper.findTestId('phone-number').exists()).toBe(true)
@@ -22,18 +20,4 @@ it('can mount Contact Details component', async () => {
   expect(wrapper.findTestId('fax-number').exists()).toBe(true)
   expect(wrapper.findTestId('email-address').exists()).toBe(true)
   expect(wrapper.findComponent(BcrosAlertsMessage).exists()).toBe(true)
-})
-
-it('emits events on input changes', async () => {
-  wrapper = await mountSuspended(BcrosFormSectionContactDetails,
-    {
-      global: { plugins: [i18n] },
-      props: {
-        errors: {}
-      }
-    })
-  await wrapper.findTestId('phone-number').trigger('input')
-  expect(wrapper.emitted('resetFieldError')).toBeTruthy()
-  await wrapper.findTestId('phone-number').trigger('blur')
-  expect(wrapper.emitted('validateField')).toBeTruthy()
 })

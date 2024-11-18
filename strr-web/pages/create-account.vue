@@ -188,20 +188,29 @@ const validatePropertyManagerStep = () => {
   if (!formState.isPropertyManagerRole && !formState.hasPropertyManager) {
     steps[0].step.isValid = true
   } else {
-    validateStep(propertyManagerSchema, formState.propertyManager, 0)
+    // create a flat form state to match the schema
+    const { businessLegalName, businessNumber, businessMailingAddress, contact } = formState.propertyManager
+    const flatFormState = {
+      businessLegalName,
+      businessNumber,
+      ...businessMailingAddress,
+      ...contact
+    }
+
+    validateStep(propertyManagerSchema, flatFormState, 0)
   }
+}
+
+const validateHostInformationStep = () => {
+  const isPrimaryContactValid = primaryContactSchema.safeParse(formState.primaryContact).success
+  const isSecondaryContactValid =
+    hasSecondaryContact.value ? secondaryContactSchema.safeParse(formState.secondaryContact).success : true
+
+  setStepValid(1, isPrimaryContactValid && isSecondaryContactValid)
 }
 
 watch(formState.propertyManager, () => {
   validatePropertyManagerStep()
-})
-
-watch(formState.primaryContact, () => {
-  validateStep(primaryContactSchema, formState.primaryContact, 1)
-})
-
-watch(formState.secondaryContact, () => {
-  validateStep(secondaryContactSchema, formState.secondaryContact, 1)
 })
 
 watch(formState.propertyDetails, () => {
@@ -249,10 +258,7 @@ const validateSteps = () => {
   if (activeStepIndex.value === 0) {
     validatePropertyManagerStep()
   } else if (activeStepIndex.value === 1) {
-    validateStep(primaryContactSchema, formState.primaryContact, 1)
-    if (hasSecondaryContact.value) {
-      validateStep(secondaryContactSchema, formState.secondaryContact, 1)
-    }
+    validateHostInformationStep()
   } else if (activeStepIndex.value === 2) {
     validateStep(propertyDetailsSchema, formState.propertyDetails, 2)
   } else if (activeStepIndex.value === 3) {

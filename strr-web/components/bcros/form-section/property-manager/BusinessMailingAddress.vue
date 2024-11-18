@@ -13,7 +13,7 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:mb-[16px]">
-        <UFormGroup name="address" class="flex-grow" :error="errors.address">
+        <UFormGroup name="address" class="flex-grow">
           <UInput
             :id="id"
             v-model="address"
@@ -21,14 +21,6 @@
             data-test-id="property-manager-address-input"
             @keypress.once="addressComplete()"
             @click="addressComplete()"
-            @blur="
-              emit('validateField', 'address');
-              resetAddressFields();
-            "
-            @change="
-              emit('validateField', 'address');
-              resetAddressFields();
-            "
           />
         </UFormGroup>
       </div>
@@ -42,21 +34,14 @@
         </UFormGroup>
       </div>
       <div class="flex flex-row justify-between w-full mb-[40px] mobile:flex-col mobile:mb-[16px]">
-        <UFormGroup
-          name="city"
-          class="d:pr-[16px] flex-grow mobile:mb-[16px]"
-          :error="errors.city"
-        >
+        <UFormGroup name="city" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
           <UInput
             v-model="city"
             :placeholder="t('createAccount.propertyManagerForm.city')"
             data-test-id="property-manager-city-input"
-            @input="emit('resetFieldError', 'city')"
-            @blur="emit('validateField', 'city')"
-            @change="emit('validateField', 'city')"
           />
         </UFormGroup>
-        <UFormGroup name="province" :error="errors.province" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
+        <UFormGroup name="province" class="d:pr-[16px] flex-grow mobile:mb-[16px]">
           <USelect
             v-if="['CA', 'US'].includes(country)"
             v-model="province"
@@ -70,19 +55,13 @@
             v-model="province"
             :placeholder="t('createAccount.propertyManagerForm.province')"
             data-test-id="property-manager-province-input"
-            @input="emit('resetFieldError', 'province')"
-            @blur="emit('validateField', 'province')"
-            @change="emit('validateField', 'province')"
           />
         </UFormGroup>
-        <UFormGroup name="postalCode" :error="errors.postalCode" class="flex-grow mobile:mb-[16px]">
+        <UFormGroup name="postalCode" class="flex-grow mobile:mb-[16px]">
           <UInput
             v-model="postalCode"
             :placeholder="t('createAccount.propertyManagerForm.postalCode')"
             data-test-id="property-manager-postal-code-input"
-            @input="emit('resetFieldError', 'postalCode')"
-            @blur="emit('validateField', 'postalCode')"
-            @change="emit('validateField', 'postalCode')"
           />
         </UFormGroup>
       </div>
@@ -120,13 +99,6 @@ const provinceItems = computed<ProvinceItem[]>(() => {
   return []
 })
 
-const resetAddressFields = () => {
-  emit('resetFieldError', 'address')
-  emit('resetFieldError', 'city')
-  emit('resetFieldError', 'province')
-  emit('resetFieldError', 'postalCode')
-}
-
 const addressComplete = () => {
   if (country.value === 'CA' || country.value === 'US') {
     enableAddressComplete(id, country.value, true)
@@ -136,19 +108,11 @@ const addressComplete = () => {
 const {
   id,
   defaultCountryIso2,
-  enableAddressComplete,
-  errors = {}
+  enableAddressComplete
 } = defineProps<{
-    id: string,
-    defaultCountryIso2: string,
-    enableAddressComplete:(id: string, countryIso2: string, countrySelect: boolean) => void,
-    errors: Record<string, string>
-}>()
-
-const emit = defineEmits<{
-    setId: [id: string]
-    validateField: [field: string]
-    resetFieldError: [field: keyof typeof errors]
+  id: string,
+  defaultCountryIso2: string,
+  enableAddressComplete:(id: string, countryIso2: string, countrySelect: boolean) => void,
 }>()
 
 country.value = defaultCountryIso2

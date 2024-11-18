@@ -10,7 +10,11 @@ const i18n = createI18n({
 
 it('can mount Property Details Form Section component', async () => {
   const addressSection = await mountSuspended(BcrosFormSectionPropertyDetails, {
-    global: { plugins: [i18n] }
+    global: { plugins: [i18n] },
+    props: {
+      hostResidenceError: '',
+      numberOfRoomsForRentError: ''
+    }
   })
   expect(addressSection.find('[data-test-id="property-details"]').exists()).toBe(true)
 })
@@ -21,6 +25,10 @@ describe('Number of Rooms Input', () => {
   beforeEach(async () => {
     wrapper = await mountSuspended(BcrosFormSectionPropertyDetails, {
       global: { plugins: [i18n] },
+      props: {
+        hostResidenceError: '',
+        numberOfRoomsForRentError: ''
+      },
       data () {
         return {
           formState: {

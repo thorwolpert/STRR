@@ -13,18 +13,27 @@ import { PropertyTypeE } from '~/enums/property-type-e'
 
 const numbersRegex = /^\d+$/
 // matches chars 123456789 ()
-const httpRegex = /^(https?:\/\/)([\w-]+(\.[\w-]+)+\.?(:\d+)?(\/.*)?)$/i
+const httpRegex = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+\.?(:\d+)?(\/.*)?)$/i // https is optional
 const html5EmailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/
 const html5PhoneRegex = /^(\+\d{1,3}[-\s.]?)?(\(?\d{3}\)?[-\s.]?\d{3}[-\s.]?\d{4,6})$/
 const pidRegex = /^\d{3}(-)\d{3}(-)\d{3}$/
-const sinRegex = /^\d{3}( )\d{3}( )\d{3}$/
-const craBusinessNumberRegex = /^\d{9}$|^\d{9}[A-Z]{2}\d{4}$/
+
+// not allowed: all 0s, starting with 8, letters; allowed: 111 222 333 or 111222333
+const sinRegex = /^(?!00000000|000 000 000)(?!8)(?:\d{9}|\d{3} \d{3} \d{3})$/
+const craBusinessNumberRegex = /^\d{9}$/
 const phoneError = { message: 'Please enter a valid phone number' }
 const emailError = { message: 'Please enter a valid email' }
-const requiredPhone = z.string().regex(html5PhoneRegex, phoneError)
+
+const requiredPhone = z
+  .string()
+  .min(1, { message: 'Required' })
+  .regex(html5PhoneRegex, phoneError)
+
 const optionalPhone = z.string().regex(html5PhoneRegex, phoneError).optional().or(z.literal(''))
 const requiredEmail = z.string().regex(html5EmailRegex, emailError)
-const requiredNumber = z.string().regex(numbersRegex, { message: 'Must be a number' })
+const requiredNumber = z.string()
+  .min(1, { message: 'Required' })
+  .regex(numbersRegex, { message: 'Must be a number' })
 const optionalNumber = z
   .string()
   .refine(val => val === '' || numbersRegex.test(val), { message: 'Must be a number' })
@@ -37,13 +46,10 @@ const optionalPID = z
   .optional()
 const requiredSin = z
   .string()
-  .regex(sinRegex, { message: 'Social Insurance Number must be provided in the format 111 111 111' })
-const optionalSin = z
-  .string()
-  .refine(val => val === '' || sinRegex.test(val), {
-    message: 'Social Insurance Number must be provided in the format 111 111 111'
-  })
-  .optional()
+  .regex(sinRegex, { message: 'Please enter a valid Social Insurance Number' })
+
+const optionalSin = requiredSin.or(z.literal(''))
+
 const optionalCRABusinessNumber = z
   .string()
   .refine(val => val === '' || craBusinessNumberRegex.test(val), {
@@ -53,6 +59,16 @@ const optionalCRABusinessNumber = z
 const optionalExtension = optionalNumber
 const optionalOrEmptyString = z
   .string()
+  .optional()
+  .transform(e => (e === '' ? undefined : e))
+const optionalOrEmptyString15 = z
+  .string()
+  .max(15, { message: 'Maximum length is 15 characters' })
+  .optional()
+  .transform(e => (e === '' ? undefined : e))
+const optionalOrEmptyString50 = z
+  .string()
+  .max(50, { message: 'Maximum length is 50 characters' })
   .optional()
   .transform(e => (e === '' ? undefined : e))
 const requiredNonEmptyString = z
@@ -83,78 +99,22 @@ export const finalizationSchema = z.object({
 })
 
 export const propertyManagerSchema = z.object({
-  businessLegalName: optionalOrEmptyString,
+  businessLegalName: optionalOrEmptyString50,
   businessNumber: optionalCRABusinessNumber,
-  businessMailingAddress: z.object({
-    address: requiredNonEmptyString,
-    addressLineTwo: optionalOrEmptyString,
-    city: requiredNonEmptyString100,
-    postalCode: requiredNonEmptyString15,
-    province: requiredNonEmptyString,
-    country: requiredNonEmptyString
-  }),
-  contact: z.object({
-    firstName: requiredNonEmptyString50,
-    middleName: optionalOrEmptyString,
-    lastName: requiredNonEmptyString50,
-    preferredName: optionalOrEmptyString,
-    phoneNumber: requiredPhone,
-    extension: optionalOrEmptyString,
-    faxNumber: optionalPhone,
-    emailAddress: requiredEmail
-  })
-}).refine(
-  data => !data.businessLegalName || data.businessLegalName.length <= 50,
-  {
-    message: 'Business Legal Name must not exceed 50 characters',
-    path: ['businessLegalName']
-  }
-).refine(
-  data => !data.contact.middleName || data.contact.middleName.length <= 50,
-  {
-    message: 'Middle Name must not exceed 50 characters',
-    path: ['contact', 'middleName']
-  }
-).refine(
-  data => !data.contact.preferredName || data.contact.preferredName.length <= 50,
-  {
-    message: 'Preferred Name must not exceed 50 characters',
-    path: ['contact', 'preferredName']
-  }
-).refine(
-  data => !data.contact.extension || data.contact.extension.length <= 15,
-  {
-    message: 'Extension must not exceed 15 characters',
-    path: ['contact', 'extension']
-  }
-)
-
-export const secondaryContactSchema = z.object({
-  firstName: requiredNonEmptyString50,
-  lastName: requiredNonEmptyString50,
-  middleName: optionalOrEmptyString,
-  socialInsuranceNumber: optionalSin,
-  businessNumber: optionalOrEmptyString,
-  preferredName: optionalOrEmptyString,
-  phoneNumber: requiredPhone,
-  extension: optionalOrEmptyString,
-  faxNumber: optionalPhone,
-  emailAddress: requiredEmail,
   address: requiredNonEmptyString,
-  country: requiredNonEmptyString,
   addressLineTwo: optionalOrEmptyString,
   city: requiredNonEmptyString100,
-  province: requiredNonEmptyString,
   postalCode: requiredNonEmptyString15,
-  birthDay: optionalNumber
-    .refine(day => day?.length === 2, 'Day must be two digits')
-    .refine(day => Number(day) <= 31, 'Must be less than or equal to 31')
-    .optional(),
-  birthMonth: optionalOrEmptyString,
-  birthYear: optionalNumber
-    .refine(year => Number(year) <= new Date().getFullYear(), 'Year must be in the past')
-    .refine(year => year?.length === 4, 'Year must be four digits')
-    .optional()
+  province: requiredNonEmptyString,
+  country: requiredNonEmptyString,
+  firstName: requiredNonEmptyString50,
+  middleName: optionalOrEmptyString50,
+  lastName: requiredNonEmptyString50,
+  preferredName: optionalOrEmptyString50,
+  phoneNumber: requiredPhone,
+  extension: optionalOrEmptyString15,
+  faxNumber: optionalPhone,
+  emailAddress: requiredEmail
 })
 
 const primaryContact: PrimaryContactInformationI = {
@@ -337,26 +297,26 @@ export const formState: CreateAccountFormStateI = reactive({
     whichPlatform: undefined,
     nickname: '',
     country: 'CA',
-    streetNumber: undefined,
-    streetName: undefined,
-    unitNumber: undefined,
-    addressLineTwo: undefined,
-    city: undefined,
+    streetNumber: '',
+    streetName: '',
+    unitNumber: '',
+    addressLineTwo: '',
+    city: '',
     province: 'BC',
-    postalCode: undefined,
+    postalCode: '',
     listingDetails: [{ url: '' }],
     numberOfRoomsForRent: 1,
     rentalUnitSpaceType: '',
-    isUnitOnPrincipalResidenceProperty: null,
+    isUnitOnPrincipalResidenceProperty: undefined,
     hostResidence: undefined
   },
   selectedAccount: {} as OrgI,
   principal: {
-    isPrincipalResidence: undefined,
+    isPrincipalResidence: false,
     agreedToRentalAct: false,
     agreedToSubmit: false,
-    nonPrincipalOption: undefined,
-    specifiedServiceProvider: undefined
+    nonPrincipalOption: '',
+    specifiedServiceProvider: ''
   },
   supportingDocuments: [],
   hasHostAuthorization: false // if Property Manager is authorized by Host
@@ -466,12 +426,12 @@ const primaryContactIndividual = z.object({
   businessLegalName: optionalOrEmptyString,
   businessNumber: optionalOrEmptyString,
   phoneNumber: requiredPhone,
-  extension: optionalOrEmptyString,
+  extension: optionalOrEmptyString15,
   faxNumber: optionalPhone,
   emailAddress: requiredEmail,
   address: requiredNonEmptyString,
-  country: requiredNonEmptyString,
   addressLineTwo: optionalOrEmptyString,
+  country: requiredNonEmptyString,
   city: requiredNonEmptyString100,
   province: requiredNonEmptyString,
   postalCode: requiredNonEmptyString15,
@@ -494,6 +454,34 @@ const primaryContactBusiness = primaryContactIndividual.extend({
   birthDay: optionalOrEmptyString,
   birthMonth: optionalOrEmptyString,
   birthYear: optionalOrEmptyString
+})
+
+export const secondaryContactSchema = z.object({
+  firstName: requiredNonEmptyString50,
+  lastName: requiredNonEmptyString50,
+  middleName: optionalOrEmptyString50,
+  socialInsuranceNumber: optionalSin,
+  businessNumber: optionalOrEmptyString,
+  preferredName: optionalOrEmptyString,
+  phoneNumber: requiredPhone,
+  extension: optionalOrEmptyString15,
+  faxNumber: optionalPhone,
+  emailAddress: requiredEmail,
+  address: requiredNonEmptyString,
+  country: requiredNonEmptyString,
+  addressLineTwo: optionalOrEmptyString,
+  city: requiredNonEmptyString100,
+  province: requiredNonEmptyString,
+  postalCode: requiredNonEmptyString15,
+  birthDay: optionalNumber
+    .refine(day => Number(day) <= 31, 'Must be less than or equal to 31')
+    .optional(),
+  birthMonth: optionalOrEmptyString,
+  birthYear: optionalNumber
+    .refine(year => Number(year) <= new Date().getFullYear(), 'Year must be in the past')
+    .refine(year => year?.length === 4, 'Year must be four digits')
+    .optional()
+    .or(z.literal(''))
 })
 
 // main Primary Contact Schema will selected based on contactType prop

@@ -6,7 +6,7 @@
           {{ t('createAccount.propertyForm.subtitle') }}
         </p>
       </div>
-      <UForm ref="form" :schema="propertyDetailsSchema" :state="formState.propertyDetails">
+      <UForm ref="propertyDetailsForm" :schema="propertyDetailsSchema" :state="formState.propertyDetails">
         <BcrosFormSectionPropertyDetails
           v-model:property-type="formState.propertyDetails.propertyType"
           v-model:ownership-type="formState.propertyDetails.ownershipType"
@@ -17,15 +17,8 @@
           v-model:is-unit-on-principal-residence-property="formState.propertyDetails.isUnitOnPrincipalResidenceProperty"
           v-model:host-residence="formState.propertyDetails.hostResidence"
           v-model:number-of-rooms-for-rent="formState.propertyDetails.numberOfRoomsForRent"
-          :property-types="propertyTypes"
-          :ownership-types="ownershipTypes"
-          :errors="errorRefs"
-          @reset-field-error="resetFieldError"
-          @validate-ownership="validateOwnershipType"
-          @validate-property="validatePropertyType"
-          @validate-business-license-expiry-date="validateBusinessLicenseExpiryDate"
-          @validate-rental-unit-space-type="validateRentalUnitSpaceType"
-          @validate-principal-residence="validatePrincipalResidenceOptions"
+          :host-residence-error="hostResidenceError"
+          :number-of-rooms-for-rent-error="numberOfRoomsForRentError"
           @validate-host-residence="validateHostResidence"
           @validate-number-of-rooms-for-rent="validateNumberOfRoomsForRent"
         />
@@ -43,9 +36,7 @@
           street-name-id="propertyAddressStreetName"
           :enable-address-complete="enableAddressComplete"
           default-country-iso2="CA"
-          :errors="errorRefs"
-          @reset-field-error="resetFieldError"
-          @validate-address-field="validateAddressField"
+          :address-in-b-c="isAddressInBC"
         />
         <BcrosFormSectionPropertyListingDetails
           v-model:listing-details="formState.propertyDetails.listingDetails"
@@ -66,70 +57,19 @@ const { isComplete } = defineProps<{
   isComplete: boolean
 }>()
 
-const errorRefs = reactive({
-  propertyType: '',
-  ownershipType: '',
-  businessLicenseExpiryDate: '',
-  rentalUnitSpaceType: '',
-  principalResidence: '',
-  hostResidence: '',
-  numberOfRoomsForRent: '',
-  streetNumber: '',
-  streetName: '',
-  unitNumber: '',
-  addressLineTwo: '',
-  city: '',
-  province: '',
-  postalCode: '',
-  addressNotInBC: ''
-})
-
-const resetFieldError = (field: keyof typeof errorRefs) => {
-  errorRefs[field] = ''
-}
-
 const {
   activeAddressField,
   addressWithStreetAttributes: canadaPostAddress,
   enableAddressComplete
 } = useCanadaPostAddress(true)
 
-const getActiveAddressState = (): PropertyDetailsI | null => {
-  if (activeAddressField.value === 'propertyAddressStreetNumber' ||
-      activeAddressField.value === 'propertyAddressStreetName') {
-    return formState.propertyDetails
-  }
-  return null
-}
-
-watch(canadaPostAddress, (newAddress) => {
-  const activeAddressState = getActiveAddressState()
-  if (newAddress && activeAddressState) {
-    if (newAddress.province === 'BC') {
-      errorRefs.addressNotInBC = ''
-      activeAddressState.streetNumber = newAddress.streetNumber
-      activeAddressState.streetName = newAddress.streetName
-      activeAddressState.addressLineTwo = newAddress.addressLineTwo
-      activeAddressState.country = newAddress.country
-      activeAddressState.city = newAddress.city
-      activeAddressState.province = newAddress.province
-      activeAddressState.postalCode = newAddress.postalCode
-    } else {
-      errorRefs.addressNotInBC = 'Address must be in BC'
-    }
-  }
-})
-
-watch(() => formState.propertyDetails.isUnitOnPrincipalResidenceProperty, (newValue) => {
-  if (!newValue) {
-    formState.propertyDetails.hostResidence = undefined // Reset if not required
-  }
-  validateHostResidence() // Ensure validation reflects changes
-})
+const isValid = ref(false)
+const propertyDetailsForm = ref()
+const isAddressInBC = ref(true)
+const hostResidenceError = ref('')
+const numberOfRoomsForRentError = ref('')
 
 const { t } = useTranslation()
-
-const isValid = ref(false)
 
 const listingURLErrors = ref<(({
     errorIndex: string | number;
@@ -148,6 +88,7 @@ const validateField = (index: number) => {
   const listingDetailsErrorsExist = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
     .find(error => error.path[0] === 'listingDetails')
   const currentUrl = formState.propertyDetails.listingDetails[index]?.url
+
   if (currentUrl) {
     const sanitizedUrl = sanitizeUrl(currentUrl)
     if (sanitizedUrl === 'about:blank' || sanitizedUrl === 'javascript:void(0)') {
@@ -160,6 +101,7 @@ const validateField = (index: number) => {
     }
     formState.propertyDetails.listingDetails[index].url = sanitizedUrl
   }
+
   if (listingDetailsErrorsExist) {
     const invalidUrl = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
       .filter(error => error.path[0] === 'listingDetails' && error.path[1].toString() === index.toString())
@@ -204,86 +146,8 @@ const validateAllPropertyListingUrls = () => {
   }
 }
 
-watch(formState.propertyDetails, () => {
-  isValid.value = propertyDetailsSchema.safeParse(formState.propertyDetails).success
-})
-
-defineEmits<{
-  validatePage: [isValid: boolean]
-}>()
-
-const propertyTypes = [
-  { value: PropertyTypeE.SINGLE_FAMILY_HOME, label: t('createAccount.propertyForm.singleFamilyHome') },
-  { value: PropertyTypeE.SECONDARY_SUITE, label: t('createAccount.propertyForm.secondarySuite') },
-  { value: PropertyTypeE.ACCESSORY_DWELLING, label: t('createAccount.propertyForm.accessoryDwelling') },
-  { value: PropertyTypeE.TOWN_HOME, label: t('createAccount.propertyForm.townhome') },
-  { value: PropertyTypeE.MULTI_UNIT_HOUSING, label: t('createAccount.propertyForm.multiUnitHousing') },
-  { value: PropertyTypeE.CONDO_OR_APT, label: t('createAccount.propertyForm.condoApartment') },
-  { value: PropertyTypeE.RECREATIONAL, label: t('createAccount.propertyForm.recreationalProperty') },
-  { value: PropertyTypeE.BED_AND_BREAKFAST, label: t('createAccount.propertyForm.bedAndBreakfast') },
-  { value: PropertyTypeE.STRATA_HOTEL, label: t('createAccount.propertyForm.strataHotel') },
-  { value: PropertyTypeE.FLOAT_HOME, label: t('createAccount.propertyForm.floatHome') }
-]
-
-const ownershipTypes = [
-  { value: OwnershipTypeE.RENT, label: t('createAccount.propertyForm.rent') },
-  { value: OwnershipTypeE.OWN, label: t('createAccount.propertyForm.own') },
-  { value: OwnershipTypeE.CO_OWN, label: t('createAccount.propertyForm.coOwn') }
-]
-
-const validatePropertyType = () => {
-  const parsed = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
-  const error = parsed?.find(error => error.path.includes('propertyType'))
-  errorRefs.propertyType = error?.message || ''
-}
-
-const validateOwnershipType = () => {
-  const parsed = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
-  const error = parsed?.find(error => error.path.includes('ownershipType'))
-  errorRefs.ownershipType = error?.message || ''
-}
-
-const validateBusinessLicenseExpiryDate = () => {
-  const parsed = propertyDetailsSchema.safeParse(formState.propertyDetails).error?.errors
-  const error = parsed?.find(error => error.path.includes('businessLicenseExpiryDate'))
-  errorRefs.businessLicenseExpiryDate = error?.message || ''
-}
-
-const validateRentalUnitSpaceType = () => {
-  if (!formState.propertyDetails.rentalUnitSpaceType) {
-    errorRefs.rentalUnitSpaceType = t('createAccount.propertyForm.rentalUnitSpaceTypeRequired')
-  } else {
-    errorRefs.rentalUnitSpaceType = ''
-  }
-}
-
-watch(
-  () => formState.propertyDetails.isUnitOnPrincipalResidenceProperty,
-  (newValue) => {
-    // Coerce string "true"/"false" to boolean true/false
-    if (newValue === 'true') {
-      formState.propertyDetails.isUnitOnPrincipalResidenceProperty = true
-    } else if (newValue === 'false') {
-      formState.propertyDetails.isUnitOnPrincipalResidenceProperty = false
-    }
-
-    if (isComplete) {
-      validatePrincipalResidenceOptions()
-    }
-  }
-)
-
-const validatePrincipalResidenceOptions = () => {
-  const value = formState.propertyDetails.isUnitOnPrincipalResidenceProperty
-  if (value === null || value === undefined) {
-    errorRefs.principalResidence = t('createAccount.propertyForm.isUnitOnPrincipalResidencePropertyRequired')
-  } else {
-    errorRefs.principalResidence = '' // Clear the error if a valid selection is made
-  }
-}
-
 const validateHostResidence = () => {
-  errorRefs.hostResidence =
+  hostResidenceError.value =
     (formState.propertyDetails.isUnitOnPrincipalResidenceProperty && !formState.propertyDetails.hostResidence)
       ? t('createAccount.propertyForm.hostResidenceRequiredError')
       : ''
@@ -298,48 +162,77 @@ const validateNumberOfRoomsForRent = () => {
   }
 
   if (value < 1) {
-    errorRefs.numberOfRoomsForRent = t('createAccount.propertyForm.numberOfRoomsForRentRequired')
+    numberOfRoomsForRentError.value = t('createAccount.propertyForm.numberOfRoomsForRentRequired')
   } else if (value > 5000) {
-    errorRefs.numberOfRoomsForRent = t('createAccount.propertyForm.numberOfRoomsForRentMaxExceeded')
+    numberOfRoomsForRentError.value = t('createAccount.propertyForm.numberOfRoomsForRentMaxExceeded')
   } else {
-    errorRefs.numberOfRoomsForRent = ''
+    numberOfRoomsForRentError.value = ''
   }
 }
 
-const validateAddressField = (field: keyof typeof errorRefs) => {
-  const parsed = propertyDetailsSchema.safeParse(formState.propertyDetails)
-  const error = parsed.success ? null : parsed.error.issues.find(issue => issue.path.includes(field))
-  errorRefs[field] = error?.message || ''
+const getActiveAddressState = (): PropertyDetailsI | null => {
+  if (activeAddressField.value === 'propertyAddressStreetNumber' ||
+      activeAddressField.value === 'propertyAddressStreetName') {
+    return formState.propertyDetails
+  }
+  return null
 }
 
-const validateAddressFields = () => {
-  validateAddressField('streetNumber')
-  validateAddressField('streetName')
-  validateAddressField('unitNumber')
-  validateAddressField('addressLineTwo')
-  validateAddressField('city')
-  validateAddressField('province')
-  validateAddressField('postalCode')
-}
-
-const form = ref()
-
-watch(form, () => {
-  if (form.value && isComplete) { form.value.validate({ silent: true }) }
+watch(() => formState.propertyDetails.isUnitOnPrincipalResidenceProperty, (newValue) => {
+  if (!newValue) {
+    formState.propertyDetails.hostResidence = undefined // Reset if not required
+  }
+  validateHostResidence() // Ensure validation reflects changes
 })
 
-onMounted(() => {
-  if (isComplete && !isValid.value) {
-    validateAllPropertyListingUrls()
+watch(formState.propertyDetails, () => {
+  isValid.value = propertyDetailsSchema.safeParse(formState.propertyDetails).success
+})
+
+watch(
+  () => formState.propertyDetails.isUnitOnPrincipalResidenceProperty,
+  (newValue) => {
+    // Coerce string "true"/"false" to boolean true/false
+    if (newValue === 'true') {
+      formState.propertyDetails.isUnitOnPrincipalResidenceProperty = true
+    } else if (newValue === 'false') {
+      formState.propertyDetails.isUnitOnPrincipalResidenceProperty = false
+    }
   }
+)
+
+watch(canadaPostAddress, (newAddress) => {
+  const activeAddressState = getActiveAddressState()
+  if (newAddress && activeAddressState) {
+    if (newAddress.province === 'BC') {
+      isAddressInBC.value = true
+      activeAddressState.streetNumber = newAddress.streetNumber
+      activeAddressState.streetName = newAddress.streetName
+      activeAddressState.addressLineTwo = newAddress.addressLineTwo
+      activeAddressState.country = newAddress.country
+      activeAddressState.city = newAddress.city
+      activeAddressState.province = newAddress.province
+      activeAddressState.postalCode = newAddress.postalCode
+    } else {
+      isAddressInBC.value = false
+    }
+    // clear errors when address autocomplete was used
+    propertyDetailsForm.value.clear('streetNumber')
+    propertyDetailsForm.value.clear('streetName')
+    propertyDetailsForm.value.clear('addressLineTwo')
+    propertyDetailsForm.value.clear('unitNumber')
+    propertyDetailsForm.value.clear('city')
+    propertyDetailsForm.value.clear('province')
+    propertyDetailsForm.value.clear('postalCode')
+  }
+})
+
+onMounted(async () => {
   if (isComplete) {
-    validatePropertyType()
-    validateOwnershipType()
-    validateRentalUnitSpaceType()
-    validatePrincipalResidenceOptions()
+    await propertyDetailsForm.value.validate(null, { silent: true })
+    validateAllPropertyListingUrls()
     validateHostResidence()
     validateNumberOfRoomsForRent()
-    validateAddressFields()
   }
 })
 </script>

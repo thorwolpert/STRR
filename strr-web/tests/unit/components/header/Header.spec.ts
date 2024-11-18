@@ -13,7 +13,7 @@ it('can mount Header component', async () => {
     {
       global: { plugins: [i18n] },
       props: {
-        title: ''
+        personMode: true
       }
     })
   expect(button.find('[data-test-id="header"]').exists()).toBe(true)
