@@ -49,6 +49,28 @@ export const mockPrimaryContactBusinessType: PrimaryContactInformationI = {
   birthYear: ''
 }
 
+export const mockSecondaryContact: SecondaryContactInformationI = {
+  firstName: 'Emily',
+  middleName: 'R.',
+  lastName: 'Smith',
+  businessNumber: '987654321',
+  socialInsuranceNumber: '555444333',
+  preferredName: 'Em',
+  phoneNumber: '250-555-7890',
+  extension: '202',
+  faxNumber: '250-555-1234',
+  emailAddress: 'emily.smith@example.com',
+  address: '456 Oak St',
+  country: 'CA',
+  addressLineTwo: 'Suite 300',
+  city: 'Victoria',
+  province: 'BC',
+  postalCode: 'V8W1P6',
+  birthDay: '22',
+  birthMonth: '11',
+  birthYear: '1980'
+}
+
 export const mockApplicationDetails: HostApplicationDetailsI = {
   listingDetails: [],
   primaryContact: {

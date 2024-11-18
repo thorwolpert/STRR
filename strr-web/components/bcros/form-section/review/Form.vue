@@ -19,18 +19,20 @@
           </p>
           <BcrosFormSectionReviewSubsection
             :state="formState.primaryContact"
-            :primary="true"
+            :is-primary-host-individual="formState.primaryContact.contactType === HostContactTypeE.INDIVIDUAL"
+            is-primary
             data-test-id="primary-contact-review"
           />
         </div>
         <!-- Secondary Contact -->
         <div v-if="secondaryContact" class="mt-12">
           <p class="font-bold mb-6 m:mx-2">
-            {{ tReview('secondaryContact') }}
+            {{ tReview(isHostTypeBusiness ? 'secondaryContactBusiness' : 'secondaryContactIndividual') }}
           </p>
           <BcrosFormSectionReviewSubsection
             :state="formState.secondaryContact"
-            :primary="false"
+            :is-primary-host-individual="formState.primaryContact.contactType === HostContactTypeE.INDIVIDUAL"
+            data-test-id="secondary-contact-review"
           />
         </div>
         <!-- Property Details -->
@@ -158,4 +160,6 @@ const confirmationCheckboxValue = computed({
     }
   }
 })
+
+const isHostTypeBusiness = computed(():boolean => formState.primaryContact.contactType === HostContactTypeE.BUSINESS)
 </script>

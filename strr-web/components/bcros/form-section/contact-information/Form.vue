@@ -23,7 +23,7 @@
       </div>
       <UForm ref="primaryContactForm" :schema="primaryContactSchema" :state="formState.primaryContact">
         <div
-          v-if="!isHostIndividual"
+          v-if="!isPrimaryHostIndividual"
           data-test-id="host-type-business"
         >
           <BcrosFormSectionBusinessDetails
@@ -42,25 +42,27 @@
 
         <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
         <BcrosFormSectionContactInformationContactInfo
-          v-if="isHostIndividual"
+          v-if="isPrimaryHostIndividual"
           v-model:day="formState.primaryContact.birthDay"
           v-model:month="formState.primaryContact.birthMonth"
           v-model:year="formState.primaryContact.birthYear"
           is-primary
         />
         <BcrosFormSectionContactInformationCraInfo
-          v-if="isHostIndividual"
+          v-if="isPrimaryHostIndividual"
           v-model:social-insurance-number="formState.primaryContact.socialInsuranceNumber"
           v-model:business-legal-name="formState.primaryContact.businessLegalName"
           v-model:business-number="formState.primaryContact.businessNumber"
           is-primary
         />
+        <div v-if="isPrimaryHostIndividual" class="m:hidden h-[1px] ml-10 mr-5 mt-10 bg-bcGovGray-300" />
         <BcrosFormSectionContactDetails
           v-model:phone-number="formState.primaryContact.phoneNumber"
           v-model:extension="formState.primaryContact.extension"
           v-model:fax-number="formState.primaryContact.faxNumber"
           v-model:email-address="formState.primaryContact.emailAddress"
         />
+        <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
         <BcrosFormSectionContactInformationMailingAddress
           id="primaryContactAddress"
           v-model:country="formState.primaryContact.country"
@@ -88,7 +90,7 @@
       <div class="mb-[180px] bg-white rounded-1 mt-8">
         <div class="bg-bcGovColor-gray2 px-10 py-[15px] rounded-t-1 flex flex-row justify-between items-center">
           <p class="font-bold">
-            {{ isHostIndividual
+            {{ isPrimaryHostIndividual
               ? t('createAccount.contact.secondaryContactInfo')
               : t('createAccount.contact.backupContactInfo')
             }}
@@ -109,21 +111,26 @@
             v-model:preferred-name="formState.secondaryContact.preferredName"
             :contact-info-description="t('createAccount.contact.backupContactInfoDescription')"
           />
+          <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
           <BcrosFormSectionContactInformationContactInfo
+            v-if="isPrimaryHostIndividual"
             v-model:day="formState.secondaryContact.birthDay"
             v-model:month="formState.secondaryContact.birthMonth"
             v-model:year="formState.secondaryContact.birthYear"
           />
           <BcrosFormSectionContactInformationCraInfo
+            v-if="isPrimaryHostIndividual"
             v-model:social-insurance-number="formState.secondaryContact.socialInsuranceNumber"
             v-model:business-number="formState.secondaryContact.businessNumber"
           />
+          <div v-if="isPrimaryHostIndividual" class="m:hidden h-[1px] ml-10 mr-5 mt-10 bg-bcGovGray-300" />
           <BcrosFormSectionContactDetails
             v-model:phone-number="formState.secondaryContact.phoneNumber"
             v-model:extension="formState.secondaryContact.extension"
             v-model:fax-number="formState.secondaryContact.faxNumber"
             v-model:email-address="formState.secondaryContact.emailAddress"
           />
+          <div class="m:hidden h-[1px] ml-10 mr-5 bg-bcGovGray-300" />
           <BcrosFormSectionContactInformationMailingAddress
             id="secondaryContactAddress"
             v-model:country="formState.secondaryContact.country"
@@ -175,7 +182,8 @@ const hostContactTypeOptions = [
   { value: HostContactTypeE.BUSINESS, label: t('createAccount.contact.businessRadioOption') }
 ]
 
-const isHostIndividual = computed((): boolean => formState.primaryContact.contactType === HostContactTypeE.INDIVIDUAL)
+const isPrimaryHostIndividual = computed((): boolean =>
+  formState.primaryContact.contactType === HostContactTypeE.INDIVIDUAL)
 
 onMounted(async () => {
   if (isComplete) {
@@ -228,7 +236,7 @@ watch(secondaryContactForm, async () => {
   }
 })
 
-watch(isHostIndividual, async () => {
+watch(isPrimaryHostIndividual, async () => {
   if (isComplete) {
     await primaryContactForm.value.validate(null, { silent: true })
   }
