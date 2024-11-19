@@ -28,8 +28,11 @@
               : '-'
           }}
         </p>
-        <p class="mobile:mb-[24px]">
-          {{ tApplicationConfirm('teamWillReview') }}
+        <p class="mb-6">
+          {{ tApplicationConfirm('reviewProcess') }}
+        </p>
+        <p class="m:mb-6">
+          {{ tApplicationConfirm('updateListingDueDate') }}
         </p>
       </div>
     </div>
