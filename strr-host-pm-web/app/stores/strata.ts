@@ -9,7 +9,6 @@ export const useStrrStrataStore = defineStore('strr/strata', () => {
   const { completingParty, primaryRep, secondaryRep } = storeToRefs(contactStore)
   const { strataBusiness } = storeToRefs(businessStore)
   const { strataDetails } = storeToRefs(detailsStore)
-  const { t } = useI18n()
 
   const {
     application,
@@ -39,20 +38,20 @@ export const useStrrStrataStore = defineStore('strr/strata', () => {
     }
   }
 
-  const loadStrataHotelList = async () => {
+  const loadHostPmList = async () => {
     // Load the full list of strata hotel applications
-    return await getAccountApplications<StrataApplicationResp>(undefined, ApplicationType.STRATA_HOTEL)
+    return await getAccountApplications(undefined, ApplicationType.HOST)
       .catch((e) => {
         logFetchError(e, 'Unable to load account applications')
         return undefined
-      })
-      .then((response) => {
-        if (response) {
-          return (response as StrataApplicationResp[]).map(app => ({
-            hotelName: app.registration.strataHotelDetails.brand.name,
+      }).then((response) => {
+        if (response) { // TODO: update types
+          return (response as Array<any>).map(app => ({
+            property: app.registration.unitAddress,
             number: app.header.registrationNumber || app.header.applicationNumber,
-            type: app.header.registrationNumber ? t('label.registration') : t('label.application'),
             date: app.header.registrationStartDate || app.header.applicationDateTime,
+            lastStatusChange: getLastStatusChangeColumn(app.header),
+            daysToExpiry: getDaysToExpiryColumn(app.header),
             status: app.header.registrationStatus || app.header.hostStatus,
             applicationNumber: app.header.applicationNumber // always used for view action
           }))
@@ -77,7 +76,7 @@ export const useStrrStrataStore = defineStore('strr/strata', () => {
     showPermitDetails,
     downloadApplicationReceipt,
     loadStrata,
-    loadStrataHotelList,
+    loadHostPmList,
     $reset
   }
 })
