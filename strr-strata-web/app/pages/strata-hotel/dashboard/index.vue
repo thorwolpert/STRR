@@ -3,12 +3,12 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 const accountStore = useConnectAccountStore()
 const strataStore = useStrrStrataStore()
-const strataModal = useStrataModals()
+const strrModal = useStrrModals()
 
 const columns = [
   {
-    key: 'hotelName',
-    label: t('label.hotelName'),
+    key: 'strataName',
+    label: t('label.strataName'),
     sortable: true
   },
   {
@@ -17,19 +17,20 @@ const columns = [
     sortable: true
   },
   {
-    key: 'type',
-    label: t('label.type'),
-    sortable: true
-  },
-  {
-    key: 'date',
-    label: t('label.date'),
-    sortable: true
-  },
-  {
     key: 'status',
     label: t('label.status'),
     sortable: true
+  },
+  {
+    key: 'lastStatusChange',
+    label: t('label.lastStatusChange'),
+    sortable: true
+  },
+  {
+    key: 'daysToExpiry',
+    label: t('label.daysToExpiry'),
+    sortable: true,
+    class: 'max-w-28'
   },
   {
     key: 'actions',
@@ -78,10 +79,11 @@ async function handleItemSelect (row: any) {
       <ConnectTypographyH1 :text="$t('page.dashboardList.h1')" />
       <p>{{ $t('page.dashboardList.subtitle') }}</p>
       <UButton
-        :label="$t('modal.helpRegisteringStrata.triggerBtn')"
+        :label="$t('modal.help.registerStr.triggerBtn')"
         :padded="false"
+        icon="i-mdi-help-circle-outline"
         variant="link"
-        @click="strataModal.openhelpRegisteringStrataModal()"
+        @click="strrModal.openHelpRegisterModal()"
       />
     </div>
 
@@ -131,7 +133,7 @@ async function handleItemSelect (row: any) {
           :rows="strataHotelList"
           :loading="status === 'pending'"
           :empty-state="{ icon: '', label: $t('table.strataHotelList.emptyText') }"
-          :sort="{ column: 'date', direction: 'desc' }"
+          :sort="{ column: 'lastStatusChange', direction: 'desc' }"
           :ui="{
             wrapper: 'relative overflow-x-auto h-[512px]',
             thead: 'sticky top-0 bg-white z-10',
@@ -148,8 +150,14 @@ async function handleItemSelect (row: any) {
           }"
         >
           <!-- using a slot for this so the nuxtui sort will still sort by datetime -->
-          <template #date-data="{ row }">
-            {{ dateToStringPacific(row.date, 'MMMM Do, YYYY') }}
+          <template #lastStatusChange-data="{ row }">
+            {{ dateToStringPacific(row.lastStatusChange, 'DDD') }}
+          </template>
+
+          <template #daysToExpiry-data="{ row }">
+            <span :class="{'font-semibold text-red-500': row.daysToExpiry.value <= 0}">
+              {{ row.daysToExpiry.label }}
+            </span>
           </template>
 
           <template #actions-data="{ row }">
