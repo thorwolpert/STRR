@@ -78,8 +78,8 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
         if (!data) {
           throw new Error('Invalid STRR API response')
         }
-        me.value = data as MeI
-        return data as MeI
+        me.value = data
+        return data
       })
       .catch((error) => {
         console.warn('Error fetching me object.')

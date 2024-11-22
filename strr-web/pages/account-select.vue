@@ -42,7 +42,7 @@ const existingAccountsTitle = `${t('account.existingAccountSection.title')} (${u
 
 onMounted(() => {
   // if no sbc accounts navigate to sbc account creation
-  if (!me?.settings.length) {
+  if (!me?.orgs.length) {
     goToCreateSbcAccount()
   }
 })

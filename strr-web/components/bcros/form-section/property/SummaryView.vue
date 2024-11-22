@@ -62,7 +62,7 @@ const propertyAddressDetails = computed((): UnitAddressAPII => {
       </div>
       <BcrosFormSectionReviewItem
         :title="tReview('isUnitOnPrincipalResidenceProperty')"
-        :content="propertyDetails.isUnitOnPrincipalResidenceProperty !== null
+        :content="propertyDetails.isUnitOnPrincipalResidenceProperty !== undefined
           ? tReview(String(propertyDetails.isUnitOnPrincipalResidenceProperty)) : '-'
         "
       />

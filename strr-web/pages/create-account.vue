@@ -132,7 +132,7 @@ const { createApplication } = useApplications()
 const submitInProgress = ref(false)
 onMounted(() => {
   // if no SBC accounts exist redirect to SBC account creation
-  if (!me?.settings.length) {
+  if (!me?.orgs.length) {
     goToCreateSbcAccount()
   }
   updateFees()
