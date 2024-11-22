@@ -56,6 +56,8 @@ export interface OrgI {
 export interface ContactI {
   socialInsuranceNumber: string
   businessNumber: string
+  businessLegalName: string
+  contactType: HostContactTypeE
   dateOfBirth: string
   details: {
     emailAddress: string

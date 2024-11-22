@@ -74,7 +74,9 @@ export const mockSecondaryContact: SecondaryContactInformationI = {
 export const mockApplicationDetails: HostApplicationDetailsI = {
   listingDetails: [],
   primaryContact: {
+    contactType: HostContactTypeE.INDIVIDUAL,
     businessNumber: '',
+    businessLegalName: '',
     dateOfBirth: '1955-07-11',
     details: {
       emailAddress: 'test1@email.com',
@@ -170,6 +172,7 @@ export const mockApplicationApprovedWithSecondaryContact: ApplicationI = {
   registration: {
     ...mockApplicationDetails,
     secondaryContact: {
+      contactType: HostContactTypeE.INDIVIDUAL,
       details: {
         emailAddress: 'secondary@email.com',
         faxNumber: '',
@@ -184,6 +187,7 @@ export const mockApplicationApprovedWithSecondaryContact: ApplicationI = {
       },
       socialInsuranceNumber: '',
       businessNumber: '',
+      businessLegalName: '',
       dateOfBirth: '1990-01-01',
       mailingAddress: {
         address: '789 Test',

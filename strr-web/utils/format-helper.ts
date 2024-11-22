@@ -35,7 +35,7 @@ export function convertDateToLongFormat (dateString: string): string {
  * @returns a formatted phone number
  * @example "5554443322" -> "555-444-3322"
  */
-function displayFormattedPhone (phoneNumber: string): string {
+export function displayFormattedPhone (phoneNumber: string): string {
   // Filter only numbers from the input
   const cleaned = phoneNumber.replace(/\D/g, '')
 
