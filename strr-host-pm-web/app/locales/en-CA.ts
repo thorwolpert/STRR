@@ -6,6 +6,47 @@ export default {
       HOSTREG_2: 'STR Application Fee'
     }
   },
+  form: {
+    pr: {
+      declaration: {
+        intro: 'As required by section 14 (2) of the {italicStart}Short-Term Accommodations Rental Act{italicEnd} (the Act), I declare the property host will comply with the principal residence restriction in the Act and provide the short-term rental accommodation services described in this registration in one or both of:',
+        list: {
+          a: 'the property host’s principal residence,',
+          b: "not more than one secondary suite or other accessory dwelling unit that is on the land parcel associated with the property host's principal residence."
+        },
+        agreement: 'I understand that if the property host does not comply with the requirement to provide the short-term rental accommodation services in the principal residence, the property host may be subject to enforcement action under Part 4 of the Act, including being ordered to pay an administrative penalty.'
+      },
+      exemptReason: {
+        EXEMPT_COMMUNITY: 'Located in exempt community',
+        STRATA_HOTEL: 'Eligible strata hotel or motel',
+        FARM_LAND: 'Farm land (BC Assessment Farm Class 9)',
+        OTHER: 'Other exempted accommodation service provider'
+      },
+      exemptOtherProvider: {
+        TIMESHARE: 'Timeshare',
+        FRACTIONAL_OWNERSHIP: 'Fractional Ownership',
+        HOME_EXCHANGE: 'Home Exchange',
+        LODGE_OPERATOR: 'Lodge (operator of outdoor recreational activity)',
+        EDUCATIONAL_INSTITUTION: 'Educational institution accommodation (Student or Employee) (off campus)',
+        STRATA_GUEST_SUITE: 'Strata corporation guest suite'
+      },
+      docType: {
+        BC_DRIVERS_LICENSE: "BC Driver's License",
+        PROPERTY_ASSESSMENT_NOTICE: 'Property Assessment Notice',
+        SPEC_TAX_CONFIRMATION: 'Speculation and Vacancy Tax Confirmation',
+        HOG_DECLARATION: 'Home Owner Grant declaration',
+        ICBC_CERTIFICATE_OF_INSURANCE: 'ICBC Certificate of Insurance',
+        HOME_INSURANCE_SUMMARY: 'Home Insurance Summary',
+        PROPERTY_TAX_NOTICE: 'Property Tax Notice',
+        UTILITY_BILL: 'Utility Bill',
+        GOVT_OR_CROWN_CORP_OFFICIAL_NOTICE: 'Government or Crown Corporation Official Notice',
+        TENANCY_AGREEMENT: 'Tenancy Agreement',
+        RENT_RECEIPT_OR_BANK_STATEMENT: 'Rent Receipt or Bank Statement',
+        LOCAL_GOVT_BUSINESS_LICENSE: 'Local Government Business License',
+        OTHERS: 'Other Proof Document (subject to review by registry staff)'
+      }
+    }
+  },
   strr: {
     step: {
       stepperLabel: 'Short-Term Rental Application Step Navigation',
@@ -114,6 +155,16 @@ export default {
     createAccount: {
       title: 'Error creating account',
       description: 'We could not create your account at this time. Please try again or if this issue persists, please contact us.'
+    },
+    docUpload: {
+      fileSize: {
+        title: 'Error Uploading Document',
+        description: 'File size too large. Please only upload files less than 10mb.'
+      },
+      generic: {
+        title: 'Error Uploading Document',
+        description: 'Something went wrong when uploading the file, only pdfs and files less than 10mb are accepted.'
+      }
     }
   },
   label: {
