@@ -8,6 +8,8 @@ import {
   mockApplicationApprovedWithDocuments
 } from '~/tests/mocks/mockApplication'
 
+import { BcrosFormSectionReviewItem } from '#components'
+
 const { t } = useTranslation()
 const tApplicationDetails = (key: string) => t(`applicationDetails.${key}`)
 const tStatuses = (key: string) => t(`statuses.${key}`)
@@ -79,13 +81,17 @@ describe('Application Details Page', () => {
   })
 
   it('displays primary contact information correctly', async () => {
+    mockUseApplications(mockApplicationApproved)
+
+    const mockPrimaryContact = (mockApplicationApproved.registration as HostApplicationDetailsI).primaryContact
+
     wrapper = await mountSuspended(ApplicationDetails)
-    const primaryContact = wrapper.findTestId('primary-contact')
+    const primaryContact = wrapper.findComponent('[data-test-id=primary-contact]')
     expect(primaryContact.exists()).toBe(true)
-    expect(wrapper.findTestId('primary-contact-name').exists()).toBe(true)
-    expect(wrapper.findTestId('primary-contact-email').exists()).toBe(true)
-    expect(wrapper.findTestId('primary-contact-phone').exists()).toBe(true)
-    expect(wrapper.findTestId('primary-contact-address').exists()).toBe(true)
+    expect(primaryContact.findAllComponents(BcrosFormSectionReviewItem)).toHaveLength(11)
+    expect(primaryContact.findTestId('contact-info-host-type').text()).toContain('Individual')
+    expect(primaryContact.findTestId('contact-info-email').text()).toContain(mockPrimaryContact.details.emailAddress)
+    expect(primaryContact.findTestId('contact-info-name').text()).toContain(mockPrimaryContact.name.firstName)
   })
 
   it('displays payment due banner when payment is due', async () => {
@@ -121,9 +127,17 @@ describe('Application Details Page', () => {
   it('displays secondary contact information when available', async () => {
     mockUseApplications(mockApplicationApprovedWithSecondaryContact)
 
+    const mockSecondaryContact =
+      (mockApplicationApprovedWithSecondaryContact.registration as HostApplicationDetailsI).secondaryContact as ContactI
+
     wrapper = await mountSuspended(ApplicationDetails)
-    const secondaryContact = wrapper.findTestId('secondary-contact')
+    const secondaryContact = wrapper.findComponent('[data-test-id=secondary-contact]')
     expect(secondaryContact.exists()).toBe(true)
-    expect(wrapper.findTestId('secondary-contact-email').text()).toContain('secondary@email.com')
+    expect(secondaryContact.findAllComponents(BcrosFormSectionReviewItem)).toHaveLength(11)
+    expect(secondaryContact.findTestId('contact-info-host-type').text()).toContain('Individual')
+    expect(secondaryContact.findTestId('contact-info-email').text())
+      .toContain(mockSecondaryContact.details.emailAddress)
+    expect(secondaryContact.findTestId('contact-info-name').text())
+      .toContain(mockSecondaryContact.name.firstName)
   })
 })

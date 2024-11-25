@@ -1,5 +1,3 @@
-import type { ProfileI } from '~/interfaces/account-i'
-
 export const testParsedToken = {
   firstname: 'First',
   lastname: 'Last',
@@ -207,33 +205,12 @@ export const mockContact: ContactI = {
     firstName: 'John',
     lastName: 'Doe',
     middleName: 'Michael'
-  }
-}
-
-export const mockProfile: ProfileI = {
-  contacts: [mockContact],
-  created: '',
-  firstname: '',
-  id: 0,
-  idpUserid: '',
-  keycloakGuid: '',
-  lastname: '',
-  loginSource: '',
-  loginTime: '',
-  modified: '',
-  modifiedBy: '',
-  type: '',
-  userStatus: 0,
-  userTerms: {
-    isTermsOfUseAccepted: true,
-    termsOfUseAcceptedVersion: ''
   },
-  username: '',
-  verified: true
+  businessLegalName: '',
+  contactType: HostContactTypeE.INDIVIDUAL
 }
 
 export const testMe: MeI = {
   orgs: [testDetailsForDev1],
-  profile: mockProfile,
   settings: mockUserSettings
 }

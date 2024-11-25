@@ -56,6 +56,8 @@ export interface OrgI {
 export interface ContactI {
   socialInsuranceNumber: string
   businessNumber: string
+  businessLegalName: string
+  contactType: HostContactTypeE
   dateOfBirth: string
   details: {
     emailAddress: string
@@ -79,33 +81,8 @@ export interface ContactI {
   }
 }
 
-interface UserTermsI {
-  isTermsOfUseAccepted: boolean
-  termsOfUseAcceptedVersion: string
-}
-
-export interface ProfileI {
-  contacts: ContactI[]
-  created: string
-  firstname: string
-  id: number
-  idpUserid: string
-  keycloakGuid: string
-  lastname: string
-  loginSource: string
-  loginTime: string
-  modified: string
-  modifiedBy: string
-  type: string
-  userStatus: number
-  userTerms: UserTermsI
-  username: string
-  verified: boolean
-}
-
 export interface MeI {
   orgs: OrgI[]
-  profile: ProfileI
   settings: UserSettingsI[]
 }
 

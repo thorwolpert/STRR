@@ -89,11 +89,11 @@
         <template #registrationNumber-data="{ row }">
           <div class="flex items-center">
             <div
-              :class="{ 'cursor-pointer': isClickableRow(row.registrationType) }"
+              :class="{ 'cursor-pointer': isClickableRow(row.registrationType) && row.registrationId }"
               class="text-center min-w-[80px]"
               @click="row.registrationId
                 ? handleRowClick(row.registrationType, row.registrationId, false)
-                : handleRowClick(row.registrationType, row.applicationNumber)
+                : null
               "
             >
               {{ row.registrationNumber }}
@@ -199,7 +199,7 @@ const { isExaminer } = storeToRefs(useBcrosKeycloak())
 const statusFilter = ref<string>('')
 const offset = ref<number>(0)
 const currentPage = ref<number>(1)
-const tableRows = ref<Record<string, string>[]>([])
+const tableRows = ref<ExaminerDashboardRowI[]>([])
 const totalResults = ref<number>(0)
 const loading = ref<boolean>(true)
 const maxPageResults = ref<number>(0)
@@ -210,7 +210,11 @@ const searchAppInput = ref<string>('')
 
 const DEFAULT_STATUS: ApplicationStatusE = ApplicationStatusE.FULL_REVIEW
 
-const isClickableRow = (registrationType: string) => registrationType !== 'Platform'
+// Display readable types in the table
+const PLATFORM_TYPE = 'Platform'
+const STRATA_HOTEL_TYPE = 'Strata Hotel'
+
+const isClickableRow = (registrationType: string) => ![PLATFORM_TYPE, STRATA_HOTEL_TYPE].includes(registrationType)
 
 const handleRowClick = (registrationType: string, identifier: string, isApplication: boolean = true) => {
   if (!isClickableRow(registrationType)) {
@@ -289,8 +293,8 @@ const updateTableRows = async () => {
   loading.value = false
 }
 
-const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<string, string>[] => {
-  const rows: Record<string, string>[] = []
+const registrationsToTableRows = (applications: PaginatedApplicationsI): ExaminerDashboardRowI[] => {
+  const rows: ExaminerDashboardRowI[] = []
   for (const application of applications.applications) {
     const {
       header: {
@@ -307,7 +311,7 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
     let applicantName = ''
     let propertyAddress = ''
     if (registrationType === RegistrationTypeE.HOST) {
-      const hostApplication: HostApplicationDetailsI = application.registration
+      const hostApplication: HostApplicationDetailsI = application.registration as HostApplicationDetailsI
       if (hostApplication.propertyManager && hostApplication.propertyManager.initiatedByPropertyManager) {
         applicationType = 'Property Manager'
       } else {
@@ -316,12 +320,12 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
       applicantName = displayContactFullName(hostApplication.primaryContact.name) || ''
       propertyAddress = formatPropertyAddress(hostApplication.unitAddress)
     } else if (registrationType === RegistrationTypeE.PLATFORM) {
-      const platformApplication: PlatformApplicationDetailsI = application.registration
-      applicationType = 'Platform'
+      const platformApplication: PlatformApplicationDetailsI = application.registration as PlatformApplicationDetailsI
+      applicationType = PLATFORM_TYPE
       applicantName = platformApplication.businessDetails.legalName
       propertyAddress = formatMailingAddress(platformApplication.businessDetails.mailingAddress)
     } else if (registrationType === RegistrationTypeE.STRATA_HOTEL) {
-      applicationType = 'Strata Hotel'
+      applicationType = STRATA_HOTEL_TYPE
       // Implement this once the backend supports it
     }
     const row: ExaminerDashboardRowI = {
@@ -333,7 +337,8 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Record<
       applicantName,
       status: examinerStatus || status,
       submissionDate: applicationDateTime,
-      isPaid: hasPaymentReceipt(status)
+      isPaid: hasPaymentReceipt(status),
+      isCertificateIssued: application.header.isCertificateIssued
     }
     rows.push(row)
   }
