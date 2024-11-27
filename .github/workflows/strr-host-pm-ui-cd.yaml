@@ -22,7 +22,7 @@ jobs:
     uses: bcgov/bcregistry-sre/.github/workflows/frontend-cd.yaml@main
     with:
       target: ${{ inputs.target }}
-      app_name: "strr-host-pm-ui"
+      app_name: "strr-hosts"
       working_directory: "./strr-host-pm-web"
       node_version: 20
     secrets:
