@@ -15,7 +15,7 @@ jobs:
   strata-ui-ci:
     uses: bcgov/bcregistry-sre/.github/workflows/frontend-ci.yaml@main
     with:
-      app_name: "strr-host-pm-ui"
+      app_name: "strr-hosts"
       working_directory: "./strr-host-pm-web"
       codecov_flag: "strrhostpmui"
       node_version: 20
