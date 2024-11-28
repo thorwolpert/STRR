@@ -249,7 +249,7 @@
 
         <template v-if="isExaminer">
           <!-- LTSA Details  -->
-          <div class="mt-10" data-test-id="ltsa-info-section">
+          <!-- <div class="mt-10" data-test-id="ltsa-info-section">
             <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
               {{ tApplicationDetails('ltsaInfo') }}
             </h2>
@@ -260,7 +260,7 @@
             >
               {{ tApplicationDetails('ltsaDetails') }}
             </a>
-          </div>
+          </div> -->
 
           <!-- Auto-Approval Logic -->
           <div class="mt-10" data-test-id="auto-approval-section">
