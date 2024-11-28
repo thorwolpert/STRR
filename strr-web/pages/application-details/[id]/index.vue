@@ -247,36 +247,6 @@
           </div>
         </div>
 
-        <template v-if="isExaminer">
-          <!-- LTSA Details  -->
-          <!-- <div class="mt-10" data-test-id="ltsa-info-section">
-            <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
-              {{ tApplicationDetails('ltsaInfo') }}
-            </h2>
-            <a
-              class="mobile:mx-2"
-              data-test-id="ltsa-details-link"
-              @click="navigateTo(`/application-details/${applicationNumber}/ltsa`)"
-            >
-              {{ tApplicationDetails('ltsaDetails') }}
-            </a>
-          </div> -->
-
-          <!-- Auto-Approval Logic -->
-          <div class="mt-10" data-test-id="auto-approval-section">
-            <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
-              {{ tApplicationDetails('autoApprovalLogic') }}
-            </h2>
-            <a
-              class="mobile:mx-2"
-              data-test-id="auto-approval-details-link"
-              @click="navigateTo(`/application-details/${applicationNumber}/auto-approval`)"
-            >
-              {{ tApplicationDetails('autoApprovalDetails') }}
-            </a>
-          </div>
-        </template>
-
         <!-- Filing History -->
         <FilingHistory
           :header="tApplicationDetails('filing')"
