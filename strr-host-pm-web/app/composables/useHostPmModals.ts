@@ -1,12 +1,13 @@
 // https://ui.nuxt.com/components/modal#control-programmatically
 import {
-  ModalBase,
-  ModalHelpRegisterStrataHotel
+  ModalBase
 } from '#components'
 
 export const useHostPmModals = () => {
   const modal = useModal()
   const { t } = useI18n()
+  const reqStore = usePropertyReqStore()
+  const propStore = useHostPropertyStore()
 
   function openHelpCreateAccountModal () {
     modal.open(ModalBase, {
@@ -17,18 +18,26 @@ export const useHostPmModals = () => {
     })
   }
 
-  function openhelpRegisteringStrataModal () {
+  // TODO reset stepper 'isComplete' when application state being reset
+  function openConfirmRestartApplicationModal (edit = true) { // maybe update edit param for different actions
     modal.open(ModalBase, {
-      title: t('modal.helpRegisteringStrata.title'),
-      content: t('modal.helpRegisteringStrata.content'),
-      actions: [{ label: t('btn.close'), handler: () => close() }]
-    })
-  }
-
-  // might change the above modal to match this one
-  function openHelpRegisterStrataHotelModal () {
-    modal.open(ModalHelpRegisterStrataHotel, {
-      actions: [{ label: t('btn.close'), handler: () => close() }]
+      title: edit ? t('modal.editUnitAddress.title') : t('modal.removeUnitAddress.title'),
+      content: edit ? t('modal.editUnitAddress.content') : t('modal.removeUnitAddress.content'),
+      actions: [
+        {
+          label: t('btn.cancel'),
+          handler: () => close(),
+          variant: 'outline'
+        },
+        {
+          label: edit ? t('modal.editUnitAddress.confirmBtn') : t('modal.removeUnitAddress.confirmBtn'),
+          handler: () => {
+            reqStore.$reset()
+            propStore.$reset()
+            close()
+          } // TODO: reset other form state as well ?
+        }
+      ]
     })
   }
 
@@ -37,9 +46,8 @@ export const useHostPmModals = () => {
   }
 
   return {
-    openhelpRegisteringStrataModal,
-    openHelpRegisterStrataHotelModal,
     openHelpCreateAccountModal,
+    openConfirmRestartApplicationModal,
     close
   }
 }
