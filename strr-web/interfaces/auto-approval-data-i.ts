@@ -1,18 +1,16 @@
 export interface AutoApprovalDataI {
+  id: number
+  applicationNumber: string
+  creationDate: string
   record: {
-    id: number,
-    applicationNumber: string,
-    creationDate: string,
-    record: {
-      renting?: boolean,
-      serviceProvider?: boolean,
-      prExempt?: boolean,
-      addressMatch?: boolean,
-      businessLicenseRequired?: boolean,
-      businessLicenseRequiredNotProvided?: boolean,
-      businessLicenseRequiredProvided?: boolean,
-      businessLicenseNotRequiredNotProvided?: boolean,
-      titleCheck?: boolean
-    }
+    renting?: boolean
+    serviceProvider?: boolean
+    businessLicenseRequired?: boolean
+    businessLicenseProvided?: boolean
+    prExempt: boolean
+    strProhibited: boolean
+    organizationNm: string
+    titleCheck: boolean | null
+    addressMatch: boolean | null
   }
 }
