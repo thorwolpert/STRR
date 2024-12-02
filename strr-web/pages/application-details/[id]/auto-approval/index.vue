@@ -20,19 +20,19 @@
           class="mobile:mx-2"
           :text="tAutoApproval('automaticLogic')"
         />
-        <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
+        <div class="bg-white py-[22px] px-[30px] mobile:px-2">
           <div class="flex flex-col justify-between w-full mobile:flex-col">
             <UTable :rows="automaticRows" />
           </div>
         </div>
       </div>
-      <div class="mt-[40px]">
+      <div class="mt-10">
         <div>
           <BcrosTypographyH2
-            class="mobile:mx-[8px]"
+            class="mobile:mx-2"
             :text="tAutoApproval('provisionalLogic')"
           />
-          <div class="bg-white py-[22px] px-[30px] mobile:px-[8px]">
+          <div class="bg-white py-[22px] px-[30px] mobile:px-2">
             <div class="flex flex-col justify-between w-full mobile:flex-col">
               <UTable :rows="provisionalRows" />
             </div>
@@ -52,16 +52,22 @@ const tAutoApproval = (translationKey: string) => t(`autoApproval.${translationK
 const automaticRows = ref<{ [key: string]: string }[]>([])
 const provisionalRows = ref<{ [key: string]: string }[]>([])
 
-const { getAutoApproval, getApplication } = useApplications()
+const { getAutoApproval } = useApplications()
 const { setupBreadcrumbData } = useBreadcrumb()
 
-const applicationNumber = route.params.id.toString()
+const registrationId = parseInt(route.params.id.toString())
 
-const application = await getApplication(applicationNumber)
-const data: AutoApprovalDataI[] = await getAutoApproval(applicationNumber) || {} as AutoApprovalDataI[]
-const applicationDetails = application.registration as HostApplicationDetailsI
+// Fetch applications and find application number based on registration id from params
+const { applications } = await useApplications().getApplications()
 
-setupBreadcrumbData(application)
+const application = applications.find(app => app.header.registrationId === registrationId)
+
+const applicationNumber = application?.header.applicationNumber
+
+const data: AutoApprovalDataI[] = await getAutoApproval(applicationNumber || '') || {} as AutoApprovalDataI[]
+const applicationDetails = application?.registration as HostApplicationDetailsI
+
+setupBreadcrumbData(application || {} as ApplicationI)
 
 const buildAutomaticRows = (rowsData: AutoApprovalDataI[]) => {
   if (!rowsData.length || !rowsData[0].record) {
@@ -103,18 +109,17 @@ const buildProvisionalRows = (rowsData: AutoApprovalDataI[]) => {
   }
 
   const licenseNull =
-    rowsData[0].record.businessLicenseRequiredProvided === null &&
-    rowsData[0].record.businessLicenseRequiredNotProvided === null &&
-    rowsData[0].record.businessLicenseNotRequiredNotProvided === null
+    rowsData[0].record.businessLicenseRequired === null &&
+    rowsData[0].record.businessLicenseProvided === null
 
   if (!licenseNull) {
     provisionalRows.value.push({
       criteria: tAutoApproval('businessLicenseReq'),
-      outcome: rowsData[0].record.businessLicenseRequiredProvided
-        ? tAutoApproval('requiredProvided')
-        : rowsData[0].record.businessLicenseNotRequiredNotProvided
-          ? tAutoApproval('notRequiredNotProvided')
+      outcome: rowsData[0].record.businessLicenseRequired
+        ? rowsData[0].record.businessLicenseProvided
+          ? tAutoApproval('requiredProvided')
           : tAutoApproval('requiredNotProvided')
+        : tAutoApproval('notRequired')
     })
   }
   if (rowsData[0].record.titleCheck !== null) {
