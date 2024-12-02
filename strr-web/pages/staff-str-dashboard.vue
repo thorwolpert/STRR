@@ -92,7 +92,7 @@
               :class="{ 'cursor-pointer': isClickableRow(row.registrationType) && row.registrationId }"
               class="text-center min-w-[80px]"
               @click="row.registrationId
-                ? handleRowClick(row.registrationType, row.registrationId, false)
+                ? handleRowClick(row.registrationType, row.registrationId, row.applicationNumber, false)
                 : null
               "
             >
@@ -216,14 +216,15 @@ const STRATA_HOTEL_TYPE = 'Strata Hotel'
 
 const isClickableRow = (registrationType: string) => ![PLATFORM_TYPE, STRATA_HOTEL_TYPE].includes(registrationType)
 
-const handleRowClick = (registrationType: string, identifier: string, isApplication: boolean = true) => {
+const handleRowClick =
+(registrationType: string, identifier: string, appNumber: string = '', isApplication: boolean = true) => {
   if (!isClickableRow(registrationType)) {
     return
   }
   if (isApplication) {
     navigateToApplicationDetails(identifier)
   } else {
-    navigateToRegistrationDetails(identifier)
+    navigateToRegistrationDetails(identifier, appNumber)
   }
 }
 
@@ -270,8 +271,8 @@ const updateFilterOptions = async () => {
 
 const navigateToApplicationDetails = (appNumber: string) =>
   navigateTo(`/${RouteNamesE.APPLICATION_DETAILS}/${appNumber}`)
-const navigateToRegistrationDetails = (id: string) =>
-  navigateTo(`${RouteNamesE.REGISTRATION_DETAILS}/${id}`)
+const navigateToRegistrationDetails = (id: string, appNumber: string) =>
+  navigateTo(`${RouteNamesE.REGISTRATION_DETAILS}/${id}?appNum=${appNumber}`)
 
 const updateTableRows = async () => {
   loading.value = true

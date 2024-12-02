@@ -238,7 +238,7 @@
             </h2>
             <a
               class="mobile:mx-2"
-              @click="navigateTo(`/application-details/${registrationId}/auto-approval`)"
+              @click="navigateTo(`/application-details/${applicationNumber}/auto-approval`)"
             >
               {{ tApplicationDetails('autoApprovalDetails') }}
             </a>
@@ -303,6 +303,7 @@ const { isExaminer } = useBcrosKeycloak()
 const { getChipFlavour } = useChipFlavour()
 
 const registrationId = route.params.id.toString()
+const applicationNumber = route.query.appNum
 
 const {
   setRegistrationNumber,

@@ -30,6 +30,12 @@ export const useApplications = () => {
       if (formState.supportingDocuments.length) {
         // upload all document and add its info to the application data
         const documents: DocumentUploadI[] = await uploadSupportingDocuments()
+
+        // work-around to submit the Host Application with supporting documents
+        documents.forEach((doc) => {
+          doc.documentType = 'OTHERS'
+        })
+
         submitApplicationPayload.registration.documents = documents
       }
 

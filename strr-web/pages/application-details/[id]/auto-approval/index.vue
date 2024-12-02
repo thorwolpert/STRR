@@ -55,19 +55,14 @@ const provisionalRows = ref<{ [key: string]: string }[]>([])
 const { getAutoApproval } = useApplications()
 const { setupBreadcrumbData } = useBreadcrumb()
 
-const registrationId = parseInt(route.params.id.toString())
+const applicationNumber = route.params.id.toString()
 
-// Fetch applications and find application number based on registration id from params
-const { applications } = await useApplications().getApplications()
+const application = await useApplications().getApplication(applicationNumber)
 
-const application = applications.find(app => app.header.registrationId === registrationId)
-
-const applicationNumber = application?.header.applicationNumber
-
-const data: AutoApprovalDataI[] = await getAutoApproval(applicationNumber || '') || {} as AutoApprovalDataI[]
+const data: AutoApprovalDataI[] = await getAutoApproval(applicationNumber) || {} as AutoApprovalDataI[]
 const applicationDetails = application?.registration as HostApplicationDetailsI
 
-setupBreadcrumbData(application || {} as ApplicationI)
+setupBreadcrumbData(application)
 
 const buildAutomaticRows = (rowsData: AutoApprovalDataI[]) => {
   if (!rowsData.length || !rowsData[0].record) {
