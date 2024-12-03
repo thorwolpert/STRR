@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const reqStore = usePropertyReqStore()
 const localePath = useLocalePath()
+const config = useRuntimeConfig().public
 
 const accordianRef = ref()
 
@@ -63,7 +64,7 @@ function handleContinueApp () {
                 >
                   <template #linkAllRules>
                     <a
-                      href=""
+                      :href="config.housingAllRulesUrl"
                       target="_blank"
                       class="text-bcGovColor-activeBlue underline"
                     >
@@ -72,7 +73,7 @@ function handleContinueApp () {
                   </template>
                   <template #linkReqDocs>
                     <a
-                      href=""
+                      :href="config.housingRequiredDocsUrl"
                       target="_blank"
                       class="text-bcGovColor-activeBlue underline"
                     >
@@ -80,7 +81,6 @@ function handleContinueApp () {
                     </a>
                   </template>
                 </i18n-t>
-                NEED LINK STILL
               </span>
             </div>
           </template>
@@ -104,7 +104,7 @@ function handleContinueApp () {
       <template #item>
         <div class="flex flex-col gap-4 pt-2 text-base text-bcGovGray-700">
           <ConnectI18nBold :translation-path="`error.reqFetch.${errorKey}.description`" />
-          <ConnectContactBcros />
+          <ContactSTRR />
         </div>
       </template>
     </UAccordion>

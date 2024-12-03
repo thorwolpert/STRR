@@ -16,12 +16,17 @@ const docStore = useDocumentStore()
 
 const emit = defineEmits<{
   change: [any]
+  cancel: [void]
 }>()
 
-const { open, onChange } = useFileDialog({
+const { open, onChange, onCancel, reset } = useFileDialog({
   accept: props.accept,
   multiple: false,
   directory: false
+})
+
+onCancel(() => {
+  emit('cancel')
 })
 
 onChange((files) => {
@@ -29,6 +34,7 @@ onChange((files) => {
   if (file) {
     emit('change', file)
   }
+  reset()
 })
 </script>
 <template>
@@ -45,10 +51,11 @@ onChange((files) => {
       size="lg"
       :color="'gray'"
       :options="docStore.docTypeOptions"
-      :aria-label="'Choose Supporting Documents'"
+      :aria-label="label"
       :aria-required="isRequired"
       :aria-invalid="isInvalid"
       value-attribute="value"
+      :aria-describedby="helpId"
       :ui-menu="{
         label: true ? 'text-gray-900' : !!error? 'text-red-600': 'text-gray-700'
       }"
