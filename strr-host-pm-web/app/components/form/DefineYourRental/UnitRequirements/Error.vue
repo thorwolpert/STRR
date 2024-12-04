@@ -31,7 +31,7 @@ function handleContinueApp () {
   >
     <UAccordion
       ref="accordianRef"
-      :items="[{ label: 'n/a' }]"
+      :items="[{ label: 'n/a', disabled: !reqStore.overrideApplicationWarning }]"
       default-open
       color="red"
       :ui="{
@@ -44,23 +44,23 @@ function handleContinueApp () {
     >
       <template #default="{ open }">
         <UButton
-          ref="buttonRef"
           variant="ghost"
           color="red"
           class="justify-between p-4"
           :ui="{
-            rounded: 'rounded-none'
+            rounded: 'rounded-none',
+            base: 'disabled:cursor-default disabled:opacity-100 aria-disabled:cursor-default aria-disabled:opacity-100',
           }"
         >
           <template #leading>
             <div class="flex items-center gap-2">
               <UIcon name="i-mdi-alert" class="size-5 shrink-0 self-start text-red-500" />
-              <span class="text-left text-base font-semibold text-gray-700">
+              <span class="text-left text-base font-bold text-gray-700">
                 <i18n-t
                   :keypath="`error.reqFetch.${errorKey}.title`"
                   tag="p"
                   scope="global"
-                  class="font-semibold"
+                  class="font-bold"
                 >
                   <template #linkAllRules>
                     <a
