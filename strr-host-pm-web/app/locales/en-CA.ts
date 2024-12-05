@@ -291,7 +291,14 @@ export default {
     fractOwnAgreement: 'Fractional ownership agreement',
     businessLicenceNumberOpt: 'Business Licence Number (Optional)',
     businessLicenceExpiryDateOpt: 'Business Licence Expiry Date (Optional)',
-    rentalAgreementOrRecept: 'Tenancy (rental) agreement or receipt or bank statement showing payment of rent'
+    rentalAgreementOrRecept: 'Tenancy (rental) agreement or receipt or bank statement showing payment of rent',
+    streetNameAndType: 'Street Name and Type',
+    siteNameOpt: 'Site Name (Optional)',
+    forNonCivicAddresses: 'For non-civic addresses',
+    locality: 'Locality',
+    additionalLocationDescription: 'Additional Location Description',
+    lookupResidentialAddress: 'Look up the Residential Address',
+    enterAddressManually: 'Enter the residental address manually'
   },
   link: {
     strataHotelInfoPage: 'strata hotel information page',
@@ -350,11 +357,15 @@ export default {
     addAllReqDocs: 'Add all required documentation that supports your short-term rental registration. {link}',
     toDetermineDocsReturnToStart: 'To determine the types of documentation you’ll need, please complete Step 1 of the application first.',
     uploadReqDocs: 'Upload all required documentation to support your application.',
-    noDocsReq: 'No supporting documentation is required.'
+    noDocsReq: 'No supporting documentation is required.',
+    unitAddressIntro: 'Include the Residential Address of your short-term rental by looking up the address, or if the address cannot be found in the lookup, you can enter the address manually.',
+    unitAddressIntroNote: 'Note: the address cannot be a Mailing Address (e.g., PO Box, etc.).',
+    unitAddressUnitNumberInfo: 'Unit Number is required if the short-term rental unit has a Unit Number. Enter a Site Name if the address does not have a Street Number and Name.'
   },
   hint: {
     strataRefCode: 'This is a unique code for each registered strata hotel. Ask the strata hotel management for this code.',
-    docUpload: 'File must be a PDF. Maximum 10 MB.'
+    docUpload: 'File must be a PDF. Maximum 10 MB.',
+    autocomplete: 'For example: 123 - 456 Street Name Victoria BC  V8V 2V2'
   },
   page: {
     dashboardList: {
@@ -394,7 +405,9 @@ export default {
     typeOfSpace: 'Please select the type of space of the unit',
     ownerRole: 'Please select the role',
     missingReqDocs: 'Missing required documents. Please see above for details.',
-    blExpiryDate: 'The expiry date must be greater than today and in less than 1 year.'
+    blExpiryDate: 'The expiry date must be greater than today and in less than 1 year.',
+    residentialAddressRequired: 'Residential address is required',
+    addressIncompleteDropdown: 'The address provided is not complete. Please select one from the dropdown list.'
   },
   requirements: {
     busLicence: {
