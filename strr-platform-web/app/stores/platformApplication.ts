@@ -8,15 +8,11 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
   const platDetailsStore = useStrrPlatformDetails()
 
   const platformConfirmation = reactive({
-    confirmInfoAccuracy: false,
-    confirmDelistAndCancelBookings: false
+    confirmation: false
   })
 
   const getConfirmationSchema = () => z.object({
-    confirmInfoAccuracy: z.boolean().refine(val => val === true, {
-      message: t('validation.confirm')
-    }),
-    confirmDelistAndCancelBookings: z.boolean().refine(val => val === true, {
+    confirmation: z.boolean().refine(val => val === true, {
       message: t('validation.confirm')
     })
   })
@@ -73,8 +69,7 @@ export const useStrrPlatformApplication = defineStore('strr/platformApplication'
     platContactStore.$reset()
     platBusinessStore.$reset()
     platDetailsStore.$reset()
-    platformConfirmation.confirmDelistAndCancelBookings = false
-    platformConfirmation.confirmInfoAccuracy = false
+    platformConfirmation.confirmation = false
   }
 
   return {

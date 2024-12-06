@@ -312,43 +312,37 @@ onMounted(async () => {
       </FormCommonReviewSection>
     </ConnectPageSection>
 
-    <section class="space-y-6">
-      <h2>{{ $t('word.Certify') }}</h2>
-
-      <UForm
-        ref="strataConfirmationFormRef"
-        :state="applicationStore.confirmation"
-        :schema="applicationStore.confirmationSchema"
-        class="space-y-10 pb-10"
+    <UForm
+      ref="strataConfirmationFormRef"
+      :state="applicationStore.confirmation"
+      :schema="applicationStore.confirmationSchema"
+      class="space-y-10 pb-10"
+    >
+      <ConnectFormCertify
+        v-model="applicationStore.confirmation.confirmation"
+        :title="$t('strr.label.confirmation')"
+        :items="[{ slot: 'item-1' }, { i18nKey: 'certify.2' }]"
+        :checkbox-label="{ key: 'certify.checkbox' }"
+        :has-error="hasFormErrors(strataConfirmationFormRef, ['confirmation'])"
+        name="confirmation"
       >
-        <UFormGroup name="confirmInfoAccuracy">
-          <UCheckbox
-            v-model="applicationStore.confirmation.confirmInfoAccuracy"
-            :label="$t('strr.review.confirm.infoAccuracy')"
-            class="rounded bg-white p-4"
-            :class="hasFormErrors(strataConfirmationFormRef, ['confirmInfoAccuracy'])
-              ? 'outline outline-red-600'
-              : ''
-            "
-            aria-required="true"
-            :aria-invalid="hasFormErrors(strataConfirmationFormRef, ['confirmInfoAccuracy'])"
-          />
-        </UFormGroup>
-
-        <UFormGroup name="confirmDelistAndCancelBookings">
-          <UCheckbox
-            v-model="applicationStore.confirmation.confirmDelistAndCancelBookings"
-            :label="$t('strr.review.confirm.delistAndCancelBookings')"
-            class="rounded bg-white p-4"
-            :class="hasFormErrors(strataConfirmationFormRef, ['confirmDelistAndCancelBookings'])
-              ? 'outline outline-red-600'
-              : ''
-            "
-            aria-required="true"
-            :aria-invalid="hasFormErrors(strataConfirmationFormRef, ['confirmDelistAndCancelBookings'])"
-          />
-        </UFormGroup>
-      </UForm>
-    </section>
+        <template #item-1>
+          <i18n-t keypath="certify.1" scope="global">
+            <template #terms>
+              <strong>{{ $t('strr.label.termsAndCond') }}.</strong>
+            </template>
+            <template #link>
+              <a
+                :href="useRuntimeConfig().public.strataTacUrl"
+                target="_blank"
+                class="text-bcGovColor-activeBlue underline"
+              >
+                {{ $t('strr.label.termsAndCond') }}
+              </a>
+            </template>
+          </i18n-t>
+        </template>
+      </ConnectFormCertify>
+    </UForm>
   </div>
 </template>
