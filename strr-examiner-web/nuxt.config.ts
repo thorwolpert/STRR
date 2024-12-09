@@ -40,10 +40,9 @@ export default defineNuxtConfig({
 
   extends: [
     // '../strr-base-web' // dev only
-    ['github:bcgov/STRR/strr-base-web', { install: true }],
-    ['github:bcgov/STRR/strr-host-pm-web', { install: true }],
     ['github:bcgov/STRR/strr-platform-web', { install: true }],
-    ['github:bcgov/STRR/strr-strata-web', { install: true }]
+    ['github:bcgov/STRR/strr-strata-web', { install: true }],
+    ['github:bcgov/STRR/strr-host-pm-web', { install: true }]
   ],
 
   imports: {
