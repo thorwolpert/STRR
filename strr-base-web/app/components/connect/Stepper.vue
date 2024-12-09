@@ -8,6 +8,11 @@ const activeStepIndexModel = defineModel<number>('activeStepIndex', { default: 0
 const activeStepModel = defineModel<Step>('activeStep', { default: () => {} })
 
 const buttonRefs = ref<HTMLButtonElement[]>([])
+const stepperOlRef = ref<HTMLOListElement | null>(null)
+const stepImageRefs = ref<HTMLDivElement[] | null>(null)
+const separatorPosition = ref<{ top: string, left: string, width: string }>({ top: '0px', left: '0px', width: '0px' })
+const activeBorderPosition = ref<{ left: string, width: string }>({ left: '0px', width: '0px' })
+const stepperVisible = useElementVisibility(stepperOlRef)
 
 async function setActiveStep (newStep: number) {
   activeStepModel.value.complete = true // set currently active step to complete
@@ -70,9 +75,35 @@ function createStepAriaLabel (index: number) {
   return `${stepCount} ${label}, ${validity}`
 }
 
+function updateActiveBorderPosition () {
+  if (stepperOlRef.value) {
+    activeBorderPosition.value = {
+      left: `${(stepperOlRef.value.offsetWidth / stepsModel.value.length) * activeStepIndexModel.value}px`,
+      width: `${stepperOlRef.value.offsetWidth / stepsModel.value.length}px`
+    }
+  }
+}
+
 watch(activeStepIndexModel, (newIndex) => {
   buttonRefs.value[newIndex]?.focus()
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  if (!stepperVisible.value) { // only scroll if stepper outside of viewport
+    stepperOlRef.value?.scrollIntoView(true) // aligns top of stepper container to top of viewport
+  }
+
+  updateActiveBorderPosition()
+})
+
+// update separator position as stepper size changes
+useResizeObserver(stepperOlRef, () => {
+  if (stepImageRefs.value && stepImageRefs.value[0] && buttonRefs.value && buttonRefs.value[0]) {
+    separatorPosition.value = {
+      top: `${stepImageRefs.value[0].offsetHeight / 2}px`,
+      left: `${buttonRefs.value[0].offsetWidth / 2}px`,
+      width: `${buttonRefs.value[0].offsetWidth * 3}px`
+    }
+  }
+
+  updateActiveBorderPosition()
 })
 
 defineExpose({ setActiveStep, setNextStep, setPreviousStep, setStepValidity, buttonRefs })
@@ -85,29 +116,38 @@ onMounted(() => {
 </script>
 <template>
   <ol
+    ref="stepperOlRef"
     :aria-label="stepperLabel"
-    class="
-        flex w-full flex-row justify-between
-        rounded-[4px] bg-transparent px-0 pt-0
-        sm:bg-white sm:px-5 sm:pt-5
-      "
+    class="relative flex w-full flex-row justify-between overflow-hidden rounded-[4px] bg-transparent sm:bg-white"
     data-testid="stepper"
   >
+    <div
+      class="absolute z-[1] w-full -translate-y-1/2 border-[0.5px] border-bcGovGray-500"
+      :style="separatorPosition"
+    />
+
+    <div
+      class="absolute bottom-0 hidden h-[3px] bg-blue-500
+      transition-all duration-300 motion-reduce:transition-none sm:block"
+      :style="activeBorderPosition"
+    />
+
     <li
       v-for="(step, index) in stepsModel"
       :key="'step' + index"
-      class="flex flex-row"
-      :class="index == stepsModel.length - 1 ? 'shrink grow-0': 'shrink-0 grow'"
+      class="z-[2] w-full grow"
     >
       <button
         ref="buttonRefs"
-        class="flex cursor-pointer flex-col items-center border-b-0 border-blue-500 pb-5"
-        :class="index === activeStepIndexModel ? 'sm:border-b-[3px]' : ''"
+        class="mx-auto flex w-full cursor-pointer flex-col items-center"
         :aria-label="createStepAriaLabel(index)"
         :aria-current="index === activeStepIndexModel ? 'step' : undefined"
         @click="setActiveStep(index)"
       >
-        <div class="flex justify-center pt-2 ">
+        <div
+          ref="stepImageRefs"
+          class="flex justify-center bg-gray-100 p-4 pt-5 sm:bg-white"
+        >
           <div
             class="
                 relative size-8 rounded-full p-[5px]
@@ -141,21 +181,12 @@ onMounted(() => {
           </div>
         </div>
         <p
-          class="
-              mt-2 hidden max-w-[95px] text-center
-              text-[14px] leading-5 sm:block
-            "
+          class="hidden w-full px-2 pb-4 text-center text-sm leading-5 sm:block"
           :class="index === activeStepIndexModel ? 'font-bold text-black' : 'text-blue-500'"
         >
           {{ step.label ? $t(step.label) : $t(`${step.i18nPrefix}.description.${index}`) }}
         </p>
       </button>
-      <div
-        v-if="index < stepsModel.length - 1"
-        class="mb-2 shrink-0 grow self-center sm:mb-10 md:mb-10"
-      >
-        <div class="h-px bg-gray-600" />
-      </div>
     </li>
   </ol>
   <div v-if="stepsModel[activeStepIndexModel]?.i18nPrefix" class="space-y-5 py-5">

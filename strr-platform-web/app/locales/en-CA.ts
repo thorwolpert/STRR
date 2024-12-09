@@ -1,10 +1,22 @@
 /* eslint-disable max-len */
 export default {
+  act: {
+    fippa: 'Freedom of Information and Protection of Privacy Act'
+  },
   feeSummary: {
     itemLabels: {
       PLATREG_SM: 'Platform Application Fee',
       PLATREG_LG: 'Platform Application Fee',
       PLATREG_WV: 'Platform Application Fee'
+    }
+  },
+  modal: {
+    info: {
+      collectionNotice: {
+        triggerBtn: 'Information collection notice',
+        title: 'Information Collection Notice',
+        content: 'This personal information is being collected by the Ministry of Housing and Municipal Affairs under s. 33(1) of the {straAct} and s. 33(2)(e) of the {fippaAct} for the purpose of registering a platform service provider. If you have any questions about the collection of this personal information, please contact the Executive Director of the Short-Term Rental Branch, at {email}'
+      }
     }
   },
   strr: {
@@ -80,9 +92,9 @@ export default {
       brandNames: 'If your platform operates under distinct brand names, please enter each of them here.',
       brandNames2: 'If the business provides the same listings on multiple websites with different brand names, provide those as well. ',
       brandNamesNote: 'NOTE: if the listings are different, each brand should be a separate registration',
-      hasCpbc: 'Does the business have an active number with Consumer Protection BC (CPBC)?',
+      hasCpbc: 'Is the business licensed as a travel wholesaler under Consumer Protection BC (CPBC)?',
       isUserRep: 'Are you the platform service provider representative? ',
-      listingSize: 'What is the total number of listings offered by the Platform Service Provider across all platforms on June 1, {year}?',
+      listingSize: 'What is the total number of listings offered by the Platform Service Provider across all platforms as of today’s date?',
       nonComplianceEmail: 'Provide an email address to receive Notices of Non-Compliance.',
       nonComplianceEmailLong: 'This message will be sent to the supplier host and platform service provider by a local government to inform both parties that a listing is not compliant with a local government business licence requirement. No action is required from the platform service provider.',
       primaryContact: 'This is the primary contact person for the platform service provider.',
