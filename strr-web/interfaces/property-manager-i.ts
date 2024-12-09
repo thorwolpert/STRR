@@ -1,27 +1,38 @@
 export interface PropertyManagerContactI {
-    firstName: string
-    middleName: string | undefined
-    lastName: string
-    preferredName: string | undefined
-    phoneNumber: string
-    extension: string | undefined
-    faxNumber: string | undefined
-    emailAddress: string
+  emailAddress: string
+  extension: string
+  faxNumber: string
+  firstName: string
+  lastName: string
+  middleName: string
+  phoneCountryCode: string
+  phoneNumber: string
+  preferredName?: string
 }
 
 export interface PropertyManagerBusinessAddressI {
-    address: string
-    country: string
-    addressLineTwo: string | undefined
-    city: string
-    province: string
-    postalCode: string
-  }
+  address: string
+  addressLineTwo: string | undefined
+  city: string
+  province: string
+  postalCode: string
+  country: string
+}
+
+export interface PropertyManagerBusinessI {
+  legalName?: string
+  businessNumber?: string
+  mailingAddress: PropertyManagerBusinessAddressI
+  primaryContact: PropertyManagerContactI
+}
+
+export interface PropertyManagerIndividualContactI extends PropertyManagerContactI {
+  mailingAddress: MailingAddressAPII
+}
 
 export interface PropertyManagerI {
-    businessLegalName: string | undefined
-    businessNumber: string | undefined
-    businessMailingAddress: PropertyManagerBusinessAddressI
-    contact: PropertyManagerContactI
-    initiatedByPropertyManager: boolean | undefined
+  business?: PropertyManagerBusinessI
+  contact?: PropertyManagerIndividualContactI
+  initiatedByPropertyManager: boolean | undefined
+  propertyManagerType: HostContactTypeE
 }

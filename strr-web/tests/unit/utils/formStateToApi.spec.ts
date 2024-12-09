@@ -116,8 +116,7 @@ it('begins with empty address', () => {
     createAccountState,
     hasSecondaryContact,
     propertyType,
-    ownershipType,
-    t
+    ownershipType
   )
 
   expect(apiFormattedState.registration.listingDetails)

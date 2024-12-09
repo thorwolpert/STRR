@@ -58,13 +58,18 @@ export function displayFormattedPhone (phoneNumber: string): string {
  * @returns The formatted phone number with extension, or undefined if no phone number is provided
  * @example "5554443322, 1234" -> "555-444-3322, Ext. 1234"
  */
-export function displayPhoneAndExt (phoneNumber?: string, phoneExt?: string): string | undefined {
+export function displayPhoneAndExt (
+  phoneNumber?: string,
+  phoneExt?: string,
+  phoneCountryCode?: string
+): string | undefined {
   if (!phoneNumber) {
     return undefined // let the caller handle the undefined state
   }
   const { t } = useTranslation()
+  const countryCode = phoneCountryCode ? `+${phoneCountryCode}-` : ''
   const extension = phoneExt ? `, ${t('common.phoneExt')} ${phoneExt}` : ''
-  return displayFormattedPhone(phoneNumber) + extension
+  return countryCode + displayFormattedPhone(phoneNumber) + extension
 }
 
 const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' })

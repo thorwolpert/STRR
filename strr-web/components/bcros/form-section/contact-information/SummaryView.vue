@@ -37,7 +37,7 @@ const displayHostType = {
       </div>
       <BcrosFormSectionReviewItem
         :title="t('common.formLabels.dateOfBirth')"
-        :content="convertDateToLongFormat(contact.dateOfBirth) || '-'"
+        :content="contact.dateOfBirth ? convertDateToLongFormat(contact.dateOfBirth) : '-'"
       />
       <BcrosFormSectionReviewItem
         :title="t('common.formLabels.socialInsuranceNumber')"

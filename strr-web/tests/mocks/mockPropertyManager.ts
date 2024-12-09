@@ -1,4 +1,8 @@
-import type { PropertyManagerBusinessAddressI } from '~/interfaces/property-manager-i'
+import type {
+  PropertyManagerBusinessAddressI,
+  PropertyManagerI,
+  PropertyManagerContactI
+} from '~/interfaces/property-manager-i'
 
 const mockPropertyManagerContact: PropertyManagerContactI = {
   firstName: 'John',
@@ -8,7 +12,8 @@ const mockPropertyManagerContact: PropertyManagerContactI = {
   phoneNumber: '604-123-4567',
   extension: '101',
   faxNumber: '604-765-4321',
-  emailAddress: 'john.doe@bcpropertymanagement.com'
+  emailAddress: 'john.doe@bcpropertymanagement.com',
+  phoneCountryCode: '1'
 }
 
 const mockBusinessMailingAddress: PropertyManagerBusinessAddressI = {
@@ -21,8 +26,12 @@ const mockBusinessMailingAddress: PropertyManagerBusinessAddressI = {
 }
 
 export const mockPropertyManager: PropertyManagerI = {
-  businessLegalName: 'BC Property Management Inc.',
-  businessNumber: '123456789',
-  businessMailingAddress: mockBusinessMailingAddress,
-  contact: mockPropertyManagerContact
+  business: {
+    legalName: 'BC Property Management Inc.',
+    businessNumber: '123456789',
+    mailingAddress: mockBusinessMailingAddress,
+    primaryContact: mockPropertyManagerContact
+  },
+  initiatedByPropertyManager: false,
+  propertyManagerType: HostContactTypeE.BUSINESS
 }
