@@ -1,7 +1,8 @@
 /* eslint-disable max-len */
 export default {
   act: {
-    strrAccomodations: 'Short-Term Rental Accommodations Act'
+    strrAccomodations: 'Short-Term Rental Accommodations Act',
+    fippa: 'Freedom of Information and Protection of Privacy Act'
   },
   badge: {
     basicAccount: 'BASIC ACCOUNT',
@@ -264,7 +265,9 @@ export default {
     createNewAccount: 'Create New Account',
     contToCreateAccount: 'Continue to Create Account',
     myStrr: 'My Short-term Rental Registry',
-    completingParty: 'Completing Party'
+    completingParty: 'Completing Party',
+    completePayment: 'Complete Payment',
+    payNow: 'Pay Now'
   },
   modal: {
     declineTos: {
@@ -288,7 +291,7 @@ export default {
       collectionNotice: {
         triggerBtn: 'Information collection notice',
         title: 'Information Collection Notice',
-        content: 'Any personal information required is collected to support the administration and enforcement of the {act}, under the authority of section 33(1) of that Act. Any questions about the collection of any information can be directed to the Executive Director of the Short-Term Rental Branch, at {email}.'
+        content: 'Any personal information required is collected to support the administration and enforcement of the {straAct}, under the authority of section 33(1) of that Act. Any questions about the collection of any information can be directed to the Executive Director of the Short-Term Rental Branch, at {email}.'
       }
     }
   },
@@ -464,7 +467,7 @@ export default {
     },
     hint: {
       businessLegalNamePlatform: 'The full legal name of the platform service provider',
-      businessLegalNameStrataHotel: 'The full legal name of the business that is operating the strata-titled hotel or motel. Include corporate designations (e.g., “Ltd.”, “Inc.”, “LLC.”',
+      businessLegalNameStrataHotel: 'The full legal name of the business that is operating the strata-titled hotel or motel. Include corporate designations (e.g., “Ltd.”, “Inc.”, “LLC.”)',
       businessNumber: 'Canada Revenue Agency (CRA) Business Number',
       humeJurisdiction: 'The regional or federal jurisdiction where the business was incorporated or registered, if applicable',
       position: 'Enter your current job title or position'

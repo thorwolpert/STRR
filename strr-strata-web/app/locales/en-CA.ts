@@ -16,7 +16,7 @@ export default {
       description: {
         0: 'Add Contact Information',
         1: 'Add Business Details',
-        2: 'Add Strata Information',
+        2: 'Add Strata Hotel Information',
         3: 'Review and Confirm'
       },
       title: {
@@ -116,10 +116,31 @@ export default {
       title: 'Need Help?',
       content: 'For more information on definitions and rules, refer to the {act} and the Short-Term Rental Accommodation Regulation, or visit the {link}. If you need help with registering your strata hotel, using the My STR Registry Dashboard, or resolving a technical issue, you can also contact us directly.'
     },
-    infoCollectionNotice: {
-      triggerBtn: 'Information collection notice',
-      title: 'Information Collection Notice',
-      content: 'Any personal information required is collected to support the administration and enforcement of the {act}, under the authority of section 33(1) of that Act. Any questions about the collection of any information can be directed to the Executive Director of the Short-Term Rental Branch, at {link}.'
+    info: {
+      collectionNotice: {
+        triggerBtn: 'Information collection notice',
+        title: 'Information Collection Notice',
+        content: {
+          p1: 'This personal information is being collected by the Ministry of Housing and Municipal Affairs under s. 33(1) of the {straAct} and s. 33(2)(e) of the {fippaAct} for the purpose of registering a platform service provider of a strata-titled hotel or motel platform.',
+          p2: 'The Ministry may share the information with the local government of the area in which the strata-titled hotel or motel is located. If you have any questions about the collection of this personal information, please contact the Executive Director of the Short-Term Rental Branch, at {email}'
+        }
+      }
+    },
+    error: {
+      applicationSubmit: {
+        badRequest: {
+          title: 'Invalid Request',
+          content: 'There was an issue with the information submitted. Please review your input and try again.'
+        },
+        internal: {
+          title: 'Internal Server Error',
+          content: 'We encountered an issue processing your application. Please try again or come back later. If the problem persists, contact us.'
+        },
+        unknown: {
+          title: 'Unexpected Error',
+          content: 'An unexpected error occurred. Please refresh the page or try again later. If the problem persists, contact us.'
+        }
+      }
     }
   },
   table: {
@@ -145,7 +166,10 @@ export default {
     brand: {
       name: 'Please enter a name',
       site: 'Please enter a valid full url for this brand (i.e. https://www.bcregistry.gov.bc.ca)'
-    }
+    },
+    wholeNumber: 'Please enter a whole number (no decimals)',
+    min1Unit: 'The number of rental units must be greater than 0',
+    max5000Units: 'The number of rental units must not exceed 5000'
   },
   certify: {
     1: '{terms} I agree to comply with the {link} of registration.',
