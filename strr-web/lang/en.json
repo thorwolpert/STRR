@@ -438,9 +438,11 @@
     "review": {
       "propertyManager": {
         "header": "Property Manager Information",
+        "propertyManagerType": "Property Manager Type",
         "businessLegalName": "Business Legal Name",
         "craBusinessNumber": "CRA Business Number",
         "businessMailingAddress": "Business Mailing Address",
+        "mailingAddress": "Mailing Address",
         "contactName": "Contact Name",
         "preferredName": "Preferred Name",
         "phoneNumber": "Phone Number",
