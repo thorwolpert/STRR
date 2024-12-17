@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { useExaminerStore } from '~/store/examiner'
 import { displayFullUnitAddress } from '~/utils/format-helper'
-
+const localePath = useLocalePath()
 const { t } = useI18n()
 
 useHead({
@@ -26,11 +27,9 @@ const PROPERTY_MANAGER_TYPE = 'Property Manager'
 const STRATA_HOTEL_TYPE = 'Strata Hotel'
 const PLATFORM_TYPE = 'Platform'
 
-const { getAccountApplications } = useStrrApi()
-
 const applications = ref()
 
-applications.value = await getAccountApplications()
+applications.value = await useExaminerStore().getAllApplications()
 
 const mappedApplications = applications.value.map(
   (application: HostApplicationResp | PlatformApplicationResp | StrataApplicationResp) => {
@@ -90,8 +89,13 @@ const columns = [
   { key: 'propertyAddress', label: 'Address', sortable: false },
   { key: 'applicantName', label: 'Applicant Name', sortable: false },
   { key: 'status', label: 'Status', sortable: false },
-  { key: 'submissionDate', label: 'Submission Date', sortable: false }
+  { key: 'submissionDate', label: 'Submission Date', sortable: false },
+  { key: 'actions', label: t('label.actions') }
 ]
+
+async function handleItemSelect (row: any) {
+  await navigateTo(localePath('/dashboard/' + row.applicationNumber))
+}
 
 </script>
 <template>
@@ -101,7 +105,11 @@ const columns = [
     </div>
 
     <div class="bg-white">
-      <UTable :columns="columns" :rows="mappedApplications" />
+      <UTable :columns="columns" :rows="mappedApplications">
+        <template #actions-data="{ row }">
+          <UButton :label="$t('btn.view')" @click="handleItemSelect(row)" />
+        </template>
+      </UTable>
     </div>
   </div>
 </template>
