@@ -22,8 +22,8 @@ export default {
   certify: {
     1: '{terms} I agree to comply with the {link} of registration.',
     2: '{boldStart}Tax Auditing.{boldEnd} I understand that my registration information will be shared with the Ministry of Finance and the Canada Revenue Agency for the purposes of tax auditing.',
-    3: "{boldStart}Principal Residence Declaration.{boldEnd} As required by section 14 (2) of the Short-Term Rental Accommodations Act (the Act), I declare that I will comply with the principal residence requirement in the Act and provide the short-term rental accommodation services described in this registration in one or both of: a. the property host's principal residence, and b. not more than one secondary suite or accessory dwelling unit on the same property. I understand that if I do not comply with the principal residence requirement, I may be subject to enforcement action under Part 4 of the Act, including being ordered to pay an administrative penalty.",
-    4: '{boldStart}Accuracy of Information.{boldEnd} I confirm that the information contained in the application for registration is accurate and true. I understand that if I have knowingly provided inaccurate or false information, I may be subject to enforcement action under Part 4 of the Short-Term Rental Accommodations Act.',
+    3: "{boldStart}Principal Residence Declaration.{boldEnd} As required by section 14 (2) of the {italicStart}Short-Term Rental Accommodations Act{italicEnd} (the Act), I declare that I will comply with the principal residence requirement in the Act and provide the short-term rental accommodation services described in this registration in one or both of: a. the property host's principal residence, and b. not more than one secondary suite or accessory dwelling unit on the same property. I understand that if I do not comply with the principal residence requirement, I may be subject to enforcement action under Part 4 of the Act, including being ordered to pay an administrative penalty.",
+    4: '{boldStart}Accuracy of Information.{boldEnd} I confirm that the information contained in the application for registration is accurate and true. I understand that if I have knowingly provided inaccurate or false information, I may be subject to enforcement action under Part 4 of the {italicStart}Short-Term Rental Accommodations Act{italicEnd}.',
     confirm: 'I, {boldStart}{name}{boldEnd}, confirm that I understand and agree to all of the requirements listed above.',
     authorization: 'I, {boldStart}{name}{boldEnd}, have relevant knowledge of and am authorized to submit this registration.',
     tac: 'Terms and Conditions.'
@@ -83,13 +83,13 @@ export default {
     step: {
       stepperLabel: 'Short-Term Rental Application Step Navigation',
       description: {
-        0: 'Define Your Rental',
+        0: 'Define Your Short-Term Rental',
         1: 'Add Individuals and Businesses',
         2: 'Add Supporting Documentation',
         3: 'Review and Confirm'
       },
       title: {
-        0: 'Define Your Rental',
+        0: 'Define Your Short-Term Rental',
         1: 'Individuals and Businesses',
         2: 'Add Supporting Documentation',
         3: 'Review and Confirm'
@@ -115,7 +115,7 @@ export default {
         craBusinessNumber: 'Canada Revenue Agency (CRA) Business Number',
         craTaxNum: 'Canada Revenue Agency (CRA) Tax Number',
         emailAddress: 'Email Address',
-        faxNumber: 'FaxNumber',
+        faxNumber: 'Fax Number',
         individualName: "Individual's Name",
         individualPreferredName: "Individual's Preferred Name",
         mailingAddress: 'Mailing Address',
@@ -230,7 +230,8 @@ export default {
     showDetails: 'Show Details',
     hideDetails: 'Hide Details',
     returnToStep: 'Return to the step to finish it',
-    ariaViewDetails: 'View details for property: {name}, {address}'
+    ariaViewDetails: 'View details for property: {name}, {address}',
+    registerAStr: 'Register a Short-Term Rental'
   },
   error: {
     createAccount: {

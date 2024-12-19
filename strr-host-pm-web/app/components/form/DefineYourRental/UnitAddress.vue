@@ -93,6 +93,7 @@ onMounted(async () => {
               </div>
               <div class="flex flex-col items-start gap-4 xl:flex-row">
                 <FormUnitAddressAutoComplete
+                  class="min-w-80"
                   id="rental-property-address-lookup"
                   v-model:address-input="propStore.unitAddress.address.street"
                   v-model:street-number="propStore.unitAddress.address.streetNumber"
@@ -194,7 +195,6 @@ onMounted(async () => {
                   <template #panel>
                     <UButton
                       class="m-2"
-                      icon="i-mdi-trashcan"
                       :label="$t('word.Remove')"
                       variant="link"
                       @click="hostModal.openConfirmRestartApplicationModal(false)"
