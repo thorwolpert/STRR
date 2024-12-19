@@ -11,6 +11,13 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     return (await getAccountApplications(applicationNumber)) as ApiApplicationResp
   }
 
+  // Fetch next Application to examiner when navigating to Examiner tab
+  const getNextApplication = async (): Promise<string> => {
+    const applications = await getAccountApplications(undefined, ApplicationType.HOST) as ApiApplicationBaseResp[]
+    // for now just get the first available Host Application
+    return applications[0].header.applicationNumber
+  }
+
   const approveApplication = async (applicationNumber: string): Promise<void> => {
     await $strrApi(`/applications/${applicationNumber}/status`, {
       method: 'PUT',
@@ -29,6 +36,7 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     getAllApplications,
     getApplication,
     approveApplication,
-    rejectApplication
+    rejectApplication,
+    getNextApplication
   }
 })

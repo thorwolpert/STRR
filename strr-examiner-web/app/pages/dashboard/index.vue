@@ -9,6 +9,7 @@ useHead({
 })
 
 definePageMeta({
+  layout: 'examiner',
   middleware: ['auth', 'require-account']
 })
 
@@ -54,15 +55,15 @@ const mappedApplications = applications.value.map(
       } else {
         applicationType = HOST_TYPE
       }
-      applicantName = displayContactFullName(hostApplication.primaryContact.name) || ''
+      applicantName = displayContactFullName(hostApplication.primaryContact) || ''
       propertyAddress = displayFullUnitAddress(hostApplication.unitAddress) || '-'
     } else if (registrationType === ApplicationType.PLATFORM) {
-      const platformApplication: ApiBasePlatformApplication = application.registration as ApiBasePlatformApplication
+      const platformApplication = application.registration
       applicationType = PLATFORM_TYPE
       applicantName = platformApplication.businessDetails.legalName
       propertyAddress = displayFullAddress(platformApplication.businessDetails.mailingAddress) || '-'
     } else if (registrationType === ApplicationType.STRATA_HOTEL) {
-      const strataApplication: ApiBaseStrataApplication = application.registration as ApiBaseStrataApplication
+      const strataApplication = application.registration
       applicationType = STRATA_HOTEL_TYPE
       const { firstName, middleName, lastName } = strataApplication.completingParty
       applicantName = displayContactFullName({ firstName, middleName, lastName }) || '-'
@@ -100,10 +101,6 @@ async function handleItemSelect (row: any) {
 </script>
 <template>
   <div class="space-y-8 py-8 sm:space-y-10 sm:py-10">
-    <div class="space-y-4">
-      <ConnectTypographyH1 :text="$t('page.dashboardList.h1')" />
-    </div>
-
     <div class="bg-white">
       <UTable :columns="columns" :rows="mappedApplications">
         <template #actions-data="{ row }">
