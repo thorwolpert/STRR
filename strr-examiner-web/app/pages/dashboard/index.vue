@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { useExaminerStore } from '~/store/examiner'
 import { displayFullUnitAddress } from '~/utils/format-helper'
-
+const localePath = useLocalePath()
 const { t } = useI18n()
 
 useHead({
@@ -8,6 +9,7 @@ useHead({
 })
 
 definePageMeta({
+  layout: 'examiner',
   middleware: ['auth', 'require-account']
 })
 
@@ -26,11 +28,9 @@ const PROPERTY_MANAGER_TYPE = 'Property Manager'
 const STRATA_HOTEL_TYPE = 'Strata Hotel'
 const PLATFORM_TYPE = 'Platform'
 
-const { getAccountApplications } = useStrrApi()
-
 const applications = ref()
 
-applications.value = await getAccountApplications()
+applications.value = await useExaminerStore().getAllApplications()
 
 const mappedApplications = applications.value.map(
   (application: HostApplicationResp | PlatformApplicationResp | StrataApplicationResp) => {
@@ -55,15 +55,15 @@ const mappedApplications = applications.value.map(
       } else {
         applicationType = HOST_TYPE
       }
-      applicantName = displayContactFullName(hostApplication.primaryContact.name) || ''
+      applicantName = displayContactFullName(hostApplication.primaryContact) || ''
       propertyAddress = displayFullUnitAddress(hostApplication.unitAddress) || '-'
     } else if (registrationType === ApplicationType.PLATFORM) {
-      const platformApplication: ApiBasePlatformApplication = application.registration as ApiBasePlatformApplication
+      const platformApplication = application.registration
       applicationType = PLATFORM_TYPE
       applicantName = platformApplication.businessDetails.legalName
       propertyAddress = displayFullAddress(platformApplication.businessDetails.mailingAddress) || '-'
     } else if (registrationType === ApplicationType.STRATA_HOTEL) {
-      const strataApplication: ApiBaseStrataApplication = application.registration as ApiBaseStrataApplication
+      const strataApplication = application.registration
       applicationType = STRATA_HOTEL_TYPE
       const { firstName, middleName, lastName } = strataApplication.completingParty
       applicantName = displayContactFullName({ firstName, middleName, lastName }) || '-'
@@ -90,18 +90,23 @@ const columns = [
   { key: 'propertyAddress', label: 'Address', sortable: false },
   { key: 'applicantName', label: 'Applicant Name', sortable: false },
   { key: 'status', label: 'Status', sortable: false },
-  { key: 'submissionDate', label: 'Submission Date', sortable: false }
+  { key: 'submissionDate', label: 'Submission Date', sortable: false },
+  { key: 'actions', label: t('label.actions') }
 ]
+
+async function handleItemSelect (row: any) {
+  await navigateTo(localePath('/dashboard/' + row.applicationNumber))
+}
 
 </script>
 <template>
   <div class="space-y-8 py-8 sm:space-y-10 sm:py-10">
-    <div class="space-y-4">
-      <ConnectTypographyH1 :text="$t('page.dashboardList.h1')" />
-    </div>
-
     <div class="bg-white">
-      <UTable :columns="columns" :rows="mappedApplications" />
+      <UTable :columns="columns" :rows="mappedApplications">
+        <template #actions-data="{ row }">
+          <UButton :label="$t('btn.view')" @click="handleItemSelect(row)" />
+        </template>
+      </UTable>
     </div>
   </div>
 </template>
