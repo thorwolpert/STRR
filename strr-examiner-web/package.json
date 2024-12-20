@@ -45,7 +45,6 @@
     "@nuxt/ui": "2.19.2",
     "country-codes-list": "^1.6.11",
     "nuxt": "^3.12.3",
-    "uuid": "^11.0.3",
-    "vue-country-flag-next": "^2.3.2"
+    "uuid": "^11.0.3"
   }
 }

@@ -23,9 +23,6 @@ importers:
       uuid:
         specifier: ^11.0.3
         version: 11.0.3
-      vue-country-flag-next:
-        specifier: ^2.3.2
-        version: 2.3.2(vue@3.5.13(typescript@5.7.2))
     devDependencies:
       '@axe-core/playwright':
         specifier: ^4.9.1
@@ -5845,12 +5842,6 @@ packages:
 
   vue-component-type-helpers@2.1.10:
     resolution: {integrity: sha512-lfgdSLQKrUmADiSV6PbBvYgQ33KF3Ztv6gP85MfGaGaSGMTXORVaHT1EHfsqCgzRNBstPKYDmvAV9Do5CmJ07A==}
-
-  vue-country-flag-next@2.3.2:
-    resolution: {integrity: sha512-Lv12L1VTwlBgizpZ3xPEPO3zuIETaJmeSiPuLOWLLgu2EakwU/o72iKYiKcdZ6BXiSkfss+Ski5fDzjuxZ1DcA==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      vue: ^3.0.0
 
   vue-demi@0.14.10:
     resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
@@ -13441,10 +13432,6 @@ snapshots:
       ufo: 1.5.4
 
   vue-component-type-helpers@2.1.10: {}
-
-  vue-country-flag-next@2.3.2(vue@3.5.13(typescript@5.7.2)):
-    dependencies:
-      vue: 3.5.13(typescript@5.7.2)
 
   vue-demi@0.14.10(vue@3.5.13(typescript@5.7.2)):
     dependencies:
