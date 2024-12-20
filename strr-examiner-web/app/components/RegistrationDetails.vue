@@ -11,7 +11,7 @@ const { header } = toRefs(props.application)
     :heading="{
       label: 'Registration Details',
       labelClass: 'font-bold',
-      icon: 'mdi-file-document-tick-outline'
+      icon: 'i-mdi-file-document-tick-outline'
     }"
     class="mt-10 pb-4"
   >

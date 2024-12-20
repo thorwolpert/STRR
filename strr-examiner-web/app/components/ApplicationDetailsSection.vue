@@ -24,7 +24,7 @@ const props = defineProps<{ label: string, hideCheckbox?: boolean, hideChecklist
         label="Checklist"
         variant="link"
         class="p-0 text-sm"
-        icon="mdi-chevron-down"
+        icon="i-mdi-chevron-down"
         size="sm"
         trailing
       />

@@ -8,7 +8,7 @@ const displayApplicationType = {
   [ApplicationType.STRATA_HOTEL]: 'Strata Hotel'
 }
 
-const { header, registration } = toRefs(props.application)
+const { header, registration } = props.application
 
 </script>
 <template>
@@ -16,7 +16,7 @@ const { header, registration } = toRefs(props.application)
     :heading="{
       label: 'Application Details',
       labelClass: 'font-bold',
-      icon: 'mdi-file-document-move-outline'
+      icon: 'i-mdi-file-document-move-outline'
     }"
     :actions="applicationActions"
     class="pb-4"
