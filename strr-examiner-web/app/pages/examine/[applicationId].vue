@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import type { ApiHostApplication } from '#build/imports'
 import ApplicationDetailsSection from '~/components/ApplicationDetailsSection.vue'
 import { useExaminerStore } from '~/store/examiner'
 
 const { t } = useI18n()
-const localePath = useLocalePath()
 const route = useRoute()
-const config = useRuntimeConfig().public
 const { loading } = storeToRefs(useConnectDetailsHeaderStore())
 const { getApplication, approveApplication, rejectApplication } = useExaminerStore()
 
@@ -54,19 +51,9 @@ const fetchApplication = async (applicationNumber: string): Promise<void> => {
 onMounted(async () => {
   loading.value = true
 
-  await fetchApplication(route.params.applicationId as string)
+  applicationId = route.params.applicationId as string
 
-  // update breadcrumbs with strata business name
-  setBreadcrumbs([
-    {
-      label: t('label.bcregDash'),
-      to: config.registryHomeURL + 'dashboard',
-      appendAccountId: true,
-      external: true
-    },
-    { label: t('strr.title.dashboard'), to: localePath('/dashboard') },
-    { label: applicationId }
-  ])
+  await fetchApplication(applicationId)
 
   loading.value = false
 })
