@@ -8,10 +8,12 @@ export interface ApiStrataDetails {
 export interface ApiBaseStrataRegistration extends ApiBaseRegistration {
   strataHotelRepresentatives: ApiRep[]
   strataHotelDetails: ApiStrataDetails
+  documents: ApiDocument[]
 }
 
 export interface ApiBaseStrataApplication extends ApiBaseStrataRegistration {
   completingParty: ApiParty
+  documents: ApiDocument[]
 }
 
 export interface StrataRegistrationResp extends ApiBaseStrataRegistration, ApiExtraRegistrationDetails {
@@ -23,4 +25,11 @@ export interface StrataApplicationPayload {
 
 export interface StrataApplicationResp extends StrataApplicationPayload {
   header: ApplicationHeader
+}
+
+export interface ApiDocument {
+  documentType: DocumentUploadType
+  fileKey: string
+  fileName: string
+  fileType: string
 }

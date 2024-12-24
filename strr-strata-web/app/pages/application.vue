@@ -9,6 +9,7 @@ const { handlePaymentRedirect } = useConnectNav()
 const { validateContact } = useStrrContactStore()
 const { validateStrataBusiness } = useStrrStrataBusinessStore()
 const { validateStrataDetails } = useStrrStrataDetailsStore()
+const { validateDocuments } = useDocumentStore()
 const {
   submitStrataApplication,
   validateStrataConfirmation,
@@ -58,7 +59,10 @@ const steps = ref<Step[]>([
     icon: 'i-mdi-map-marker-plus-outline',
     complete: false,
     isValid: false,
-    validationFn: () => validateStrataDetails(true) as boolean
+    validationFn: () => (
+      validateStrataDetails(true) as boolean &&
+      validateDocuments(true) as boolean
+    )
   },
   {
     i18nPrefix: 'strr.step',
@@ -107,6 +111,7 @@ const handleStrataSubmit = async () => {
       validateContact(),
       validateStrataBusiness(),
       validateStrataDetails(),
+      validateDocuments(),
       validateStrataConfirmation()
     ]
 
@@ -114,7 +119,7 @@ const handleStrataSubmit = async () => {
     formErrors = validationResults.flatMap(result => result as MultiFormValidationResult)
     const isApplicationValid = formErrors.every(result => result.success === true)
 
-    // console.info('is application valid: ', isApplicationValid, formErrors)
+    console.info('is application valid: ', isApplicationValid, formErrors)
 
     // if all steps valid, submit form with store function
     if (isApplicationValid) {
