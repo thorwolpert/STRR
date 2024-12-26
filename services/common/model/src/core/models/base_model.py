@@ -38,7 +38,7 @@ from sqlalchemy import Column, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship
 
-from strr_api.models.user import User
+from .user import User
 
 from .db import db
 
