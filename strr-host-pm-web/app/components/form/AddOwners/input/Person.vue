@@ -141,7 +141,7 @@ watch(isCompParty, (val) => {
           id="host-owner-taxNumber"
           v-model="owner.taxNumber"
           name="taxNumber"
-          :placeholder="$t('label.craTaxNumberOpt')"
+          :placeholder="$t('label.craTaxNumber')"
           :help="$t('strr.hint.craTaxNumber')"
           mask="### ### ###"
         />
@@ -197,6 +197,7 @@ watch(isCompParty, (val) => {
           :aria-label="$t('label.faxNumberOpt')"
           name="faxNumber"
           :placeholder="$t('label.faxNumberOpt')"
+          :mask="owner.phone.countryCode === '1' ? '(###) ###-####' : '##############'"
         />
       </ConnectFormSection>
       <ConnectFormSection
