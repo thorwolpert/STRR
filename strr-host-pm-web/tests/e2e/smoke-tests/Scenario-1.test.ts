@@ -1,15 +1,12 @@
 /* eslint-disable max-len */
-import { fileURLToPath } from 'url'
-import { dirname } from 'path'
 import { test, expect, type Page } from '@playwright/test'
 import { config as dotenvConfig } from 'dotenv'
-import { OwnerRole } from '../../app/enums/owner-role'
-import { OwnerType } from '../../app/enums/owner-type'
-import { getFakeOwner, getFakePropertyNickname, getFakePid, getFakeBlInfo } from './test-utils/faker'
-import { uploadDocuments } from './test-utils/upload-documents'
+import { OwnerRole } from '../../../app/enums/owner-role'
+import { OwnerType } from '../../../app/enums/owner-type'
+import { getFakeOwner, getFakePropertyNickname, getFakePid, getFakeBlInfo } from '../test-utils/faker'
+import { uploadDocuments } from '../test-utils/upload-documents'
 // load default env
 dotenvConfig()
-const currentDir = dirname(fileURLToPath(import.meta.url))
 
 enum LoginSource {
   BCSC = 'BCSC',
@@ -46,10 +43,10 @@ async function authSetup (loginMethod: LoginSource, page: Page) {
 const loginMethods = [LoginSource.BCSC, LoginSource.BCEID]
 
 loginMethods.forEach((loginMethod) => {
-  test.describe(`STRR Host Smoke Test - Scenario 3 - ${loginMethod}`, () => { // TODO - scenario number
+  test.describe(`STRR Host Smoke Test - Scenario 1 - ${loginMethod}`, () => {
     // address constants
     const nickname = getFakePropertyNickname()
-    const lookupAddress = '2618 Panorama Dr'
+    const lookupAddress = '142 Barkley Terr'
     // unit details contants
     const propertyType = 'Single Family Home'
     const typeOfSpace = 'Entire home (guests have the entire place to themselves)'
@@ -62,7 +59,7 @@ loginMethods.forEach((loginMethod) => {
     const propertManager = getFakeOwner(OwnerType.BUSINESS, OwnerRole.PROPERTY_MANAGER, false)
     const blInfo = getFakeBlInfo()
     const requiredDocs = [
-      { option: 'Local Government Business License', filename: 'fake-business-licence' },
+      // { option: 'Local Government Business License', filename: 'fake-business-licence' },
       { option: 'British Columbia Services Card', filename: 'fake-bc-services-card' },
       { option: 'Property Assessment Notice', filename: 'fake-property-assessment-notice' }
     ]
@@ -80,6 +77,7 @@ loginMethods.forEach((loginMethod) => {
     })
 
     const getH2 = () => page.getByTestId('h2').first()
+    const getPropertyRequirementsList = () => page.getByTestId('property-requirements-list')
 
     test('smoke test - Select Account', async () => {
       page.goto('./en-CA/auth/account/choose-existing') // should be redirected to select account page
@@ -108,8 +106,22 @@ loginMethods.forEach((loginMethod) => {
       // enter address autocomplete
       await page.locator('#rental-property-address-lookup-street').click()
       await page.keyboard.type(lookupAddress, { delay: 100 }) // using .fill() doesnt trigger canada post api
-      await page.getByRole('option', { name: lookupAddress }).click() // 'Panorama DrCoquitlam, BC, V3E 2W1'
+      await page.getByRole('option', { name: lookupAddress }).click() // 'Barkley Terr'
       await page.getByTestId('property-requirements-section').waitFor({ state: 'visible', timeout: 10000 }) // wait for autocomplete requirements to be displayed
+
+      // str prohibited alert should be visible
+      await expect(page.getByTestId('alert-str-prohibited')).toBeVisible()
+      await expect(page.getByTestId('btn-exit-registration')).toBeVisible()
+      await expect(page.getByTestId('btn-continue-registration')).toBeVisible()
+
+      // continue with registration anyways
+      await expect(page.getByTestId('form-unit-details')).not.toBeVisible() // form should be hidden by default
+      await expect(getPropertyRequirementsList()).not.toBeVisible() // requirements list should be hidden by default
+      await page.getByTestId('btn-continue-registration').click() // open form
+      await expect(page.getByTestId('form-unit-details')).toBeVisible() // form should now be visible
+      await expect(getPropertyRequirementsList()).toBeVisible() // requirements list should now be visible
+      await expect(getPropertyRequirementsList().getByRole('button', { name: 'Principal residence' })).toBeVisible()
+      await expect(getPropertyRequirementsList()).not.toContainText('Business License')
 
       // fill out unit details
       await page.getByLabel('Property Type').click()
@@ -233,9 +245,14 @@ loginMethods.forEach((loginMethod) => {
       // check and fill step 3 - supporting documents
       await expect(getH2()).toContainText('Add Supporting Documentation')
 
+      // requirements checklist should have 1 item (proof of pr only)
+      const requiredDocsList = page.getByTestId('required-docs-checklist').locator('ul')
+      await expect(requiredDocsList.locator('li')).toHaveCount(1)
+      await expect(requiredDocsList).toContainText('Proof of principal residence')
+
       // upload required docs
       const fileSection = page.locator('section').filter({ hasText: 'File Upload' })
-      await uploadDocuments(currentDir, page, fileSection, requiredDocs)
+      await uploadDocuments(page, fileSection, requiredDocs)
 
       // fill out business licence info
       const blSection = page.locator('section').filter({ hasNotText: 'File Upload', hasText: 'Local Government Business License' })
@@ -291,6 +308,9 @@ loginMethods.forEach((loginMethod) => {
       })
       await expect(supportingInfoSection).toContainText(blInfo.businessLicense)
       await expect(supportingInfoSection).toContainText(blInfo.businessLicenseExpiryDate)
+
+      // confirmation section should include pr declaration = 4 items total
+      await expect(page.getByTestId('section-agreed-to-rental-act').locator('ol li')).toHaveCount(4)
 
       // Check certify checkboxes
       await page.getByTestId('agreedToRentalAct-checkbox').check()
