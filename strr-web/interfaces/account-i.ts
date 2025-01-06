@@ -54,18 +54,20 @@ export interface OrgI {
 }
 
 export interface ContactI {
+  firstName: string
+  lastName: string
+  middleName: string
+  preferredName: string
+  dateOfBirth: string
   socialInsuranceNumber: string
   businessNumber: string
   businessLegalName: string
   contactType: HostContactTypeE
-  dateOfBirth: string
-  details: {
-    emailAddress: string
-    extension: string
-    faxNumber: string
-    phoneNumber: string
-    preferredName: string
-  }
+  phoneNumber: string
+  phoneCountryCode: string
+  extension: string
+  faxNumber: string
+  emailAddress: string
   mailingAddress: {
     address: string
     addressLineTwo: string
@@ -74,12 +76,35 @@ export interface ContactI {
     postalCode: string
     province: string
   }
-  name: {
-    firstName: string
-    lastName: string
-    middleName: string
-  }
 }
+
+// export interface ContactI {
+//   socialInsuranceNumber: string
+//   businessNumber: string
+//   businessLegalName: string
+//   contactType: HostContactTypeE
+//   dateOfBirth: string
+//   details: {
+//     emailAddress: string
+//     extension: string
+//     faxNumber: string
+//     phoneNumber: string
+//     preferredName: string
+//   }
+//   mailingAddress: {
+//     address: string
+//     addressLineTwo: string
+//     city: string
+//     country: string
+//     postalCode: string
+//     province: string
+//   }
+//   name: {
+//     firstName: string
+//     lastName: string
+//     middleName: string
+//   }
+// }
 
 export interface MeI {
   orgs: OrgI[]

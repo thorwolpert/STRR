@@ -211,8 +211,10 @@ const searchAppInput = ref<string>('')
 const DEFAULT_STATUS: ApplicationStatusE = ApplicationStatusE.FULL_REVIEW
 
 // Display readable types in the table
+const HOST_TYPE = 'Host'
 const PLATFORM_TYPE = 'Platform'
 const STRATA_HOTEL_TYPE = 'Strata Hotel'
+const PM_TYPE = 'Property Manager'
 
 const isClickableRow = (registrationType: string) => ![PLATFORM_TYPE, STRATA_HOTEL_TYPE].includes(registrationType)
 
@@ -314,11 +316,11 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Examine
     if (registrationType === RegistrationTypeE.HOST) {
       const hostApplication: HostApplicationDetailsI = application.registration as HostApplicationDetailsI
       if (hostApplication.propertyManager && hostApplication.propertyManager.initiatedByPropertyManager) {
-        applicationType = 'Property Manager'
+        applicationType = PM_TYPE
       } else {
-        applicationType = 'Host'
+        applicationType = HOST_TYPE
       }
-      applicantName = displayContactFullName(hostApplication.primaryContact.name) || ''
+      applicantName = displayContactFullName(hostApplication.primaryContact) || ''
       propertyAddress = formatPropertyAddress(hostApplication.unitAddress)
     } else if (registrationType === RegistrationTypeE.PLATFORM) {
       const platformApplication: PlatformApplicationDetailsI = application.registration as PlatformApplicationDetailsI
@@ -327,7 +329,9 @@ const registrationsToTableRows = (applications: PaginatedApplicationsI): Examine
       propertyAddress = formatMailingAddress(platformApplication.businessDetails.mailingAddress)
     } else if (registrationType === RegistrationTypeE.STRATA_HOTEL) {
       applicationType = STRATA_HOTEL_TYPE
-      // Implement this once the backend supports it
+      const strataApplication = application.registration as PlatformApplicationDetailsI
+      applicantName = strataApplication.businessDetails.legalName
+      propertyAddress = formatMailingAddress(strataApplication.businessDetails.mailingAddress)
     }
     const row: ExaminerDashboardRowI = {
       applicationNumber,

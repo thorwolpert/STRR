@@ -90,8 +90,8 @@ describe('Application Details Page', () => {
     expect(primaryContact.exists()).toBe(true)
     expect(primaryContact.findAllComponents(BcrosFormSectionReviewItem)).toHaveLength(11)
     expect(primaryContact.findTestId('contact-info-host-type').text()).toContain('Individual')
-    expect(primaryContact.findTestId('contact-info-email').text()).toContain(mockPrimaryContact.details.emailAddress)
-    expect(primaryContact.findTestId('contact-info-name').text()).toContain(mockPrimaryContact.name.firstName)
+    expect(primaryContact.findTestId('contact-info-email').text()).toContain(mockPrimaryContact.emailAddress)
+    expect(primaryContact.findTestId('contact-info-name').text()).toContain(mockPrimaryContact.firstName)
   })
 
   it('displays payment due banner when payment is due', async () => {
@@ -136,8 +136,8 @@ describe('Application Details Page', () => {
     expect(secondaryContact.findAllComponents(BcrosFormSectionReviewItem)).toHaveLength(11)
     expect(secondaryContact.findTestId('contact-info-host-type').text()).toContain('Individual')
     expect(secondaryContact.findTestId('contact-info-email').text())
-      .toContain(mockSecondaryContact.details.emailAddress)
+      .toContain(mockSecondaryContact.emailAddress)
     expect(secondaryContact.findTestId('contact-info-name').text())
-      .toContain(mockSecondaryContact.name.firstName)
+      .toContain(mockSecondaryContact.firstName)
   })
 })

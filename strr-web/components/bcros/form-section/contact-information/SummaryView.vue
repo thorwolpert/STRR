@@ -25,13 +25,13 @@ const displayHostType = {
       />
       <BcrosFormSectionReviewItem
         :title="t('common.formLabels.name')"
-        :content="displayContactFullName(contact.name)"
+        :content="displayContactFullName(contact)"
         data-test-id="contact-info-name"
       />
       <div class="grid grid-rows-subgrid row-span-2">
         <BcrosFormSectionReviewItem
           :title="t('common.formLabels.preferredName')"
-          :content="contact.details.preferredName || '-'"
+          :content="contact.preferredName || '-'"
           data-test-id="contact-info-preferred-name"
         />
       </div>
@@ -54,17 +54,17 @@ const displayHostType = {
       <BcrosFormSectionReviewItem
         :title="t('common.formLabels.phoneNumber')"
         :content="displayPhoneAndExt(
-          contact.details.phoneNumber,
-          contact.details.extension) || '-'"
+          contact.phoneNumber,
+          contact.extension) || '-'"
         data-test-id="contact-info-phone"
       />
       <BcrosFormSectionReviewItem
         :title="t('common.formLabels.faxNumber')"
-        :content="displayFormattedPhone(contact.details.faxNumber) || '-'"
+        :content="contact.faxNumber ? displayFormattedPhone(contact.faxNumber) : '-'"
       />
       <BcrosFormSectionReviewItem
         :title="t('common.formLabels.emailAddress')"
-        :content="contact.details.emailAddress || '-'"
+        :content="contact.emailAddress || '-'"
         data-test-id="contact-info-email"
       />
       <BcrosFormSectionReviewItem

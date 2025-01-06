@@ -78,13 +78,12 @@ export const mockApplicationDetails: HostApplicationDetailsI = {
     businessNumber: '',
     businessLegalName: '',
     dateOfBirth: '1955-07-11',
-    details: {
-      emailAddress: 'test1@email.com',
-      faxNumber: '',
-      phoneNumber: '5554443322',
-      preferredName: '',
-      extension: ''
-    },
+    emailAddress: 'test1@email.com',
+    faxNumber: '',
+    phoneNumber: '5554443322',
+    phoneCountryCode: '',
+    preferredName: '',
+    extension: '',
     mailingAddress: {
       address: '555 Main St',
       addressLineTwo: '',
@@ -93,11 +92,9 @@ export const mockApplicationDetails: HostApplicationDetailsI = {
       postalCode: 'V3V2V2',
       province: 'BC'
     },
-    name: {
-      firstName: 'BCREGTEST',
-      lastName: 'TWENTYFIVE',
-      middleName: ''
-    },
+    firstName: 'BCREGTEST',
+    lastName: 'TWENTYFIVE',
+    middleName: '',
     socialInsuranceNumber: '111 222 333'
   },
   principalResidence: {
@@ -173,18 +170,15 @@ export const mockApplicationApprovedWithSecondaryContact: ApplicationI = {
     ...mockApplicationDetails,
     secondaryContact: {
       contactType: HostContactTypeE.INDIVIDUAL,
-      details: {
-        emailAddress: 'secondary@email.com',
-        faxNumber: '',
-        phoneNumber: '2505551234',
-        preferredName: 'Jane Smith',
-        extension: ''
-      },
-      name: {
-        firstName: 'Jane',
-        lastName: 'Smith',
-        middleName: ''
-      },
+      emailAddress: 'secondary@email.com',
+      faxNumber: '',
+      phoneNumber: '2505551234',
+      phoneCountryCode: '',
+      preferredName: 'Jane Smith',
+      extension: '',
+      firstName: 'Jane',
+      lastName: 'Smith',
+      middleName: '',
       socialInsuranceNumber: '',
       businessNumber: '',
       businessLegalName: '',
@@ -212,7 +206,8 @@ export const mockApplicationApprovedWithDocuments: ApplicationI = {
       {
         fileKey: '809bf24f-a2b9-4740-af84-8297bc346f1d',
         fileName: 'Test_test',
-        fileType: 'application/octet-stream'
+        fileType: 'application/octet-stream',
+        documentType: ''
       }
     ]
   },
