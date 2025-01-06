@@ -78,34 +78,6 @@ export interface ContactI {
   }
 }
 
-// export interface ContactI {
-//   socialInsuranceNumber: string
-//   businessNumber: string
-//   businessLegalName: string
-//   contactType: HostContactTypeE
-//   dateOfBirth: string
-//   details: {
-//     emailAddress: string
-//     extension: string
-//     faxNumber: string
-//     phoneNumber: string
-//     preferredName: string
-//   }
-//   mailingAddress: {
-//     address: string
-//     addressLineTwo: string
-//     city: string
-//     country: string
-//     postalCode: string
-//     province: string
-//   }
-//   name: {
-//     firstName: string
-//     lastName: string
-//     middleName: string
-//   }
-// }
-
 export interface MeI {
   orgs: OrgI[]
   settings: UserSettingsI[]
