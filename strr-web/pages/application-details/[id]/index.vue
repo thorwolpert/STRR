@@ -187,34 +187,40 @@
         </div>
 
         <!-- Principal Residence -->
-        <div class="mt-10" data-test-id="principal-residence">
+        <div
+          v-if="applicationDetails.strRequirements"
+          class="mt-10"
+          data-test-id="principal-residence"
+        >
           <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('principalResidence') }}
           </h2>
-          <div class="bg-white p-8 mobile:px-5">
+          <div class="bg-white p-8 mobile:px-5 grid d:grid-cols-3 d:grid-rows-2 gap-y-8">
             <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
               <p data-test-id="principal-residence-proof">
-                {{
-                  applicationDetails.principalResidence.isPrincipalResidence
-                    ? tApplicationDetails('principalResidenceApplies')
-                    : tApplicationDetails('principalResidenceNotApplies')
-                }}
+                {{ tReview(`${applicationDetails.strRequirements.isPrincipalResidenceRequired}`) }}
               </p>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem
-              v-if="applicationDetails.principalResidence.nonPrincipalOption"
-              :title="tApplicationDetails('principalResidenceReason')"
-              class="mt-4"
+              title="Business Licence Required"
             >
-              <p>{{ applicationDetails.principalResidence.nonPrincipalOption }}</p>
+              <p>{{ tReview(`${applicationDetails.strRequirements.isBusinessLicenceRequired}`) }}</p>
             </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem
-              v-if="applicationDetails.principalResidence.specifiedServiceProvider &&
-                applicationDetails.principalResidence.specifiedServiceProvider !== 'n/a'"
-              :title="tApplicationDetails('principalResidenceServiceProvider')"
-              class="mt-4"
+              title="STR Prohibited"
             >
-              <p>{{ applicationDetails.principalResidence.specifiedServiceProvider }}</p>
+              <p>{{ tReview(`${applicationDetails.strRequirements.isStrProhibited}`) }}</p>
+            </BcrosFormSectionReviewItem>
+            <BcrosFormSectionReviewItem
+              title="STRAA Exempt"
+            >
+              <p>{{ tReview(`${applicationDetails.strRequirements.isStraaExempt}`) }}</p>
+            </BcrosFormSectionReviewItem>
+
+            <BcrosFormSectionReviewItem
+              title="Jurisdiction"
+            >
+              <p>{{ applicationDetails.strRequirements.organizationNm }}</p>
             </BcrosFormSectionReviewItem>
           </div>
         </div>

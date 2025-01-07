@@ -39,6 +39,14 @@ interface ListingDetailsI {
   url: string
 }
 
+interface StrRequirements {
+  isBusinessLicenceRequired: boolean | null
+  isPrincipalResidenceRequired: boolean | null
+  isStrProhibited: boolean | null
+  isStraaExempt: boolean | null
+  organizationNm: string | null
+}
+
 export interface HostApplicationDetailsI {
   registrationType: RegistrationTypeE,
   listingDetails: ListingDetailsI[]
@@ -47,6 +55,7 @@ export interface HostApplicationDetailsI {
   principalResidence: PrincipalResidenceI
   unitAddress: UnitAddressAPII
   propertyManager?: PropertyManagerI
+  strRequirements?: StrRequirements
   unitDetails: {
     parcelIdentifier?: string
     businessLicense?: string
