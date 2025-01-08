@@ -86,6 +86,7 @@ onMounted(async () => {
         />
         <ConnectChecklistBasic
           v-else
+          data-testid="potential-docs-checklist"
           :title="$t('text.followingDocsMayBeRequired')"
           :items="docStore.potentialRequiredDocs"
         />
@@ -146,6 +147,7 @@ onMounted(async () => {
 
       <UAlert
         v-else
+        data-testid="alert-no-docs-required"
         color="yellow"
         :title="$t('text.noDocsReq')"
         icon="i-mdi-check-circle"
