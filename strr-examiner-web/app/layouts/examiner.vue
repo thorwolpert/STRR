@@ -14,12 +14,10 @@ const { getNextApplication } = useExaminerStore()
 const items = [{
   key: 'dashboard',
   label: 'Dashboard',
-  icon: 'i-mdi-list-box-outline',
   path: RoutesE.DASHBOARD
 }, {
   key: 'examine',
   label: 'Examine',
-  icon: 'i-mdi-file-search-outline',
   path: RoutesE.EXAMINE
 }]
 
@@ -42,9 +40,7 @@ async function onChange (index: number) {
 </script>
 <template>
   <div>
-    <ConnectHeaderWrapper
-      class="py-0"
-    >
+    <ConnectHeaderWrapper>
       <div class="flex items-center justify-between">
         <ConnectHeaderLogoHomeLink />
         <UTabs
@@ -53,15 +49,13 @@ async function onChange (index: number) {
           :ui="{
             wrapper: 'relative h-full space-y-0',
             list: {
-              padding: 'p-0',
-              height: 'h-16',
-              rounded: 'rounded-none',
+              background: '',
               marker: {
-                rounded: 'rounded-none'
+                background: ''
               },
               tab: {
-                rounded: 'rounded-none',
-                height: 'h-full'
+                background: 'bg-transparent',
+                active: 'text-white font-bold bg-transparent underline underline-offset-4',
               }
             }
           }"
@@ -81,7 +75,14 @@ async function onChange (index: number) {
     <ConnectSystemBanner />
 
     <main class="app-inner-container app-body">
-      <slot />
+      <NuxtErrorBoundary>
+        <slot />
+        <template #error="{ error }">
+          <p class="py-10">
+            {{ error }}
+          </p>
+        </template>
+      </NuxtErrorBoundary>
     </main>
     <ConnectFooter />
   </div>

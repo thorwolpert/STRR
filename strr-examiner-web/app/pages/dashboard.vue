@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { RoutesE } from '~/enums/routes'
+import type { HostApplicationResp } from '~/interfaces/host-i'
+import type { ApiBasePlatformApplication, PlatformApplicationResp } from '~/interfaces/platform-i'
+import type { StrataApplicationResp } from '~/interfaces/strata-i'
 import { useExaminerStore } from '~/store/examiner'
 import { displayFullUnitAddress } from '~/utils/format-helper'
 const localePath = useLocalePath()
@@ -69,12 +72,12 @@ onMounted(async () => {
         applicantName = displayContactFullName(hostApplication.primaryContact) || ''
         propertyAddress = displayFullUnitAddress(hostApplication.unitAddress) || '-'
       } else if (registrationType === ApplicationType.PLATFORM) {
-        const platformApplication = application.registration
+        const platformApplication = application.registration as ApiBasePlatformApplication
         applicationType = PLATFORM_TYPE
         applicantName = platformApplication.businessDetails.legalName
         propertyAddress = displayFullAddress(platformApplication.businessDetails.mailingAddress) || '-'
       } else if (registrationType === ApplicationType.STRATA_HOTEL) {
-        const strataApplication = application.registration
+        const strataApplication = application.registration as ApiBaseStrataApplication
         applicationType = STRATA_HOTEL_TYPE
         const { firstName, middleName, lastName } = strataApplication.completingParty
         applicantName = displayContactFullName({ firstName, middleName, lastName }) || '-'
