@@ -519,7 +519,7 @@ export default {
       unknown: {
         title: 'Unknown Error - Short-Term Rental Registry',
         h1: 'Unknown Error',
-        content: 'An unknown error occured, please refresh the page or try again later.'
+        content: 'An unknown error occurred, please refresh the page or try again later.'
       }
     }
   },
