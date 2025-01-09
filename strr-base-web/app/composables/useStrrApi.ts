@@ -36,11 +36,21 @@ export const useStrrApi = () => {
     return resp.applications
   }
 
-  const postApplication = async <T extends { registration: any }, R extends T>(body: T) => {
-    return await $strrApi<R>('/applications', {
-      method: 'POST',
+  const postApplication = async <T extends { registration: any }, R extends T>(
+    body: T,
+    isDraft = false,
+    applicationId?: string
+  ) => {
+    const path = applicationId ? `/applications/${applicationId}` : '/applications'
+    return await $strrApi<R>(path, {
+      method: applicationId ? 'PUT' : 'POST',
+      headers: (isDraft ? { isDraft: true } : {}) as HeadersInit,
       body
     })
+  }
+
+  const deleteApplication = async (applicationId: string) => {
+    return await $strrApi(`/applications/${applicationId}`, { method: 'DELETE' })
   }
 
   const getApplicationReceipt = async (applicationNumber: string) => {
@@ -65,6 +75,7 @@ export const useStrrApi = () => {
   }
 
   return {
+    deleteApplication,
     getAccountRegistrations,
     getAccountApplications,
     getApplicationReceipt,

@@ -2,9 +2,12 @@
 import { ConnectStepper, FormReview } from '#components'
 
 const { t } = useI18n()
+const route = useRoute()
 const localePath = useLocalePath()
 const strrModal = useStrrModals()
 const { handlePaymentRedirect } = useConnectNav()
+const { setButtonControl, handleButtonLoading } = useButtonControl()
+const ldStore = useConnectLaunchdarklyStore()
 
 const propertyStore = useHostPropertyStore()
 const { unitDetails, propertyTypeFeeTriggers } = storeToRefs(propertyStore)
@@ -16,6 +19,10 @@ const {
   validateUserConfirmation,
   $reset: applicationReset
 } = useHostApplicationStore()
+const permitStore = useHostPermitStore()
+
+const applicationId = route.query.applicationId as string
+const loading = ref(false)
 
 // fee stuff
 const {
@@ -33,8 +40,11 @@ const hostFee2 = ref<ConnectFeeItem | undefined>(undefined)
 const hostFee3 = ref<ConnectFeeItem | undefined>(undefined)
 
 onMounted(async () => {
-  // TODO: check for application id in the route query, if there then load the application
+  loading.value = true
   applicationReset()
+  if (applicationId) {
+    await permitStore.loadHostData(applicationId, true)
+  }
   const [fee1, fee2] = await Promise.all([
     getFee(StrrFeeEntityType.STRR, StrrFeeCode.STR_HOST_1),
     getFee(StrrFeeEntityType.STRR, StrrFeeCode.STR_HOST_2)
@@ -46,6 +56,7 @@ onMounted(async () => {
   if (hostFee1.value) {
     setPlaceholderServiceFee(hostFee1.value.serviceFees)
   }
+  loading.value = false
 })
 
 const setFeeBasedOnProperty = () => {
@@ -125,31 +136,31 @@ const activeStep = ref<Step>(steps.value[activeStepIndex.value] as Step)
 const stepperRef = shallowRef<InstanceType<typeof ConnectStepper> | null>(null)
 const reviewFormRef = shallowRef<InstanceType<typeof FormReview> | null>(null)
 
+const saveApplication = async (resumeLater = false) => {
+  handleButtonLoading(false, 'left', resumeLater ? 1 : 2)
+  // prevent flicker of buttons by waiting half a second
+  try {
+    await Promise.all([
+      new Promise(resolve => setTimeout(resolve, 500)),
+      submitApplication(true, applicationId)
+    ])
+    if (resumeLater) {
+      await navigateTo(localePath('/dashboard'))
+    }
+  } catch (e) {
+    logFetchError(e, 'Error saving host application')
+    strrModal.openAppSubmitError(e)
+  } finally {
+    handleButtonLoading(true)
+  }
+}
+
 // need to cleanup the setButtonControl somehow
 const handleSubmit = async () => {
   let formErrors: MultiFormValidationResult = []
   try {
-    // TODO: move button management into composable ?
     // set buttons to loading state
-    setButtonControl({
-      leftButtons: [],
-      rightButtons: [
-        {
-          action: () => undefined, // is disabled
-          icon: 'i-mdi-chevron-left',
-          label: t('btn.back'),
-          variant: 'outline',
-          disabled: true
-        },
-        {
-          action: () => undefined, // is disabled
-          icon: 'i-mdi-chevron-right',
-          label: t('btn.submitAndPay'),
-          trailing: true,
-          loading: true
-        }
-      ]
-    })
+    handleButtonLoading(false, 'right', 1)
 
     activeStep.value.complete = true // set final review step as active before validation
     reviewFormRef.value?.validateConfirmation() // validate confirmation checkboxes on submit
@@ -195,23 +206,7 @@ const handleSubmit = async () => {
     strrModal.openAppSubmitError(e)
   } finally {
     // set buttons back to non loading state
-    setButtonControl({
-      leftButtons: [],
-      rightButtons: [
-        {
-          action: () => stepperRef.value?.setPreviousStep(),
-          icon: 'i-mdi-chevron-left',
-          label: t('btn.back'),
-          variant: 'outline'
-        },
-        {
-          action: handleSubmit,
-          icon: 'i-mdi-chevron-right',
-          label: t('btn.submitAndPay'),
-          trailing: true
-        }
-      ]
-    })
+    handleButtonLoading(true)
   }
 }
 
@@ -234,7 +229,16 @@ watch(activeStepIndex, (val) => {
     trailing: true
   })
 
-  setButtonControl({ leftButtons: [], rightButtons: buttons })
+  setButtonControl({
+    leftButtons: ldStore.getStoredFlag('enable-save-draft')
+      ? [
+          { action: () => navigateTo(localePath('/dashboard')), label: t('btn.cancel'), variant: 'outline' },
+          { action: () => saveApplication(true), label: t('btn.saveExit'), variant: 'outline' },
+          { action: saveApplication, label: t('btn.save'), variant: 'outline' }
+        ]
+      : [],
+    rightButtons: buttons
+  })
 }, { immediate: true })
 
 // remove unnecessary docs when/if exemption options change
@@ -292,7 +296,8 @@ setBreadcrumbs([
 ])
 </script>
 <template>
-  <div class="space-y-8 py-8 sm:py-10">
+  <ConnectSpinner v-if="loading" overlay />
+  <div v-else class="space-y-8 py-8 sm:py-10">
     <ConnectTypographyH1 :text="t('strr.title.application')" class="my-5" />
     <ModalGroupHelpAndInfo />
     <ConnectStepper

@@ -36,6 +36,7 @@ export default {
     decline: 'Decline',
     close: 'Close',
     openHelpDocs: 'Read the Overview',
+    deleteApplication: 'Delete Application',
     downloadCertificate: 'Download Certificate',
     downloadReceipt: 'Download Receipt',
     downloadReport: 'Download Report',
@@ -60,6 +61,7 @@ export default {
     save: 'Save',
     saveExit: 'Save and Resume Later',
     beginApplication: 'Begin Application',
+    resume: 'Resume',
     resumeApplication: 'Resume Application',
     acceptTos: {
       main: 'Accept Terms of Use',

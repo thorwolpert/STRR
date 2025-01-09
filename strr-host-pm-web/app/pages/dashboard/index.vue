@@ -4,6 +4,7 @@ const localePath = useLocalePath()
 const accountStore = useConnectAccountStore()
 const hostPermitStore = useHostPermitStore()
 const strrModal = useStrrModals()
+const { deleteApplication } = useStrrApi()
 
 const columns = [
   {
@@ -63,7 +64,7 @@ setBreadcrumbs([
 ])
 
 // can use watch param to handle pagination in future
-const { data: hostPmList, status } = await useAsyncData(
+const { data: hostPmList, status, refresh } = await useAsyncData(
   'host-pm-list',
   () => hostPermitStore.loadHostPmList(),
   {
@@ -72,8 +73,35 @@ const { data: hostPmList, status } = await useAsyncData(
   }
 )
 
+function isDraft (status: string) {
+  return status === 'Draft'
+}
+
+const deleting = ref(false)
+async function deleteDraft (row: any) {
+  try {
+    deleting.value = true
+    row.class = 'bg-red-50 animate-pulse'
+    row.disabled = true
+    await Promise.all([
+      new Promise(resolve => setTimeout(resolve, 500)),
+      await deleteApplication(row.applicationNumber)
+    ])
+  } catch (e) {
+    logFetchError(e, `Error deleting application ${row.applicationNumber}`)
+    strrModal.openAppSubmitError(e)
+  } finally {
+    refresh()
+    deleting.value = false
+  }
+}
+
 async function handleItemSelect (row: any) {
-  await navigateTo(localePath('/dashboard/' + row.applicationNumber))
+  if (isDraft(row.status)) {
+    await navigateTo(localePath('/application?applicationId=' + row.applicationNumber))
+  } else {
+    await navigateTo(localePath('/dashboard/' + row.applicationNumber))
+  }
 }
 </script>
 <template>
@@ -134,7 +162,7 @@ async function handleItemSelect (row: any) {
           ref="tableRef"
           :columns="selectedColumns"
           :rows="hostPmList"
-          :loading="status === 'pending'"
+          :loading="status === 'pending' || deleting"
           :empty-state="{ icon: '', label: $t('table.hostPmList.emptyText') }"
           :sort="{ column: 'date', direction: 'desc' }"
           :ui="{
@@ -176,19 +204,42 @@ async function handleItemSelect (row: any) {
           </template>
 
           <template #actions-data="{ row }">
-            <UButton
-              :label="$t('btn.view')"
-              :aria-label="
-                $t('btn.ariaViewDetails', {
-                  name: row.name,
-                  address: `${row.address.unitNumber
-                    ? row.address.unitNumber + '-'
-                    : ''}${row.address.streetNumber} ${row.address.streetName}, ${row.address.city}`
-                })
-              "
-              :block="true"
-              @click="handleItemSelect(row)"
-            />
+            <div class="flex flex-col gap-px lg:flex-row">
+              <UButton
+                :class="isDraft(row.status) ? 'justify-center grow lg:rounded-r-none' : ''"
+                :label="isDraft(row.status) ? $t('label.resumeDraft') : $t('btn.view')"
+                :aria-label="isDraft(row.status)
+                  ? $t('btn.ariaResumeDraft', { number: row.applicationNumber })
+                  : $t('btn.ariaViewDetails', {
+                    name: row.name,
+                    address: `${row.address.unitNumber
+                      ? row.address.unitNumber + '-'
+                      : ''}${row.address.streetNumber} ${row.address.streetName}, ${row.address.city}`
+                  })
+                "
+                :block="!isDraft(row.status)"
+                :disabled="row.disabled"
+                @click="handleItemSelect(row)"
+              />
+              <UPopover v-if="isDraft(row.status)" :popper="{ placement: 'bottom-end' }">
+                <UButton
+                  class="grow justify-center lg:flex-none lg:rounded-l-none"
+                  icon="i-mdi-menu-down"
+                  :aria-label="$t('text.showMoreOptions')"
+                  :disabled="row.disabled"
+                />
+                <template #panel>
+                  <!-- TODO: not focusable via keyboard tab, should be fixed in nuxt/ui v3 -->
+                  <UButton
+                    class="m-2"
+                    :label="$t('btn.deleteApplication')"
+                    :aria-label="$t('btn.deleteApplication')"
+                    variant="link"
+                    @click="deleteDraft(row)"
+                  />
+                </template>
+              </UPopover>
+            </div>
           </template>
         </UTable>
       </ConnectPageSection>
