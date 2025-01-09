@@ -12,6 +12,14 @@ export default defineAppConfig({
           idirSubtext: undefined
         }
       }
+    },
+    feeWidget: {
+      itemLabelTooltip: {
+        test: {
+          i18nkey: '',
+          hrefRtcKey: ''
+        }
+      }
     }
   },
   ui: {
