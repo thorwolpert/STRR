@@ -129,7 +129,9 @@ export default {
       recreational: 'Recreational',
       secondarySuite: 'Secondary Suite',
       singleFamily: 'Single Family Home',
+      host: 'Host',
       strataHotel: 'Strata Hotel',
+      platform: 'Platform',
       townHome: 'Town Home',
       rentalUnit: 'Rental Unit',
       rentalUnitSetup: 'Rental Unit Set-up',
@@ -186,7 +188,9 @@ export default {
     edit: 'Edit',
     done: 'Done',
     showDetails: 'Show Details',
-    hideDetails: 'Hide Details'
+    hideDetails: 'Hide Details',
+    decline: 'Decline',
+    approve: 'Approve'
   },
   error: {
     createAccount: {
@@ -313,8 +317,12 @@ export default {
     FLOAT_HOME: 'Float Home'
   },
   rentalUnitType: {
-    ENTIRE_HOME: 'Entire home (guests have the entire place to themselves)',
+    ENTIRE_HOME: 'Entire home',
     SHARED_ACCOMMODATION: 'Shared accommodation (guests rent a portion of the unit with access to common spaces that may be shared with the host or other guests)'
+  },
+  hostResidence: {
+    SAME_UNIT: 'Same property as host’s principal residence',
+    ANOTHER_UNIT: 'Not same property as host’s principal residence'
   },
   rentalUnitSetupType: {
     WHOLE_PRINCIPAL_RESIDENCE: "This unit is the host's principal residence", // The whole Host Principal Residence
@@ -329,5 +337,24 @@ export default {
   },
   tooltip: {
     pid: 'You can find your Parcel Identifier (PID) on your Property Assessment Notice from BC Assessment. Alternatively, visit the BC Assessment website, search for your civic address, and look for the PID under ‘Legal Description and Parcel ID’.'
+  },
+  documentLabels: {
+    BC_DRIVERS_LICENSE: "BC Driver's Licence",
+    BCSC: 'BC Services Card',
+    COMBINED_BCSC_LICENSE: 'Combined BCSC License',
+    PROPERTY_ASSESSMENT_NOTICE: 'Property Assessment Notice',
+    SPEC_TAX_CONFIRMATION: 'Special Tax Confirmation',
+    HOG_DECLARATION: 'HOG Declaration',
+    ICBC_CERTIFICATE_OF_INSURANCE: 'ICBC Certificate of Insurance',
+    HOME_INSURANCE_SUMMARY: 'Home Insurance Summary',
+    PROPERTY_TAX_NOTICE: 'Property Tax Notice',
+    UTILITY_BILL: 'Utility Bill',
+    GOVT_OR_CROWN_CORP_OFFICIAL_NOTICE: 'Government or Crown Corporation Official Notice',
+    FRACTIONAL_OWNERSHIP_AGREEMENT: 'Fractional Ownership Agreement',
+    STRATA_HOTEL_DOCUMENTATION: 'Strata Hotel Documentation',
+    TENANCY_AGREEMENT: 'Tenancy Agreement',
+    RENT_RECEIPT_OR_BANK_STATEMENT: 'Rent Receipt or Bank Statement',
+    LOCAL_GOVT_BUSINESS_LICENSE: 'Local Government Business License',
+    OTHERS: 'Others'
   }
 }

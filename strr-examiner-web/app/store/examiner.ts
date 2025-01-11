@@ -32,11 +32,26 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     })
   }
 
+  /**
+   * Get/Download Supporting Document file for the Application.
+   *
+   * @param {string} applicationNumber - The application number to which the document belongs.
+   * @param {string} fileKey - The key of the document to be retrieved.
+   * @returns The file/document
+   */
+  const getDocument = async (applicationNumber: string, fileKey: string): Promise<Blob> => {
+    return await $strrApi(`/applications/${applicationNumber}/documents/${fileKey}`, {
+      method: 'GET',
+      responseType: 'blob'
+    })
+  }
+
   return {
     getAllApplications,
     getApplication,
     approveApplication,
     rejectApplication,
-    getNextApplication
+    getNextApplication,
+    getDocument
   }
 })

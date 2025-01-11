@@ -55,16 +55,19 @@ export function dateToStringPacific (date: Date | string, format = 'y-MM-dd') {
 
 /**
  * Calculates the number of full days remaining until a given end date.
+ * If isElapsed is true, it calculates the number of full days since the end date.
  *
  * @param end - The ISO datestring for the end value.
  * @returns The number of full days remaining until the end date.
  */
-export function dayCountdown (end: string): number {
+export function dayCountdown (end: string, isElapsed: boolean = false): number {
   const startDate = DateTime.utc() // get current utc date
   const endDate = DateTime.fromISO(end, { setZone: true }).toUTC() // get given end date and convert to utc
 
   // get difference in days https://moment.github.io/luxon/#/math?id=diffs
-  const diff = endDate.diff(startDate, 'days').toObject().days
+  const diff = isElapsed
+    ? startDate.diff(endDate, 'days').toObject().days ?? 0
+    : endDate.diff(startDate, 'days').toObject().days
 
   // round difference down
   return Math.floor(diff)
