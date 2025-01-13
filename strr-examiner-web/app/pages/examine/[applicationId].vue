@@ -75,7 +75,11 @@ const registration = computed(
   <div v-if="loading" class="w-full justify-center p-14">
     Loading...
   </div>
-  <div v-else-if="application" class="py-5">
+  <div v-else-if="application" class="pb-5">
+    <ApplicationInfoHeader
+      class="mb-4"
+      :application="application"
+    />
     <HostDetailsView
       v-if="registration?.registrationType === ApplicationType.HOST"
       :application="application"

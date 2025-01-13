@@ -7,18 +7,6 @@ const { header, registration } = props.application
 
 <template>
   <div>
-    <div class="mb-2 align-middle text-lg">
-      <strong>
-        {{ header?.applicationNumber }}
-      </strong>
-      <UButton
-        label="View History"
-        variant="link"
-        size="sm"
-        class="mx-2 underline"
-      />
-    </div>
-
     <div
       class="flex flex-row gap-x-5 divide-x text-sm"
     >
@@ -69,7 +57,6 @@ const { header, registration } = props.application
     <div class="mt-6 divide-y">
       <ApplicationDetailsSection
         label="Business Details"
-        hide-checklist
       >
         <div class="flex items-center justify-between">
           <div class="flex">
