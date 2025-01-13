@@ -23,7 +23,7 @@ const openDocInNewTab = async (supportingDocument: ApiDocument) => {
   URL.revokeObjectURL(url)
 }
 
-const businessLicence = registration.documents
+const businessLicenceDoc = registration.documents
   .find(doc => doc.documentType === DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE)
 
 // Principal Residence Requirements:
@@ -102,9 +102,7 @@ const getOwnershipType = (): string =>
       </div>
 
       <div class="space-y-2 pl-5">
-        <div
-          v-if="registration?.secondaryContact"
-        >
+        <div v-if="registration?.secondaryContact">
           <UIcon name="i-mdi-account-multiple-outline" />
           {{ registration?.secondaryContact?.contactType === OwnerType.INDIVIDUAL
             ? displayContactFullName(registration?.secondaryContact) :
@@ -121,10 +119,7 @@ const getOwnershipType = (): string =>
     </div>
 
     <div class="mt-6 divide-y">
-      <ApplicationDetailsSection
-        v-if="strRequirements?.isStrProhibited"
-        :label="t('strr.label.strProhibited')"
-      >
+      <ApplicationDetailsSection v-if="strRequirements?.isStrProhibited" :label="t('strr.label.strProhibited')">
         {{ t('strr.label.strProhibitedAction') }}
       </ApplicationDetailsSection>
 
@@ -132,30 +127,34 @@ const getOwnershipType = (): string =>
         v-if="strRequirements?.isBusinessLicenceRequired"
         :label="t('strr.label.businessLicence')"
       >
-        <UButton
-          v-if="businessLicence"
-          class="mr-4 gap-x-1 p-0"
-          variant="link"
-          icon="mdi-file-document-outline"
-          @click="openDocInNewTab(businessLicence)"
-        >
-          {{ t(`documentLabels.${DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE}`) }}
-        </UButton>
+        <div class="flex gap-x-8">
+          <UButton
+            v-if="businessLicenceDoc"
+            class="mr-4 gap-x-1 p-0"
+            variant="link"
+            icon="mdi-file-document-outline"
+            @click="openDocInNewTab(businessLicenceDoc)"
+          >
+            {{ t(`documentLabels.${DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE}`) }}
+          </UButton>
+          <span v-if="unitDetails.businessLicense">
+            {{ t('strr.label.businessLicenceNumber') }} {{ unitDetails.businessLicense }}
+          </span>
+          <span v-if="unitDetails.businessLicenseExpiryDate">
+            {{ t('strr.label.businessLicenceExpiryDate') }}
+            {{ dateToString(unitDetails.businessLicenseExpiryDate, 'MMM dd, yyyy') }}
+          </span>
+        </div>
       </ApplicationDetailsSection>
 
-      <ApplicationDetailsSection
-        :label="t('strr.label.prRequirement')"
-      >
+      <ApplicationDetailsSection :label="t('strr.label.prRequirement')">
         <div v-if="!isEmpty(strRequirements)">
           {{ getPrRequired() }}
           {{ getPrExemptReason() }}
           {{ getOwnershipType() }}
         </div>
 
-        <div
-          v-if="!isEmpty(registration.documents)"
-          class="mt-2"
-        >
+        <div v-if="!isEmpty(registration.documents)" class="mt-2">
           <UButton
             v-for="document in
               registration.documents.filter(doc => doc.documentType !== DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE)"

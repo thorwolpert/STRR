@@ -150,7 +150,9 @@ export default {
       ownerRenter: 'Owner / Renter:',
       strProhibited: 'Short-term rentals prohibited',
       strProhibitedAction: 'Review Policy',
-      businessLicence: 'Business Licence'
+      businessLicence: 'Business Licence',
+      businessLicenceNumber: 'Number:',
+      businessLicenceExpiryDate: 'Expiry:'
     },
     text: {
       applicationMustInclude: 'Your application must include the following:',
@@ -367,7 +369,7 @@ export default {
     TENANCY_AGREEMENT: 'Tenancy Agreement',
     RENT_RECEIPT_OR_BANK_STATEMENT: 'Rent Receipt or Bank Statement',
     LOCAL_GOVT_BUSINESS_LICENSE: 'Business License',
-    OTHERS: 'Others'
+    OTHERS: 'Other'
   },
   pr: {
     required: 'Required.',
