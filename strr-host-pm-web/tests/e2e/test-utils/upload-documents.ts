@@ -10,7 +10,7 @@ export async function uploadDocuments (
 
   for (const { option, filename } of files) {
     const fileChooserPromise = page.waitForEvent('filechooser')
-    await section.getByLabel('Choose Supporting Documents').click()
+    await section.getByLabel('Choose type of supporting document to upload').click()
     await section.getByRole('option', { name: option }).click()
 
     const fileChooser = await fileChooserPromise
@@ -18,9 +18,10 @@ export async function uploadDocuments (
 
     // wait for upload to be complete
     await page.waitForResponse(res =>
-      res.url().includes('/documents') && res.status() === 201
+      res.url().includes('/documents') && res.status() === 201,
+    { timeout: 10000 }
     )
 
-    await expect(section.getByTestId('document-upload-list')).toContainText(option)
+    await expect(section.getByTestId('document-upload-list')).toContainText(option, { timeout: 10000 })
   }
 }
