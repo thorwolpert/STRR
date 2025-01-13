@@ -20,6 +20,10 @@ export default defineAppConfig({
           hrefRtcKey: ''
         }
       }
+    },
+    sbcWebMsg: {
+      enable: false,
+      allowedRoutes: undefined
     }
   },
   ui: {
