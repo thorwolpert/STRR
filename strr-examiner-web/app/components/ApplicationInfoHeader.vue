@@ -11,6 +11,19 @@ const displayApplicationType = {
   [ApplicationType.STRATA_HOTEL]: t('strr.label.strataHotel')
 }
 
+const getBadgeColor = (status: ApplicationStatus): string => {
+  switch (status) {
+    case ApplicationStatus.DECLINED:
+      return 'red'
+    case ApplicationStatus.AUTO_APPROVED:
+    case ApplicationStatus.FULL_REVIEW_APPROVED:
+    case ApplicationStatus.PROVISIONALLY_APPROVED:
+      return 'green'
+    default:
+      return 'primary'
+  }
+}
+
 </script>
 
 <template>
@@ -19,10 +32,10 @@ const displayApplicationType = {
       <strong>
         {{ header?.applicationNumber }} |
       </strong>
-      {{ registration.unitAddress.nickname }}
+      {{ registration.unitAddress?.nickname }}
     </div>
     <div class="text-sm">
-      <UBadge class="mr-3 font-bold" :label="header.examinerStatus" color="primary" />
+      <UBadge class="mr-3 font-bold" :label="header.examinerStatus" :color="getBadgeColor(header.status)" />
       <strong>Type:</strong>
       {{ displayApplicationType[registration?.registrationType as keyof typeof displayApplicationType] }} |
       <strong>Submitted:</strong> {{ dateToString(header.applicationDateTime, 'y-MM-dd t') }}

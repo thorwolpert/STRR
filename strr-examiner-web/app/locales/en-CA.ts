@@ -138,11 +138,19 @@ export default {
       rentalUnitName: 'Rental Unit Name',
       rentalUnitNameOpt: 'Rental Unit Name (Optional)',
       parcelId: 'Parcel Identifier (PID)',
-      prRequirement: 'Principal Residence Requirement',
+      pid: 'PID:',
+      registeredRentals: 'Registered Rentals:',
+      prRegisteredRentals: 'PR Registered Rentals:',
+      prRequirement: 'Principal Residence',
       theRentalUnitIs: 'The rental unit is:',
       supportingInfo: 'Supporting Information',
       other: 'Other',
-      remove: 'Remove'
+      remove: 'Remove',
+      hostType: 'Host Type:',
+      ownerRenter: 'Owner / Renter:',
+      strProhibited: 'Short-term rentals prohibited',
+      strProhibitedAction: 'Review Policy',
+      businessLicence: 'Business Licence'
     },
     text: {
       applicationMustInclude: 'Your application must include the following:',
@@ -329,6 +337,10 @@ export default {
     UNIT_ON_PR_PROPERTY: 'This unit is not the host’s principal residence but it’s on the same property', // A whole unit on the same property as the Host Principal Residence (e.g., basement suite)
     UNIT_NOT_ON_PR_PROPERTY: 'This unit is not on the same property as the host’s principal residence'
   },
+  ownerType: {
+    INDIVIDUAL: 'individual',
+    BUSINESS: 'Business'
+  },
   ownershipType: {
     RENT: 'Renter',
     OWN: 'Owner',
@@ -354,7 +366,17 @@ export default {
     STRATA_HOTEL_DOCUMENTATION: 'Strata Hotel Documentation',
     TENANCY_AGREEMENT: 'Tenancy Agreement',
     RENT_RECEIPT_OR_BANK_STATEMENT: 'Rent Receipt or Bank Statement',
-    LOCAL_GOVT_BUSINESS_LICENSE: 'Local Government Business License',
+    LOCAL_GOVT_BUSINESS_LICENSE: 'Business License',
     OTHERS: 'Others'
+  },
+  pr: {
+    required: 'Required.',
+    notRequired: 'Not Required.'
+  },
+  prExemptReason: {
+    notExempt: 'Not Exempt.',
+    STRATA_HOTEL: 'PR Exempt - Strata Hotel.',
+    FARM_LAND: 'PR Exempt - Class 9 Farmland.',
+    FRACTIONAL_OWNERSHIP: 'PR Exempt - Fractional Ownership.'
   }
 }
