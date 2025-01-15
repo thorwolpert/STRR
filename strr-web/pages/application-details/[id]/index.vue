@@ -222,6 +222,13 @@
             >
               <p>{{ applicationDetails.strRequirements.organizationNm }}</p>
             </BcrosFormSectionReviewItem>
+
+            <BcrosFormSectionReviewItem
+              v-if="applicationDetails.unitDetails.prExemptReason"
+              title="Exemption Reason"
+            >
+              <p>{{ tReview(`prExemptReason.${applicationDetails.unitDetails.prExemptReason}`) }}</p>
+            </BcrosFormSectionReviewItem>
           </div>
         </div>
 
