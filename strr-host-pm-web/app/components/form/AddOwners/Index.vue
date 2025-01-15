@@ -107,6 +107,11 @@ const checklistItems = computed<ConnectValidatedChecklistItem[]>(() => [
         @cancel="addingNewType = undefined, activeOwner = undefined"
         @done="contactStore.addHostOwner($event), addingNewType = undefined, activeOwner = undefined"
       />
+      <SummaryOwners
+        v-else-if="!hostOwners.length"
+        :editable="false"
+        :disable-actions="true"
+      />
     </ConnectTransitionFade>
     <SummaryOwners v-if="hostOwners.length" editable :disable-actions="addingNewType !== undefined" />
   </div>
