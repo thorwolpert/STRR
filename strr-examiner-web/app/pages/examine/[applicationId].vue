@@ -99,7 +99,6 @@ watch(application, () => {
   </div>
   <div v-else-if="application" class="pb-5">
     <ApplicationInfoHeader
-      class="mb-4"
       :application="application"
     />
     <HostDetailsView
