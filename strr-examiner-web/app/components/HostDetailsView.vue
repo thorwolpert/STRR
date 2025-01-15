@@ -180,18 +180,18 @@ const displayDetailsItem = (item: HostDetailsDisplayItem) => {
           </div>
         </ApplicationDetailsSection>
 
-        <<<<<<< HEAD
         <ApplicationDetailsSection :label="t('strr.label.prRequirement')">
           <div v-if="!isEmpty(strRequirements)">
             {{ getPrRequired() }}
             {{ getPrExemptReason() }}
             {{ getOwnershipType() }}
           </div>
-          =======
-          <div v-if="!isEmpty(registration.documents)" :class="{'mt-2': !isEmpty(strRequirements) }">
+
+          <div v-if="!isEmpty(registration.documents)" class="mt-2">
             <UButton
-              v-for="document in
-                registration.documents.filter(doc => doc.documentType !== DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE)"
+              v-for="document in registration.documents.filter(
+                doc => doc.documentType !== DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE
+              )"
               :key="document.fileKey"
               class="mr-4 gap-x-1 p-0"
               variant="link"
@@ -201,23 +201,6 @@ const displayDetailsItem = (item: HostDetailsDisplayItem) => {
               {{ t(`documentLabels.${document.documentType}`) }}
             </UButton>
           </div>
-        </ApplicationDetailsSection>
-        >>>>>>> fcca8ae3 (Update Examiner table. Add PR Req.)
-
-        <div v-if="!isEmpty(registration.documents)" class="mt-2">
-          <UButton
-            v-for="document in registration.documents.filter(
-              doc => doc.documentType !== DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE
-            )"
-            :key="document.fileKey"
-            class="mr-4 gap-x-1 p-0"
-            variant="link"
-            icon="mdi-file-document-outline"
-            @click="openDocInNewTab(document)"
-          >
-            {{ t(`documentLabels.${document.documentType}`) }}
-          </UButton>
-        </div>
         </ApplicationDetailsSection>
       </div>
     </ConnectPageSection>

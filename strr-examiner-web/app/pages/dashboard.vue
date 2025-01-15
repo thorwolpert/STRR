@@ -182,7 +182,7 @@ async function handleRowSelect (row: any) {
       :rows="applications"
       :loading="status === 'pending'"
       :ui="{
-        wrapper: 'relative overflow-x-auto h-[512px]',
+        wrapper: 'relative overflow-x-auto h-[512px] bg-white',
         thead: 'sticky top-0 bg-white z-10',
         th: { padding: 'px-2 py-4' },
         td: {
