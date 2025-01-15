@@ -35,12 +35,12 @@ const getPrRequired = (): string =>
     : t('pr.notRequired')
 
 const getPrExemptReason = (): string =>
-  registration.unitDetails.prExemptReason
-    ? t(`prExemptReason.${registration.unitDetails.prExemptReason}`)
+  unitDetails.prExemptReason
+    ? t(`prExemptReason.${unitDetails.prExemptReason}`)
     : t('prExemptReason.notExempt')
 
 const getOwnershipType = (): string =>
-  registration?.unitDetails.ownershipType === OwnershipType.RENT ? `${t('ownershipType.RENT')}.` : ''
+  unitDetails.ownershipType === OwnershipType.RENT ? `${t('ownershipType.RENT')}.` : ''
 
 const showExpansion = ref<boolean>(false)
 const displayItem = ref<HostDetailsDisplayItem>(undefined)
@@ -51,7 +51,7 @@ const displayDetailsItem = (item: HostDetailsDisplayItem) => {
 </script>
 <template>
   <div>
-    <div class="grid grid-cols-4 gap-x-5 divide-x text-sm text-bcGovColor-midGray">
+    <div class="text-bcGovColor-midGray grid grid-cols-4 gap-x-5 divide-x text-sm">
       <div class="space-y-2">
         <strong>{{ t('strr.label.rentalUnit').toUpperCase() }}</strong>
         <div class="w-[150px]">
@@ -180,18 +180,18 @@ const displayDetailsItem = (item: HostDetailsDisplayItem) => {
           </div>
         </ApplicationDetailsSection>
 
+        <<<<<<< HEAD
         <ApplicationDetailsSection :label="t('strr.label.prRequirement')">
           <div v-if="!isEmpty(strRequirements)">
             {{ getPrRequired() }}
             {{ getPrExemptReason() }}
             {{ getOwnershipType() }}
           </div>
-
-          <div v-if="!isEmpty(registration.documents)" class="mt-2">
+          =======
+          <div v-if="!isEmpty(registration.documents)" :class="{'mt-2': !isEmpty(strRequirements) }">
             <UButton
-              v-for="document in registration.documents.filter(
-                doc => doc.documentType !== DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE
-              )"
+              v-for="document in
+                registration.documents.filter(doc => doc.documentType !== DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE)"
               :key="document.fileKey"
               class="mr-4 gap-x-1 p-0"
               variant="link"
@@ -201,6 +201,23 @@ const displayDetailsItem = (item: HostDetailsDisplayItem) => {
               {{ t(`documentLabels.${document.documentType}`) }}
             </UButton>
           </div>
+        </ApplicationDetailsSection>
+        >>>>>>> fcca8ae3 (Update Examiner table. Add PR Req.)
+
+        <div v-if="!isEmpty(registration.documents)" class="mt-2">
+          <UButton
+            v-for="document in registration.documents.filter(
+              doc => doc.documentType !== DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE
+            )"
+            :key="document.fileKey"
+            class="mr-4 gap-x-1 p-0"
+            variant="link"
+            icon="mdi-file-document-outline"
+            @click="openDocInNewTab(document)"
+          >
+            {{ t(`documentLabels.${document.documentType}`) }}
+          </UButton>
+        </div>
         </ApplicationDetailsSection>
       </div>
     </ConnectPageSection>

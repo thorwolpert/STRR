@@ -152,7 +152,14 @@ export default {
       strProhibitedAction: 'Review Policy',
       businessLicence: 'Business Licence',
       businessLicenceNumber: 'Number:',
-      businessLicenceExpiryDate: 'Expiry:'
+      businessLicenceExpiryDate: 'Expiry:',
+      primaryBuilding: 'Primary Building',
+      business: 'Business',
+      attorneyForService: 'Attorney For Service',
+      representative: 'Representative',
+      secondaryRepresentative: 'Secondary Representative',
+      completingParty: 'Completing Party',
+      additionalInformation: 'Additional Information'
     },
     text: {
       applicationMustInclude: 'Your application must include the following:',
@@ -284,7 +291,36 @@ export default {
     dashboardList: {
       title: 'Dashboard - My Short-Term Rental Registry',
       h1: 'My CEU STR Registry Dashboard',
-      subtitle: 'Register and keep short-term rental unit information up to date.'
+      subtitle: 'Register and keep short-term rental unit information up to date.',
+      na: 'N/A',
+      columns: {
+        applicationNumber: 'Application Number',
+        registrationNumber: 'Registration #',
+        registrationType: 'Type',
+        requirements: 'Requirements',
+        applicantName: 'Applicant Name',
+        propertyHost: 'Property Host',
+        propertyManager: 'Property Manager',
+        propertyAddress: 'Property Address',
+        status: 'Status',
+        submissionDate: 'Submission Date'
+      },
+      requirements: {
+        platform: {
+          THOUSAND_AND_ABOVE: 'Major platform',
+          BETWEEN_250_AND_999: 'Medium platform',
+          LESS_THAN_250: 'Minor platform'
+        },
+        host: {
+          pr: 'PR',
+          bl: 'BL',
+          prohibited: 'Prohibited',
+          none: 'None',
+          STRATA_HOTEL: 'PR-ex-strata',
+          FARM_LAND: 'PR-ex-farm',
+          FRACTIONAL_OWNERSHIP: 'PR-ex-fractional'
+        }
+      }
     },
     chooseAccount: {
       title: 'Choose Account - My Short-Term Rental Registry',
@@ -313,6 +349,11 @@ export default {
     ownerRole: 'Please select the role',
     missingReqDocs: 'Missing required documents. Please see above for details.',
     blExpiryDate: 'The expiry date must be greater than today and in less than 1 year.'
+  },
+  registrationType: {
+    HOST: 'Host',
+    PLATFORM: 'Platform',
+    STRATA_HOTEL: 'Strata Hotel'
   },
   propertyType: {
     SECONDARY_SUITE: 'Secondary Suite',
@@ -349,6 +390,7 @@ export default {
     CO_OWN: 'Co-owner',
     OTHER: 'Other'
   },
+
   tooltip: {
     pid: 'You can find your Parcel Identifier (PID) on your Property Assessment Notice from BC Assessment. Alternatively, visit the BC Assessment website, search for your civic address, and look for the PID under ‘Legal Description and Parcel ID’.'
   },

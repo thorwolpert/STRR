@@ -24,6 +24,19 @@ const getBadgeColor = (status: ApplicationStatus): string => {
   }
 }
 
+const getApplicationName = (): string => {
+  switch (registration.registrationType) {
+    case ApplicationType.STRATA_HOTEL:
+      return registration.businessDetails.legalName
+    case ApplicationType.HOST:
+      return registration.unitAddress?.nickname || ''
+    case ApplicationType.PLATFORM:
+      return registration.businessDetails?.legalName || ''
+    default:
+      return ''
+  }
+}
+
 </script>
 
 <template>
@@ -32,7 +45,7 @@ const getBadgeColor = (status: ApplicationStatus): string => {
       <strong>
         {{ header?.applicationNumber }} |
       </strong>
-      {{ registration.unitAddress?.nickname }}
+      {{ getApplicationName() }}
     </div>
     <div class="text-sm">
       <UBadge class="mr-3 font-bold" :label="header.examinerStatus" :color="getBadgeColor(header.status)" />
