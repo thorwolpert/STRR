@@ -35,12 +35,12 @@ const getPrRequired = (): string =>
     : t('pr.notRequired')
 
 const getPrExemptReason = (): string =>
-  unitDetails.prExemptReason
+  unitDetails?.prExemptReason
     ? t(`prExemptReason.${unitDetails.prExemptReason}`)
     : t('prExemptReason.notExempt')
 
 const getOwnershipType = (): string =>
-  unitDetails.ownershipType === OwnershipType.RENT ? `${t('ownershipType.RENT')}.` : ''
+  unitDetails?.ownershipType === OwnershipType.RENT ? `${t('ownershipType.RENT')}.` : ''
 
 const showExpansion = ref<boolean>(false)
 const displayItem = ref<HostDetailsDisplayItem>(undefined)
@@ -51,7 +51,7 @@ const displayDetailsItem = (item: HostDetailsDisplayItem) => {
 </script>
 <template>
   <div>
-    <div class="text-bcGovColor-midGray grid grid-cols-4 gap-x-5 divide-x text-sm">
+    <div class="text-bcGovColor-midGray mb-6 grid grid-cols-4 gap-x-5 divide-x bg-white p-4 text-sm">
       <div class="space-y-2">
         <strong>{{ t('strr.label.rentalUnit').toUpperCase() }}</strong>
         <div class="w-[150px]">

@@ -40,7 +40,7 @@ const getApplicationName = (): string => {
 </script>
 
 <template>
-  <div class="border-b py-6">
+  <div class="border-b bg-white px-4 py-6">
     <div class="mb-2 text-2xl">
       <strong>
         {{ header?.applicationNumber }} |
