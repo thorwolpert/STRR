@@ -21,9 +21,9 @@
       "mailingAddress": "Mailing Address",
       "businessDetails": "Business Details",
       "businessLegalName": "Business Legal Name",
-      "businessLegalNameOptional" : "Business Legal Name (Optional)",
+      "businessLegalNameOptional": "Business Legal Name (Optional)",
       "craBusinessNumber": "CRA Business Number",
-      "craBusinessNumberOptional" : "Canada Revenue Agency Business Number (Optional)"
+      "craBusinessNumberOptional": "Canada Revenue Agency Business Number (Optional)"
     },
     "loadingState": "Loading, please wait...",
     "phoneExt": "Ext."
@@ -502,7 +502,12 @@
       "true": "Yes",
       "false": "No",
       "SAME_UNIT": "The host lives in this unit",
-      "ANOTHER_UNIT": "The host lives in another unit on the same property"
+      "ANOTHER_UNIT": "The host lives in another unit on the same property",
+      "prExemptReason": {
+        "STRATA_HOTEL": "PR Exempt - Strata Hotel",
+        "FARM_LAND": "PR Exempt - Class 9 Farmland",
+        "FRACTIONAL_OWNERSHIP": "PR Exempt - Fractional Ownership"
+      }
     },
     "details": {
       "title": "Step 3 - Add Your Short Term Rental Property Details",

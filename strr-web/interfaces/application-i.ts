@@ -5,6 +5,7 @@ import {
   RegistrationStatusE,
   RegistrationTypeE
 } from '#imports'
+import type { PrExemptionReason } from '~/enums/pr-exemption-reason-e'
 
 export interface ApplicationHeaderI {
   applicationDateTime: string
@@ -66,6 +67,7 @@ export interface HostApplicationDetailsI {
     isUnitOnPrincipalResidenceProperty: boolean
     hostResidence: string | undefined
     numberOfRoomsForRent: number
+    prExemptReason?: PrExemptionReason
   }
   documents?: DocumentUploadI[]
 }
