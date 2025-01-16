@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const localePath = useLocalePath()
+const { isAuthenticated } = useKeycloak()
 const headerOptions = useAppConfig().connect.core.header.options
 provide(headerOptionsSymbol, headerOptions)
-const { isAuthenticated } = useKeycloak()
+const localePath = useLocalePath()
 </script>
 <template>
   <div class="app-container">
@@ -35,19 +35,16 @@ const { isAuthenticated } = useKeycloak()
         </ClientOnly>
       </div>
     </ConnectHeaderWrapper>
-
     <ConnectSystemBanner />
-
-    <main class="app-inner-container app-body">
-      <NuxtErrorBoundary>
-        <slot />
-        <template #error="{ error }">
-          <p class="py-10">
-            {{ error }}
-          </p>
-        </template>
-      </NuxtErrorBoundary>
-    </main>
+    <NuxtErrorBoundary>
+      <slot />
+      <template #error="{ error }">
+        <p class="py-10">
+          {{ error }}
+        </p>
+      </template>
+    </NuxtErrorBoundary>
+    <ConnectButtonControl />
     <ConnectFooter />
   </div>
 </template>
