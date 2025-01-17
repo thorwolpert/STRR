@@ -158,34 +158,20 @@
         </div>
 
         <!-- Principal Residence -->
-        <div class="mt-10" data-test-id="principal-residence">
+        <div
+          v-if="application.unitDetails?.prExemptReason"
+          class="mt-10"
+          data-test-id="principal-residence"
+        >
           <h2 class="font-bold mb-6 mobile:mx-2 text-xl">
             {{ tApplicationDetails('principalResidence') }}
           </h2>
           <div class="bg-white p-8 mobile:px-5">
-            <BcrosFormSectionReviewItem :title="tApplicationDetails('proof')">
-              <p data-test-id="principal-residence-proof">
-                {{
-                  application.principalResidence.isPrincipalResidence
-                    ? tApplicationDetails('principalResidenceApplies')
-                    : tApplicationDetails('principalResidenceNotApplies')
-                }}
-              </p>
-            </BcrosFormSectionReviewItem>
             <BcrosFormSectionReviewItem
-              v-if="application.principalResidence.nonPrincipalOption"
-              :title="tApplicationDetails('principalResidenceReason')"
-              class="mt-4"
+              v-if="application.unitDetails.prExemptReason"
+              title="Exemption Reason"
             >
-              <p>{{ application.principalResidence.nonPrincipalOption }}</p>
-            </BcrosFormSectionReviewItem>
-            <BcrosFormSectionReviewItem
-              v-if="application.principalResidence.specifiedServiceProvider &&
-                application.principalResidence.specifiedServiceProvider !== 'n/a'"
-              :title="tApplicationDetails('principalResidenceServiceProvider')"
-              class="mt-4"
-            >
-              <p>{{ application.principalResidence.specifiedServiceProvider }}</p>
+              <p>{{ tReview(`prExemptReason.${application.unitDetails.prExemptReason}`) }}</p>
             </BcrosFormSectionReviewItem>
           </div>
         </div>
