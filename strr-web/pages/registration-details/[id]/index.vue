@@ -168,7 +168,6 @@
           </h2>
           <div class="bg-white p-8 mobile:px-5">
             <BcrosFormSectionReviewItem
-              v-if="application.unitDetails.prExemptReason"
               title="Exemption Reason"
             >
               <p>{{ tReview(`prExemptReason.${application.unitDetails.prExemptReason}`) }}</p>
