@@ -1,42 +1,48 @@
 <script setup lang="ts">
 
-const props = defineProps<{application: StrataApplicationResp }>()
+const props = defineProps<{ application: StrataApplicationResp }>()
 
 const { t } = useI18n()
-const { header, registration } = props.application
-const { applicationNumber } = header
+const { registration } = props.application
+const { businessDetails } = registration
 
 </script>
 
 <template>
-  <div>
-    <div class="text-bcGovColor-midGray mb-6 grid grid-cols-4 gap-x-5 divide-x bg-white p-4 text-sm">
+  <div class="app-inner-container">
+    <div class="text-bcGovColor-midGray grid grid-cols-4 gap-x-5 divide-x bg-white py-4 text-sm">
       <div class="space-y-2">
         <b>{{ t('strr.label.primaryBuilding').toUpperCase() }}</b>
         <ConnectInfoWithIcon
           icon="i-mdi-map-marker-outline"
           :content="displayFullAddress(registration?.strataHotelDetails.buildings[0])"
         />
+        <UButton
+          v-if="registration?.strataHotelDetails.buildings.length > 1"
+          :label="t('strr.label.viewAllBuildings')"
+          :padded="false"
+          variant="link"
+        />
       </div>
 
       <div class="space-y-4 pl-5">
         <div class="space-y-2">
           <b>{{ t('strr.label.business').toUpperCase() }}</b>
-          <ConnectInfoWithIcon icon="i-mdi-domain" :content="registration?.businessDetails?.legalName" />
+          <ConnectInfoWithIcon icon="i-mdi-domain" :content="businessDetails?.legalName" />
           <ConnectInfoWithIcon
             icon="i-mdi-envelope-outline"
-            :content="displayFullAddress(registration?.businessDetails.mailingAddress)"
+            :content="displayFullAddress(businessDetails.mailingAddress)"
           />
         </div>
         <div class="space-y-2">
           <b>{{ t('strr.label.attorneyForService').toUpperCase() }}</b>
           <ConnectInfoWithIcon
             icon="i-mdi-domain"
-            :content="registration?.businessDetails.registeredOfficeOrAttorneyForServiceDetails.attorneyName"
+            :content="businessDetails.registeredOfficeOrAttorneyForServiceDetails.attorneyName"
           />
           <ConnectInfoWithIcon
             icon="i-mdi-map-marker-outline"
-            :content="displayFullAddress(registration?.businessDetails.registeredOfficeOrAttorneyForServiceDetails.mailingAddress)"
+            :content="displayFullAddress(businessDetails.registeredOfficeOrAttorneyForServiceDetails.mailingAddress)"
           />
         </div>
       </div>
@@ -68,10 +74,7 @@ const { applicationNumber } = header
         <div class="space-y-2">
           <!-- Completing Party -->
           <b>{{ t('strr.label.completingParty').toUpperCase() }}</b>
-          <ConnectInfoWithIcon
-            icon="i-mdi-account"
-            :content="displayContactFullName(registration?.completingParty)"
-          />
+          <ConnectInfoWithIcon icon="i-mdi-account" :content="displayContactFullName(registration?.completingParty)" />
         </div>
       </div>
 
@@ -83,17 +86,6 @@ const { applicationNumber } = header
         </div>
       </div>
     </div>
-
-    <ConnectPageSection>
-      <div
-        v-if="props.application.registration.documents?.length > 0"
-        class="divide-y px-10 py-6"
-      >
-        <ApplicationDetailsSection :label="t('strr.label.supportingInfo')">
-          <SupportingDocuments :application="props.application" />
-        </ApplicationDetailsSection>
-      </div>
-    </ConnectPageSection>
   </div>
 </template>
 

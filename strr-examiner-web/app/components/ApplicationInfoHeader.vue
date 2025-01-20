@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { type HousApplicationResponse } from '~/types/application-response'
-defineProps<{ application: HousApplicationResponse }>()
+
+const props = defineProps<{ application: HousApplicationResponse }>()
+
+const { application } = props
+const { registration } = application
 
 const getBadgeColor = (status: ApplicationStatus): string => {
   switch (status) {
@@ -14,15 +18,37 @@ const getBadgeColor = (status: ApplicationStatus): string => {
       return 'primary'
   }
 }
+
+const getApplicationName = (): string => {
+  switch (registration.registrationType) {
+    case ApplicationType.STRATA_HOTEL:
+      return registration.businessDetails.legalName
+    case ApplicationType.HOST:
+      return registration.unitAddress?.nickname || ''
+    case ApplicationType.PLATFORM:
+      return registration.businessDetails?.legalName || ''
+    default:
+      return ''
+  }
+}
+
 </script>
 <template>
   <div class="border-b bg-white py-6">
-    <div v-if="application.registration.registrationType === ApplicationType.HOST" class="app-inner-container">
+    <div class="app-inner-container">
       <div class="mb-2 text-2xl">
         <strong>
           {{ application.header?.applicationNumber }} |
         </strong>
-        {{ application.registration.unitAddress?.nickname }}
+        {{ getApplicationName() }}
+        <UButton
+          v-if="registration.registrationType === ApplicationType.STRATA_HOTEL"
+          icon="mdi-web"
+          :padded="false"
+          variant="link"
+          :to="(application.registration as ApiBaseStrataApplication).strataHotelDetails.brand.website"
+          target="_blank"
+        />
       </div>
       <div class="text-sm">
         <UBadge
@@ -35,9 +61,6 @@ const getBadgeColor = (status: ApplicationStatus): string => {
         <strong>Submitted:</strong> {{ dateToString(application.header.applicationDateTime, 'y-MM-dd t') }}
         ({{ dayCountdown(application.header.applicationDateTime.toString(), true) }} days ago)
       </div>
-    </div>
-    <div v-else>
-      Complete Strata/Platform Header
     </div>
   </div>
 </template>

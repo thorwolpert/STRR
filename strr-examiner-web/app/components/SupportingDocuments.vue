@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { isEmpty } from 'lodash'
-import { useExaminerStore } from '~/store/examiner'
 
 const props = defineProps<{
   application: HostApplicationResp | PlatformApplicationResp | StrataApplicationResp

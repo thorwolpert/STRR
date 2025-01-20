@@ -154,6 +154,7 @@ export default {
       businessLicenceNumber: 'Number:',
       businessLicenceExpiryDate: 'Expiry:',
       primaryBuilding: 'Primary Building',
+      viewAllBuildings: 'View all buildings',
       business: 'Business',
       attorneyForService: 'Attorney For Service',
       representative: 'Representative',
