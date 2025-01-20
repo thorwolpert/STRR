@@ -98,7 +98,10 @@ watch(
 </script>
 <template>
   <div class="app-body">
-    <ConnectSpinner v-if="initialMount || status === 'pending'" overlay />
+    <ConnectSpinner
+      v-if="initialMount || status === 'pending'"
+      overlay
+    />
     <!-- TODO: improve error state -->
     <div v-else-if="error" class="m-auto flex max-w-screen-sm flex-col">
       <ConnectPageSection
@@ -113,7 +116,12 @@ watch(
         <div class="flex flex-col space-y-2 p-10 text-left">
           <span>Status: {{ error.statusCode }}</span>
           <pre>Details: {{ error.data }}</pre>
-          <UButton label="Return to Dashboard" :to="localePath(RoutesE.DASHBOARD)" icon="i-mdi-home" :block="true" />
+          <UButton
+            label="Return to Dashboard"
+            :to="localePath(RoutesE.DASHBOARD)"
+            icon="i-mdi-home"
+            :block="true"
+          />
           <UButton
             label="Try Again"
             icon="i-mdi-refresh"
@@ -130,10 +138,14 @@ watch(
       <div class="bg-white">
         <ApplicationInfoHeader :application />
         <!-- TODO: other sub headers -->
-        <HostSubHeader v-if="application?.registration.registrationType === ApplicationType.HOST" :application />
+        <HostSubHeader
+          v-if="application?.registration.registrationType === ApplicationType.HOST"
+          :application
+        />
+
         <StrataSubHeader
           v-if="application?.registration.registrationType === ApplicationType.STRATA_HOTEL"
-          :application="application"
+          :application
         />
         <!-- @open-expansion="manageExpansion" -->
       </div>
