@@ -10,7 +10,7 @@ const { businessDetails } = registration
 
 <template>
   <div class="app-inner-container">
-    <div class="text-bcGovColor-midGray grid grid-cols-4 gap-x-5 divide-x bg-white py-4 text-sm">
+    <div class="grid grid-cols-4 gap-x-5 divide-x bg-white py-4 text-sm text-bcGovColor-midGray">
       <div class="space-y-2">
         <b>{{ t('strr.label.primaryBuilding').toUpperCase() }}</b>
         <ConnectInfoWithIcon
