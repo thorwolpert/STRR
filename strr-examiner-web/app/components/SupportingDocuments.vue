@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isEmpty } from 'lodash'
+import isEmpty from 'lodash'
 
 const props = defineProps<{
   application: HostApplicationResp | PlatformApplicationResp | StrataApplicationResp
