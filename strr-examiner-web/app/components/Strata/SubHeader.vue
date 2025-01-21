@@ -6,11 +6,13 @@ const { t } = useI18n()
 const { registration } = props.application
 const { businessDetails } = registration
 
+const strataExpansion = useStrataExpansion()
+
 </script>
 
 <template>
   <div class="app-inner-container">
-    <div class="grid grid-cols-4 gap-x-5 divide-x bg-white py-4 text-sm text-bcGovColor-midGray">
+    <div class="text-bcGovColor-midGray grid grid-cols-4 gap-x-5 divide-x bg-white py-4 text-sm">
       <div class="space-y-2">
         <b>{{ t('strr.label.primaryBuilding').toUpperCase() }}</b>
         <ConnectInfoWithIcon
@@ -28,7 +30,16 @@ const { businessDetails } = registration
       <div class="space-y-4 pl-5">
         <div class="space-y-2">
           <b>{{ t('strr.label.business').toUpperCase() }}</b>
-          <ConnectInfoWithIcon icon="i-mdi-domain" :content="businessDetails?.legalName" />
+          <ConnectInfoWithIcon
+            icon="i-mdi-domain"
+            :content="businessDetails?.legalName"
+          />
+          <UButton
+            :label="businessDetails?.legalName"
+            :padded="false"
+            variant="link"
+            @click="strataExpansion.openBusiness(application)"
+          />
           <ConnectInfoWithIcon
             icon="i-mdi-envelope-outline"
             :content="displayFullAddress(businessDetails.mailingAddress)"
