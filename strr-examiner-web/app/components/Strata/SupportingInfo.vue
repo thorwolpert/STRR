@@ -16,7 +16,7 @@ const { t } = useI18n()
       class="divide-y px-10 py-6"
     >
       <ApplicationDetailsSection :label="t('strr.label.supportingInfo')">
-        <SupportingDocuments :application="application" />
+        <SupportingDocuments :application />
       </ApplicationDetailsSection>
     </div>
   </ConnectPageSection>
