@@ -5,16 +5,18 @@ const props = defineProps<{
   application: StrataApplicationResp
 }>()
 
+const { application: { registration } } = props
+
 const { t } = useI18n()
 </script>
 <template>
   <ConnectPageSection>
     <div
-      v-if="props.application?.registration?.documents?.length > 0"
+      v-if="registration.documents && registration.documents.length > 0"
       class="divide-y px-10 py-6"
     >
       <ApplicationDetailsSection :label="t('strr.label.supportingInfo')">
-        <SupportingDocuments :application="props.application" />
+        <SupportingDocuments :application="application" />
       </ApplicationDetailsSection>
     </div>
   </ConnectPageSection>

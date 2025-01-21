@@ -2,9 +2,7 @@
 import { type HousApplicationResponse } from '~/types/application-response'
 
 const props = defineProps<{ application: HousApplicationResponse }>()
-
-const { application } = props
-const { registration } = application
+const { header, registration } = props.application
 
 const getBadgeColor = (status: ApplicationStatus): string => {
   switch (status) {
@@ -22,11 +20,11 @@ const getBadgeColor = (status: ApplicationStatus): string => {
 const getApplicationName = (): string => {
   switch (registration.registrationType) {
     case ApplicationType.STRATA_HOTEL:
-      return registration.businessDetails.legalName
+      return (registration as ApiBaseStrataApplication).businessDetails.legalName
     case ApplicationType.HOST:
-      return registration.unitAddress?.nickname || ''
+      return (registration as ApiHostApplication).unitAddress?.nickname || ''
     case ApplicationType.PLATFORM:
-      return registration.businessDetails?.legalName || ''
+      return (registration as ApiBasePlatformApplication).businessDetails?.legalName || ''
     default:
       return ''
   }
@@ -38,7 +36,7 @@ const getApplicationName = (): string => {
     <div class="app-inner-container">
       <div class="mb-2 text-2xl">
         <strong>
-          {{ application.header?.applicationNumber }} |
+          {{ header?.applicationNumber }} |
         </strong>
         {{ getApplicationName() }}
         <UButton
@@ -53,13 +51,13 @@ const getApplicationName = (): string => {
       <div class="text-sm">
         <UBadge
           class="mr-3 font-bold"
-          :label="application.header.examinerStatus"
-          :color="getBadgeColor(application.header.status)"
+          :label="header.examinerStatus"
+          :color="getBadgeColor(header.status)"
         />
         <strong>Type:</strong>
         {{ $t(`applicationType.${application.registration?.registrationType}`) }} |
-        <strong>Submitted:</strong> {{ dateToString(application.header.applicationDateTime, 'y-MM-dd t') }}
-        ({{ dayCountdown(application.header.applicationDateTime.toString(), true) }} days ago)
+        <strong>Submitted:</strong> {{ dateToString(header.applicationDateTime, 'y-MM-dd t') }}
+        ({{ dayCountdown(header.applicationDateTime.toString(), true) }} days ago)
       </div>
     </div>
   </div>
