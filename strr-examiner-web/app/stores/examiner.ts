@@ -37,10 +37,19 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     })
   }
 
+  const openDocInNewTab = async (applicationNumber: string, supportingDocument: ApiDocument) => {
+    const file = await getDocument(applicationNumber, supportingDocument.fileKey)
+    const blob = new Blob([file], { type: 'application/pdf' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank')
+    URL.revokeObjectURL(url)
+  }
+
   return {
     approveApplication,
     rejectApplication,
     getNextApplication,
-    getDocument
+    getDocument,
+    openDocInNewTab
   }
 })

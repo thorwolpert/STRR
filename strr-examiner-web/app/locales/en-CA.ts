@@ -154,12 +154,15 @@ export default {
       businessLicenceNumber: 'Number:',
       businessLicenceExpiryDate: 'Expiry:',
       primaryBuilding: 'Primary Building',
+      viewAllBuildings: 'View all buildings',
       business: 'Business',
       attorneyForService: 'Attorney For Service',
       representative: 'Representative',
       secondaryRepresentative: 'Secondary Representative',
       completingParty: 'Completing Party',
-      additionalInformation: 'Additional Information'
+      additionalInformation: 'Additional Information',
+      strataCategory: 'Category:',
+      numberOfRentalUnits: 'Number of Rental Units:'
     },
     text: {
       applicationMustInclude: 'Your application must include the following:',
@@ -235,6 +238,7 @@ export default {
     application: 'Application',
     registration: 'Registration',
     date: 'Date',
+    phoneExt: 'Ext.',
     accountName: 'Account Name',
     accountInfo: 'Account Information',
     primaryContactInfo: 'Primary Contact Information',

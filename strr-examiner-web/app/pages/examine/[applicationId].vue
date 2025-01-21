@@ -136,14 +136,18 @@ watch(
     </div>
     <main v-else>
       <div class="bg-white">
-        <ApplicationInfoHeader
-          :application
-        />
+        <ApplicationInfoHeader :application />
         <!-- TODO: other sub headers -->
         <HostSubHeader
           v-if="application?.registration.registrationType === ApplicationType.HOST"
           :application
         />
+
+        <StrataSubHeader
+          v-if="application?.registration.registrationType === ApplicationType.STRATA_HOTEL"
+          :application
+        />
+        <!-- @open-expansion="manageExpansion" -->
       </div>
 
       <div class="app-inner-container space-y-10 py-10">
@@ -155,15 +159,16 @@ watch(
           :application
         />
 
-        <!-- <PlatformDetailsView
-      v-if="registration?.registrationType === ApplicationType.PLATFORM"
-      :application="application"
-    />
+        <StrataSupportingInfo
+          v-if="application?.registration.registrationType === ApplicationType.STRATA_HOTEL"
+          :application
+        />
 
-    <StrataHotelDetailsView
-      v-if="registration?.registrationType === ApplicationType.STRATA_HOTEL"
-      :application="application"
-    /> -->
+        <!--
+          <PlatformDetailsView
+          v-if="registration?.registrationType === ApplicationType.PLATFORM"
+          :application="application"
+        />-->
       </div>
     </main>
   </div>
