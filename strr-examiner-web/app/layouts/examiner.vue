@@ -21,9 +21,9 @@ const { isAuthenticated } = useKeycloak()
           ]"
           :ui="{
             wrapper: 'w-min',
-            active: 'text-white after:bg-white',
+            active: 'text-white after:bg-white font-semibold',
             inactive: 'hover:text-gray-200',
-            base: 'rounded focus-visible:ring-white hover:before:bg-white/10'
+            base: 'rounded focus-visible:ring-white hover:before:bg-transparent py-1'
           }"
         />
         <ClientOnly>
