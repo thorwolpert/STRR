@@ -3,10 +3,6 @@ const props = defineProps<{
   application: StrataApplicationResp
 }>()
 
-defineEmits<{
-  close: [void]
-}>()
-
 const { strataHotelRepresentatives, completingParty } = props.application.registration
 
 </script>

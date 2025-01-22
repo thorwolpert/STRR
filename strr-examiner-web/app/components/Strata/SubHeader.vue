@@ -2,7 +2,6 @@
 
 const props = defineProps<{ application: StrataApplicationResp }>()
 
-const { t } = useI18n()
 const { registration } = props.application
 const { businessDetails } = registration
 
@@ -12,16 +11,16 @@ const strataExpansion = useStrataExpansion(props.application)
 
 <template>
   <div class="app-inner-container">
-    <div class="grid grid-cols-4 gap-x-5 divide-x bg-white py-4 text-sm text-bcGovColor-midGray">
+    <div class="text-bcGovColor-midGray grid grid-cols-4 gap-x-5 divide-x bg-white py-4 text-sm">
       <div class="space-y-2">
-        <b>{{ t('strr.label.primaryBuilding').toUpperCase() }}</b>
+        <b>{{ $t('strr.label.primaryBuilding').toUpperCase() }}</b>
         <ConnectInfoWithIcon
           icon="i-mdi-map-marker-outline"
           :content="displayFullAddress(registration?.strataHotelDetails.buildings[0])"
         />
         <UButton
           v-if="registration?.strataHotelDetails.buildings.length > 1"
-          :label="t('strr.label.viewAllBuildings')"
+          :label="$t('strr.label.viewAllBuildings')"
           :padded="false"
           variant="link"
           @click="strataExpansion.openAllBuildings()"
@@ -30,7 +29,7 @@ const strataExpansion = useStrataExpansion(props.application)
 
       <div class="space-y-4 pl-5">
         <div class="space-y-2">
-          <b>{{ t('strr.label.business').toUpperCase() }}</b>
+          <b>{{ $t('strr.label.business').toUpperCase() }}</b>
           <ConnectInfoWithIcon
             icon="i-mdi-domain"
             class="whitespace-nowrap"
@@ -49,7 +48,7 @@ const strataExpansion = useStrataExpansion(props.application)
           />
         </div>
         <div class="space-y-2">
-          <b>{{ t('strr.label.attorneyForService').toUpperCase() }}</b>
+          <b>{{ $t('strr.label.attorneyForService').toUpperCase() }}</b>
           <ConnectInfoWithIcon
             v-if="businessDetails.registeredOfficeOrAttorneyForServiceDetails.attorneyName"
             icon="i-mdi-domain"
@@ -65,7 +64,7 @@ const strataExpansion = useStrataExpansion(props.application)
       <div class="space-y-4 pl-5">
         <div class="space-y-2">
           <!--Main Representative -->
-          <b>{{ t('strr.label.representative').toUpperCase() }}</b>
+          <b>{{ $t('strr.label.representative').toUpperCase() }}</b>
           <ConnectInfoWithIcon
             icon="i-mdi-account"
             class="whitespace-nowrap"
@@ -91,7 +90,7 @@ const strataExpansion = useStrataExpansion(props.application)
         </div>
         <div v-if="registration?.strataHotelRepresentatives[1]" class="space-y-2">
           <!-- Second Representative if available -->
-          <b>{{ t('strr.label.secondaryRepresentative').toUpperCase() }}</b>
+          <b>{{ $t('strr.label.secondaryRepresentative').toUpperCase() }}</b>
           <ConnectInfoWithIcon
             icon="i-mdi-account"
             class="whitespace-nowrap"
@@ -106,7 +105,7 @@ const strataExpansion = useStrataExpansion(props.application)
         </div>
         <div class="space-y-2">
           <!-- Completing Party -->
-          <b>{{ t('strr.label.completingParty').toUpperCase() }}</b>
+          <b>{{ $t('strr.label.completingParty').toUpperCase() }}</b>
           <ConnectInfoWithIcon
             icon="i-mdi-account"
             class="whitespace-nowrap"
@@ -122,9 +121,9 @@ const strataExpansion = useStrataExpansion(props.application)
       </div>
 
       <div class="space-y-2 pl-5">
-        <b>{{ t('strr.label.additionalInformation').toUpperCase() }}</b>
+        <b>{{ $t('strr.label.additionalInformation').toUpperCase() }}</b>
         <div>
-          <b>{{ t('strr.label.numberOfRentalUnits') }}</b>
+          <b>{{ $t('strr.label.numberOfRentalUnits') }}</b>
           {{ registration.strataHotelDetails.numberOfUnits }}
         </div>
       </div>

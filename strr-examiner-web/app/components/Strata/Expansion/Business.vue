@@ -3,10 +3,6 @@ const props = defineProps<{
   application: StrataApplicationResp
 }>()
 
-defineEmits<{
-  close: [void]
-}>()
-
 const { registration } = props.application
 const { businessDetails } = registration
 
@@ -53,7 +49,3 @@ const { businessDetails } = registration
     </div>
   </CommonExpansionTemplate>
 </template>
-
-<style scoped>
-
-</style>

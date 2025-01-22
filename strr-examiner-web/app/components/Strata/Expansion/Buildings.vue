@@ -3,10 +3,6 @@ const props = defineProps<{
   application: StrataApplicationResp
 }>()
 
-defineEmits<{
-  close: [void]
-}>()
-
 const { t } = useI18n()
 
 const { buildings } = props.application.registration.strataHotelDetails
