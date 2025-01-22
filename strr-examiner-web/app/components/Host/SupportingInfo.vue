@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import isEmpty from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import { ConnectPageSection } from '#components'
 import { useExaminerStore } from '~/stores/examiner'
 

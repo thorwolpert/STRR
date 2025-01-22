@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import isEmpty from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import { RoutesE } from '~/enums/routes'
 import type { ApiBasePlatformApplication, PlatformApplicationResp } from '~/interfaces/platform-i'
 import type { StrataApplicationResp } from '~/interfaces/strata-i'
@@ -109,11 +109,11 @@ const getHostPrRequirements = (hostApplication: ApiHostApplication): string => {
 
 // Get Property Manager info for the Host application
 const getHostPropertyManager = (propertyManager: ApiPropertyManager): string => {
-  if (!propertyManager) { return '' }
+  if (!propertyManager) { return 'N/A' }
 
   return propertyManager.propertyManagerType === OwnerType.INDIVIDUAL
-    ? displayContactFullName(propertyManager.contact as ApiPartyWithAddress) || ''
-    : propertyManager.business?.legalName || ''
+    ? displayContactFullName(propertyManager.contact as ApiPartyWithAddress) || 'N/A'
+    : propertyManager.business?.legalName || 'N/A'
 }
 
 const applications = computed(() => mapApplicationsList())
@@ -141,6 +141,7 @@ async function handleRowSelect (row: any) {
 <template>
   <div class="h-full space-y-8 py-8 sm:space-y-10 sm:py-10">
     <UButton
+      v-if="false"
       label="Force Error"
       color="red"
       variant="outline"
