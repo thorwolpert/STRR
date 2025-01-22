@@ -7,60 +7,51 @@ defineEmits<{
   close: [void]
 }>()
 
-const { t } = useI18n()
 const { registration } = props.application
 const { businessDetails } = registration
 
 </script>
 
 <template>
-  <div class="text-bcGovColor-midGray grid grid-cols-4 gap-x-5 text-sm">
-    <div class="flex w-[200px]">
-      <b>Businesses</b>
+  <CommonExpansionTemplate
+    :label="$t('strr.label.businesses')"
+  >
+    <div class="flex gap-x-10">
+      <div class="space-y-2">
+        <b>{{ $t('strr.label.business').toUpperCase() }}</b>
+        <ConnectInfoWithIcon
+          icon="i-mdi-domain"
+          :content="businessDetails?.legalName"
+        />
+        <ConnectInfoWithIcon
+          v-if="businessDetails?.businessNumber"
+          icon="i-mdi-pound"
+          :content="businessDetails?.businessNumber"
+        />
+        <ConnectInfoWithIcon
+          icon="i-mdi-envelope-outline"
+          :content="displayFullAddress(businessDetails.mailingAddress)"
+        />
+        <ConnectInfoWithIcon
+          v-if="businessDetails?.homeJurisdiction"
+          icon="i-mdi-map-outline"
+          :content="businessDetails?.homeJurisdiction"
+        />
+      </div>
+      <div class="space-y-2">
+        <b>{{ $t('strr.label.attorneyForService').toUpperCase() }}</b>
+        <ConnectInfoWithIcon
+          v-if="businessDetails.registeredOfficeOrAttorneyForServiceDetails.attorneyName"
+          icon="i-mdi-domain"
+          :content="businessDetails.registeredOfficeOrAttorneyForServiceDetails.attorneyName"
+        />
+        <ConnectInfoWithIcon
+          icon="i-mdi-map-marker-outline"
+          :content="displayFullAddress(businessDetails.registeredOfficeOrAttorneyForServiceDetails.mailingAddress)"
+        />
+      </div>
     </div>
-    <div class="space-y-2">
-      <b>{{ t('strr.label.business').toUpperCase() }}</b>
-      <ConnectInfoWithIcon
-        icon="i-mdi-domain"
-        :content="businessDetails?.legalName"
-      />
-      <ConnectInfoWithIcon
-        v-if="businessDetails?.businessNumber"
-        icon="i-mdi-domain"
-        :content="businessDetails?.businessNumber"
-      />
-      <ConnectInfoWithIcon
-        icon="i-mdi-envelope-outline"
-        :content="displayFullAddress(businessDetails.mailingAddress)"
-      />
-      <ConnectInfoWithIcon
-        v-if="businessDetails?.homeJurisdiction"
-        icon="i-mdi-map-outline"
-        :content="businessDetails?.homeJurisdiction"
-      />
-    </div>
-    <div class="space-y-2">
-      <b>{{ t('strr.label.attorneyForService').toUpperCase() }}</b>
-      <ConnectInfoWithIcon
-        v-if="businessDetails.registeredOfficeOrAttorneyForServiceDetails.attorneyName"
-        icon="i-mdi-domain"
-        :content="businessDetails.registeredOfficeOrAttorneyForServiceDetails.attorneyName"
-      />
-      <ConnectInfoWithIcon
-        icon="i-mdi-map-marker-outline"
-        :content="displayFullAddress(businessDetails.registeredOfficeOrAttorneyForServiceDetails.mailingAddress)"
-      />
-    </div>
-    <div class="relative flex-1">
-      <UButton
-        :label="t('btn.close')"
-        trailing-icon="i-mdi-close"
-        variant="ghost"
-        class="absolute right-0"
-        @click="$emit('close')"
-      />
-    </div>
-  </div>
+  </CommonExpansionTemplate>
 </template>
 
 <style scoped>

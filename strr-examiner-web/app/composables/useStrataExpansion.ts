@@ -1,19 +1,25 @@
-// https://ui.nuxt.com/components/modal#control-programmatically
+import { StrataExpansionBusiness, StrataExpansionIndividuals, StrataExpansionBuildings } from '#components'
 
-import { StrataExpansionBusiness } from '#components'
-
-export const useStrataExpansion = () => {
+export const useStrataExpansion = (app: StrataApplicationResp) => {
   const exp = useStrrExpansion()
 
-  function openBusiness (
-    application: StrataApplicationResp
-  ) {
-    exp.open(StrataExpansionBusiness, {
-      application,
-      onClose () {
-        exp.close()
-      }
+  const open = (component: any) => {
+    exp.open(component, {
+      application: app,
+      onClose: exp.close
     })
+  }
+
+  function openBusiness () {
+    open(StrataExpansionBusiness)
+  }
+
+  function openIndividuals () {
+    open(StrataExpansionIndividuals)
+  }
+
+  function openAllBuildings () {
+    open(StrataExpansionBuildings)
   }
 
   function close () {
@@ -22,6 +28,8 @@ export const useStrataExpansion = () => {
 
   return {
     openBusiness,
+    openIndividuals,
+    openAllBuildings,
     close
   }
 }
