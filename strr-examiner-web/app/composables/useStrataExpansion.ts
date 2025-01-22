@@ -10,21 +10,10 @@ export const useStrataExpansion = (app: StrataApplicationResp) => {
     })
   }
 
-  function openBusiness () {
-    open(StrataExpansionBusiness)
-  }
-
-  function openIndividuals () {
-    open(StrataExpansionIndividuals)
-  }
-
-  function openAllBuildings () {
-    open(StrataExpansionBuildings)
-  }
-
-  function close () {
-    exp.close()
-  }
+  const openBusiness = () => open(StrataExpansionBusiness)
+  const openIndividuals = () => open(StrataExpansionIndividuals)
+  const openAllBuildings = () => open(StrataExpansionBuildings)
+  const close = () => exp.close()
 
   return {
     openBusiness,
