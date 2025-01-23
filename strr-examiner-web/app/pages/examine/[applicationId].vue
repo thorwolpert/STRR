@@ -13,7 +13,7 @@ useHead({
 
 definePageMeta({
   layout: 'examine',
-  middleware: ['auth', 'require-account']
+  middleware: ['auth']
 })
 
 const initialMount = ref(true) // flag for whether to fetch next or specific application on mount - true until initial application is loaded
