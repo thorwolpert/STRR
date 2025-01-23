@@ -16,7 +16,7 @@ useHead({
 
 definePageMeta({
   layout: 'examiner',
-  middleware: ['auth', 'require-account']
+  middleware: ['auth']
 })
 
 const { data: applicationListResp, status } = await useAsyncData(
