@@ -3,6 +3,20 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
 
   const { $strrApi } = useNuxtApp()
 
+  const tableLimit = ref(50)
+  const tablePage = ref(1)
+  const tableFilters = reactive({
+    registrationNumber: '',
+    registrationType: [],
+    requirements: [],
+    applicantName: '',
+    propertyAddress: '',
+    status: [ApplicationStatus.FULL_REVIEW],
+    submissionDate: { start: null, end: null },
+    lastModified: { start: null, end: null },
+    adjudicator: []
+  })
+
   const getNextApplication = async <T extends ApiApplicationBaseResp>(): Promise<T | undefined> => {
     // TODO: update when requirements are flushed out and backend is updated.
     const resp = await getAccountApplications<T>(
@@ -46,11 +60,32 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     URL.revokeObjectURL(url)
   }
 
+  const resetFilters = () => {
+    Object.assign(
+      tableFilters,
+      {
+        registrationNumber: '',
+        registrationType: [],
+        requirements: [],
+        applicantName: '',
+        propertyAddress: '',
+        status: [ApplicationStatus.FULL_REVIEW],
+        submissionDate: { start: null, end: null },
+        lastModified: { start: null, end: null },
+        adjudicator: []
+      }
+    )
+  }
+
   return {
+    tableFilters,
+    tableLimit,
+    tablePage,
     approveApplication,
     rejectApplication,
     getNextApplication,
     getDocument,
-    openDocInNewTab
+    openDocInNewTab,
+    resetFilters
   }
-})
+}, { persist: true }) // will persist data in session storage
