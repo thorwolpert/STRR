@@ -97,6 +97,24 @@ loginMethods.forEach((loginMethod) => {
           await expect(potentialDocsList.locator('li')).toHaveCount(2)
           await expect(potentialDocsList).toContainText('Proof of principal residence')
           await expect(potentialDocsList).toContainText('Local government short-term rental business licence')
+        },
+        false
+      )
+
+      // Verify validation error message being triggered - missing 2 column B docs
+      await expect(page.getByText('Missing required documents. Please see above for details.')).toBeVisible()
+      // Add missing column B document
+      requiredDocs.push({ option: i18nText.form.pr.docType.HOG_DECLARATION, filename: 'fake-home-owner-grant' }) // 'Home Owner Grant'
+
+      await completeStep3(
+        page,
+        requiredDocs,
+        blInfo,
+        async () => {
+          const potentialDocsList = page.getByTestId('potential-docs-checklist').locator('ul')
+          await expect(potentialDocsList.locator('li')).toHaveCount(2)
+          await expect(potentialDocsList).toContainText('Proof of principal residence')
+          await expect(potentialDocsList).toContainText('Local government short-term rental business licence')
         }
       )
 

@@ -229,7 +229,8 @@ export const completeStep3 = async (
   page: Page,
   requiredDocs: Array<{ option: string, filename: string }>,
   blInfo: { businessLicense: string, businessLicenseExpiryDate: string },
-  docsChecklistAssertions: () => Promise<void>
+  docsChecklistAssertions: () => Promise<void>,
+  expectSuccess: boolean = true
 ) => {
   await expect(getH2(page)).toContainText('Add Supporting Information')
 
@@ -250,7 +251,9 @@ export const completeStep3 = async (
 
   // finalize step 3
   page.getByRole('button', { name: 'Review and Confirm', exact: true }).click()
-  await expect(getH2(page)).toContainText('Review and Confirm')
+  if (expectSuccess) {
+    await expect(getH2(page)).toContainText('Review and Confirm')
+  }
 }
 
 export const completeStep4 = async (

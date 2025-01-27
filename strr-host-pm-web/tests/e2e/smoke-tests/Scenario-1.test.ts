@@ -44,7 +44,8 @@ loginMethods.forEach((loginMethod) => {
     const blInfo = getFakeBlInfo()
     const requiredDocs = [
       { option: i18nText.form.pr.docType.BCSC, filename: 'fake-bc-services-card' }, // 'British Columbia Services Card'
-      { option: i18nText.form.pr.docType.PROPERTY_ASSESSMENT_NOTICE, filename: 'fake-property-assessment-notice' } // 'Property Assessment Notice'
+      { option: i18nText.form.pr.docType.PROPERTY_ASSESSMENT_NOTICE, filename: 'fake-property-assessment-notice' }, // 'Property Assessment Notice'
+      { option: i18nText.form.pr.docType.HOG_DECLARATION, filename: 'fake-home-owner-grant' } // 'Home Owner Grant'
     ]
 
     test('Complete Application Flow', async ({ page }) => {
