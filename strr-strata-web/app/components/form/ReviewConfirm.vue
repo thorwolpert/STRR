@@ -341,7 +341,16 @@ onMounted(async () => {
             <template #terms>
               <strong>{{ $t('strr.label.termsAndCond') }}.</strong>
             </template>
-            <template #link>
+            <template #link1>
+              <a
+                :href="useRuntimeConfig().public.strataTacUrl"
+                target="_blank"
+                class="text-bcGovColor-activeBlue underline"
+              >
+                {{ $t('strr.label.termsAndCondLowerCase') }}
+              </a>
+            </template>
+            <template #link2>
               <a
                 :href="useRuntimeConfig().public.strataTacUrl"
                 target="_blank"
