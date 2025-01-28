@@ -17,6 +17,28 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     adjudicator: []
   })
 
+  const fetchApplications = () => {
+    if (tableFilters.registrationType.length) { // fetch applications by type if type provided
+      return $strrApi('/applications', {
+        query: {
+          limit: tableLimit.value,
+          page: tablePage.value,
+          registrationType: tableFilters.registrationType[0], // api only allows 1 at a time
+          status: tableFilters.status[0] // api only allows 1 at a time
+        }
+      })
+    } else { // else try to fetch by search
+      return $strrApi('/applications/search', {
+        query: {
+          limit: tableLimit.value,
+          page: tablePage.value,
+          status: tableFilters.status[0], // api only allows 1 at a time
+          text: tableFilters.registrationNumber.length > 2 ? tableFilters.registrationNumber : undefined // min length 3 required
+        }
+      })
+    }
+  }
+
   const getNextApplication = async <T extends ApiApplicationBaseResp>(): Promise<T | undefined> => {
     // TODO: update when requirements are flushed out and backend is updated.
     const resp = await getAccountApplications<T>(
@@ -83,6 +105,7 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     tablePage,
     approveApplication,
     rejectApplication,
+    fetchApplications,
     getNextApplication,
     getDocument,
     openDocInNewTab,

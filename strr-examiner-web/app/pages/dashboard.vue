@@ -4,7 +4,6 @@ import { sub } from 'date-fns'
 
 const localePath = useLocalePath()
 const { t } = useI18n()
-const { $strrApi } = useNuxtApp()
 // TODO: ApplicationStatus.FULL_REVIEW is temporary until we have reqs defined
 // const { limit, page, getApplicationList } = useStrrBasePermitList(undefined, undefined) // leaving this for reference
 // const { getAccountApplications } = useStrrApi() // leaving this for reference
@@ -88,27 +87,7 @@ const getRequirementsColumn = (app: HousApplicationResponse) => {
 // cannot combine search and registration type at this point in time - so hacky if/else for the moment
 const { data: applicationListResp, status } = await useAsyncData(
   'application-list-resp',
-  useDebounceFn(() => {
-    if (exStore.tableFilters.registrationType.length) { // fetch applications by type if type provided
-      return $strrApi('/applications', {
-        query: {
-          limit: exStore.tableLimit,
-          page: exStore.tablePage,
-          registrationType: exStore.tableFilters.registrationType[0], // api only allows 1 at a time
-          status: exStore.tableFilters.status[0] // api only allows 1 at a time
-        }
-      })
-    } else { // else try to fetch by search
-      return $strrApi('/applications/search', {
-        query: {
-          limit: exStore.tableLimit,
-          page: exStore.tablePage,
-          status: exStore.tableFilters.status[0], // api only allows 1 at a time
-          text: exStore.tableFilters.registrationNumber.length > 2 ? exStore.tableFilters.registrationNumber : undefined // min length 3 required
-        }
-      })
-    }
-  }, 500),
+  useDebounceFn(exStore.fetchApplications, 500),
   {
     watch: [
       () => exStore.tableLimit,

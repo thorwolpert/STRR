@@ -1,13 +1,29 @@
-import { mockNuxtImport, mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, it, expect, beforeEach } from 'vitest'
+import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mockApplications } from '../mocks/mockedData'
 import { enI18n } from '../mocks/i18n'
 import Dashboard from '~/pages/dashboard.vue'
 
-mockNuxtImport('useStrrBasePermitList', () => () => ({
+const mockedResp: ApiApplicationsListResp = {
+  applications: mockApplications,
+  total: mockApplications.length,
   limit: 50,
-  page: 1,
-  getApplicationList: () => ({ applications: mockApplications, total: mockApplications.length })
+  page: 1
+}
+
+vi.mock('@/stores/examiner', () => ({
+  useExaminerStore: () => ({
+    tableFilters: {},
+    tableLimit: 10,
+    tablePage: 1,
+    fetchApplications: vi.fn().mockResolvedValue(mockedResp),
+    approveApplication: vi.fn(),
+    rejectApplication: vi.fn(),
+    getNextApplication: vi.fn().mockResolvedValue(mockApplications[0]),
+    getDocument: vi.fn(),
+    openDocInNewTab: vi.fn(),
+    resetFilters: vi.fn()
+  })
 }))
 
 describe('Examiner Dashboard Page', () => {
@@ -17,15 +33,12 @@ describe('Examiner Dashboard Page', () => {
     wrapper = await mountSuspended(Dashboard, {
       global: { plugins: [enI18n] }
     })
-  })
 
-  it('should setup tests', () => {
-    const result = useStrrBasePermitList()
-    expect(result).toHaveProperty('limit', 50)
-    expect(result).toHaveProperty('page', 1)
+    await nextTick()
   })
 
   it('should produce correct Host PR Requirements', () => {
+    expect(wrapper.exists()).toBe(true)
     const getPrReq = (reg: ApiHostApplication) => wrapper.vm.getHostPrRequirements(reg)
 
     const prRequirements = getPrReq(mockApplications[0]?.registration)
@@ -67,8 +80,7 @@ describe('Examiner Dashboard Page', () => {
     expect(wrapper.findTestId('applications-table').exists()).toBe(true)
     expect(wrapper.findTestId('applications-pagination').exists()).toBe(mockApplications.length > 50)
 
-    const applications = wrapper.vm.applications
-
+    const { applications } = wrapper.vm.applicationListResp.value
     expect(applications.length).toBe(mockApplications.length)
     expect(applications[0].applicantName).toEqual(
       displayContactFullName(mockApplications[0]?.registration.primaryContact)
@@ -77,7 +89,8 @@ describe('Examiner Dashboard Page', () => {
     const applicationText = wrapper.findTestId('applications-table').text()
     const { header, registration } = mockApplications[0] as ApiApplicationBaseResp
     expect(applicationText).toContain(header.applicationNumber)
-    expect(applicationText).toContain(header.examinerStatus)
+    expect(applicationText).toContain(header.hostStatus)
+    expect(applicationText).toContain(displayContactFullName(registration.primaryContact))
     expect(applicationText).toContain(registration.unitAddress.city)
   })
 })
