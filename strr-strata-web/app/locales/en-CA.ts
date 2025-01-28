@@ -57,7 +57,8 @@ export default {
       registeringBusiness: 'Registering Business',
       regOfficeAttSvc: 'Registered Office or Attorney for Service',
       confirmation: 'Confirmation',
-      termsAndCond: 'Terms and Conditions'
+      termsAndCond: 'Terms and Conditions',
+      termsAndCondLowerCase: 'terms and conditions'
     },
     text: {
       comingSoon: 'Short-Term Rental Strata Hotel Registry will be available on December 15, 2024',
@@ -162,7 +163,7 @@ export default {
     min1Document: 'Must have at least one document'
   },
   certify: {
-    1: '{terms} I agree to comply with the {link} of registration.',
+    1: '{terms} I confirm that I am duly authorized to register this Strata-Titled Hotel or Motel and to agree to the {link1} of registration on behalf of the Strata-Titled Hotel or Motel. I agree to comply, and the Strata-Titled Hotel or Motel agrees to comply, with the {link2} of registration.',
     2: '{boldStart}Accuracy of Information.{boldEnd} I confirm that the information contained in the application for registration is accurate and true. I understand that if I have knowingly provided inaccurate or false information, I may be subject to enforcement action under Part 4 of the {italicStart}Short-term Rental Accommodations Act{italicEnd}.',
     checkbox: 'I confirm that I understand and agree to the above.'
   },

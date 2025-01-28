@@ -73,6 +73,7 @@ export default {
       registeredOfficeAttorney: 'Registered Office / Attorney',
       takedownEmail: 'Takedown Email',
       termsAndCond: 'Terms and Conditions',
+      termsAndCondLowerCase: 'terms and conditions',
       confirmation: 'Confirmation'
     },
     hint: {
@@ -120,7 +121,7 @@ export default {
     }
   },
   certify: {
-    1: '{terms} I agree to comply with the {link} of registration.',
+    1: '{terms} I confirm that I am duly authorized to register this Platform Service Provider and to agree to the {link1} of registration on behalf of the Platform Service Provider. I agree to comply, and the Platform Service Provider agrees to comply, with the {link2} of registration.',
     2: '{boldStart}Accuracy of Information.{boldEnd} I confirm that the information contained in the application for registration is accurate and true. I understand that if I have knowingly provided inaccurate or false information, I may be subject to enforcement action under Part 4 of the {italicStart}Short-term Rental Accommodations Act{italicEnd}.',
     3: '{boldStart}Validating Registration.{boldEnd} I understand that under section 13(1) of the {italicStart}Short-term Rental Accommodations Act{italicEnd}, the platform service provider must validate that all platform offers have a valid registration number; and that under section 17(2)(a) of the Act, platform service providers must cease providing platform services with respect to a platform offer that does not have a valid registration number. ',
     checkbox: 'I confirm that I understand and agree to the above.'
