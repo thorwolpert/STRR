@@ -35,7 +35,7 @@ export default defineVitestConfig({
         // },
       }
     },
-    // setupFiles: './tests/setup/i18n.ts',
+    setupFiles: './tests/setup.ts',
     globals: true
   }
 })

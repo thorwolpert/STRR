@@ -46,6 +46,7 @@ const getApplicationName = (): string => {
           variant="link"
           :to="(application.registration as ApiBaseStrataApplication).strataHotelDetails.brand.website"
           target="_blank"
+          data-testid="strata-brand-website"
         />
       </div>
       <div class="text-sm">
