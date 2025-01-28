@@ -115,7 +115,6 @@ const getActiveAddressState = (): PropertyManagerBusinessAddressI | null => {
 
 watch(canadaPostAddress, (newAddress) => {
   const activeAddressState = getActiveAddressState()
-  console.log(newAddress)
 
   if (newAddress && activeAddressState) {
     activeAddressState.address = newAddress.address

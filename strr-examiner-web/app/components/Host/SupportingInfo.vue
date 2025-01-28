@@ -43,13 +43,18 @@ const getOwnershipType = (): string =>
 <template>
   <ConnectPageSection>
     <div class="divide-y px-10 py-6">
-      <ApplicationDetailsSection v-if="reg?.strRequirements?.isStrProhibited" :label="t('strr.label.strProhibited')">
+      <ApplicationDetailsSection
+        v-if="reg?.strRequirements?.isStrProhibited"
+        :label="t('strr.label.strProhibited')"
+        data-testid="str-prohibited-section"
+      >
         {{ t('strr.label.strProhibitedAction') }}
       </ApplicationDetailsSection>
 
       <ApplicationDetailsSection
         v-if="reg?.strRequirements?.isBusinessLicenceRequired"
         :label="t('strr.label.businessLicence')"
+        data-testid="business-lic-section"
       >
         <div class="flex gap-x-8">
           <UButton
@@ -57,6 +62,7 @@ const getOwnershipType = (): string =>
             class="mr-4 gap-x-1 p-0"
             variant="link"
             icon="mdi-file-document-outline"
+            data-testid="open-business-lic-btn"
             @click="openDocInNewTab(businessLicenceDoc)"
           >
             {{ t(`documentLabels.${DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE}`) }}
@@ -71,14 +77,21 @@ const getOwnershipType = (): string =>
         </div>
       </ApplicationDetailsSection>
 
-      <ApplicationDetailsSection :label="t('strr.label.prRequirement')">
+      <ApplicationDetailsSection
+        :label="t('strr.label.prRequirement')"
+        data-testid="pr-req-section"
+      >
         <div v-if="!isEmpty(reg?.strRequirements)">
           {{ getPrRequired() }}
           {{ getPrExemptReason() }}
           {{ getOwnershipType() }}
         </div>
 
-        <div v-if="!isEmpty(reg?.documents)" class="mt-2">
+        <div
+          v-if="!isEmpty(reg?.documents)"
+          class="mt-2"
+          data-testid="pr-req-documents"
+        >
           <UButton
             v-for="document in application.registration.documents.filter(
               doc => doc.documentType !== DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE

@@ -183,7 +183,11 @@ function handleColumnSort (column: string) {
 }
 </script>
 <template>
-  <div class="flex grow flex-col justify-center space-y-8 py-8 sm:space-y-10 sm:py-10">
+  <div
+    id="dashboard-page"
+    class="flex grow flex-col justify-center space-y-8 py-8 sm:space-y-10 sm:py-10"
+    data-testid="examiner-dashboard-page"
+  >
     <UButton
       v-if="false"
       label="Force Error"
@@ -237,6 +241,7 @@ function handleColumnSort (column: string) {
                   activeButton: { class: 'rounded' }
                 }
               }"
+              data-testid="applications-pagination"
             />
             <USelectMenu
               v-slot="{ open }"
@@ -281,6 +286,7 @@ function handleColumnSort (column: string) {
             size: 'text-sm',
           }
         }"
+        data-testid="applications-table"
         @select="handleRowSelect"
       >
         <template #registrationNumber-header="{ column }">
