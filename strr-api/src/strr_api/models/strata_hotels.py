@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 from sql_versioning import Versioned
+from sqlalchemy import Enum
 from sqlalchemy.orm import relationship
 
+from strr_api.common.enum import BaseEnum, auto
 from strr_api.models.base_model import BaseModel
 
 from .db import db
@@ -13,6 +15,13 @@ from .db import db
 
 class StrataHotel(Versioned, BaseModel):
     """Strata Hotel"""
+
+    class StrataHotelCategory(BaseEnum):
+        """Enum of the strata hotel category."""
+
+        FULL_SERVICE = auto()  # pylint: disable=invalid-name
+        MULTI_UNIT_NON_PR = auto()  # pylint: disable=invalid-name
+        POST_DECEMBER_2023 = auto()  # pylint: disable=invalid-name
 
     __tablename__ = "strata_hotels"
 
@@ -24,6 +33,7 @@ class StrataHotel(Versioned, BaseModel):
     brand_name = db.Column("brand_name", db.String(250), nullable=False)
     website = db.Column("website", db.String(1000), nullable=False)
     number_of_units = db.Column("number_of_units", db.Integer, nullable=False)
+    category = db.Column(Enum(StrataHotelCategory), nullable=True, index=True)
 
     mailing_address_id = db.Column(db.Integer, db.ForeignKey("addresses.id"), nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey("addresses.id"), nullable=False)

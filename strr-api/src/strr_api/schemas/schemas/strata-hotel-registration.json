@@ -118,12 +118,21 @@
           "items": {
             "$ref": "https://strr.gov.bc.ca/.well_known/schemas/address"
           }
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "FULL_SERVICE",
+            "MULTI_UNIT_NON_PR",
+            "POST_DECEMBER_2023"
+          ]
         }
       },
       "required": [
         "brand",
         "location",
-        "numberOfUnits"
+        "numberOfUnits",
+        "category"
       ]
     }
   },
