@@ -39,6 +39,7 @@ from strr_api.enums.enum import ApplicationType, PaymentStatus
 from strr_api.models import Application, Events, User
 from strr_api.models.application import ApplicationSerializer
 from strr_api.models.dataclass import ApplicationSearch
+from strr_api.services.email_service import EmailService
 from strr_api.services.events_service import EventsService
 from strr_api.services.registration_service import RegistrationService
 from strr_api.services.user_service import UserService
@@ -196,6 +197,9 @@ class ApplicationService:
             event_name=ApplicationService._get_event_name(application.status),
             application_id=application.id,
         )
+
+        EmailService.send_application_status_update_email(application)
+
         return application
 
     @staticmethod
