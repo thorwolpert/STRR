@@ -1,8 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-// import { fileURLToPath } from 'url'
+import { fileURLToPath } from 'url'
 // import { dirname, join } from 'path'
 
 // const currentDir = dirname(fileURLToPath(import.meta.url))
+
+// disable gtm if dev or test env or missing gtm id
+const isTestOrDev = ['test', 'development'].includes((process.env.NUXT_ENVIRONMENT_HEADER || '').toLowerCase())
+const isGtmIdEmpty = !(process.env.NUXT_GTM_ID?.trim() || '')
+const isGtmEnabled = !(isTestOrDev || isGtmIdEmpty)
 
 export default defineNuxtConfig({
   devtools: { enabled: false },
@@ -34,6 +39,10 @@ export default defineNuxtConfig({
 
   imports: {
     dirs: ['stores', 'composables', 'enums', 'interfaces', 'types', 'utils']
+  },
+
+  alias: {
+    '#baseWeb': fileURLToPath(new URL('./app', import.meta.url))
   },
 
   css: [],
@@ -80,8 +89,8 @@ export default defineNuxtConfig({
   },
 
   gtm: {
-    enabled: !!process.env.NUXT_GTM_ID?.trim(),
-    id: process.env.NUXT_GTM_ID?.trim() as string,
+    enabled: isGtmEnabled,
+    id: isGtmEnabled ? process.env.NUXT_GTM_ID?.trim() as string : 'GTM-UNDEFINED',
     debug: true,
     defer: true
   },
