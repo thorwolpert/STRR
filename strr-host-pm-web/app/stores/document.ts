@@ -269,7 +269,7 @@ export const useDocumentStore = defineStore('host/document', () => {
       DocumentUploadType.BCSC,
       DocumentUploadType.COMBINED_BCSC_LICENSE
     ],
-    uniqueColumnB: [ // or 1 doc from column A and 2 unique docs from this list are required
+    uniqueColumnB: [ // 1 doc from bcId and 2 unique docs from this list are required
       DocumentUploadType.ICBC_CERTIFICATE_OF_INSURANCE,
       DocumentUploadType.HOME_INSURANCE_SUMMARY,
       DocumentUploadType.PROPERTY_TAX_NOTICE,
@@ -277,7 +277,7 @@ export const useDocumentStore = defineStore('host/document', () => {
       DocumentUploadType.PROPERTY_ASSESSMENT_NOTICE,
       DocumentUploadType.HOG_DECLARATION
     ],
-    nonUniqueColumnB: [ // or 1 doc from column A and 2 non-unique docs from this list are required
+    nonUniqueColumnB: [ // or 1 doc from bcId and 2 non-unique docs from this list are required
       DocumentUploadType.UTILITY_BILL,
       DocumentUploadType.OTHERS,
       DocumentUploadType.GOVT_OR_CROWN_CORP_OFFICIAL_NOTICE

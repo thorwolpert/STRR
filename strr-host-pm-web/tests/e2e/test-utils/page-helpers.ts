@@ -20,7 +20,7 @@ export async function completeLogin (page: Page, loginMethod: LoginSource) {
   const environment = process.env.NUXT_ENVIRONMENT_HEADER!.toLowerCase()
   const otpSecret = process.env.PLAYWRIGHT_TEST_BCEID_OTP_SECRET!
 
-  await page.goto('en-CA/auth/login', { waitUntil: 'networkidle', timeout: 60000 })
+  await page.goto('en-CA/auth/login', { waitUntil: 'load', timeout: 60000 })
 
   if (loginMethod === LoginSource.BCSC) {
     await page.getByRole('button', { name: 'Continue with BC Services Card' }).click()
@@ -49,7 +49,7 @@ export async function completeLogin (page: Page, loginMethod: LoginSource) {
 }
 
 export async function chooseAccount (page: Page, loginMethod: LoginSource) {
-  await page.goto('./en-CA/auth/account/choose-existing', { waitUntil: 'networkidle', timeout: 60000 })
+  await page.goto('./en-CA/auth/account/choose-existing', { waitUntil: 'load', timeout: 60000 })
 
   await expect(page.getByTestId('h1')).toContainText('Existing Account Found')
 
@@ -229,8 +229,7 @@ export const completeStep3 = async (
   page: Page,
   requiredDocs: Array<{ option: string, filename: string }>,
   blInfo: { businessLicense: string, businessLicenseExpiryDate: string },
-  docsChecklistAssertions: () => Promise<void>,
-  expectSuccess: boolean = true
+  docsChecklistAssertions: () => Promise<void>
 ) => {
   await expect(getH2(page)).toContainText('Add Supporting Information')
 
@@ -251,9 +250,7 @@ export const completeStep3 = async (
 
   // finalize step 3
   page.getByRole('button', { name: 'Review and Confirm', exact: true }).click()
-  if (expectSuccess) {
-    await expect(getH2(page)).toContainText('Review and Confirm')
-  }
+  await expect(getH2(page)).toContainText('Review and Confirm')
 }
 
 export const completeStep4 = async (
