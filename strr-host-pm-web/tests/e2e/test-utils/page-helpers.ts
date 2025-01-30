@@ -20,7 +20,7 @@ export async function completeLogin (page: Page, loginMethod: LoginSource) {
   const environment = process.env.NUXT_ENVIRONMENT_HEADER!.toLowerCase()
   const otpSecret = process.env.PLAYWRIGHT_TEST_BCEID_OTP_SECRET!
 
-  await page.goto('en-CA/auth/login', { waitUntil: 'networkidle', timeout: 60000 })
+  await page.goto('en-CA/auth/login', { waitUntil: 'load', timeout: 60000 })
 
   if (loginMethod === LoginSource.BCSC) {
     await page.getByRole('button', { name: 'Continue with BC Services Card' }).click()
@@ -49,7 +49,7 @@ export async function completeLogin (page: Page, loginMethod: LoginSource) {
 }
 
 export async function chooseAccount (page: Page, loginMethod: LoginSource) {
-  await page.goto('./en-CA/auth/account/choose-existing', { waitUntil: 'networkidle', timeout: 60000 })
+  await page.goto('./en-CA/auth/account/choose-existing', { waitUntil: 'load', timeout: 60000 })
 
   await expect(page.getByTestId('h1')).toContainText('Existing Account Found')
 

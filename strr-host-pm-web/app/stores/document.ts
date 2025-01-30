@@ -76,7 +76,7 @@ export const useDocumentStore = defineStore('host/document', () => {
       docs.push({
         isValid: isRentValid,
         icon: isRentValid ? 'i-mdi-check' : 'i-mdi-close',
-        label: t('label.rentalAgreementOrRecept')
+        label: t('label.rentalAgreementOrNoticeOfIncrease')
       })
     }
 
@@ -102,7 +102,7 @@ export const useDocumentStore = defineStore('host/document', () => {
     }
 
     if (propStore.unitDetails.ownershipType === OwnershipType.RENT) {
-      docs.push(t('label.rentalAgreementOrRecept'))
+      docs.push(t('label.rentalAgreementOrNoticeOfIncrease'))
     }
 
     return docs
@@ -269,17 +269,15 @@ export const useDocumentStore = defineStore('host/document', () => {
       DocumentUploadType.BCSC,
       DocumentUploadType.COMBINED_BCSC_LICENSE
     ],
-    uniqueColumnA: [ // either 2 unique docs from this list are required
-      DocumentUploadType.PROPERTY_ASSESSMENT_NOTICE,
-      DocumentUploadType.SPEC_TAX_CONFIRMATION,
-      DocumentUploadType.HOG_DECLARATION
-    ],
-    uniqueColumnB: [ // or 1 doc from column A and 2 unique docs from this list are required
+    uniqueColumnB: [ // 1 doc from bcId and 2 unique docs from this list are required
       DocumentUploadType.ICBC_CERTIFICATE_OF_INSURANCE,
       DocumentUploadType.HOME_INSURANCE_SUMMARY,
-      DocumentUploadType.PROPERTY_TAX_NOTICE
+      DocumentUploadType.PROPERTY_TAX_NOTICE,
+      DocumentUploadType.SPEC_TAX_CONFIRMATION,
+      DocumentUploadType.PROPERTY_ASSESSMENT_NOTICE,
+      DocumentUploadType.HOG_DECLARATION
     ],
-    nonUniqueColumnB: [ // or 1 doc from column A and 2 non-unique docs from this list are required
+    nonUniqueColumnB: [ // or 1 doc from bcId and 2 non-unique docs from this list are required
       DocumentUploadType.UTILITY_BILL,
       DocumentUploadType.OTHERS,
       DocumentUploadType.GOVT_OR_CROWN_CORP_OFFICIAL_NOTICE
@@ -299,19 +297,12 @@ export const useDocumentStore = defineStore('host/document', () => {
 
   const prDocs: DocumentUploadType[] = [
     ...documentCategories.bcId,
-    ...documentCategories.uniqueColumnA,
     ...documentCategories.uniqueColumnB,
     ...documentCategories.nonUniqueColumnB,
     ...documentCategories.rental
   ]
 
   function validatePrincipalResidenceDocuments (): boolean {
-    // get unique column a docs
-    const columnAFilteredUnique = uniqBy(
-      apiDocuments.value.filter(item => documentCategories.uniqueColumnA.includes(item.documentType)),
-      'documentType'
-    )
-
     // get unique column b docs
     const columnBFilteredUnique = uniqBy(
       apiDocuments.value.filter(item => documentCategories.uniqueColumnB.includes(item.documentType)),
@@ -335,11 +326,11 @@ export const useDocumentStore = defineStore('host/document', () => {
     const rentalDocCount = rentalDocsExist ? 1 : 0
 
     // get doc count
-    const columnACount = columnAFilteredUnique.length + bcIdDocCount
+    const columnACount = bcIdDocCount
     const columnBCount = columnBFilteredUnique.length + columnBFilteredNonUnique.length + rentalDocCount
 
-    // validate at least 2 of column a docs OR validate at least 1 of column a and 2 of column b
-    return columnACount >= 2 || (columnACount >= 1 && columnBCount >= 2)
+    // validate at least 1 of column a and 2 of column b
+    return columnACount >= 1 && columnBCount >= 2
   }
 
   function validateRequiredDocuments () {
