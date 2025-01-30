@@ -216,6 +216,9 @@ export default {
         name: 'Strata Hotel Brand Name | Strata Hotel Brand {count} Name',
         site: 'Strata Hotel Brand Website | Strata Hotel Brand {count} Website'
       }
+    },
+    alertFlags: {
+      hostAddressNotSame: 'PR requirement applies'
     }
   },
   btn: {

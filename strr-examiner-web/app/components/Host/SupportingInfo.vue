@@ -2,6 +2,7 @@
 import isEmpty from 'lodash/isEmpty'
 import { ConnectPageSection } from '#components'
 import { useExaminerStore } from '~/stores/examiner'
+import { useFlags } from '~/composables/useFlags'
 
 const props = defineProps<{
   application: HostApplicationResp | undefined
@@ -10,6 +11,7 @@ const reg = props.application?.registration
 
 const { t } = useI18n()
 const { getDocument } = useExaminerStore()
+const alertFlags = reactive(useFlags(props.application as HostApplicationResp))
 
 const openDocInNewTab = async (supportingDocument: ApiDocument) => {
   if (props.application !== undefined) {
@@ -48,6 +50,9 @@ const getOwnershipType = (): string =>
         :label="t('strr.label.strProhibited')"
         data-testid="str-prohibited-section"
       >
+        <template #icon>
+          <AlertFlag />
+        </template>
         {{ t('strr.label.strProhibitedAction') }}
       </ApplicationDetailsSection>
 
@@ -81,6 +86,12 @@ const getOwnershipType = (): string =>
         :label="t('strr.label.prRequirement')"
         data-testid="pr-req-section"
       >
+        <template #icon>
+          <AlertFlag
+            v-if="alertFlags.isNotSameProperty"
+            data-testid="flag-pr-requirement"
+          />
+        </template>
         <div v-if="!isEmpty(reg?.strRequirements)">
           {{ getPrRequired() }}
           {{ getPrExemptReason() }}
