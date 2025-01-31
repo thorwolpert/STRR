@@ -31,9 +31,9 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-"""Tests to assure the GCP service layer.
+"""Tests to assure the Email service.
 
-Test-Suite to ensure that the GCP Queue Service layer is working as expected.
+Test-Suite to ensure that the Email Service is working as expected.
 """
 import json
 import os
@@ -47,7 +47,7 @@ from gcp_queue.gcp_queue import GcpQueue
 from strr_api import create_app
 from strr_api.models import Application, Registration, User
 from strr_api.services import ApplicationService
-from strr_api.services.gcp_queue_publisher import QueueMessage, publish_to_queue
+from strr_api.services.email_service import EmailService
 
 HOST_REGISTRATION_JSON = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), "../../mocks/json/host_registration.json"
@@ -69,30 +69,79 @@ def mock_credentials():
         yield mock
 
 
-def test_publish_to_queue_success(app, mock_credentials, mock_publisher_client):
-    """Test publishing to GCP PubSub Queue successfully."""
+@pytest.mark.parametrize(
+    "registration_type, status, expect_email",
+    [
+        (
+            Registration.RegistrationType.HOST,
+            Application.Status.FULL_REVIEW_APPROVED,
+            True,
+        ),
+        (
+            Registration.RegistrationType.HOST,
+            Application.Status.AUTO_APPROVED,
+            True,
+        ),
+        (
+            Registration.RegistrationType.HOST,
+            Application.Status.PROVISIONAL_REVIEW,
+            True,
+        ),
+        (
+            Registration.RegistrationType.HOST,
+            Application.Status.FULL_REVIEW,
+            False,
+        ),
+        (
+            Registration.RegistrationType.PLATFORM,
+            Application.Status.AUTO_APPROVED,
+            True,
+        ),
+        (
+            Registration.RegistrationType.PLATFORM,
+            Application.Status.PAID,
+            False,
+        ),
+        (
+            Registration.RegistrationType.STRATA_HOTEL,
+            Application.Status.FULL_REVIEW_APPROVED,
+            False,
+        ),
+    ],
+)
+def test_email_queue_publish(app, mock_publisher_client, mock_credentials, registration_type, status, expect_email):
+    """Test that the email service calls the publisher service as expected."""
+    orig_topic = app.config["GCP_EMAIL_TOPIC"]
+    app.config["GCP_EMAIL_TOPIC"] = "test"
     with patch.object(GcpQueue, "publish") as mock_publisher:
         with app.app_context():
-            queue_message = QueueMessage(
-                source="test-source",
-                message_type="test-message-type",
-                payload={"key": "value"},
-                topic="projects/project-id/topics/topic",
+            # init fake staff user
+            user = User(
+                username="testUser",
+                firstname="Test",
+                lastname="User",
+                iss="test",
+                sub=f"sub{random.randint(0, 99999)}",
+                idp_userid="testUserID",
+                login_source="testLogin",
             )
+            user.save()
+            # init fake application
+            application = Application()
+            application.registration_type = registration_type
+            application.status = status
+            application.application_number = Application.generate_unique_application_number()
+            application.application_json = {"fake": "lala"}
+            application.submitter_id = user.id
+            application.payment_account = 1
+            application.type = "registration"
+            application.save()
+            # update status and check email trigger
+            EmailService.send_application_status_update_email(application)
+            if expect_email:
+                mock_publisher.assert_called_once_with("test", ANY)
+            else:
+                mock_publisher.publish.assert_not_called()
 
-            publish_to_queue(queue_message)
-            mock_publisher.assert_called_once_with("projects/project-id/topics/topic", ANY)
-
-
-def test_publish_to_queue_no_topic(app, mock_credentials, mock_publisher_client):
-    """Test that publish_to_queue does not publish if no topic is set."""
-    with patch.object(GcpQueue, "publish") as mock_publisher:
-        with app.app_context():
-            queue_message = QueueMessage(
-                source="test-source",
-                message_type="test-message-type",
-                payload={"key": "value"},
-                topic=None,
-            )
-            publish_to_queue(queue_message)
-            mock_publisher.publish.assert_not_called()
+    # set back to original topic
+    app.config["GCP_EMAIL_TOPIC"] = orig_topic
