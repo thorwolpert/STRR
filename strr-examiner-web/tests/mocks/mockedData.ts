@@ -97,7 +97,6 @@ export const mockHostApplication: HostApplicationResp = {
 }
 
 // Host application with flags for Examiner:
-// Strr Prohibited, Host is Business
 export const mockHostApplicationWithFlags: HostApplicationResp = {
   ...mockHostApplication,
   header: {
@@ -129,6 +128,7 @@ const mockStrataApplication: StrataApplicationResp =
     decisionDate: undefined,
     examinerActions: [],
     examinerStatus: 'Draft',
+    existingHostRegistrations: 0,
     hostActions: [],
     hostStatus: 'Draft',
     isCertificateIssued: false,
@@ -137,8 +137,7 @@ const mockStrataApplication: StrataApplicationResp =
     paymentStatus: 'COMPLETED',
     paymentToken: 12345,
     status: ApplicationStatus.FULL_REVIEW,
-    paymentMethod: ConnectPaymentMethod.DIRECT_PAY,
-    existingHostRegistrations: 0
+    paymentMethod: ConnectPaymentMethod.DIRECT_PAY
   },
   registration: {
     businessDetails: {
