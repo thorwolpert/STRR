@@ -34,6 +34,13 @@ const primaryContactPerson: ApiHostContactPerson = {
   socialInsuranceNumber: '123 456 789'
 }
 
+const primaryContactBusiness: ApiHostContactBusiness = {
+  ...primaryContactPerson,
+  contactType: OwnerType.BUSINESS,
+  businessLegalName: 'ABC Rentals',
+  businessNumber: '123123123'
+}
+
 export const mockHostApplication: HostApplicationResp = {
   header: {
     applicationDateTime: new Date('2025-01-01T10:30:00.000000+00:00'),
@@ -85,6 +92,27 @@ export const mockHostApplication: HostApplicationResp = {
       rentalUnitSpaceType: RentalUnitType.ENTIRE_HOME,
       businessLicense: '123123123'
     }
+  }
+}
+
+// Host application with flags for Examiner:
+// Strr Prohibited, Host is Business
+export const mockHostApplicationWithFlags: HostApplicationResp = {
+  ...mockHostApplication,
+  registration: {
+    ...mockHostApplication.registration,
+    primaryContact: primaryContactBusiness,
+    strRequirements: {
+      isBusinessLicenceRequired: true,
+      isPrincipalResidenceRequired: true,
+      isStrProhibited: true,
+      isStraaExempt: false,
+      organizationNm: 'City of Vancouver'
+    },
+    unitAddress: {
+      ...mockHostApplication.registration.unitAddress,
+      unitNumber: ''
+    } as ApiUnitAddress
   }
 }
 

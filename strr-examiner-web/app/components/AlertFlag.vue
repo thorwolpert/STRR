@@ -10,6 +10,9 @@ const props = defineProps<{ tooltipText?: string }>()
       placement: 'right',
       arrow: true
     }"
+    :ui="{
+      base: 'p-4'
+    }"
   >
     <UIcon
       name="i-mdi-alert"

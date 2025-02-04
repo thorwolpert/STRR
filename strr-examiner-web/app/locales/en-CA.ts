@@ -218,7 +218,10 @@ export default {
       }
     },
     alertFlags: {
-      hostAddressNotSame: 'PR requirement applies'
+      hostAddressNotSame: 'PR requirement applies',
+      hostIsBusiness: 'Host is a business',
+      unitNumberMissing: 'Unit Number Missing',
+      notSameProperty: "Unit not on the same property as host's principal residence"
     }
   },
   btn: {
@@ -412,7 +415,7 @@ export default {
     UNIT_NOT_ON_PR_PROPERTY: 'This unit is not on the same property as the host’s principal residence'
   },
   ownerType: {
-    INDIVIDUAL: 'individual',
+    INDIVIDUAL: 'Individual',
     BUSINESS: 'Business'
   },
   ownershipType: {

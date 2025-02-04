@@ -10,7 +10,8 @@ export const useFlags = (application: HostApplicationResp) => {
       PropertyType.TOWN_HOME,
       PropertyType.STRATA_HOTEL
     ]
-    return unitNumberRequired.includes(application.registration.unitDetails.propertyType)
+    return unitNumberRequired.includes(application.registration.unitDetails.propertyType) &&
+      !application.registration.unitAddress?.unitNumber
   })
 
   const isProhibited = computed(() => application.registration.strRequirements?.isStrProhibited)
@@ -26,9 +27,14 @@ export const useFlags = (application: HostApplicationResp) => {
     return isPrincipalResidenceRequired && !prExemptReason && hostResidence === ResidenceType.ANOTHER_UNIT
   })
 
+  const isHostTypeBusiness = computed((): boolean =>
+    application.registration.primaryContact?.contactType === OwnerType.BUSINESS
+  )
+
   return {
     isUnitNumberMissing,
     isNotSameProperty,
-    isProhibited
+    isProhibited,
+    isHostTypeBusiness
   }
 }

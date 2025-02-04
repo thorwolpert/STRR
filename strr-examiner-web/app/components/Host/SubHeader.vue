@@ -20,10 +20,20 @@ const hostExp = useHostExpansion()
         <div class="w-[150px]">
           <UIcon name="i-mdi-map-marker-outline" />
           {{ displayFullUnitAddress(reg.unitAddress) }}
+          <AlertFlag
+            v-if="alertFlags.isUnitNumberMissing"
+            data-testid="flag-unit-number-missing"
+          />
         </div>
         <div v-if="reg.strRequirements?.organizationNm">
           <UIcon name="i-mdi-map-outline" />
           {{ reg.strRequirements.organizationNm }}
+        </div>
+        <div
+          v-if="alertFlags.isUnitNumberMissing"
+          class="font-bold text-red-600"
+        >
+          {{ t('strr.alertFlags.unitNumberMissing') }}
         </div>
       </div>
 
@@ -52,6 +62,12 @@ const hostExp = useHostExpansion()
         <div v-if="reg.primaryContact?.contactType">
           <strong>{{ t('strr.label.hostType') }}</strong>
           {{ t(`ownerType.${reg.primaryContact?.contactType}`) }}
+          <AlertFlag
+            v-if="alertFlags.isHostTypeBusiness"
+            class="ml-1"
+            :tooltip-text="t('strr.alertFlags.hostIsBusiness')"
+            data-testid="flag-host-business"
+          />
         </div>
         <div>
           <strong>{{ t('strr.label.ownerRenter') }}</strong>
@@ -74,7 +90,7 @@ const hostExp = useHostExpansion()
           <AlertFlag
             v-if="alertFlags.isNotSameProperty"
             :tooltip-text="t('strr.alertFlags.hostAddressNotSame')"
-            data-testid="flag-host-res-another-unit"
+            data-testid="flag-host-address-not-same"
           />
         </div>
         <div><strong>{{ t('strr.label.pid') }}</strong> {{ reg.unitDetails?.parcelIdentifier }}</div>
