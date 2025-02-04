@@ -222,7 +222,7 @@ export default {
       hostIsBusiness: 'Host is a business',
       unitNumberMissing: 'Unit Number Missing',
       notSameProperty: "Unit not on the same property as host's principal residence",
-      exceedsRegistrationLimit: 'Exceeds max limit of 2'
+      exceedsRegistrationLimit: 'More than 2 Registrations'
     }
   },
   btn: {
