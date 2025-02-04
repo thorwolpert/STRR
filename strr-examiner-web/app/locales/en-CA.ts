@@ -221,7 +221,8 @@ export default {
       hostAddressNotSame: 'PR requirement applies',
       hostIsBusiness: 'Host is a business',
       unitNumberMissing: 'Unit Number Missing',
-      notSameProperty: "Unit not on the same property as host's principal residence"
+      notSameProperty: "Unit not on the same property as host's principal residence",
+      exceedsRegistrationLimit: 'Exceeds max limit of 2'
     }
   },
   btn: {

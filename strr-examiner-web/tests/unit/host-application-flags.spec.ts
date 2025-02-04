@@ -26,6 +26,7 @@ describe('Host Application Alert Flags', () => {
     const hostSubHeader = wrapper.findComponent(HostSubHeader)
     expect(hostSubHeader.findTestId('flag-host-business').exists()).toBe(true)
     expect(hostSubHeader.findTestId('flag-unit-number-missing').exists()).toBe(true)
+    expect(hostSubHeader.findTestId('flag-exceeds-reg-limit').exists()).toBe(true)
 
     const hostSupportingInfo = wrapper.findComponent(HostSupportingInfo)
     expect(hostSupportingInfo.findTestId('str-prohibited-section').exists()).toBe(true)

@@ -3,6 +3,7 @@ import { useFlags } from '~/composables/useFlags'
 
 const props = defineProps<{ application: HostApplicationResp }>()
 const reg = props.application.registration
+const { header } = props.application
 
 const { t } = useI18n()
 const alertFlags = reactive(useFlags(props.application as HostApplicationResp))
@@ -59,12 +60,11 @@ const hostExp = useHostExpansion()
           <UIcon name="i-mdi-at" />
           {{ reg.primaryContact?.emailAddress }}
         </div>
-        <div v-if="reg.primaryContact?.contactType">
+        <div v-if="reg.primaryContact?.contactType" class="flex gap-x-1">
           <strong>{{ t('strr.label.hostType') }}</strong>
           {{ t(`ownerType.${reg.primaryContact?.contactType}`) }}
           <AlertFlag
             v-if="alertFlags.isHostTypeBusiness"
-            class="ml-1"
             :tooltip-text="t('strr.alertFlags.hostIsBusiness')"
             data-testid="flag-host-business"
           />
@@ -94,9 +94,14 @@ const hostExp = useHostExpansion()
           />
         </div>
         <div><strong>{{ t('strr.label.pid') }}</strong> {{ reg.unitDetails?.parcelIdentifier }}</div>
-        <div>
+        <div class="flex gap-x-1">
           <strong>{{ t('strr.label.registeredRentals') }}</strong>
-          <!-- TODO: Get number of registered rentals -->
+          {{ header.existingHostRegistrations }}
+          <AlertFlag
+            v-if="alertFlags.isRegLimitExceeded"
+            :tooltip-text="t('strr.alertFlags.exceedsRegistrationLimit')"
+            data-testid="flag-exceeds-reg-limit"
+          />
         </div>
         <div>
           <strong>{{ t('strr.label.prRegisteredRentals') }}</strong>

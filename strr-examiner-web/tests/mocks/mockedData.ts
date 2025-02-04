@@ -48,6 +48,7 @@ export const mockHostApplication: HostApplicationResp = {
     decisionDate: undefined,
     examinerActions: ['APPROVE'],
     examinerStatus: 'Full Examination',
+    existingHostRegistrations: 0,
     hostActions: [],
     hostStatus: 'Pending Approval',
     isCertificateIssued: false,
@@ -99,19 +100,23 @@ export const mockHostApplication: HostApplicationResp = {
 // Strr Prohibited, Host is Business
 export const mockHostApplicationWithFlags: HostApplicationResp = {
   ...mockHostApplication,
+  header: {
+    ...mockHostApplication.header,
+    existingHostRegistrations: 10 // flag
+  },
   registration: {
     ...mockHostApplication.registration,
-    primaryContact: primaryContactBusiness,
+    primaryContact: primaryContactBusiness, // flag
     strRequirements: {
-      isBusinessLicenceRequired: true,
+      isBusinessLicenceRequired: true, // flag
       isPrincipalResidenceRequired: true,
-      isStrProhibited: true,
+      isStrProhibited: true, // flag
       isStraaExempt: false,
       organizationNm: 'City of Vancouver'
     },
     unitAddress: {
       ...mockHostApplication.registration.unitAddress,
-      unitNumber: ''
+      unitNumber: '' // flag
     } as ApiUnitAddress
   }
 }
@@ -132,7 +137,8 @@ const mockStrataApplication: StrataApplicationResp =
     paymentStatus: 'COMPLETED',
     paymentToken: 12345,
     status: ApplicationStatus.FULL_REVIEW,
-    paymentMethod: ConnectPaymentMethod.DIRECT_PAY
+    paymentMethod: ConnectPaymentMethod.DIRECT_PAY,
+    existingHostRegistrations: 0
   },
   registration: {
     businessDetails: {
@@ -186,7 +192,8 @@ const mockStrataApplication: StrataApplicationResp =
         postalCode: 'V1Y 1A1',
         province: 'BC'
       },
-      numberOfUnits: 0
+      numberOfUnits: 0,
+      category: StrataHotelCategory.FULL_SERVICE
     },
     strataHotelRepresentatives: []
   }
