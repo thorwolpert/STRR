@@ -113,7 +113,8 @@ const steps = ref<Step[]>([
     validationFn: () => (
       propertyStore.validateUnitAddress(true) as boolean &&
       propertyStore.validateUnitDetails(true) as boolean &&
-      propertyReqStore.validateBlExemption(true) as boolean
+      propertyReqStore.validateBlExemption(true) as boolean &&
+      propertyReqStore.validatePrRequirements(true) as boolean
     )
   },
   {
@@ -187,7 +188,8 @@ const handleSubmit = async () => {
       propertyStore.validateUnitDetails(),
       validateOwners(),
       validateUserConfirmation(),
-      propertyReqStore.validateBlExemption()
+      propertyReqStore.validateBlExemption(),
+      propertyReqStore.validatePrRequirements()
     ]
 
     const validationResults = await Promise.all(validations)
