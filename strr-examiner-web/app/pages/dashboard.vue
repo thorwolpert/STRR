@@ -205,7 +205,7 @@ function handleColumnSort (column: string) {
               size="sm"
             >
               <template #trailing>
-                <UIcon name="i-mdi-search" class="size-5 shrink-0 text-bcGovColor-activeBlue" />
+                <UIcon name="i-mdi-search" class="text-bcGovColor-activeBlue size-5 shrink-0" />
               </template>
             </UInput>
             <ConnectI18nHelper translation-path="label.resultsInTable" :count="applicationListResp?.total || 0" />
@@ -292,6 +292,10 @@ function handleColumnSort (column: string) {
         :rows="applicationListResp.applications"
         :loading="status === 'pending'"
         sort-mode="manual"
+        :empty-state="{
+          icon: '',
+          label:'No matching applications or registrations found.'
+        }"
         :ui="{
           wrapper: 'relative overflow-x-auto h-[512px] bg-white',
           thead: 'sticky top-0 bg-white z-10',

@@ -6,6 +6,9 @@ const props = defineProps<{ label: string }>()
 
 <template>
   <div class="flex py-4 text-sm">
+    <div class="block min-w-[25px]">
+      <slot name="icon" />
+    </div>
     <div class="flex w-1/5 items-start justify-start">
       <span class="text-sm font-bold">{{ props.label }}</span>
     </div>

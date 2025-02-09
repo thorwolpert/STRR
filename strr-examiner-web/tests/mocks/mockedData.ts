@@ -34,6 +34,13 @@ const primaryContactPerson: ApiHostContactPerson = {
   socialInsuranceNumber: '123 456 789'
 }
 
+const primaryContactBusiness: ApiHostContactBusiness = {
+  ...primaryContactPerson,
+  contactType: OwnerType.BUSINESS,
+  businessLegalName: 'ABC Rentals',
+  businessNumber: '123123123'
+}
+
 export const mockHostApplication: HostApplicationResp = {
   header: {
     applicationDateTime: new Date('2025-01-01T10:30:00.000000+00:00'),
@@ -41,6 +48,7 @@ export const mockHostApplication: HostApplicationResp = {
     decisionDate: undefined,
     examinerActions: ['APPROVE'],
     examinerStatus: 'Full Examination',
+    existingHostRegistrations: 0,
     hostActions: [],
     hostStatus: 'Pending Approval',
     isCertificateIssued: false,
@@ -88,6 +96,30 @@ export const mockHostApplication: HostApplicationResp = {
   }
 }
 
+// Host application with flags for Examiner:
+export const mockHostApplicationWithFlags: HostApplicationResp = {
+  ...mockHostApplication,
+  header: {
+    ...mockHostApplication.header,
+    existingHostRegistrations: 10 // flag
+  },
+  registration: {
+    ...mockHostApplication.registration,
+    primaryContact: primaryContactBusiness, // flag
+    strRequirements: {
+      isBusinessLicenceRequired: true, // flag
+      isPrincipalResidenceRequired: true,
+      isStrProhibited: true, // flag
+      isStraaExempt: false,
+      organizationNm: 'City of Vancouver'
+    },
+    unitAddress: {
+      ...mockHostApplication.registration.unitAddress,
+      unitNumber: '' // flag
+    } as ApiUnitAddress
+  }
+}
+
 const mockStrataApplication: StrataApplicationResp =
 {
   header: {
@@ -96,6 +128,7 @@ const mockStrataApplication: StrataApplicationResp =
     decisionDate: undefined,
     examinerActions: [],
     examinerStatus: 'Draft',
+    existingHostRegistrations: 0,
     hostActions: [],
     hostStatus: 'Draft',
     isCertificateIssued: false,
@@ -158,7 +191,8 @@ const mockStrataApplication: StrataApplicationResp =
         postalCode: 'V1Y 1A1',
         province: 'BC'
       },
-      numberOfUnits: 0
+      numberOfUnits: 0,
+      category: StrataHotelCategory.FULL_SERVICE
     },
     strataHotelRepresentatives: []
   }

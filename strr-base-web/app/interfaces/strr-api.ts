@@ -72,6 +72,7 @@ export interface ApplicationHeader {
   decisionDate: Date | undefined
   examinerActions: string[]
   examinerStatus: string
+  existingHostRegistrations: number
   hostActions: string[] // SUBMIT_PAYMENT is currently the only case where this has anything
   hostStatus: string
   isCertificateIssued: boolean

@@ -2,6 +2,7 @@
 import isEmpty from 'lodash/isEmpty'
 import { ConnectPageSection } from '#components'
 import { useExaminerStore } from '~/stores/examiner'
+import { useFlags } from '~/composables/useFlags'
 
 const props = defineProps<{
   application: HostApplicationResp | undefined
@@ -10,6 +11,7 @@ const reg = props.application?.registration
 
 const { t } = useI18n()
 const { getDocument } = useExaminerStore()
+const alertFlags = reactive(useFlags(props.application as HostApplicationResp))
 
 const openDocInNewTab = async (supportingDocument: ApiDocument) => {
   if (props.application !== undefined) {
@@ -48,6 +50,9 @@ const getOwnershipType = (): string =>
         :label="t('strr.label.strProhibited')"
         data-testid="str-prohibited-section"
       >
+        <template #icon>
+          <AlertFlag data-testid="flag-str-prohibited" />
+        </template>
         {{ t('strr.label.strProhibitedAction') }}
       </ApplicationDetailsSection>
 
@@ -81,29 +86,51 @@ const getOwnershipType = (): string =>
         :label="t('strr.label.prRequirement')"
         data-testid="pr-req-section"
       >
-        <div v-if="!isEmpty(reg?.strRequirements)">
-          {{ getPrRequired() }}
-          {{ getPrExemptReason() }}
-          {{ getOwnershipType() }}
-        </div>
+        <template #icon>
+          <AlertFlag
+            v-if="alertFlags.isNotSameProperty || alertFlags.isHostTypeBusiness"
+            data-testid="flag-pr-requirement"
+          />
+        </template>
+        <div class="flex">
+          <div>
+            <div v-if="!isEmpty(reg?.strRequirements)">
+              {{ getPrRequired() }}
+              {{ getPrExemptReason() }}
+              {{ getOwnershipType() }}
+            </div>
 
-        <div
-          v-if="!isEmpty(reg?.documents)"
-          class="mt-2"
-          data-testid="pr-req-documents"
-        >
-          <UButton
-            v-for="document in application.registration.documents.filter(
-              doc => doc.documentType !== DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE
-            )"
-            :key="document.fileKey"
-            class="mr-4 gap-x-1 p-0"
-            variant="link"
-            icon="mdi-file-document-outline"
-            @click="openDocInNewTab(document)"
+            <div
+              v-if="!isEmpty(reg?.documents)"
+              class="mt-2"
+              data-testid="pr-req-documents"
+            >
+              <UButton
+                v-for="document in application.registration.documents.filter(
+                  doc => doc.documentType !== DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE
+                )"
+                :key="document.fileKey"
+                class="mr-4 gap-x-1 p-0"
+                variant="link"
+                icon="mdi-file-document-outline"
+                @click="openDocInNewTab(document)"
+              >
+                {{ t(`documentLabels.${document.documentType}`) }}
+              </UButton>
+            </div>
+          </div>
+          <div
+            v-if="alertFlags.isNotSameProperty"
+            class="ml-3 w-1/3 font-bold text-red-600"
           >
-            {{ t(`documentLabels.${document.documentType}`) }}
-          </UButton>
+            {{ t('strr.alertFlags.notSameProperty') }}
+          </div>
+          <div
+            v-if="alertFlags.isHostTypeBusiness"
+            class="ml-3 w-1/3 font-bold text-red-600"
+          >
+            {{ t('strr.alertFlags.hostIsBusiness') }}
+          </div>
         </div>
       </ApplicationDetailsSection>
     </div>
