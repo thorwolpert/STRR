@@ -140,6 +140,7 @@ class UnitDetails:
         self.prExemptReason = prExemptReason
         self.strataHotelCategory = strataHotelCategory
 
+
 class MailingAddress:
     """MailingAddress payload object."""
 
