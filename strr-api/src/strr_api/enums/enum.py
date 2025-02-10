@@ -14,6 +14,7 @@
 """Enum definitions."""
 
 from enum import Enum
+
 from strr_api.common.enum import BaseEnum, auto
 
 
