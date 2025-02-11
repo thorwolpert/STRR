@@ -63,9 +63,9 @@ export const usePropertyReqStore = defineStore('property/requirements', () => {
     category: prRequirements.value.isPropertyPrExempt &&
             prRequirements.value.prExemptionReason === PrExemptionReason.STRATA_HOTEL
       ? z.enum([
-        StrataHotelCategoryType.FULL_SERVICE,
-        StrataHotelCategoryType.MULTI_UNIT_NON_PR,
-        StrataHotelCategoryType.POST_DECEMBER_2023
+        StrataHotelCategory.FULL_SERVICE,
+        StrataHotelCategory.MULTI_UNIT_NON_PR,
+        StrataHotelCategory.POST_DECEMBER_2023
       ], {
         errorMap: () => ({ message: t('validation.strataHotelCategory') })
       })
@@ -82,13 +82,13 @@ export const usePropertyReqStore = defineStore('property/requirements', () => {
     blExemptType: undefined,
     blExemptReason: ''
   })
-  const getEmptyStrataHotelCategory = (): StrataHotelCategory => ({
+  const getEmptyStrataHotelCategory = (): StrataHotelCategories => ({
     category: undefined
   })
 
   const prRequirements = ref<PrRequirements>(getEmptyPrRequirements())
   const blRequirements = ref<BusinessLicenceRequirements>(getEmptyBlRequirements())
-  const strataHotelCategory = ref<StrataHotelCategory>(getEmptyStrataHotelCategory())
+  const strataHotelCategory = ref<StrataHotelCategories>(getEmptyStrataHotelCategory())
 
   async function getPropertyReqs () {
     try {

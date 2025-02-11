@@ -42,7 +42,7 @@ export interface ApiUnitDetails {
   numberOfRoomsForRent: number | undefined
   prExemptReason?: PrExemptionReason
   blExemptReason?: string
-  strataHotelCategory: StrataHotelCategoryType | undefined
+  strataHotelCategory?: StrataHotelCategory
 }
 
 export interface ApiUnitAddress extends ApiBaseAddress {

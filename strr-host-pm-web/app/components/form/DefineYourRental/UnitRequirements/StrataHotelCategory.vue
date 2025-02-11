@@ -10,16 +10,16 @@ const reqStore = usePropertyReqStore()
 
 const strataHotelCategoryOptions = [
   {
-    value: StrataHotelCategoryType.FULL_SERVICE,
-    label: t(`strataHotelCategory.${StrataHotelCategoryType.FULL_SERVICE}`)
+    value: StrataHotelCategory.FULL_SERVICE,
+    label: t(`strataHotelCategory.${StrataHotelCategory.FULL_SERVICE}`)
   },
   {
-    value: StrataHotelCategoryType.MULTI_UNIT_NON_PR,
-    label: t(`strataHotelCategory.${StrataHotelCategoryType.MULTI_UNIT_NON_PR}`)
+    value: StrataHotelCategory.MULTI_UNIT_NON_PR,
+    label: t(`strataHotelCategory.${StrataHotelCategory.MULTI_UNIT_NON_PR}`)
   },
   {
-    value: StrataHotelCategoryType.POST_DECEMBER_2023,
-    label: t(`strataHotelCategory.${StrataHotelCategoryType.POST_DECEMBER_2023}`)
+    value: StrataHotelCategory.POST_DECEMBER_2023,
+    label: t(`strataHotelCategory.${StrataHotelCategory.POST_DECEMBER_2023}`)
   }
 ]
 
