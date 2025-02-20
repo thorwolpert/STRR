@@ -4,9 +4,8 @@ import { mockStrataApplication } from '../mocks/mockedData'
 import { enI18n } from '../mocks/i18n'
 import ApplicationDetails from '~/pages/examine/[applicationId].vue'
 import {
-  ConnectPageSection, ApplicationInfoHeader, HostSubHeader, HostSupportingInfo,
-  StrataSubHeader, PlatformSubHeader, UBadge, UButton,
-  ConnectButtonControl,
+  ApplicationInfoHeader, HostSubHeader, HostSupportingInfo,
+  StrataSubHeader, PlatformSubHeader, UBadge,
   StrataSupportingInfo
 } from '#components'
 

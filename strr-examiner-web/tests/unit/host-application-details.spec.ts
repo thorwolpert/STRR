@@ -4,7 +4,7 @@ import { mockHostApplication } from '../mocks/mockedData'
 import { enI18n } from '../mocks/i18n'
 import ApplicationDetails from '~/pages/examine/[applicationId].vue'
 import {
-  ConnectPageSection, ApplicationInfoHeader, HostSubHeader, HostSupportingInfo,
+  ApplicationInfoHeader, HostSubHeader, HostSupportingInfo,
   StrataSubHeader, PlatformSubHeader, UBadge, UButton,
   StrataSupportingInfo
 } from '#components'
@@ -24,7 +24,7 @@ describe('Examiner - Host Application Details Page', () => {
     })
   })
 
-  it.only('renders Application Details page and its components', () => {
+  it('renders Application Details page and its components', () => {
     expect(wrapper.exists()).toBe(true)
     expect(wrapper.findComponent(ApplicationInfoHeader).exists()).toBe(true)
     expect(wrapper.findComponent(HostSubHeader).exists()).toBe(true)
