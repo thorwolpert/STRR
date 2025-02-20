@@ -232,7 +232,7 @@ export default {
     done: 'Done',
     showDetails: 'Show Details',
     hideDetails: 'Hide Details',
-    decline: 'Decline',
+    decline: 'Refuse',
     approve: 'Approve'
   },
   error: {

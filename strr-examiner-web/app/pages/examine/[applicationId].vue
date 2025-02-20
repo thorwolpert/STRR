@@ -73,7 +73,8 @@ watch(
       )
 
       // set buttons actions to use new application id
-      if (newVal.registration.registrationType === ApplicationType.HOST) { // TODO: update when strata approval is ready (what to do with platforms ???)
+      if (newVal.registration.registrationType === ApplicationType.HOST ||
+        newVal.registration.registrationType === ApplicationType.STRATA_HOTEL) { // TODO: what to do with platforms ?
         setButtonControl({
           leftButtons: [],
           rightButtons: [
@@ -141,12 +142,10 @@ watch(
     <main v-else>
       <div class="bg-white">
         <ApplicationInfoHeader :application />
-        <!-- TODO: other sub headers -->
         <HostSubHeader
           v-if="application?.registration.registrationType === ApplicationType.HOST"
           :application
         />
-
         <StrataSubHeader
           v-if="application?.registration.registrationType === ApplicationType.STRATA_HOTEL"
           :application
