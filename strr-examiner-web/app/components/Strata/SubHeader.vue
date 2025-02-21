@@ -7,19 +7,25 @@ const { businessDetails } = registration
 
 const strataExpansion = useStrataExpansion(props.application)
 
+const attorney = businessDetails.registeredOfficeOrAttorneyForServiceDetails
+const hasAttorneyAddress = Object.values(attorney.mailingAddress).some(Boolean)
+
 </script>
 
 <template>
-  <div class="app-inner-container">
-    <div class="grid grid-cols-4 gap-x-5 divide-x bg-white py-4 text-sm text-bcGovColor-midGray">
+  <div
+    data-testid="strata-sub-header"
+    class="app-inner-container"
+  >
+    <div class="text-bcGovColor-midGray grid grid-cols-4 gap-x-5 divide-x bg-white py-4 text-sm">
       <div class="space-y-2">
         <b>{{ $t('strr.label.primaryBuilding').toUpperCase() }}</b>
         <ConnectInfoWithIcon
           icon="i-mdi-map-marker-outline"
-          :content="displayFullAddress(registration?.strataHotelDetails.buildings[0])"
+          :content="displayFullAddress(registration?.strataHotelDetails.location)"
         />
         <UButton
-          v-if="registration?.strataHotelDetails.buildings.length > 1"
+          v-if="registration?.strataHotelDetails.buildings.length > 0"
           :label="$t('strr.label.viewAllBuildings')"
           :padded="false"
           variant="link"
@@ -47,16 +53,20 @@ const strataExpansion = useStrataExpansion(props.application)
             :content="displayFullAddress(businessDetails.mailingAddress)"
           />
         </div>
-        <div class="space-y-2">
+        <div
+          v-if="attorney.attorneyName || hasAttorneyAddress"
+          class="space-y-2"
+        >
           <b>{{ $t('strr.label.attorneyForService').toUpperCase() }}</b>
           <ConnectInfoWithIcon
-            v-if="businessDetails.registeredOfficeOrAttorneyForServiceDetails.attorneyName"
+            v-if="attorney.attorneyName"
             icon="i-mdi-domain"
-            :content="businessDetails.registeredOfficeOrAttorneyForServiceDetails.attorneyName"
+            :content="attorney.attorneyName"
           />
           <ConnectInfoWithIcon
+            v-if="hasAttorneyAddress"
             icon="i-mdi-map-marker-outline"
-            :content="displayFullAddress(businessDetails.registeredOfficeOrAttorneyForServiceDetails.mailingAddress)"
+            :content="displayFullAddress(attorney.mailingAddress)"
           />
         </div>
       </div>
