@@ -142,8 +142,6 @@ class Config:  # pylint: disable=too-few-public-methods
         "TAC_URL_PLATFORM",
         "https://www2.gov.bc.ca/gov/content/housing-tenancy/short-term-rentals/registry/registry-toc-platforms",
     )
-    STRR_REGISTRAR_NAME = os.getenv("STRR_REGISTRAR_NAME", "Short-Term Rental Branch")
-
 
 class DevConfig(Config):  # pylint: disable=too-few-public-methods
     """Creates the Development Config object."""

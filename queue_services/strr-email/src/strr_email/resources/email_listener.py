@@ -119,8 +119,7 @@ def worker():
         expiry_date=_get_expiry_date(app_dict, application.registration_type),
         service_provider=_get_service_provider(app_dict, application.registration_type),
         tac_url=_get_tac_url(application),
-        ops_email=current_app.config["EMAIL_HOUSING_OPS_EMAIL"],
-        registrar_name=current_app.config["STRR_REGISTRAR_NAME"],
+        ops_email=current_app.config["EMAIL_HOUSING_OPS_EMAIL"]
     )
     subject_number = (
         app_dict.get("header", {}).get("registrationNumber") or application.application_number
