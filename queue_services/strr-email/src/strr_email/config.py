@@ -143,6 +143,7 @@ class Config:  # pylint: disable=too-few-public-methods
         "https://www2.gov.bc.ca/gov/content/housing-tenancy/short-term-rentals/registry/registry-toc-platforms",
     )
 
+
 class DevConfig(Config):  # pylint: disable=too-few-public-methods
     """Creates the Development Config object."""
 
