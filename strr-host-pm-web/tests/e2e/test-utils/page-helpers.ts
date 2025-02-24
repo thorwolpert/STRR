@@ -229,7 +229,7 @@ export const completeStep3 = async (
   page: Page,
   requiredDocs: Array<{ option: string, filename: string }>,
   docsChecklistAssertions: () => Promise<void>,
-  blInfo?: { businessLicense: string, businessLicenseExpiryDate: string },
+  blInfo?: { businessLicense: string, businessLicenseExpiryDate: string }
 ) => {
   await expect(getH2(page)).toContainText('Add Supporting Information')
 
