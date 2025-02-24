@@ -87,12 +87,12 @@ loginMethods.forEach((loginMethod) => {
       await completeStep3(
         page,
         requiredDocs,
-        blInfo,
         async () => {
           const requiredDocsList = page.getByTestId('required-docs-checklist').locator('ul')
           await expect(requiredDocsList.locator('li')).toHaveCount(1)
           await expect(requiredDocsList).toContainText('Proof of principal residence')
-        }
+        },
+        blInfo
       )
 
       // Complete Step 4
@@ -109,8 +109,8 @@ loginMethods.forEach((loginMethod) => {
         cohost,
         propertyManager,
         requiredDocs,
-        blInfo,
-        true
+        true,
+        blInfo
       )
 
       // Assert Dashboard Details View

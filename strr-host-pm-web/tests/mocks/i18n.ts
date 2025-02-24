@@ -1,4 +1,7 @@
 import { createI18n } from 'vue-i18n'
+import baseEn from '../../../strr-base-web/app/locales/en-CA'
+import baseFr from '../../../strr-base-web/app/locales/fr-CA'
+import { deepMerge } from '../../../strr-base-web/app/utils/deepMerge'
 import en from '~~/app/locales/en-CA'
 import fr from '~~/app/locales/fr-CA'
 
@@ -10,11 +13,27 @@ export const enI18n = createI18n({
   }
 })
 
+export const baseEnI18n = createI18n({
+  legacy: false,
+  locale: 'en-CA',
+  messages: {
+    'en-CA':  deepMerge({}, baseEn, en)
+  }
+})
+
 export const frI18n = createI18n({
   legacy: false,
   locale: 'fr-CA',
   messages: {
     'fr-CA': fr
+  }
+})
+
+export const baseFrI18n = createI18n({
+  legacy: false,
+  locale: 'en-CA',
+  messages: {
+    'fr-CA':  deepMerge({}, baseFr, fr)
   }
 })
 

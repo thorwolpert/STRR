@@ -103,16 +103,18 @@ setBreadcrumbs([
 <template>
   <div
     id="host-dashboard-page"
+    data-test-id="host-dashboard-page"
     class="flex flex-col gap-5 py-8 sm:flex-row sm:py-10"
   >
     <div class="grow space-y-10">
       <ConnectDashboardSection
         id="to-do-section"
+        data-test-id="todo-section"
         :title="$t('label.todo')"
         :title-num="todos.length"
         :loading="loading"
       >
-        <TodoEmpty v-if="!todos.length" />
+        <TodoEmpty v-if="!todos.length" data-test-id="todo-empty" />
         <Todo
           v-for="todo in todos"
           :key="todo.title"
@@ -123,27 +125,35 @@ setBreadcrumbs([
       </ConnectDashboardSection>
       <ConnectDashboardSection
         id="short-term-rental-section"
+        data-test-id="rental-section"
         :title="$t('strr.label.shortTermRental')"
         :loading="loading"
       >
-        <SummaryProperty class="px-10 py-5" />
+        <SummaryProperty class="px-10 py-5" data-test-id="summary-property" />
       </ConnectDashboardSection>
       <ConnectDashboardSection
         id="supporting-info-section"
+        data-test-id="supporting-info-section"
         :title="$t('strr.label.supportingInfo')"
         :loading="loading"
       >
-        <SummarySupportingInfo class="px-10 py-5" />
+        <SummarySupportingInfo class="px-10 py-5" data-test-id="summary-supporting-info" />
       </ConnectDashboardSection>
     </div>
     <div class="space-y-10 sm:w-[300px]">
       <ConnectDashboardSection
         id="individuals-business-section"
+        data-test-id="individuals-business-section"
         :title="$t('strr.label.individualsBusinesses')"
         :loading="loading"
       >
-        <ConnectAccordion v-if="showPermitDetails" :items="owners" multiple />
-        <div v-else class="w-full bg-white p-5 opacity-50">
+        <ConnectAccordion
+          v-if="showPermitDetails"
+          :items="owners"
+          multiple
+          data-test-id="owners-accordion"
+        />
+        <div v-else class="w-full bg-white p-5 opacity-50" data-test-id="complete-filing-message">
           <p class="text-sm">
             {{ $t('text.completeFilingToDisplay') }}
           </p>
