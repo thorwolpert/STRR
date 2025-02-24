@@ -107,7 +107,10 @@ watch(canadaPostAddress, (newAddress) => {
 const addId = useId()
 </script>
 <template>
-  <div class="space-y-3">
+  <div
+    id="connect-form-address"
+    class="space-y-3"
+  >
     <!-- country menu -->
     <UFormGroup
       v-if="!checkFieldsExcluded(['country'])"
@@ -131,6 +134,7 @@ const addId = useId()
           :aria-required="true"
           :aria-invalid="error !== undefined"
           :aria-describedby="schemaPrefix + 'country-' + addId"
+          @change="region = ''"
         />
       </template>
 
