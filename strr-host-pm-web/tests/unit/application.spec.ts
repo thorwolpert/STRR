@@ -104,16 +104,16 @@ describe('Application Page', () => {
 
   beforeAll(async () => {
     wrapper = await mountSuspended(Application, {
-      global: { 
+      global: {
         plugins: [baseEnI18n],
         stubs: {
-          'ConnectSpinner': true,
-          'ConnectTypographyH1': true,
-          'ModalGroupHelpAndInfo': true,
-          'FormDefineYourRental': true,
-          'FormAddOwners': true,
-          'FormAddDocuments': true,
-          'FormReview': true
+          ConnectSpinner: true,
+          ConnectTypographyH1: true,
+          ModalGroupHelpAndInfo: true,
+          FormDefineYourRental: true,
+          FormAddOwners: true,
+          FormAddDocuments: true,
+          FormReview: true
         }
       }
     })
@@ -156,7 +156,7 @@ describe('Application Page', () => {
     it('only renders one form at a time', async () => {
       await wrapper.findComponent(ConnectStepper).vm.$emit('update:activeStepIndex', 2)
       await nextTick()
-      
+
       const formComponents = [
         wrapper.findComponent({ name: 'FormDefineYourRental' }),
         wrapper.findComponent(FormAddOwners),

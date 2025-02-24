@@ -1,5 +1,8 @@
 import { vi } from 'vitest'
 
+import { config } from '@vue/test-utils'
+import { dataTestId } from './plugins/data-test-id'
+
 vi.mock('vue-i18n', async (importOriginal) => {
   const actual = await importOriginal()
   return {
@@ -9,8 +12,5 @@ vi.mock('vue-i18n', async (importOriginal) => {
     })
   }
 })
-
-import { config } from '@vue/test-utils'
-import { dataTestId } from './plugins/data-test-id'
 
 config.global.plugins.push(dataTestId)

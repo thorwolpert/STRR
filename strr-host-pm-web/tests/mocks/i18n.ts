@@ -17,7 +17,7 @@ export const baseEnI18n = createI18n({
   legacy: false,
   locale: 'en-CA',
   messages: {
-    'en-CA':  deepMerge({}, baseEn, en)
+    'en-CA': deepMerge({}, baseEn, en)
   }
 })
 
@@ -33,7 +33,7 @@ export const baseFrI18n = createI18n({
   legacy: false,
   locale: 'en-CA',
   messages: {
-    'fr-CA':  deepMerge({}, baseFr, fr)
+    'fr-CA': deepMerge({}, baseFr, fr)
   }
 })
 

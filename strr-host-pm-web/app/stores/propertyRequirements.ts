@@ -121,7 +121,7 @@ export const usePropertyReqStore = defineStore('property/requirements', () => {
     if (returnBool) {
       return blResult.success
     }
-    return [blResult]   
+    return [blResult]
   }
 
   const $reset = () => {

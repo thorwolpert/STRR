@@ -34,13 +34,6 @@ const primaryContactPerson: ApiHostContactPerson = {
   socialInsuranceNumber: '123 456 789'
 }
 
-const primaryContactBusiness: ApiHostContactBusiness = {
-  ...primaryContactPerson,
-  contactType: OwnerType.BUSINESS,
-  businessLegalName: 'ABC Rentals',
-  businessNumber: '123123123'
-}
-
 export const mockApplication: HostApplicationResp = {
   header: {
     applicationDateTime: new Date('2025-01-01T10:30:00.000000+00:00'),

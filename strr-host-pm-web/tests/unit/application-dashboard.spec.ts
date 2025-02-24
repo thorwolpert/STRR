@@ -64,7 +64,7 @@ describe('Dashboard Application Page', () => {
       'individuals-business-section'
     ]
 
-    sections.forEach(section => {
+    sections.forEach((section) => {
       expect(wrapper.find(`[data-test-id="${section}"]`).exists()).toBe(true)
     })
   })
@@ -75,7 +75,7 @@ describe('Dashboard Application Page', () => {
       'summary-supporting-info'
     ]
 
-    summaryComponents.forEach(component => {
+    summaryComponents.forEach((component) => {
       expect(wrapper.find(`[data-test-id="${component}"]`).exists()).toBe(true)
     })
   })
