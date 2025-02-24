@@ -186,7 +186,8 @@ const handleSubmit = async () => {
       propertyStore.validateUnitAddress(),
       propertyStore.validateUnitDetails(),
       validateOwners(),
-      validateUserConfirmation()
+      validateUserConfirmation(),
+      propertyReqStore.validateBlExemption()
     ]
 
     const validationResults = await Promise.all(validations)
