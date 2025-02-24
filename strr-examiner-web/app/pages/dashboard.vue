@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import isEmpty from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import { sub } from 'date-fns'
 
 const localePath = useLocalePath()
@@ -209,7 +209,7 @@ function handleColumnSort (column: string) {
               size="sm"
             >
               <template #trailing>
-                <UIcon name="i-mdi-search" class="size-5 shrink-0 text-bcGovColor-activeBlue" />
+                <UIcon name="i-mdi-search" class="text-bcGovColor-activeBlue size-5 shrink-0" />
               </template>
             </UInput>
             <ConnectI18nHelper translation-path="label.resultsInTable" :count="applicationListResp?.total || 0" />
