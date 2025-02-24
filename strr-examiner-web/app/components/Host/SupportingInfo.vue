@@ -34,6 +34,8 @@ const getPrRequired = (): string =>
     ? t('pr.required')
     : t('pr.notRequired')
 
+const blExemptReason = reg?.unitDetails?.blExemptReason
+
 const getPrExemptReason = (): string =>
   reg?.unitDetails?.prExemptReason
     ? t(`prExemptReason.${reg.unitDetails.prExemptReason}`)
@@ -62,23 +64,28 @@ const getOwnershipType = (): string =>
         data-testid="business-lic-section"
       >
         <div class="flex gap-x-8">
-          <UButton
-            v-if="businessLicenceDoc"
-            class="mr-4 gap-x-1 p-0"
-            variant="link"
-            icon="mdi-file-document-outline"
-            data-testid="open-business-lic-btn"
-            @click="openDocInNewTab(businessLicenceDoc)"
-          >
-            {{ t(`documentLabels.${DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE}`) }}
-          </UButton>
-          <span v-if="reg.unitDetails?.businessLicense">
-            {{ t('strr.label.businessLicenceNumber') }} {{ reg.unitDetails.businessLicense }}
+          <span v-if="blExemptReason">
+            {{ t('strr.label.exemptionReason') }}: {{ blExemptReason }}
           </span>
-          <span v-if="reg.unitDetails?.businessLicenseExpiryDate">
-            {{ t('strr.label.businessLicenceExpiryDate') }}
-            {{ dateToString(reg.unitDetails.businessLicenseExpiryDate, 'MMM dd, yyyy') }}
-          </span>
+          <template v-else>
+            <UButton
+              v-if="businessLicenceDoc"
+              class="mr-4 gap-x-1 p-0"
+              variant="link"
+              icon="mdi-file-document-outline"
+              data-testid="open-business-lic-btn"
+              @click="openDocInNewTab(businessLicenceDoc)"
+            >
+              {{ t(`documentLabels.${DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE}`) }}
+            </UButton>
+            <span v-if="reg.unitDetails?.businessLicense">
+              {{ t('strr.label.businessLicenceNumber') }} {{ reg.unitDetails.businessLicense }}
+            </span>
+            <span v-if="reg.unitDetails?.businessLicenseExpiryDate">
+              {{ t('strr.label.businessLicenceExpiryDate') }}
+              {{ dateToString(reg.unitDetails.businessLicenseExpiryDate, 'MMM dd, yyyy') }}
+            </span>
+          </template>
         </div>
       </ApplicationDetailsSection>
 

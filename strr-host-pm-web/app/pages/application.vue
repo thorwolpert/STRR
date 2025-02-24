@@ -112,8 +112,9 @@ const steps = ref<Step[]>([
     isValid: false,
     validationFn: () => (
       propertyStore.validateUnitAddress(true) as boolean &&
-      propertyStore.validateUnitDetails(true) as boolean) &&
+      propertyStore.validateUnitDetails(true) as boolean &&
       propertyReqStore.validateBlExemption(true) as boolean
+    )
   },
   {
     i18nPrefix: 'strr.step',

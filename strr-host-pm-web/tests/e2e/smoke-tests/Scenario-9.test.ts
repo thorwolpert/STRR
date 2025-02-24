@@ -21,7 +21,7 @@ import { enI18n } from '~~/tests/mocks/i18n'
 const i18nText = enI18n.global.messages.value['en-CA']
 
 loginMethods.forEach((loginMethod) => {
-  test.describe(`Host Smoke - Scenario 3 - NoBL_YesPR_NotProh_Exempt - ${loginMethod}`, () => {
+  test.describe(`Host Smoke - Scenario 9 - NoBL_YesPR_NotProh_Exempt - ${loginMethod}`, () => {
     // use saved login state
     test.use({ storageState: `tests/e2e/.auth/${loginMethod.toLowerCase()}-user.json` })
 
