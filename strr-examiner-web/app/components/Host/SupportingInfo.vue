@@ -65,7 +65,7 @@ const getOwnershipType = (): string =>
       >
         <div class="flex gap-x-8">
           <span v-if="blExemptReason">
-            {{ t('strr.label.exemptionReason') }}: {{ blExemptReason }}
+            <strong>{{ t('strr.label.exemptionReason') }}</strong> {{ blExemptReason }}
           </span>
           <template v-else>
             <UButton
