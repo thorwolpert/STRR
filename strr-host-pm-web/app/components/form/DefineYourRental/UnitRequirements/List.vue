@@ -5,7 +5,7 @@ defineProps<{ isComplete: boolean }>()
 </script>
 <template>
   <div
-    class="border-bcGovGray-300 flex flex-col gap-4 border-y pt-10"
+    class="flex flex-col gap-4 border-y border-bcGovGray-300 pt-10"
     data-testid="property-requirements-list"
   >
     <span class="font-bold">
@@ -26,7 +26,7 @@ defineProps<{ isComplete: boolean }>()
         <template #default="{ item, open }">
           <UButton
             variant="ghost"
-            class="border-bcGovGray-300 justify-between border-t py-4 pl-0 pr-2"
+            class="justify-between border-t border-bcGovGray-300 py-4 pl-0 pr-2"
             :ui="{
               rounded: 'rounded-none'
             }"

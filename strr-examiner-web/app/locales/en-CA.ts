@@ -141,6 +141,7 @@ export default {
       rentalUnitNameOpt: 'Rental Unit Name (Optional)',
       parcelId: 'Parcel Identifier (PID)',
       pid: 'PID:',
+      exemptionReason: 'Reason:',
       registeredRentals: 'Registered Rentals:',
       prRegisteredRentals: 'PR Registered Rentals:',
       prRequirement: 'Principal Residence',

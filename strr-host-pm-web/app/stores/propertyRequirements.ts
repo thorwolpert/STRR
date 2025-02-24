@@ -111,6 +111,19 @@ export const usePropertyReqStore = defineStore('property/requirements', () => {
     }
   }
 
+  const validateBlExemption = (returnBool = false): MultiFormValidationResult | boolean => {
+    const blResult = validateSchemaAgainstState(
+      blRequirementsSchema.value,
+      blRequirements.value,
+      'bl-requirements-form'
+    )
+
+    if (returnBool) {
+      return blResult.success
+    }
+    return [blResult]
+  }
+
   const $reset = () => {
     propertyReqs.value = {} as PropertyRequirements
     propertyReqError.value = {} as PropertyRequirementsError
@@ -133,6 +146,7 @@ export const usePropertyReqStore = defineStore('property/requirements', () => {
     showUnitDetailsForm,
     requirementsList,
     overrideApplicationWarning,
+    validateBlExemption,
     getPropertyReqs,
     $reset
   }

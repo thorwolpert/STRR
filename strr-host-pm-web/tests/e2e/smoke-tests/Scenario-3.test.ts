@@ -78,14 +78,14 @@ loginMethods.forEach((loginMethod) => {
       await completeStep3(
         page,
         requiredDocs,
-        blInfo,
         async () => {
           // requirements checklist should have 2 items (proof of pr + business license only)
           const requiredDocsList = page.getByTestId('required-docs-checklist').locator('ul')
           await expect(requiredDocsList.locator('li')).toHaveCount(2)
           await expect(requiredDocsList).toContainText('Proof of principal residence')
           await expect(requiredDocsList).toContainText('Local government short-term rental business licence')
-        }
+        },
+        blInfo
       )
 
       // Complete Step 4
@@ -102,8 +102,8 @@ loginMethods.forEach((loginMethod) => {
         cohost,
         propertyManager,
         requiredDocs,
-        blInfo,
-        true
+        true,
+        blInfo
       )
 
       // Assert Dashboard Details View
