@@ -80,6 +80,8 @@ from strr_api.validators.RegistrationRequestValidator import validate_request
 logger = logging.getLogger("api")
 bp = Blueprint("applications", __name__)
 
+VALID_SORT_FIELDS = ["application_date", "id", "application_number", "decision_date", "invoice_id"]
+
 
 @bp.route("", methods=("POST",))
 @bp.route("/<string:application_number>", methods=["POST", "PUT"])
@@ -167,6 +169,17 @@ def get_applications():
         name: Account-Id
         required: true
         type: string
+      - in: query
+        name: sortBy
+        type: string
+        default: application_date
+        description: Field to sort by (e.g., application_date, id, status)
+      - in: query
+        name: sortOrder
+        type: string
+        enum: [asc, desc]
+        default: asc
+        description: Sort order (ascending or descending)
     responses:
       200:
         description:
@@ -182,8 +195,19 @@ def get_applications():
         page = request.args.get("page", 1)
         limit = request.args.get("limit", 50)
         registration_type = request.args.get("registrationType")
+        sort_by = request.args.get("sortBy", "application_date")
+        sort_order = request.args.get("sortOrder", "asc")
+        if sort_by not in VALID_SORT_FIELDS:
+            sort_by = "application_date"
+        if sort_order not in ["asc", "desc"]:
+            sort_order = "asc"
         filter_criteria = ApplicationSearch(
-            status=status, page=int(page), limit=int(limit), registration_type=registration_type
+            status=status,
+            page=int(page),
+            limit=int(limit),
+            registration_type=registration_type,
+            sort_by=sort_by,
+            sort_order=sort_order
         )
         application_list = ApplicationService.list_applications(account_id, filter_criteria=filter_criteria)
         return jsonify(application_list), HTTPStatus.OK
