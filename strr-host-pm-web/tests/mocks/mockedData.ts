@@ -84,7 +84,8 @@ export const mockApplication: HostApplicationResp = {
       parcelIdentifier: '123-456-789',
       propertyType: PropertyType.CONDO_OR_APT,
       rentalUnitSpaceType: RentalUnitType.ENTIRE_HOME,
-      businessLicense: '123123123'
+      businessLicense: '123123123',
+      strataHotelCategory: StrataHotelCategory.FULL_SERVICE
     }
   }
 }

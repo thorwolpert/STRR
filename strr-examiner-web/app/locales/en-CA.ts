@@ -451,7 +451,9 @@ export default {
   },
   pr: {
     required: 'Required.',
-    notRequired: 'Not Required.'
+    notRequired: 'Not Required.',
+    exempt: 'Exempt.',
+    notExempt: 'Not Exempt.'
   },
   prExemptReason: {
     notExempt: 'Not Exempt.',
