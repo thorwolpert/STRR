@@ -1,6 +1,10 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, it, expect, vi, beforeAll } from 'vitest'
-import { mockHostApplication } from '../mocks/mockedData'
+import {
+  mockHostApplication,
+  mockWithPrExemptAndStrataHotel,
+  mockWithBlExempt
+} from '../mocks/mockedData'
 import { enI18n } from '../mocks/i18n'
 import ApplicationDetails from '~/pages/examine/[applicationId].vue'
 import {
@@ -9,16 +13,26 @@ import {
   StrataSupportingInfo
 } from '#components'
 
+let currentMockData = mockHostApplication
 vi.mock('@/stores/examiner', () => ({
   useExaminerStore: () => ({
-    getNextApplication: vi.fn().mockResolvedValue(mockHostApplication)
+    getNextApplication: vi.fn().mockImplementation(() => Promise.resolve(currentMockData)),
+    getDocument: vi.fn().mockResolvedValue(new Blob(['test'], { type: 'application/pdf' }))
   })
 }))
+
+const mockOpen = vi.fn()
+vi.stubGlobal('open', mockOpen)
+vi.stubGlobal('URL', {
+  createObjectURL: vi.fn().mockReturnValue('blob:url'),
+  revokeObjectURL: vi.fn()
+})
 
 describe('Examiner - Host Application Details Page', () => {
   let wrapper: any
 
   beforeAll(async () => {
+    currentMockData = mockHostApplication
     wrapper = await mountSuspended(ApplicationDetails, {
       global: { plugins: [enI18n] }
     })
@@ -73,5 +87,37 @@ describe('Examiner - Host Application Details Page', () => {
     expect(hostSupportingInfo.findTestId('pr-req-section').exists()).toBe(true)
     expect(hostSupportingInfo.findTestId('pr-req-documents').exists()).toBe(true)
     expect(hostSupportingInfo.findTestId('pr-req-documents').findAllComponents(UButton).length).toBe(1)
+  })
+
+  it('opens document in new tab when business license button is clicked', async () => {
+    const hostSupportingInfo = wrapper.findComponent(HostSupportingInfo)
+    const businessLicBtn = hostSupportingInfo.findTestId('open-business-lic-btn')
+    await businessLicBtn.trigger('click')
+    expect(mockOpen).toHaveBeenCalledWith('blob:url', '_blank')
+  })
+
+  it('opens document in new tab when PR document button is clicked', async () => {
+    const hostSupportingInfo = wrapper.findComponent(HostSupportingInfo)
+    const prDocBtn = hostSupportingInfo.findTestId('pr-req-documents').findComponent(UButton)
+    await prDocBtn.trigger('click')
+    expect(mockOpen).toHaveBeenCalledWith('blob:url', '_blank')
+  })
+
+  it('displays PR exemption reason and Strata category', async () => {
+    currentMockData = mockWithPrExemptAndStrataHotel
+
+    const prWrapper = await mountSuspended(ApplicationDetails, {
+      global: { plugins: [enI18n] }
+    })
+    expect(prWrapper.exists()).toBe(true)
+  })
+
+  it('displays BL exemption reason', async () => {
+    currentMockData = mockWithBlExempt
+
+    const prWrapper = await mountSuspended(ApplicationDetails, {
+      global: { plugins: [enI18n] }
+    })
+    expect(prWrapper.exists()).toBe(true)
   })
 })

@@ -96,6 +96,29 @@ export const mockHostApplication: HostApplicationResp = {
   }
 }
 
+export const mockWithPrExemptAndStrataHotel = {
+  ...mockHostApplication,
+  registration: {
+    ...mockHostApplication.registration,
+    unitDetails: {
+      ...mockHostApplication.registration.unitDetails,
+      prExemptReason: PrExemptionReason.STRATA_HOTEL,
+      strataHotelCategory: StrataHotelCategory.FULL_SERVICE
+    }
+  }
+}
+
+export const mockWithBlExempt = {
+  ...mockHostApplication,
+  registration: {
+    ...mockHostApplication.registration,
+    unitDetails: {
+      ...mockHostApplication.registration.unitDetails,
+      blExemptReason: 'OVER 30 DAYS'
+    }
+  }
+}
+
 // Host application with flags for Examiner:
 export const mockHostApplicationWithFlags: HostApplicationResp = {
   ...mockHostApplication,

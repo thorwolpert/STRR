@@ -40,7 +40,9 @@ onMounted(async () => {
     propertyStore.validateUnitAddress(),
     propertyStore.validateUnitDetails(),
     ownerStore.validateOwners(),
-    applicationStore.validateUserConfirmation()
+    applicationStore.validateUserConfirmation(),
+    reqStore.validatePrRequirements(),
+    reqStore.validateBlExemption()
   ]
 
   const validationResults = await Promise.all(validations)
@@ -90,7 +92,11 @@ const agreedToRentalActListItems = computed(() => {
       }"
     >
       <FormCommonReviewSection
-        :error="isSectionInvalid('rental-unit-address-form') || isSectionInvalid('unit-details-form')"
+        :error="isSectionInvalid('rental-unit-address-form') ||
+          isSectionInvalid('unit-details-form') ||
+          isSectionInvalid('pr-requirements-form') ||
+          isSectionInvalid('bl-requirements-form') ||
+          isSectionInvalid('strata-hotel-form')"
         @edit="$emit('edit', 0)"
       >
         <SummaryProperty />
