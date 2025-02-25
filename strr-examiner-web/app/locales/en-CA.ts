@@ -112,7 +112,7 @@ export default {
       parcelIdentifier: 'Parcel Identifier',
       parcelIdentifierOpt: 'Parcel Identifier (Optional)',
       platforms: 'Platforms',
-      propertyType: 'Property Type',
+      propertyType: 'Rental Unit Type',
       role: {
         CO_HOST: 'Co-host',
         HOST: 'Property Host',
@@ -378,7 +378,7 @@ export default {
     },
     ownershipType: 'Please select the ownership type of this rental unit',
     parcelIdentifier: 'The parcel identifier must be a nine-digit number',
-    propertyType: 'Please select the property type of this rental unit',
+    propertyType: 'Please select the rental unit type of this rental unit',
     onlineListings: 'Please enter a valid URL (i.e. https://www.bcregistry.gov.bc.ca)',
     rentalUnitSetupType: 'Please select the setup type of the rental unit',
     typeOfSpace: 'Please select the type of space of the unit',
