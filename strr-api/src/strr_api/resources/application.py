@@ -172,13 +172,13 @@ def get_applications():
       - in: query
         name: sortBy
         type: string
-        default: application_date
+        default: id
         description: Field to sort by (e.g., application_date, id, status)
       - in: query
         name: sortOrder
         type: string
         enum: [asc, desc]
-        default: asc
+        default: desc
         description: Sort order (ascending or descending)
     responses:
       200:
@@ -195,19 +195,19 @@ def get_applications():
         page = request.args.get("page", 1)
         limit = request.args.get("limit", 50)
         registration_type = request.args.get("registrationType")
-        sort_by = request.args.get("sortBy", "application_date")
-        sort_order = request.args.get("sortOrder", "asc")
+        sort_by = request.args.get("sortBy", "id")
+        sort_order = request.args.get("sortOrder", "desc")
         if sort_by not in VALID_SORT_FIELDS:
-            sort_by = "application_date"
+            sort_by = "id"
         if sort_order not in ["asc", "desc"]:
-            sort_order = "asc"
+            sort_order = "desc"
         filter_criteria = ApplicationSearch(
             status=status,
             page=int(page),
             limit=int(limit),
             registration_type=registration_type,
             sort_by=sort_by,
-            sort_order=sort_order
+            sort_order=sort_order,
         )
         application_list = ApplicationService.list_applications(account_id, filter_criteria=filter_criteria)
         return jsonify(application_list), HTTPStatus.OK
@@ -754,6 +754,17 @@ def search_applications():
         name: limit
         type: integer
         default: 50
+      - in: query
+        name: sortBy
+        type: string
+        default: id
+        description: Field to sort by (e.g., application_date, id, status)
+      - in: query
+        name: sortOrder
+        type: string
+        enum: [asc, desc]
+        default: desc
+        description: Sort order (ascending or descending)
     responses:
       200:
         description:
@@ -767,11 +778,23 @@ def search_applications():
         status = request.args.get("status", None)
         page = request.args.get("page", 1)
         limit = request.args.get("limit", 50)
-
+        sort_by = request.args.get("sortBy", "id")
+        sort_order = request.args.get("sortOrder", "desc")
+        if sort_by not in VALID_SORT_FIELDS:
+            sort_by = "id"
+        if sort_order not in ["asc", "desc"]:
+            sort_order = "desc"
         if search_text and len(search_text) < 3:
             return error_response(HTTPStatus.BAD_REQUEST, "Search term must be at least 3 characters long.")
 
-        filter_criteria = ApplicationSearch(status=status, page=int(page), limit=int(limit), search_text=search_text)
+        filter_criteria = ApplicationSearch(
+            status=status,
+            page=int(page),
+            limit=int(limit),
+            search_text=search_text,
+            sort_by=sort_by,
+            sort_order=sort_order,
+        )
 
         application_list = ApplicationService.search_applications(filter_criteria=filter_criteria)
         return jsonify(application_list), HTTPStatus.OK

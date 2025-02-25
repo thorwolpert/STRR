@@ -166,11 +166,11 @@ class Application(BaseModel):
             query = query.filter_by(status=filter_criteria.status.upper())
         if filter_criteria.registration_type:
             query = query.filter_by(registration_type=filter_criteria.registration_type.upper())
-        sort_column = getattr(Application, filter_criteria.sort_by, Application.application_date)
-        if filter_criteria.sort_order and filter_criteria.sort_order.lower() == "desc":
-            query = query.order_by(sort_column.desc())
+        sort_column = getattr(Application, filter_criteria.sort_by, Application.id)
+        if filter_criteria.sort_order and filter_criteria.sort_order.lower() == "asc":
+            query = query.order_by(sort_column.asc())
         else:
-            query = query.order_by(sort_column)
+            query = query.order_by(sort_column.desc())
 
         paginated_result = query.paginate(per_page=filter_criteria.limit, page=filter_criteria.page)
         return paginated_result
@@ -197,7 +197,11 @@ class Application(BaseModel):
             query = query.filter_by(status=filter_criteria.status.upper())
         else:
             query = query.filter(Application.status != Application.Status.DRAFT)
-        query = query.order_by(Application.id.desc())
+        sort_column = getattr(Application, filter_criteria.sort_by, Application.id)
+        if filter_criteria.sort_order and filter_criteria.sort_order.lower() == "asc":
+            query = query.order_by(sort_column.asc())
+        else:
+            query = query.order_by(sort_column.desc())
         paginated_result = query.paginate(per_page=filter_criteria.limit, page=filter_criteria.page)
         return paginated_result
 

@@ -41,7 +41,7 @@ class ApplicationSearch:
     page: int
     limit: int
     status: str
-    sort_by: str = "application_date"
-    sort_order: str = "asc"
+    sort_by: str = "id"
+    sort_order: str = "desc"
     search_text: str = None
     registration_type: str = None
