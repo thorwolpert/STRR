@@ -480,11 +480,6 @@ function handleColumnSort (column: string) {
         </template>
 
         <template #propertyAddress-data="{ row }">
-          <!-- <div
-            v-if="row.registrationType === ApplicationType.STRATA_HOTEL"
-          >
-            {{ displayFullAddress(row.propertyAddress) }}
-          </div> -->
           <ConnectFormAddressDisplay
             :address="row.propertyAddress"
             omit-country
