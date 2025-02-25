@@ -80,7 +80,7 @@ from strr_api.validators.RegistrationRequestValidator import validate_request
 logger = logging.getLogger("api")
 bp = Blueprint("applications", __name__)
 
-VALID_SORT_FIELDS = ["application_date", "id", "application_number", "decision_date", "invoice_id"]
+VALID_SORT_FIELDS = ["application_date", "id", "application_number", "decision_date"]
 
 
 @bp.route("", methods=("POST",))
