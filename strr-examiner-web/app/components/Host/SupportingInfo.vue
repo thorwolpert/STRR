@@ -129,13 +129,11 @@ const getBlSectionSubLabel = (): string =>
         </template>
         <div class="flex">
           <div>
-            <div v-if="prExemptReason">
-              <span>
+            <div class="flex gap-x-8">
+              <span v-if="prExemptReason">
                 <strong>{{ t('strr.label.exemptionReason') }}</strong> {{ getPrExemptReason(prExemptReason) }}
               </span>
-            </div>
-            <div v-if="getStrataHotelCategory()" class="mt-2">
-              <span>
+              <span v-if="getStrataHotelCategory()">
                 <strong>{{ t('label.strataHotelCategory') }}:</strong> {{ getStrataHotelCategory() }}
               </span>
             </div>
