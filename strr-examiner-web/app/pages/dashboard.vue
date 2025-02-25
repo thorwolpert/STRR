@@ -67,12 +67,27 @@ const getApplicantNameColumn = (app: HousApplicationResponse) => {
   }
 }
 
+// Strata location has different interface than the ConnectFormAddressDisplay accepts
+const mapStrataAddress = (address: ApiAddress): ConnectAddress | string => {
+  return !isEmpty(address)
+    ? {
+        street: address.address,
+        streetAdditional: address.addressLineTwo,
+        city: address.city,
+        region: address.province,
+        postalCode: address.postalCode,
+        country: address.country,
+        locationDescription: address.locationDescription
+      }
+    : '-'
+}
+
 const getPropertyAddressColumn = (app: HousApplicationResponse) => {
   switch (app.registration.registrationType) {
     case ApplicationType.HOST:
       return (app.registration as ApiHostApplication).unitAddress || '-'
     case ApplicationType.STRATA_HOTEL:
-      return (app.registration as ApiBaseStrataApplication).strataHotelDetails.location || '-'
+      return mapStrataAddress((app.registration as ApiBaseStrataApplication).strataHotelDetails.location)
     default: // platform
       return (app.registration as ApiBasePlatformApplication).businessDetails.mailingAddress || '-'
   }
@@ -392,7 +407,7 @@ function handleColumnSort (column: string) {
               { label: 'Full Review', value: ApplicationStatus.FULL_REVIEW },
               { label: 'Provisional Review', value: ApplicationStatus.PROVISIONAL_REVIEW },
               { label: 'Payment Due', value: ApplicationStatus.PAYMENT_DUE },
-              { label: 'Provsional', value: ApplicationStatus.PROVISIONAL },
+              { label: 'Provisional', value: ApplicationStatus.PROVISIONAL },
               { label: 'Paid', value: ApplicationStatus.PAID },
               { label: 'Additional Info Requested', value: ApplicationStatus.ADDITIONAL_INFO_REQUESTED },
               { label: 'Provisionally Approved', value: ApplicationStatus.PROVISIONALLY_APPROVED },
@@ -465,6 +480,11 @@ function handleColumnSort (column: string) {
         </template>
 
         <template #propertyAddress-data="{ row }">
+          <!-- <div
+            v-if="row.registrationType === ApplicationType.STRATA_HOTEL"
+          >
+            {{ displayFullAddress(row.propertyAddress) }}
+          </div> -->
           <ConnectFormAddressDisplay
             :address="row.propertyAddress"
             omit-country
