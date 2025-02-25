@@ -141,6 +141,7 @@ export default {
       rentalUnitNameOpt: 'Rental Unit Name (Optional)',
       parcelId: 'Parcel Identifier (PID)',
       pid: 'PID:',
+      exemptionReason: 'Reason:',
       registeredRentals: 'Registered Rentals:',
       prRegisteredRentals: 'PR Registered Rentals:',
       prRequirement: 'Principal Residence',
@@ -232,7 +233,7 @@ export default {
     done: 'Done',
     showDetails: 'Show Details',
     hideDetails: 'Hide Details',
-    decline: 'Decline',
+    decline: 'Refuse',
     approve: 'Approve'
   },
   error: {
@@ -450,7 +451,9 @@ export default {
   },
   pr: {
     required: 'Required.',
-    notRequired: 'Not Required.'
+    notRequired: 'Not Required.',
+    exempt: 'Exempt.',
+    notExempt: 'Not Exempt.'
   },
   prExemptReason: {
     notExempt: 'Not Exempt.',

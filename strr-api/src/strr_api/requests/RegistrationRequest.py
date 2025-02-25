@@ -121,8 +121,10 @@ class UnitDetails:
         parcelIdentifier=None,
         businessLicense=None,
         businessLicenseExpiryDate=None,
+        blExemptReason=None,
         strataHotelRegistrationNumber=None,
         prExemptReason=None,
+        strataHotelCategory=None,
     ):
         self.propertyType = propertyType
         self.ownershipType = ownershipType
@@ -133,8 +135,10 @@ class UnitDetails:
         self.isUnitOnPrincipalResidenceProperty = isUnitOnPrincipalResidenceProperty
         self.numberOfRoomsForRent = numberOfRoomsForRent
         self.businessLicenseExpiryDate = businessLicenseExpiryDate
+        self.blExemptReason = blExemptReason
         self.strataHotelRegistrationNumber = strataHotelRegistrationNumber
         self.prExemptReason = prExemptReason
+        self.strataHotelCategory = strataHotelCategory
 
 
 class MailingAddress:

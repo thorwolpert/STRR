@@ -10,7 +10,7 @@ from sqlalchemy import Enum
 from sqlalchemy.orm import relationship
 
 from strr_api.common.enum import BaseEnum, auto
-from strr_api.enums.enum import PropertyType, RegistrationStatus
+from strr_api.enums.enum import PropertyType, RegistrationStatus, StrataHotelCategory
 from strr_api.models.base_model import BaseModel
 
 from .db import db
@@ -79,6 +79,7 @@ class RentalProperty(Versioned, BaseModel):
     parcel_identifier = db.Column(db.String, nullable=True)
     local_business_licence = db.Column(db.String, nullable=True)
     local_business_licence_expiry_date = db.Column(db.Date, nullable=True)
+    bl_exempt_reason = db.Column(db.String, nullable=True)
     property_type = db.Column(Enum(PropertyType), nullable=False)
     ownership_type = db.Column(db.Enum(OwnershipType), nullable=False)
     is_principal_residence = db.Column(db.Boolean, nullable=False, default=False)
@@ -90,6 +91,7 @@ class RentalProperty(Versioned, BaseModel):
     is_unit_on_principal_residence_property = db.Column(db.Boolean, nullable=False)
     number_of_rooms_for_rent = db.Column(db.Integer, nullable=False)
     strata_hotel_registration_number = db.Column(db.String, nullable=True)
+    strata_hotel_category = db.Column(Enum(StrataHotelCategory), nullable=True, index=True)
 
     address_id = db.Column(db.Integer, db.ForeignKey("addresses.id"), nullable=False)
     registration_id = db.Column(db.Integer, db.ForeignKey("registrations.id"), nullable=False)

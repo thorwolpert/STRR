@@ -77,13 +77,13 @@ loginMethods.forEach((loginMethod) => {
       await completeStep3(
         page,
         [],
-        blInfo,
         async () => {
           // requirements checklist should not be displayed
           await expect(page.getByTestId('required-docs-checklist')).not.toBeVisible()
           // no docs required alert should be visible
           await expect(page.getByTestId('alert-no-docs-required')).toBeVisible()
-        }
+        },
+        blInfo
       )
 
       // Complete Step 4
@@ -100,8 +100,8 @@ loginMethods.forEach((loginMethod) => {
         cohost,
         propertyManager,
         [],
-        blInfo,
-        false
+        false,
+        blInfo
       )
 
       // Assert Dashboard Details View

@@ -17,7 +17,7 @@ const blFormRef = ref<Form<any>>()
 const docFormRef = ref<Form<any>>()
 
 const docUploadHelpId = useId() // id for aria-describedby on doc select
-
+const blExempt = computed(() => reqStore.blRequirements.isBusinessLicenceExempt)
 // revalidate uploaded documents when user adding/removing docs if step marked as complete
 watch(
   () => docStore.requiredDocs,
@@ -162,7 +162,7 @@ onMounted(async () => {
       />
 
       <!-- TODO: add aria label to page section ?? -->
-      <ConnectPageSection>
+      <ConnectPageSection v-if="!blExempt">
         <UForm
           ref="blFormRef"
           :schema="propStore.blInfoSchema"

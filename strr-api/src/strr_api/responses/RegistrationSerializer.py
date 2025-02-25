@@ -267,6 +267,7 @@ class RegistrationSerializer:
             )
             if registration.rental_property.local_business_licence_expiry_date
             else None,
+            "blExemptReason": registration.rental_property.bl_exempt_reason,
             "propertyType": registration.rental_property.property_type.name,
             "ownershipType": registration.rental_property.ownership_type.name,
             "rentalUnitSpaceType": registration.rental_property.space_type,
@@ -275,6 +276,7 @@ class RegistrationSerializer:
             "numberOfRoomsForRent": registration.rental_property.number_of_rooms_for_rent,
             "strataHotelRegistrationNumber": registration.rental_property.strata_hotel_registration_number,
             "prExemptReason": registration.rental_property.pr_exempt_reason,
+            "strataHotelCategory": registration.rental_property.strata_hotel_category,
         }
 
         registration_data["listingDetails"] = [

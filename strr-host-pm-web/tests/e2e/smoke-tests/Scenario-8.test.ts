@@ -91,13 +91,13 @@ loginMethods.forEach((loginMethod) => {
       await completeStep3(
         page,
         requiredDocs,
-        blInfo,
         async () => {
           const potentialDocsList = page.getByTestId('potential-docs-checklist').locator('ul')
           await expect(potentialDocsList.locator('li')).toHaveCount(2)
           await expect(potentialDocsList).toContainText('Proof of principal residence')
           await expect(potentialDocsList).toContainText('Local government short-term rental business licence')
-        }
+        },
+        blInfo
       )
 
       // Complete Step 4
@@ -114,8 +114,8 @@ loginMethods.forEach((loginMethod) => {
         cohost,
         propertyManager,
         requiredDocs,
-        blInfo,
-        true
+        true,
+        blInfo
       )
 
       // Assert Dashboard Details View

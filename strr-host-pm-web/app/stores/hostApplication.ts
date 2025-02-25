@@ -64,7 +64,13 @@ export const useHostApplicationStore = defineStore('host/application', () => {
           : {}
         ),
         unitAddress: formatHostUnitAddressApi(propertyStore.unitAddress.address),
-        unitDetails: formatHostUnitDetailsAPI(propertyStore.unitDetails, propertyStore.blInfo, reqStore.prRequirements),
+        unitDetails: formatHostUnitDetailsAPI(
+          propertyStore.unitDetails,
+          propertyStore.blInfo,
+          reqStore.prRequirements,
+          reqStore.blRequirements,
+          reqStore.strataHotelCategory
+        ),
         documents: documentStore.apiDocuments,
         strRequirements: reqStore.propertyReqs,
         listingDetails: []

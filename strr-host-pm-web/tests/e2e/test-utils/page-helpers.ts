@@ -82,7 +82,7 @@ export const completeStep1 = async (
   await page.goto('./en-CA/application') // go to application
 
   // check for step 1 content
-  await expect(page.getByTestId('h1')).toContainText('Short-Term Rental Registration')
+  await expect(page.getByTestId('h1')).toContainText('Short-Term Rental Registration', { timeout: 30000 })
   await expect(getH2(page)).toContainText('Define Your Short-Term Rental')
 
   // fill in rental unit nickname
@@ -228,8 +228,8 @@ export const completeStep2 = async (
 export const completeStep3 = async (
   page: Page,
   requiredDocs: Array<{ option: string, filename: string }>,
-  blInfo: { businessLicense: string, businessLicenseExpiryDate: string },
-  docsChecklistAssertions: () => Promise<void>
+  docsChecklistAssertions: () => Promise<void>,
+  blInfo?: { businessLicense: string, businessLicenseExpiryDate: string }
 ) => {
   await expect(getH2(page)).toContainText('Add Supporting Information')
 
@@ -244,9 +244,11 @@ export const completeStep3 = async (
   }
 
   // fill out business licence info
-  const blSection = page.locator('section').filter({ hasNotText: 'File Upload', hasText: 'Local Government Business Licence' })
-  await blSection.getByTestId('property-business-license').fill(blInfo.businessLicense)
-  await blSection.getByTestId('date-select').fill(blInfo.businessLicenseExpiryDate)
+  if (blInfo) {
+    const blSection = page.locator('section').filter({ hasNotText: 'File Upload', hasText: 'Local Government Business Licence' })
+    await blSection.getByTestId('property-business-license').fill(blInfo.businessLicense)
+    await blSection.getByTestId('date-select').fill(blInfo.businessLicenseExpiryDate)
+  }
 
   // finalize step 3
   page.getByRole('button', { name: 'Review and Confirm', exact: true }).click()
@@ -272,8 +274,8 @@ export const completeStep4 = async (
   cohost: HostOwner,
   propertyManager: HostOwner,
   requiredDocs: Array<{ option: string, filename: string }>,
-  blInfo: { businessLicense: string, businessLicenseExpiryDate: string },
-  hasPrDeclaration: boolean
+  hasPrDeclaration: boolean,
+  blInfo?: { businessLicense: string, businessLicenseExpiryDate: string }
 ) => {
   await expect(getH2(page)).toContainText('Review and Confirm')
 
@@ -317,8 +319,10 @@ export const completeStep4 = async (
       await expect(supportingInfoSection).toContainText(item.option)
     })
   }
-  await expect(supportingInfoSection).toContainText(blInfo.businessLicense)
-  await expect(supportingInfoSection).toContainText(blInfo.businessLicenseExpiryDate)
+  if (blInfo) {
+    await expect(supportingInfoSection).toContainText(blInfo.businessLicense)
+    await expect(supportingInfoSection).toContainText(blInfo.businessLicenseExpiryDate)
+  }
 
   // confirmation section includes pr declaration ?
   await expect(page.getByTestId('section-agreed-to-rental-act').locator('ol li')).toHaveCount(hasPrDeclaration ? 4 : 3)
@@ -351,7 +355,7 @@ export const assertDashboardDetailsView = async (
   cohost: HostOwner,
   propertyManager: HostOwner,
   requiredDocs: Array<{ option: string, filename: string }>,
-  blInfo: { businessLicense: string, businessLicenseExpiryDate: string }
+  blInfo?: { businessLicense: string, businessLicenseExpiryDate: string }
 ) => {
   page.waitForURL('**/dashboard/**')
   await expect(page.getByTestId('h1')).toContainText(nickname)
@@ -392,8 +396,10 @@ export const assertDashboardDetailsView = async (
       await expect(supportingInfoSection).toContainText(item.option)
     })
   }
-  await expect(supportingInfoSection).toContainText(blInfo.businessLicense)
-  await expect(supportingInfoSection).toContainText(blInfo.businessLicenseExpiryDate)
+  if (blInfo) {
+    await expect(supportingInfoSection).toContainText(blInfo.businessLicense)
+    await expect(supportingInfoSection).toContainText(blInfo.businessLicenseExpiryDate)
+  }
 
   // individuals and business
   const ibSection = page.locator('section').filter({ hasText: 'Individuals and Businesses' })

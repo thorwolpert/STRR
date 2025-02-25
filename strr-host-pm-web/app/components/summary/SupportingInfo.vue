@@ -1,16 +1,26 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const { blInfo } = storeToRefs(useHostPropertyStore())
-const { overrideApplicationWarning, showUnitDetailsForm } = storeToRefs(usePropertyReqStore())
+const { overrideApplicationWarning, showUnitDetailsForm, blRequirements } = storeToRefs(usePropertyReqStore())
 const { requiredDocs, storedDocuments } = storeToRefs(useDocumentStore())
 
 // step 3 items
-const supportingInfo = computed(() => [
-  { label: t('strr.label.supportingDocs'), info: storedDocuments.value, slot: 'documents' },
-  { label: '', info: '', slot: 'border' },
-  { label: t('strr.label.businessLicense'), info: blInfo.value.businessLicense || t('text.notEntered') },
-  { label: t('strr.label.businessLicenseDate'), info: blInfo.value.businessLicenseExpiryDate || t('text.notEntered') }
-])
+const supportingInfo = computed(() => {
+  const items = [
+    { label: t('strr.label.supportingDocs'), info: storedDocuments.value, slot: 'documents' },
+    { label: '', info: '', slot: 'border' }
+  ]
+  if (!blRequirements.value.isBusinessLicenceExempt) {
+    items.push(
+      { label: t('strr.label.businessLicense'), info: blInfo.value.businessLicense || t('text.notEntered') },
+      {
+        label: t('strr.label.businessLicenseDate'),
+        info: blInfo.value.businessLicenseExpiryDate || t('text.notEntered')
+      }
+    )
+  }
+  return items
+})
 </script>
 <template>
   <ConnectInfoTable :items="supportingInfo">

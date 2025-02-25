@@ -26,12 +26,20 @@ const reqStore = usePropertyReqStore()
 
     <FormDefineYourRentalUnitRequirementsList
       v-if="reqStore.requirementsList.length > 0 && reqStore.showUnitDetailsForm === true"
+      :is-complete="isComplete"
     />
 
     <FormDefineYourRentalUnitRequirementsPrRequired
       v-if="
         (reqStore.propertyReqs.isPrincipalResidenceRequired === true && reqStore.showUnitDetailsForm === true)
           || reqStore.overrideApplicationWarning
+      "
+      :is-complete="isComplete"
+    />
+    <FormDefineYourRentalUnitRequirementsStrataHotelCategory
+      v-if="
+        reqStore.prRequirements.isPropertyPrExempt &&
+          reqStore.prRequirements.prExemptionReason === PrExemptionReason.STRATA_HOTEL
       "
       :is-complete="isComplete"
     />

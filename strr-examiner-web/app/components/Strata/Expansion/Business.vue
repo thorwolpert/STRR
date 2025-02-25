@@ -6,6 +6,9 @@ const props = defineProps<{
 const { registration } = props.application
 const { businessDetails } = registration
 
+const attorney = businessDetails.registeredOfficeOrAttorneyForServiceDetails
+const hasAttorneyAddress = Object.values(attorney.mailingAddress).some(Boolean)
+
 </script>
 
 <template>
@@ -34,16 +37,20 @@ const { businessDetails } = registration
           :content="businessDetails?.homeJurisdiction"
         />
       </div>
-      <div class="space-y-2">
+      <div
+        v-if="attorney.attorneyName || hasAttorneyAddress"
+        class="space-y-2"
+      >
         <b>{{ $t('strr.label.attorneyForService').toUpperCase() }}</b>
         <ConnectInfoWithIcon
-          v-if="businessDetails.registeredOfficeOrAttorneyForServiceDetails.attorneyName"
+          v-if="attorney.attorneyName"
           icon="i-mdi-domain"
-          :content="businessDetails.registeredOfficeOrAttorneyForServiceDetails.attorneyName"
+          :content="attorney.attorneyName"
         />
         <ConnectInfoWithIcon
+          v-if="hasAttorneyAddress"
           icon="i-mdi-map-marker-outline"
-          :content="displayFullAddress(businessDetails.registeredOfficeOrAttorneyForServiceDetails.mailingAddress)"
+          :content="displayFullAddress(attorney.mailingAddress)"
         />
       </div>
     </div>

@@ -96,6 +96,29 @@ export const mockHostApplication: HostApplicationResp = {
   }
 }
 
+export const mockWithPrExemptAndStrataHotel = {
+  ...mockHostApplication,
+  registration: {
+    ...mockHostApplication.registration,
+    unitDetails: {
+      ...mockHostApplication.registration.unitDetails,
+      prExemptReason: PrExemptionReason.STRATA_HOTEL,
+      strataHotelCategory: StrataHotelCategory.FULL_SERVICE
+    }
+  }
+}
+
+export const mockWithBlExempt = {
+  ...mockHostApplication,
+  registration: {
+    ...mockHostApplication.registration,
+    unitDetails: {
+      ...mockHostApplication.registration.unitDetails,
+      blExemptReason: 'OVER 30 DAYS'
+    }
+  }
+}
+
 // Host application with flags for Examiner:
 export const mockHostApplicationWithFlags: HostApplicationResp = {
   ...mockHostApplication,
@@ -120,7 +143,7 @@ export const mockHostApplicationWithFlags: HostApplicationResp = {
   }
 }
 
-const mockStrataApplication: StrataApplicationResp =
+export const mockStrataApplication: StrataApplicationResp =
 {
   header: {
     applicationDateTime: new Date('2025-01-14T19:58:57.549356+00:00'),
@@ -167,12 +190,12 @@ const mockStrataApplication: StrataApplicationResp =
       }
     },
     completingParty: {
-      emailAddress: 'johndoe@example.com',
-      extension: '123',
-      firstName: 'John',
-      lastName: 'Doe',
-      phoneCountryCode: '+1',
-      phoneNumber: '5551234567'
+      emailAddress: 'alice@example.com',
+      extension: '789',
+      firstName: 'Alice',
+      lastName: 'Johnson',
+      phoneCountryCode: '+61',
+      phoneNumber: '412345678'
     },
     documents: [],
     registrationType: ApplicationType.STRATA_HOTEL,
@@ -191,10 +214,17 @@ const mockStrataApplication: StrataApplicationResp =
         postalCode: 'V1Y 1A1',
         province: 'BC'
       },
-      numberOfUnits: 0,
+      numberOfUnits: 1,
       category: StrataHotelCategory.FULL_SERVICE
     },
-    strataHotelRepresentatives: []
+    strataHotelRepresentatives: [{
+      lastName: 'Smith',
+      emailAddress: 'jane.smith@example.com',
+      firstName: 'Jane',
+      middleName: 'B',
+      preferredName: '',
+      faxNumber: '987-654-3210'
+    }] as ApiRep[]
   }
 }
 

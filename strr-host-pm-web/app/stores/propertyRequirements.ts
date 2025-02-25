@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { FetchError } from 'ofetch'
+import type { BusinessLicenceRequirements } from '~/interfaces/business-licence-requirements'
 
 export const usePropertyReqStore = defineStore('property/requirements', () => {
   const { t } = useI18n()
@@ -24,6 +25,7 @@ export const usePropertyReqStore = defineStore('property/requirements', () => {
       reqs.push(
         {
           label: t('requirements.busLicense.label'),
+          id: 'bl-requirement',
           content: overrideApplicationWarning.value
             ? t('requirements.busLicense.content.override')
             : t('requirements.busLicense.content.normal')
@@ -48,12 +50,45 @@ export const usePropertyReqStore = defineStore('property/requirements', () => {
       : z.any().optional()
   }))
 
+  // business licence requirements when bl not required option is selected
+  const blRequirementsSchema = computed(() => z.object({
+    isBusinessLicenceExempt: z.boolean(),
+    blExemptReason: blRequirements.value.isBusinessLicenceExempt
+      ? z.string()
+        .min(1, { message: t('validation.required') })
+      : z.any().optional()
+  }))
+
+  const strataHotelCategorySchema = computed(() => z.object({
+    category: prRequirements.value.isPropertyPrExempt &&
+            prRequirements.value.prExemptionReason === PrExemptionReason.STRATA_HOTEL
+      ? z.enum([
+        StrataHotelCategory.FULL_SERVICE,
+        StrataHotelCategory.MULTI_UNIT_NON_PR,
+        StrataHotelCategory.POST_DECEMBER_2023
+      ], {
+        errorMap: () => ({ message: t('validation.strataHotelCategory') })
+      })
+      : z.any().optional()
+  }))
+
   const getEmptyPrRequirements = (): PrRequirements => ({
     isPropertyPrExempt: false,
     prExemptionReason: undefined
   })
 
+  const getEmptyBlRequirements = (): BusinessLicenceRequirements => ({
+    isBusinessLicenceExempt: false,
+    blExemptType: undefined,
+    blExemptReason: ''
+  })
+  const getEmptyStrataHotelCategory = (): StrataHotelCategories => ({
+    category: undefined
+  })
+
   const prRequirements = ref<PrRequirements>(getEmptyPrRequirements())
+  const blRequirements = ref<BusinessLicenceRequirements>(getEmptyBlRequirements())
+  const strataHotelCategory = ref<StrataHotelCategories>(getEmptyStrataHotelCategory())
 
   async function getPropertyReqs () {
     try {
@@ -93,10 +128,55 @@ export const usePropertyReqStore = defineStore('property/requirements', () => {
     }
   }
 
+  const validateBlExemption = (returnBool = false): MultiFormValidationResult | boolean => {
+    const blResult = validateSchemaAgainstState(
+      blRequirementsSchema.value,
+      blRequirements.value,
+      'bl-requirements-form'
+    )
+
+    if (returnBool) {
+      return blResult.success
+    }
+    return [blResult]
+  }
+
+  const validatePrRequirements = (returnBool = false): MultiFormValidationResult | boolean => {
+    const prResult = validateSchemaAgainstState(
+      prRequirementsSchema.value,
+      prRequirements.value,
+      'pr-requirements-form'
+    )
+
+    // Only validate strata hotel category if PR is exempt and reason is STRATA_HOTEL
+    const shouldValidateStrataHotel = prRequirements.value.isPropertyPrExempt &&
+      prRequirements.value.prExemptionReason === PrExemptionReason.STRATA_HOTEL
+
+    if (shouldValidateStrataHotel) {
+      const strataResult = validateSchemaAgainstState(
+        strataHotelCategorySchema.value,
+        strataHotelCategory.value,
+        'strata-hotel-form'
+      )
+
+      if (returnBool) {
+        return prResult.success && strataResult.success
+      }
+      return [prResult, strataResult]
+    }
+
+    if (returnBool) {
+      return prResult.success
+    }
+    return [prResult]
+  }
+
   const $reset = () => {
     propertyReqs.value = {} as PropertyRequirements
     propertyReqError.value = {} as PropertyRequirementsError
     prRequirements.value = getEmptyPrRequirements()
+    blRequirements.value = getEmptyBlRequirements()
+    strataHotelCategory.value = getEmptyStrataHotelCategory()
     showUnitDetailsForm.value = false
     overrideApplicationWarning.value = false
   }
@@ -108,10 +188,16 @@ export const usePropertyReqStore = defineStore('property/requirements', () => {
     hasReqError,
     propertyReqError,
     prRequirementsSchema,
+    blRequirementsSchema,
     prRequirements,
+    blRequirements,
+    strataHotelCategorySchema,
+    strataHotelCategory,
     showUnitDetailsForm,
     requirementsList,
     overrideApplicationWarning,
+    validateBlExemption,
+    validatePrRequirements,
     getPropertyReqs,
     $reset
   }

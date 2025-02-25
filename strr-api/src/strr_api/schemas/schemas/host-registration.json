@@ -125,6 +125,11 @@
           "type": "string",
           "format": "date"
         },
+        "blExemptReason": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "BL Exemption Reason."
+        },
         "rentalUnitSpaceType": {
           "type": "string",
           "enum": [
@@ -178,6 +183,14 @@
             "STRATA_HOTEL",
             "FARM_LAND",
             "FRACTIONAL_OWNERSHIP"
+          ]
+        },
+        "strataHotelCategory": {
+          "type": "string",
+          "enum": [
+            "FULL_SERVICE",
+            "MULTI_UNIT_NON_PR",
+            "POST_DECEMBER_2023"
           ]
         }
       },
