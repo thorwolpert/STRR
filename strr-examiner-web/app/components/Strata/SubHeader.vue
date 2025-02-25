@@ -18,7 +18,10 @@ const hasAttorneyAddress = Object.values(attorney.mailingAddress).some(Boolean)
     class="app-inner-container"
   >
     <div class="grid grid-cols-4 gap-x-5 divide-x bg-white py-4 text-sm text-bcGovColor-midGray">
-      <div class="space-y-2">
+      <div
+        data-testid="strata-primary-building"
+        class="space-y-2"
+      >
         <b>{{ $t('strr.label.primaryBuilding').toUpperCase() }}</b>
         <ConnectInfoWithIcon
           icon="i-mdi-map-marker-outline"

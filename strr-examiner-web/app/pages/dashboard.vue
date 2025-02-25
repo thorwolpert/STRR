@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import isEmpty from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import { sub } from 'date-fns'
 
 const localePath = useLocalePath()
@@ -67,12 +67,27 @@ const getApplicantNameColumn = (app: HousApplicationResponse) => {
   }
 }
 
+// Strata location has different interface than the ConnectFormAddressDisplay accepts
+const mapStrataAddress = (address: ApiAddress): ConnectAddress | string => {
+  return !isEmpty(address)
+    ? {
+        street: address.address,
+        streetAdditional: address.addressLineTwo,
+        city: address.city,
+        region: address.province,
+        postalCode: address.postalCode,
+        country: address.country,
+        locationDescription: address.locationDescription
+      }
+    : '-'
+}
+
 const getPropertyAddressColumn = (app: HousApplicationResponse) => {
   switch (app.registration.registrationType) {
     case ApplicationType.HOST:
       return (app.registration as ApiHostApplication).unitAddress || '-'
     case ApplicationType.STRATA_HOTEL:
-      return (app.registration as ApiBaseStrataApplication).strataHotelDetails.location || '-'
+      return mapStrataAddress((app.registration as ApiBaseStrataApplication).strataHotelDetails.location)
     default: // platform
       return (app.registration as ApiBasePlatformApplication).businessDetails.mailingAddress || '-'
   }
@@ -209,7 +224,7 @@ function handleColumnSort (column: string) {
               size="sm"
             >
               <template #trailing>
-                <UIcon name="i-mdi-search" class="size-5 shrink-0 text-bcGovColor-activeBlue" />
+                <UIcon name="i-mdi-search" class="text-bcGovColor-activeBlue size-5 shrink-0" />
               </template>
             </UInput>
             <ConnectI18nHelper translation-path="label.resultsInTable" :count="applicationListResp?.total || 0" />
@@ -392,7 +407,7 @@ function handleColumnSort (column: string) {
               { label: 'Full Review', value: ApplicationStatus.FULL_REVIEW },
               { label: 'Provisional Review', value: ApplicationStatus.PROVISIONAL_REVIEW },
               { label: 'Payment Due', value: ApplicationStatus.PAYMENT_DUE },
-              { label: 'Provsional', value: ApplicationStatus.PROVISIONAL },
+              { label: 'Provisional', value: ApplicationStatus.PROVISIONAL },
               { label: 'Paid', value: ApplicationStatus.PAID },
               { label: 'Additional Info Requested', value: ApplicationStatus.ADDITIONAL_INFO_REQUESTED },
               { label: 'Provisionally Approved', value: ApplicationStatus.PROVISIONALLY_APPROVED },
