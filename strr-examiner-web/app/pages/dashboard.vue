@@ -51,7 +51,7 @@ const getHostPrRequirements = (hostApplication: ApiHostApplication): string => {
       : '',
     isBusinessLicenceRequired ? t('page.dashboardList.requirements.host.bl') : '',
     isStrProhibited ? t('page.dashboardList.requirements.host.prohibited') : ''
-  ].filter(Boolean).join('/') ||
+  ].filter(Boolean).join(', ') ||
   // default value where there are no requirements
   t('page.dashboardList.requirements.host.none')
 }
@@ -129,12 +129,13 @@ const { data: applicationListResp, status } = await useAsyncData(
       }
 
       const applications = res.applications.map((app: HousApplicationResponse) => ({
-        applicationNumber: app.header.registrationNumber || app.header.applicationNumber,
+        applicationNumber: app.header.applicationNumber,
+        registrationNumber: app.header.registrationNumber,
         registrationType: t(`registrationType.${app.registration.registrationType}`),
         requirements: getRequirementsColumn(app),
         applicantName: getApplicantNameColumn(app),
         propertyAddress: getPropertyAddressColumn(app),
-        status: app.header.registrationStatus || app.header.hostStatus, // TODO: should this have registration status? maybe this should just return app.header.status?
+        status: app.header.registrationStatus ? app.header.examinerStatus : app.header.hostStatus, // TODO: should this have registration status? maybe this should just return app.header.status?
         submissionDate: app.header.applicationDateTime,
         lastModified: getLastStatusChangeColumn(app.header),
         adjudicator: '-' // TODO: get adjudicator
@@ -184,6 +185,7 @@ const columns = computed(() => {
 })
 
 const selectedColumns = ref([...columns.value])
+const columnsTable = computed(() => columns.value.filter(column => selectedColumns.value.includes(column)))
 const sort = ref<TableSort>({ column: 'submissionDate', direction: 'asc' as const })
 
 async function handleRowSelect (row: any) {
@@ -206,7 +208,7 @@ function handleColumnSort (column: string) {
 <template>
   <div
     id="dashboard-page"
-    class="flex grow flex-col justify-center space-y-8 py-8 sm:space-y-10 sm:py-10"
+    class="flex grow flex-col space-y-6 py-8"
     data-testid="examiner-dashboard-page"
   >
     <h1>{{ $t('label.search') }}</h1>
@@ -224,10 +226,14 @@ function handleColumnSort (column: string) {
               size="sm"
             >
               <template #trailing>
-                <UIcon name="i-mdi-search" class="text-bcGovColor-activeBlue size-5 shrink-0" />
+                <UIcon name="i-mdi-search" class="size-5 shrink-0 text-bcGovColor-activeBlue" />
               </template>
             </UInput>
-            <ConnectI18nHelper translation-path="label.resultsInTable" :count="applicationListResp?.total || 0" />
+            <ConnectI18nHelper
+              class="text-sm"
+              translation-path="label.resultsInTable"
+              :count="applicationListResp?.total || 0"
+            />
             <UButton
               :label="$t('label.clearAllFilters')"
               icon="i-mdi-close"
@@ -245,7 +251,7 @@ function handleColumnSort (column: string) {
               size="lg"
               :total="applicationListResp?.total || 0"
               :ui="{
-                base: 'h-[42px]',
+                base: 'h-10',
                 default: {
                   activeButton: { class: 'rounded' }
                 }
@@ -253,7 +259,9 @@ function handleColumnSort (column: string) {
               data-testid="applications-pagination"
             />
             <div class="flex items-center gap-2">
-              <span>{{ $t('label.tableLimitDisplay') }}</span>
+              <span
+                class="text-sm"
+              >{{ $t('label.tableLimitDisplay') }}</span>
               <USelectMenu
                 v-model="exStore.tableLimit"
                 value-attribute="value"
@@ -268,7 +276,7 @@ function handleColumnSort (column: string) {
                   <!-- TODO: aria labels? -->
                   <UButton
                     variant="select_menu_trigger"
-                    class="flex-1 justify-between bg-white"
+                    class="h-10 flex-1 justify-between bg-white"
                   >
                     {{ exStore.tableLimit }}
                     <UIcon
@@ -285,11 +293,12 @@ function handleColumnSort (column: string) {
               v-model="selectedColumns"
               :options="columns"
               multiple
+              :ui-menu="{ option: { base: 'w-[230px]' } }"
               :ui="{ trigger: 'flex items-center w-full' }"
             >
               <UButton
                 color="white"
-                class="h-[42px] flex-1 justify-between text-gray-700"
+                class="h-10 flex-1 justify-between text-gray-700"
                 :aria-label="$t('btn.colsToShow.aria', { count: selectedColumns.length })"
               >
                 <span>{{ $t('btn.colsToShow.label') }}</span>
@@ -307,20 +316,23 @@ function handleColumnSort (column: string) {
       <UTable
         ref="tableRef"
         v-model:sort="sort"
-        :columns="selectedColumns"
+        :columns="columnsTable"
         :rows="applicationListResp.applications"
         :loading="status === 'pending'"
         sort-mode="manual"
         :empty-state="{
           icon: '',
-          label:'No matching applications or registrations found.'
+          label: 'No matching applications or registrations found.'
         }"
         :ui="{
           wrapper: 'relative overflow-x-auto h-[512px] bg-white',
-          thead: 'sticky top-0 bg-white z-10',
-          th: { padding: enableTableFilters ? 'px-0 py-0' : 'px-2 py-3' },
+          thead: 'sticky top-0 bg-white z-10 shadow-sm',
+          th: {
+            base: 'h-[72px]',
+            padding: enableTableFilters ? 'px-0 py-0' : 'px-2 py-3'
+          },
           td: {
-            base: 'whitespace-normal max-w-96 align-top',
+            base: 'whitespace-normal max-w-96 align-middle h-[72px]',
             padding: 'p-2',
             color: 'text-bcGovColor-midGray',
             font: '',
@@ -476,7 +488,15 @@ function handleColumnSort (column: string) {
 
         <!-- row slots -->
         <template #registrationNumber-data="{ row }">
-          {{ row.registrationNumber ? `${row.registrationNumber} / ` : '' }}{{ row.applicationNumber }}
+          <div
+            v-if="row.registrationNumber"
+            class="flex items-center whitespace-nowrap font-bold text-bcGovColor-activeBlue underline"
+          >
+            <UIcon name="i-mdi-check-circle" class="mr-1 text-green-700" />{{ row.registrationNumber }} /
+          </div>
+          <div class="text-bcGovColor-activeBlue underline">
+            {{ row.applicationNumber }}
+          </div>
         </template>
 
         <template #propertyAddress-data="{ row }">
