@@ -328,16 +328,16 @@ export default {
       subtitle: 'Register and keep short-term rental unit information up to date.',
       na: 'N/A',
       columns: {
-        applicationNumber: 'Application Number',
+        applicationNumber: 'Number',
         registrationNumber: 'Registration #',
         registrationType: 'Type',
         requirements: 'Requirements',
-        applicantName: 'Applicant Name',
+        applicantName: 'Applicant',
         propertyHost: 'Property Host',
         propertyManager: 'Property Manager',
-        propertyAddress: 'Property Address',
+        propertyAddress: 'Address',
         status: 'Status',
-        submissionDate: 'Submission Date'
+        submissionDate: 'Submitted'
       },
       requirements: {
         platform: {

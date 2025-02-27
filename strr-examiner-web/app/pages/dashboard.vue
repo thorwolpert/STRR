@@ -51,7 +51,7 @@ const getHostPrRequirements = (hostApplication: ApiHostApplication): string => {
       : '',
     isBusinessLicenceRequired ? t('page.dashboardList.requirements.host.bl') : '',
     isStrProhibited ? t('page.dashboardList.requirements.host.prohibited') : ''
-  ].filter(Boolean).join('/') ||
+  ].filter(Boolean).join(', ') ||
   // default value where there are no requirements
   t('page.dashboardList.requirements.host.none')
 }
@@ -129,12 +129,13 @@ const { data: applicationListResp, status } = await useAsyncData(
       }
 
       const applications = res.applications.map((app: HousApplicationResponse) => ({
-        applicationNumber: app.header.registrationNumber || app.header.applicationNumber,
+        applicationNumber: app.header.applicationNumber,
+        registrationNumber: app.header.registrationNumber,
         registrationType: t(`registrationType.${app.registration.registrationType}`),
         requirements: getRequirementsColumn(app),
         applicantName: getApplicantNameColumn(app),
         propertyAddress: getPropertyAddressColumn(app),
-        status: app.header.registrationStatus || app.header.hostStatus, // TODO: should this have registration status? maybe this should just return app.header.status?
+        status: app.header.examinerStatus || app.header.hostStatus, // TODO: should this have registration status? maybe this should just return app.header.status?
         submissionDate: app.header.applicationDateTime,
         lastModified: getLastStatusChangeColumn(app.header),
         adjudicator: '-' // TODO: get adjudicator
@@ -206,7 +207,7 @@ function handleColumnSort (column: string) {
 <template>
   <div
     id="dashboard-page"
-    class="flex grow flex-col justify-center space-y-8 py-8 sm:space-y-10 sm:py-10"
+    class="flex grow flex-col space-y-8 py-8 sm:space-y-10 sm:py-10"
     data-testid="examiner-dashboard-page"
   >
     <h1>{{ $t('label.search') }}</h1>
@@ -476,7 +477,15 @@ function handleColumnSort (column: string) {
 
         <!-- row slots -->
         <template #registrationNumber-data="{ row }">
-          {{ row.registrationNumber ? `${row.registrationNumber} / ` : '' }}{{ row.applicationNumber }}
+          <div
+            v-if="row.registrationNumber"
+            class="text-bcGovColor-activeBlue flex items-center whitespace-nowrap font-bold underline"
+          >
+            <UIcon name="i-mdi-check-circle" class="mr-1 text-green-700" />{{ row.registrationNumber }} /
+          </div>
+          <div class="text-bcGovColor-activeBlue underline">
+            {{ row.applicationNumber }}
+          </div>
         </template>
 
         <template #propertyAddress-data="{ row }">
