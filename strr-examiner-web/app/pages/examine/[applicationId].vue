@@ -50,7 +50,7 @@ const manageApplication = async (id: string, action: 'approve' | 'reject') => {
   } catch (error) {
     console.error(error)
     // TODO: improve error message/flow
-    strrModal.openErrorModal('Error', 'An error occured approving or rejecting this application.', false)
+    strrModal.openErrorModal('Error', 'An error occurred approving or rejecting this application.', false)
   } finally {
     // reset bottom buttons loading state
     handleButtonLoading(true)
