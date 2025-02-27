@@ -329,7 +329,7 @@ export default {
       na: 'N/A',
       columns: {
         applicationNumber: 'Number',
-        registrationNumber: 'Registration #',
+        registrationNumber: 'Registration # / Application',
         registrationType: 'Type',
         requirements: 'Requirements',
         applicantName: 'Applicant',
