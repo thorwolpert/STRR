@@ -12,7 +12,7 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     requirements: [],
     applicantName: '',
     propertyAddress: '',
-    status: [ApplicationStatus.FULL_REVIEW],
+    status: [], // show all statuses
     submissionDate: { start: null, end: null },
     lastModified: { start: null, end: null },
     adjudicator: []
@@ -25,7 +25,9 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
           limit: tableLimit.value,
           page: tablePage.value,
           registrationType: tableFilters.registrationType[0], // api only allows 1 at a time
-          status: tableFilters.status[0] // api only allows 1 at a time
+          status: tableFilters.status[0], // api only allows 1 at a time
+          sortBy: ApplicationSortBy.APPLICATION_DATE,
+          sortOrder: ApplicationSortOrder.ASC
         }
       })
     } else { // else try to fetch by search
@@ -34,7 +36,9 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
           limit: tableLimit.value,
           page: tablePage.value,
           status: tableFilters.status[0], // api only allows 1 at a time
-          text: tableFilters.searchText.length > 2 ? tableFilters.searchText : undefined // min length 3 required
+          text: tableFilters.searchText.length > 2 ? tableFilters.searchText : undefined, // min length 3 required
+          sortBy: ApplicationSortBy.APPLICATION_DATE,
+          sortOrder: ApplicationSortOrder.ASC
         }
       })
     }
@@ -43,7 +47,9 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
   const getNextApplication = async <T extends ApiApplicationBaseResp>(): Promise<T | undefined> => {
     // TODO: update when requirements are flushed out and backend is updated.
     const resp = await getAccountApplications<T>(
-      undefined, undefined, ApplicationType.HOST, ApplicationStatus.FULL_REVIEW)
+      undefined, undefined, ApplicationType.HOST, ApplicationStatus.FULL_REVIEW,
+      ApplicationSortBy.APPLICATION_DATE, ApplicationSortOrder.ASC
+    )
     return resp.applications[0]
   }
 
