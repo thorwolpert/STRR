@@ -135,7 +135,7 @@ const { data: applicationListResp, status } = await useAsyncData(
         requirements: getRequirementsColumn(app),
         applicantName: getApplicantNameColumn(app),
         propertyAddress: getPropertyAddressColumn(app),
-        status: app.header.examinerStatus || app.header.hostStatus, // TODO: should this have registration status? maybe this should just return app.header.status?
+        status: app.header.registrationStatus ? app.header.examinerStatus : app.header.hostStatus, // TODO: should this have registration status? maybe this should just return app.header.status?
         submissionDate: app.header.applicationDateTime,
         lastModified: getLastStatusChangeColumn(app.header),
         adjudicator: '-' // TODO: get adjudicator
@@ -226,7 +226,7 @@ function handleColumnSort (column: string) {
               size="sm"
             >
               <template #trailing>
-                <UIcon name="i-mdi-search" class="text-bcGovColor-activeBlue size-5 shrink-0" />
+                <UIcon name="i-mdi-search" class="size-5 shrink-0 text-bcGovColor-activeBlue" />
               </template>
             </UInput>
             <ConnectI18nHelper
@@ -293,8 +293,8 @@ function handleColumnSort (column: string) {
               v-model="selectedColumns"
               :options="columns"
               multiple
-              :ui="{
-                trigger: 'flex items-center w-full' }"
+              :ui-menu="{ option: { base: 'w-[230px]' } }"
+              :ui="{ trigger: 'flex items-center w-full' }"
             >
               <UButton
                 color="white"
@@ -490,7 +490,7 @@ function handleColumnSort (column: string) {
         <template #registrationNumber-data="{ row }">
           <div
             v-if="row.registrationNumber"
-            class="text-bcGovColor-activeBlue flex items-center whitespace-nowrap font-bold underline"
+            class="flex items-center whitespace-nowrap font-bold text-bcGovColor-activeBlue underline"
           >
             <UIcon name="i-mdi-check-circle" class="mr-1 text-green-700" />{{ row.registrationNumber }} /
           </div>
