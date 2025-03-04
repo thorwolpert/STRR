@@ -2,11 +2,12 @@
 Registration response objects.
 """
 
+# Cannot import ApplicationService at the top level to avoid circular imports
+import importlib
+
 from strr_api.enums.enum import RegistrationStatus, RegistrationType
 from strr_api.models import Application, Platform, PropertyManager, Registration, StrataHotel
 from strr_api.models.application import ApplicationSerializer
-# Cannot import ApplicationService at the top level to avoid circular imports
-import importlib
 
 
 class RegistrationSerializer:
@@ -47,9 +48,9 @@ class RegistrationSerializer:
         try:
             # Dynamically import ApplicationService to avoid circular import
             application_service_module = importlib.import_module('strr_api.services.application_service')
-            ApplicationService = application_service_module.ApplicationService
+            application_service = application_service_module.ApplicationService
 
-            return ApplicationService.get_existing_host_registrations_count(application_dict)
+            return application_service.get_existing_host_registrations_count(application_dict)
         except Exception:
             return 0
 
