@@ -57,7 +57,7 @@ class RegistrationSerializer:
     @classmethod
     def _get_str_requirement(cls, application_dict) -> int:
         """Get strRequirements from application_json"""
-        return application_dict["registration"]["strRequirements"]
+        return application_dict.get("registration", {}).get("strRequirements", {})
 
     @classmethod
     def serialize(cls, registration: Registration):
