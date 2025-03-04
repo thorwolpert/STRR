@@ -47,7 +47,7 @@ class RegistrationSerializer:
         """Get existing host registrations count"""
         try:
             # Dynamically import ApplicationService to avoid circular import
-            application_service_module = importlib.import_module('strr_api.services.application_service')
+            application_service_module = importlib.import_module("strr_api.services.application_service")
             application_service = application_service_module.ApplicationService
 
             return application_service.get_existing_host_registrations_count(application_dict)
@@ -74,30 +74,7 @@ class RegistrationSerializer:
             "registrationNumber": registration.registration_number,
         }
 
-        registration_data["header"] = {}
-        registration_data["header"]["hostStatus"] = RegistrationSerializer.HOST_STATUSES.get(
-            registration.status, registration.status.name
-        )
-        registration_data["header"]["hostActions"] = RegistrationSerializer.HOST_ACTIONS.get(registration.status, [])
-        registration_data["header"]["examinerStatus"] = RegistrationSerializer.EXAMINER_STATUSES.get(
-            registration.status, registration.status.name
-        )
-        registration_data["header"]["examinerActions"] = RegistrationSerializer.EXAMINER_ACTIONS.get(
-            registration.status, []
-        )
-        application = Application.get_by_registration_id(registration.id)
-        if application:
-            registration_data["header"]["applicationNumber"] = application.application_number
-            registration_data["header"]["applicationDateTime"] = application.application_date.isoformat()
-            registration_data["header"]["reviewer"] = {}
-            if application.reviewer_id:
-                registration_data["header"]["reviewer"]["username"] = application.reviewer.username
-                reviewer_display_name = ""
-                if application.reviewer.firstname:
-                    reviewer_display_name = f"{reviewer_display_name}{application.reviewer.firstname}"
-                if application.reviewer.lastname:
-                    reviewer_display_name = f"{reviewer_display_name} {application.reviewer.lastname}"
-                registration_data["header"]["reviewer"]["displayName"] = reviewer_display_name
+        RegistrationSerializer._populate_header_data(registration_data, registration)
 
         documents = []
         if registration.documents:
@@ -122,6 +99,34 @@ class RegistrationSerializer:
             RegistrationSerializer.populate_strata_hotel_registration_details(registration_data, registration)
 
         return registration_data
+
+    @classmethod
+    def _populate_header_data(cls, registration_data: dict, registration: Registration):
+        """Populates header data into response object."""
+        registration_data["header"] = {}
+        registration_data["header"]["hostStatus"] = RegistrationSerializer.HOST_STATUSES.get(
+            registration.status, registration.status.name
+        )
+        registration_data["header"]["hostActions"] = RegistrationSerializer.HOST_ACTIONS.get(registration.status, [])
+        registration_data["header"]["examinerStatus"] = RegistrationSerializer.EXAMINER_STATUSES.get(
+            registration.status, registration.status.name
+        )
+        registration_data["header"]["examinerActions"] = RegistrationSerializer.EXAMINER_ACTIONS.get(
+            registration.status, []
+        )
+        application = Application.get_by_registration_id(registration.id)
+        if application:
+            registration_data["header"]["applicationNumber"] = application.application_number
+            registration_data["header"]["applicationDateTime"] = application.application_date.isoformat()
+            registration_data["header"]["reviewer"] = {}
+            if application.reviewer_id:
+                registration_data["header"]["reviewer"]["username"] = application.reviewer.username
+                reviewer_display_name = ""
+                if application.reviewer.firstname:
+                    reviewer_display_name = f"{reviewer_display_name}{application.reviewer.firstname}"
+                if application.reviewer.lastname:
+                    reviewer_display_name = f"{reviewer_display_name} {application.reviewer.lastname}"
+                registration_data["header"]["reviewer"]["displayName"] = reviewer_display_name
 
     @classmethod
     def populate_strata_hotel_registration_details(cls, registration_data: dict, registration: Registration):
