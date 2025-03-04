@@ -2,12 +2,58 @@
 Registration response objects.
 """
 
-from strr_api.enums.enum import RegistrationType
-from strr_api.models import Platform, PropertyManager, Registration, StrataHotel
+from strr_api.enums.enum import RegistrationStatus, RegistrationType
+from strr_api.models import Application, Platform, PropertyManager, Registration, StrataHotel
+from strr_api.models.application import ApplicationSerializer
 
 
 class RegistrationSerializer:
     """Registration response serializer."""
+
+    HOST_STATUSES = {
+        RegistrationStatus.ACTIVE: "Registered",
+        RegistrationStatus.EXPIRED: "Expired",
+        RegistrationStatus.SUSPENDED: "Suspended",
+        RegistrationStatus.CANCELLED: "Cancelled",
+    }
+
+    HOST_ACTIONS = {
+        RegistrationStatus.EXPIRED: ["REAPPLY"],
+    }
+
+    EXAMINER_STATUSES = {
+        RegistrationStatus.ACTIVE: "Registered",
+        RegistrationStatus.EXPIRED: "Expired",
+        RegistrationStatus.SUSPENDED: "Suspended",
+        RegistrationStatus.CANCELLED: "Cancelled",
+    }
+
+    EXAMINER_ACTIONS = {
+        RegistrationStatus.ACTIVE: ["SUSPEND", "CANCEL"],
+        RegistrationStatus.SUSPENDED: ["REINSTATE", "CANCEL"],
+        RegistrationStatus.EXPIRED: [],
+    }
+
+    @classmethod
+    def _get_completing_party(cls, application_dict) -> dict:
+        """Get completing party"""
+        return application_dict["registration"]["completingParty"]
+
+    @classmethod
+    def _get_existing_host_registrations_count(cls, application_dict) -> int:
+        """Get existing host registrations count"""
+        try:
+            # To Avoid Circular Import
+            from strr_api.services.application_service import ApplicationService
+
+            return ApplicationService.get_existing_host_registrations_count(application_dict)
+        except Exception:
+            return 0
+
+    @classmethod
+    def _get_str_requirement(cls, application_dict) -> int:
+        """Get strRequirements from application_json"""
+        return application_dict["registration"]["strRequirements"]
 
     @classmethod
     def serialize(cls, registration: Registration):
@@ -17,12 +63,37 @@ class RegistrationSerializer:
             "user_id": registration.user_id,
             "sbc_account_id": registration.sbc_account_id,
             "registrationType": registration.registration_type,
-            "updatedDate": registration.updated_date,
-            "startDate": registration.start_date if registration.start_date else None,
-            "expiryDate": registration.expiry_date if registration.expiry_date else None,
+            "updatedDate": registration.updated_date.isoformat(),
+            "startDate": registration.start_date.isoformat() if registration.start_date else None,
+            "expiryDate": registration.expiry_date.isoformat() if registration.expiry_date else None,
             "status": registration.status.name,
-            "registration_number": registration.registration_number,
+            "registrationNumber": registration.registration_number,
         }
+
+        registration_data["header"] = {}
+        registration_data["header"]["hostStatus"] = RegistrationSerializer.HOST_STATUSES.get(
+            registration.status, registration.status.name
+        )
+        registration_data["header"]["hostActions"] = RegistrationSerializer.HOST_ACTIONS.get(registration.status, [])
+        registration_data["header"]["examinerStatus"] = RegistrationSerializer.EXAMINER_STATUSES.get(
+            registration.status, registration.status.name
+        )
+        registration_data["header"]["examinerActions"] = RegistrationSerializer.EXAMINER_ACTIONS.get(
+            registration.status, []
+        )
+        application = Application.get_by_registration_id(registration.id)
+        if application:
+            registration_data["header"]["applicationNumber"] = application.application_number
+            registration_data["header"]["applicationDateTime"] = application.application_date.isoformat()
+            registration_data["header"]["reviewer"] = {}
+            if application.reviewer_id:
+                registration_data["header"]["reviewer"]["username"] = application.reviewer.username
+                reviewer_display_name = ""
+                if application.reviewer.firstname:
+                    reviewer_display_name = f"{reviewer_display_name}{application.reviewer.firstname}"
+                if application.reviewer.lastname:
+                    reviewer_display_name = f"{reviewer_display_name} {application.reviewer.lastname}"
+                registration_data["header"]["reviewer"]["displayName"] = reviewer_display_name
 
         documents = []
         if registration.documents:
@@ -123,6 +194,11 @@ class RegistrationSerializer:
             "buildings": buildings,
         }
 
+        application = Application.get_by_registration_id(registration.id)
+        if application:
+            application_dict = ApplicationSerializer.to_dict(application)
+            registration_data["completingParty"] = RegistrationSerializer._get_completing_party(application_dict)
+
     @classmethod
     def populate_platform_registration_details(cls, registration_data: dict, registration: Registration):
         """Populates host registration details into response object."""
@@ -178,6 +254,11 @@ class RegistrationSerializer:
 
         platform_brands = [{"name": brand.name, "website": brand.website} for brand in platform.brands]
         registration_data["platformDetails"] = {"brands": platform_brands, "listingSize": platform.listing_size}
+
+        application = Application.get_by_registration_id(registration.id)
+        if application:
+            application_dict = ApplicationSerializer.to_dict(application)
+            registration_data["completingParty"] = RegistrationSerializer._get_completing_party(application_dict)
 
     @classmethod
     def populate_host_registration_details(cls, registration_data: dict, registration: Registration):
@@ -333,3 +414,11 @@ class RegistrationSerializer:
                     }
 
             registration_data["propertyManager"]["propertyManagerType"] = property_manager.property_manager_type
+
+        application = Application.get_by_registration_id(registration.id)
+        if application:
+            application_dict = ApplicationSerializer.to_dict(application)
+            registration_data[
+                "existingHostRegistrations"
+            ] = RegistrationSerializer._get_existing_host_registrations_count(application_dict)
+            registration_data["strRequirements"] = RegistrationSerializer._get_str_requirement(application_dict)
