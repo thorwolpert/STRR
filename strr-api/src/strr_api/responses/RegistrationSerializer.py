@@ -5,6 +5,8 @@ Registration response objects.
 from strr_api.enums.enum import RegistrationStatus, RegistrationType
 from strr_api.models import Application, Platform, PropertyManager, Registration, StrataHotel
 from strr_api.models.application import ApplicationSerializer
+# Cannot import ApplicationService at the top level to avoid circular imports
+import importlib
 
 
 class RegistrationSerializer:
@@ -43,8 +45,9 @@ class RegistrationSerializer:
     def _get_existing_host_registrations_count(cls, application_dict) -> int:
         """Get existing host registrations count"""
         try:
-            # To Avoid Circular Import
-            from strr_api.services.application_service import ApplicationService
+            # Dynamically import ApplicationService to avoid circular import
+            application_service_module = importlib.import_module('strr_api.services.application_service')
+            ApplicationService = application_service_module.ApplicationService
 
             return ApplicationService.get_existing_host_registrations_count(application_dict)
         except Exception:
