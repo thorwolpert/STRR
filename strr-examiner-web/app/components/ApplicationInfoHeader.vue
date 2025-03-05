@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { type HousApplicationResponse } from '~/types/application-response'
 
-const props = defineProps<{ application: HousApplicationResponse }>()
-const { header, registration } = props.application
+const { activeRecord } = useExaminerStore()
+const application = activeRecord as HousApplicationResponse
+const { header, registration } = application
 
 const getBadgeColor = (status: ApplicationStatus): string => {
   switch (status) {

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
-const props = defineProps<{ data: HousRegistrationResponse }>()
-const { header } = props.data
-const registration = props.data
+const { activeRecord } = useExaminerStore()
+const registration = activeRecord as HousRegistrationResponse
+const { header } = registration
 
 const getBadgeColor = (status: RegistrationStatus): string => {
   switch (status) {

@@ -5,11 +5,10 @@ import {
   PlatformExpansionParties
 } from '#components'
 
-const props = defineProps<{ data: PlatformApplicationResp | PlatformRegistrationResp}>()
-const isApplication = 'registration' in props.data
+const { isApplication, activeRecord } = useExaminerStore()
 const reg = isApplication
-  ? props.data.registration as ApiBasePlatformApplication
-  : props.data as PlatformRegistrationResp
+  ? activeRecord.registration
+  : activeRecord
 
 // business data extra formatting
 const regOffice = reg.businessDetails!.registeredOfficeOrAttorneyForServiceDetails

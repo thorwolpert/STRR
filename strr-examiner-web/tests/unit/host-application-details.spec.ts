@@ -17,7 +17,9 @@ let currentMockData = mockHostApplication
 vi.mock('@/stores/examiner', () => ({
   useExaminerStore: () => ({
     getNextApplication: vi.fn().mockImplementation(() => Promise.resolve(currentMockData)),
-    getDocument: vi.fn().mockResolvedValue(new Blob(['test'], { type: 'application/pdf' }))
+    getDocument: vi.fn().mockResolvedValue(new Blob(['test'], { type: 'application/pdf' })),
+    activeRecord: currentMockData,
+    isApplication: true
   })
 }))
 

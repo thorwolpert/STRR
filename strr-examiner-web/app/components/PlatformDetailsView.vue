@@ -1,12 +1,11 @@
 <script setup lang="ts">
 
-const props = defineProps<{ data: PlatformApplicationResp | PlatformRegistrationResp }>()
+const { isApplication, activeRecord } = useExaminerStore()
+const header = activeRecord.header
 
-const { header } = props.data
-const isApplication = 'registration' in props.data
 const registration = isApplication
-  ? props.data.registration
-  : props.data
+  ? activeRecord.registration
+  : activeRecord
 
 </script>
 

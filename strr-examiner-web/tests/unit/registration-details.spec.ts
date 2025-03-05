@@ -14,10 +14,13 @@ import {
   RegistrationInfoHeader
 } from '#components'
 
+let currentMockData = mockHostRegistration
 vi.mock('@/stores/examiner', () => ({
   useExaminerStore: () => ({
     updateRegistrationStatus: vi.fn().mockResolvedValue(undefined),
-    getRegistrationById: vi.fn().mockResolvedValue(mockHostRegistration)
+    getRegistrationById: vi.fn().mockImplementation(() => Promise.resolve(currentMockData)),
+    activeRecord: currentMockData,
+    isApplication: false
   })
 }))
 
@@ -25,6 +28,7 @@ describe('Examiner - Registration Details Page', () => {
   let wrapper: any
 
   beforeAll(async () => {
+    currentMockData = mockHostRegistration
     wrapper = await mountSuspended(RegistrationDetails, {
       global: { plugins: [enI18n] }
     })
@@ -34,152 +38,137 @@ describe('Examiner - Registration Details Page', () => {
     expect(wrapper.exists()).toBe(true)
     expect(wrapper.findComponent(RegistrationInfoHeader).exists()).toBe(true)
   })
-})
-
-describe('RegistrationInfoHeader Component', () => {
-  let wrapper: any
 
   it('displays correct badge color for ACTIVE status', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockHostRegistration
-      },
+    currentMockData = mockHostRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
-    const badge = wrapper.find('.inline-flex.bg-green-500')
+    const badge = componentWrapper.find('.inline-flex.bg-green-500')
     expect(badge.exists()).toBe(true)
     expect(badge.text()).toContain('Registered')
   })
 
   it('displays correct badge color for EXPIRED status', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockExpiredRegistration
-      },
+    currentMockData = mockExpiredRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
-    const badge = wrapper.find('.inline-flex.bg-red-500')
+    const badge = componentWrapper.find('.inline-flex.bg-red-500')
     expect(badge.exists()).toBe(true)
     expect(badge.text()).toContain('Expired')
   })
 
   it('displays correct badge color for SUSPENDED status', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockSuspendedRegistration
-      },
+    currentMockData = mockSuspendedRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
-    const badge = wrapper.find('.inline-flex.bg-blue-500')
+    const badge = componentWrapper.find('.inline-flex.bg-blue-500')
     expect(badge.exists()).toBe(true)
     expect(badge.text()).toContain('Suspended')
   })
 
   it('displays correct badge color for CANCELLED status', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockCancelledRegistration
-      },
+    currentMockData = mockCancelledRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
-    const badge = wrapper.find('.inline-flex.bg-red-500')
+
+    const badge = componentWrapper.find('.inline-flex.bg-red-500')
     expect(badge.exists()).toBe(true)
     expect(badge.text()).toContain('Cancelled')
   })
 
   it('displays correct application name for HOST type', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockHostRegistration
-      },
+    currentMockData = mockHostRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
 
-    const nameElement = wrapper.find('.text-2xl')
+    const nameElement = componentWrapper.find('.text-2xl')
     expect(nameElement.text()).toContain('Downtown Unit')
   })
 
   it('displays correct application name for PLATFORM type', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockPlatformRegistration
-      },
+    currentMockData = mockPlatformRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
 
-    const nameElement = wrapper.find('.text-2xl')
+    const nameElement = componentWrapper.find('.text-2xl')
     expect(nameElement.text()).toContain('Test Platform Inc.')
   })
 
   it('displays correct application name for STRATA_HOTEL type', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockStrataHotelRegistration
-      },
+    currentMockData = mockStrataHotelRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
 
-    const nameElement = wrapper.find('.text-2xl')
+    const nameElement = componentWrapper.find('.text-2xl')
     expect(nameElement.text()).toContain('Doe Enterprises')
   })
 
   it('displays website button for STRATA_HOTEL type', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockStrataHotelRegistration
-      },
+    currentMockData = mockStrataHotelRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
 
-    const websiteButton = wrapper.findTestId('strata-brand-website')
+    const websiteButton = componentWrapper.findTestId('strata-brand-website')
     expect(websiteButton.exists()).toBe(true)
     expect(websiteButton.attributes('href')).toBe('https://luxurystays.com')
   })
 
   it('displays correct registration type for HOST', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockHostRegistration
-      },
+    currentMockData = mockHostRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
 
-    const typeElement = wrapper.findAll('.text-sm')[1]
+    const typeElement = componentWrapper.findAll('.text-sm')[1]
     expect(typeElement.text()).toContain('Type: Host')
   })
 
   it('displays correct registration type for PLATFORM', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockPlatformRegistration
-      },
+    currentMockData = mockPlatformRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
 
-    const typeElement = wrapper.findAll('.text-sm')[1]
+    const typeElement = componentWrapper.findAll('.text-sm')[1]
     expect(typeElement.text()).toContain('Type: Platform')
   })
 
   it('displays correct registration type for STRATA_HOTEL', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockStrataHotelRegistration
-      },
+    currentMockData = mockStrataHotelRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
-    const allText = wrapper.text()
+    const allText = componentWrapper.text()
     expect(allText).toContain('Type: Strata Hotel')
   })
 
   it('displays reviewer information when available', async () => {
-    wrapper = await mountSuspended(RegistrationInfoHeader, {
-      props: {
-        data: mockHostRegistration
-      },
+    currentMockData = mockHostRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
       global: { plugins: [enI18n] }
     })
 
-    const reviewerElement = wrapper.findAll('.text-sm')[1]
+    const reviewerElement = componentWrapper.findAll('.text-sm')[1]
     expect(reviewerElement.text()).toContain('Approved By: examiner1')
   })
 })

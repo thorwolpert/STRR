@@ -1,12 +1,11 @@
 <script setup lang="ts">
 
-const props = defineProps<{ data: StrataApplicationResp | StrataHotelRegistrationResp }>()
-const isApplication = 'registration' in props.data
+const { isApplication, activeRecord } = useExaminerStore()
 const reg = isApplication
-  ? props.data.registration as ApiBaseStrataApplication
-  : props.data as StrataHotelRegistrationResp
-const businessDetails = reg?.businessDetails
+  ? activeRecord.registration
+  : activeRecord
 
+const businessDetails = reg?.businessDetails
 const strataExpansion = useStrataExpansion(reg)
 
 const attorney = businessDetails?.registeredOfficeOrAttorneyForServiceDetails || {}

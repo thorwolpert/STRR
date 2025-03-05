@@ -1,11 +1,12 @@
-export const useFlags = (data: HostApplicationResp | HousRegistrationResponse, isApplication: boolean) => {
+export const useFlags = () => {
+  const { isApplication, activeRecord } = useExaminerStore()
   const REGISTRATIONS_LIMIT = 2
 
   const registration = isApplication
-    ? (data as HostApplicationResp).registration
-    : data as HousRegistrationResponse
+    ? activeRecord.registration
+    : activeRecord
   const existingHostRegistrations = isApplication
-    ? (data as HostApplicationResp).header.existingHostRegistrations
+    ? activeRecord.header.existingHostRegistrations
     : undefined
 
   /**

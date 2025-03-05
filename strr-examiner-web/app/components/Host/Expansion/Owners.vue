@@ -1,17 +1,15 @@
 <script setup lang="ts">
 const props = defineProps<{
-  data: HostApplicationResp | HostRegistrationResp
   display: 'primaryContact' | 'secondaryContact' | 'propertyManager'
-  isApplication: boolean
 }>()
-
 defineEmits<{
   close: [void]
 }>()
+const { isApplication, activeRecord } = useExaminerStore()
 
-const registration = props.isApplication
-  ? (props.data as HostApplicationResp).registration
-  : props.data as HousRegistrationResponse
+const registration = isApplication
+  ? activeRecord.registration
+  : activeRecord
 
 const { t } = useI18n()
 

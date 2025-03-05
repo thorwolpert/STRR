@@ -1,10 +1,8 @@
 <script setup lang="ts">
-const props = defineProps<{
-  data: StrataApplicationPayload | StrataHotelRegistrationResp
-}>()
-const isApplication = 'completingParty' in props.data
-const reg = props.data
-
+const { isApplication, activeRecord } = useExaminerStore()
+const reg = isApplication
+  ? activeRecord.registration
+  : activeRecord
 const { strataHotelRepresentatives } = reg
 const compParty = isApplication
   ? reg.completingParty

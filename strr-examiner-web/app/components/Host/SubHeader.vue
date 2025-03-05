@@ -1,20 +1,15 @@
 <script setup lang="ts">
 import { useFlags } from '~/composables/useFlags'
 
-const props = defineProps<{
-  data: HostApplicationResp | HostRegistrationResp
-}>()
-const isApplication = 'registration' in props.data
+const { isApplication, activeRecord } = useExaminerStore()
 const reg = isApplication
-  ? props.data.registration as HostApplicationResp
-  : props.data as HostRegistrationResp
+  ? activeRecord.registration
+  : activeRecord
 const existingHostRegistrations = isApplication
-  ? props.data.header.existingHostRegistrations
+  ? activeRecord.header.existingHostRegistrations
   : undefined
 const { t } = useI18n()
-const alertFlags = reactive(useFlags(
-  props.data, isApplication
-))
+const alertFlags = reactive(useFlags())
 
 const hostExp = useHostExpansion()
 </script>
@@ -64,7 +59,7 @@ const hostExp = useHostExpansion()
             :label="displayContactFullName(reg.primaryContact!)"
             :padded="false"
             variant="link"
-            @click="hostExp.openHostOwners(data, 'primaryContact', isApplication)"
+            @click="hostExp.openHostOwners('primaryContact')"
           />
         </div>
         <div>
@@ -132,7 +127,7 @@ const hostExp = useHostExpansion()
               : displayContactFullName(reg?.secondaryContact)"
             :padded="false"
             variant="link"
-            @click="hostExp.openHostOwners(data, 'secondaryContact', isApplication)"
+            @click="hostExp.openHostOwners('secondaryContact')"
           />
         </div>
 
@@ -144,7 +139,7 @@ const hostExp = useHostExpansion()
               : reg?.propertyManager?.business?.legalName"
             :padded="false"
             variant="link"
-            @click="hostExp.openHostOwners(data, 'propertyManager', isApplication)"
+            @click="hostExp.openHostOwners('propertyManager')"
           />
         </div>
       </div>

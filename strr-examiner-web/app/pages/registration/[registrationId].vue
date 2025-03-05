@@ -47,10 +47,10 @@ const handleRegistrationAction = (
 
 watch(
   [registration, error],
-  ([newVal, _]) => {
+  ([_, __]) => {
     initialMount.value = false
 
-    updateRouteAndButtons(newVal, RoutesE.REGISTRATION, false, {
+    updateRouteAndButtons(RoutesE.REGISTRATION, {
       cancel: {
         action: (id: number) => handleRegistrationAction(id, 'CANCEL', 'right', 1),
         label: t('btn.cancel')
@@ -81,10 +81,9 @@ watch(
     />
     <ApplicationDetailsView
       v-else
-      :data="registration!"
     >
       <template #header>
-        <RegistrationInfoHeader :data="registration!" />
+        <RegistrationInfoHeader />
       </template>
     </ApplicationDetailsView>
   </div>

@@ -2,18 +2,16 @@
 import isEmpty from 'lodash/isEmpty'
 
 const props = defineProps<{
-  data: HousApplicationResponse | HousRegistrationResponse
   excludeTypes?: DocumentUploadType[]
 }>()
 
 const { t } = useI18n()
-const { openDocInNewTab } = useExaminerStore()
-const { header } = props.data
+const { isApplication, activeRecord, openDocInNewTab } = useExaminerStore()
+const header = activeRecord.header
 const { applicationNumber } = header
-const isApplication = 'registration' in props.data
 const reg = isApplication
-  ? props.data.registration
-  : props.data
+  ? activeRecord.registration
+  : activeRecord
 const { documents } = reg as { documents: ApiDocument[] }
 
 const filteredDocuments = props.excludeTypes

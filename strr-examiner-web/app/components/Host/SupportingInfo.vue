@@ -4,19 +4,17 @@ import { ConnectPageSection } from '#components'
 import { useExaminerStore } from '~/stores/examiner'
 import { useFlags } from '~/composables/useFlags'
 
-const props = defineProps<{
-  data: HostApplicationResp | HostRegistrationResp | undefined
-}>()
-
-const isApplication = props.data ? 'registration' in props.data : false
-const reg = props.data ? (isApplication ? props.data.registration : props.data) : undefined
-const header = props.data?.header
+const { isApplication, activeRecord } = useExaminerStore()
+const reg = isApplication
+  ? activeRecord.registration
+  : activeRecord
+const header = activeRecord.header
 const { t } = useI18n()
 const { getDocument } = useExaminerStore()
-const alertFlags = reactive(useFlags(props.data, isApplication))
+const alertFlags = reactive(useFlags())
 
 const openDocInNewTab = async (supportingDocument: ApiDocument) => {
-  if (props.data !== undefined) {
+  if (activeRecord !== undefined) {
     const file = await getDocument(header.applicationNumber!, supportingDocument.fileKey)
     const blob = new Blob([file], { type: 'application/pdf' })
     const url = URL.createObjectURL(blob)
@@ -31,15 +29,23 @@ const businessLicenceDoc = reg?.documents
   : undefined
 
 // Principal Residence Requirements:
-const getPrRequired = (): string =>
-  reg?.strRequirements?.isPrincipalResidenceRequired
+const getPrRequired = (): string => {
+  if (!isApplication) {
+    return ''
+  }
+  return reg?.strRequirements?.isPrincipalResidenceRequired
     ? t('pr.required')
     : t('pr.notRequired')
+}
 
-const getBlRequired = (): string =>
-  reg?.strRequirements?.isBusinessLicenceRequired
+const getBlRequired = (): string => {
+  if (!isApplication) {
+    return ''
+  }
+  return reg?.strRequirements?.isBusinessLicenceRequired
     ? t('pr.required')
     : t('pr.notRequired')
+}
 
 const blExemptReason = reg?.unitDetails?.blExemptReason
 const prExemptReason = reg?.unitDetails?.prExemptReason

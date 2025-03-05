@@ -5,6 +5,8 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
 
   const tableLimit = ref(50)
   const tablePage = ref(1)
+  const isApplication = ref<boolean>(true)
+  const activeRecord = ref<HousApplicationResponse | HousRegistrationResponse | undefined>(undefined)
   const tableFilters = reactive({
     searchText: '',
     registrationNumber: '',
@@ -50,7 +52,10 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
       undefined, undefined, ApplicationType.HOST, ApplicationStatus.FULL_REVIEW,
       ApplicationSortBy.APPLICATION_DATE, ApplicationSortOrder.ASC
     )
-    return resp.applications[0]
+    const nextApplication = resp.applications[0]
+    activeRecord.value = nextApplication
+    isApplication.value = true
+    return nextApplication
   }
 
   const approveApplication = async (applicationNumber: string): Promise<void> => {
@@ -68,9 +73,12 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
   }
 
   const getApplicationById = async (applicationNumber: string): Promise<HousApplicationResponse> => {
-    return await $strrApi<HousApplicationResponse>(`/applications/${applicationNumber}`, {
+    const resp = await $strrApi<HousApplicationResponse>(`/applications/${applicationNumber}`, {
       method: 'GET'
     })
+    activeRecord.value = resp
+    isApplication.value = true
+    return resp
   }
 
   /**
@@ -106,9 +114,12 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
    * @param {number} registrationId - The registrationId for the registration.
    */
   const getRegistrationById = async (registrationId: number): Promise<HousRegistrationResponse> => {
-    return await $strrApi<HousRegistrationResponse>(`/registrations/${registrationId}`, {
+    const resp = await $strrApi<HousRegistrationResponse>(`/registrations/${registrationId}`, {
       method: 'GET'
     })
+    activeRecord.value = resp
+    isApplication.value = false
+    return resp
   }
 
   const openDocInNewTab = async (applicationNumber: string, supportingDocument: ApiDocument) => {
@@ -141,6 +152,8 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     tableFilters,
     tableLimit,
     tablePage,
+    isApplication,
+    activeRecord,
     approveApplication,
     rejectApplication,
     fetchApplications,

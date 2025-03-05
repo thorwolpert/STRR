@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const props = defineProps<{
-  data: StrataApplicationPayload | StrataHotelRegistrationResp
-}>()
-const reg = props.data
+const { isApplication, activeRecord } = useExaminerStore()
+const reg = isApplication
+  ? activeRecord.registration
+  : activeRecord
 
 const businessDetails = reg.businessDetails
 

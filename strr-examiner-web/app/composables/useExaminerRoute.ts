@@ -2,10 +2,8 @@ export const useExaminerRoute = () => {
   const localePath = useLocalePath()
   const { setButtonControl } = useButtonControl()
 
-  const updateRouteAndButtons = <T>(
-    newVal: T | undefined,
+  const updateRouteAndButtons = (
     routePrefix: string,
-    isApplication: boolean,
     buttonConfig: {
       approve?: {
         action: (id: string) => void
@@ -25,7 +23,8 @@ export const useExaminerRoute = () => {
       }
     }
   ) => {
-    if (!newVal) {
+    const { isApplication, activeRecord } = useExaminerStore()
+    if (!activeRecord) {
       setButtonControl({ leftButtons: [], rightButtons: [] })
       return
     }
@@ -34,13 +33,13 @@ export const useExaminerRoute = () => {
     let examinerActions: string[] | undefined = []
 
     if (isApplication) {
-      const application = newVal as unknown as HousApplicationResponse
+      const application = activeRecord as unknown as HousApplicationResponse
       id = application.header.applicationNumber
-      examinerActions = application.header.examinerActions
+      examinerActions = application.header.examinerActions || []
     } else {
-      const registration = newVal as unknown as HousRegistrationResponse
+      const registration = activeRecord as unknown as HousRegistrationResponse
       id = registration.id
-      examinerActions = registration.header.examinerActions
+      examinerActions = registration.header.examinerActions || []
     }
 
     if (id) {

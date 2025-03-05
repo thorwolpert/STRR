@@ -1,16 +1,9 @@
 <script setup lang="ts">
-const props = defineProps<{
-  data: HousApplicationResponse | HousRegistrationResponse
-}>()
+const { isApplication, activeRecord } = useExaminerStore()
 
-const isApplication = 'registration' in props.data
 const reg = isApplication
-  ? props.data.registration
-  : props.data
-
-const getStrataData = (): StrataApplicationResp | StrataHotelRegistrationResp => {
-  return props.data as StrataApplicationResp | StrataHotelRegistrationResp
-}
+  ? activeRecord.registration
+  : activeRecord
 </script>
 
 <template>
@@ -19,16 +12,13 @@ const getStrataData = (): StrataApplicationResp | StrataHotelRegistrationResp =>
       <slot name="header" />
       <HostSubHeader
         v-if="reg.registrationType === ApplicationType.HOST"
-        :data="data"
       />
       <StrataSubHeader
         v-if="reg.registrationType === ApplicationType.STRATA_HOTEL"
-        :data="getStrataData()"
       />
       <!-- @open-expansion="manageExpansion" -->
       <PlatformSubHeader
         v-if="reg.registrationType === ApplicationType.PLATFORM"
-        :data="data"
       />
     </div>
 
@@ -37,18 +27,15 @@ const getStrataData = (): StrataApplicationResp | StrataHotelRegistrationResp =>
 
       <HostSupportingInfo
         v-if="reg.registrationType === ApplicationType.HOST"
-        :data="data"
       />
 
       <StrataSupportingInfo
         v-if="reg.registrationType === ApplicationType.STRATA_HOTEL"
-        :data="getStrataData()"
       />
 
       <!--
         <PlatformDetailsView
         v-if="reg.registrationType === ApplicationType.PLATFORM"
-        :data="data"
       />-->
     </div>
   </main>

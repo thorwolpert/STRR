@@ -52,10 +52,10 @@ const handleApplicationAction = (
 // update route and bottom buttons when new application
 watch(
   [application, error],
-  ([newVal, _]) => {
+  ([_, __]) => {
     // if watch triggered, this means initial page mount is complete, set flag to false
     initialMount.value = false
-    updateRouteAndButtons(newVal, RoutesE.EXAMINE, true, {
+    updateRouteAndButtons(RoutesE.EXAMINE, {
       approve: {
         action: (id: string) => handleApplicationAction(id, 'APPROVE', 'right', 0),
         label: t('btn.approve')
@@ -86,10 +86,9 @@ watch(
     />
     <ApplicationDetailsView
       v-else
-      :data="application!"
     >
       <template #header>
-        <ApplicationInfoHeader :application="application!" />
+        <ApplicationInfoHeader />
       </template>
     </ApplicationDetailsView>
   </div>

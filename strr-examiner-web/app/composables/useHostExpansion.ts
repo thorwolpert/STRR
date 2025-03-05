@@ -7,14 +7,10 @@ export const useHostExpansion = () => {
   const exp = useStrrExpansion()
 
   function openHostOwners (
-    data: HostApplicationResp | HousRegistrationResponse,
-    display: 'primaryContact' | 'secondaryContact' | 'propertyManager',
-    isApplication: boolean
+    display: 'primaryContact' | 'secondaryContact' | 'propertyManager'
   ) {
     exp.open(HostExpansionOwners, {
-      data,
       display,
-      isApplication,
       onClose () {
         exp.close()
       }

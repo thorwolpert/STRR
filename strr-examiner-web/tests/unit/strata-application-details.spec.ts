@@ -10,7 +10,9 @@ import {
 
 vi.mock('@/stores/examiner', () => ({
   useExaminerStore: () => ({
-    getNextApplication: vi.fn().mockResolvedValue(mockStrataApplication)
+    getNextApplication: vi.fn().mockResolvedValue(mockStrataApplication),
+    activeRecord: mockStrataApplication,
+    isApplication: true
   })
 }))
 
