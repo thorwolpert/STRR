@@ -121,7 +121,7 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
    *
    * @param {number} registrationId - The registrationId for the registration.
    */
-  const getRegistrationById = async (registrationId: number): Promise<HousRegistrationResponse> => {
+  const getRegistrationById = async (registrationId: string): Promise<HousRegistrationResponse> => {
     const resp = await $strrApi<HousRegistrationResponse>(`/registrations/${registrationId}`, {
       method: 'GET'
     })

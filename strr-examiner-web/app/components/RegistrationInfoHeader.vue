@@ -2,8 +2,6 @@
 
 const exStore = useExaminerStore()
 const { activeReg, activeHeader } = storeToRefs(exStore)
-const registration = activeReg.value as HousRegistrationResponse
-const header = activeHeader.value
 
 const getBadgeColor = (status: RegistrationStatus): string => {
   switch (status) {
@@ -21,20 +19,20 @@ const getBadgeColor = (status: RegistrationStatus): string => {
 }
 
 const getApplicationName = (): string => {
-  switch (registration.registrationType) {
+  switch (activeReg.value.registrationType) {
     case ApplicationType.STRATA_HOTEL:
-      return (registration as StrataHotelRegistrationResp).businessDetails?.legalName || ''
+      return (activeReg.value as StrataHotelRegistrationResp).businessDetails?.legalName || ''
     case ApplicationType.HOST:
-      return (registration as HostRegistrationResp).unitAddress?.nickname || ''
+      return (activeReg.value as HostRegistrationResp).unitAddress?.nickname || ''
     case ApplicationType.PLATFORM:
-      return (registration as PlatformRegistrationResp).businessDetails?.legalName || ''
+      return (activeReg.value as PlatformRegistrationResp).businessDetails?.legalName || ''
     default:
       return ''
   }
 }
 
 const getRegistrationType = (): string => {
-  switch (registration.registrationType) {
+  switch (activeReg.value.registrationType) {
     case ApplicationType.STRATA_HOTEL:
       return 'Strata Hotel'
     case ApplicationType.HOST:
@@ -53,15 +51,15 @@ const getRegistrationType = (): string => {
       <div class="mb-2">
         <div class="mb-2 text-2xl">
           <strong>
-            {{ registration.registrationNumber }} |
+            {{ activeReg.registrationNumber }} |
           </strong>
           {{ getApplicationName() }}
           <UButton
-            v-if="registration.registrationType === ApplicationType.STRATA_HOTEL"
+            v-if="activeReg.registrationType === ApplicationType.STRATA_HOTEL"
             icon="mdi-web"
             :padded="false"
             variant="link"
-            :to="(registration as StrataHotelRegistrationResp).strataHotelDetails?.brand.website"
+            :to="(activeReg as StrataHotelRegistrationResp).strataHotelDetails?.brand.website"
             target="_blank"
             data-testid="strata-brand-website"
           />
@@ -69,25 +67,25 @@ const getRegistrationType = (): string => {
         <div class="text-sm">
           <UBadge
             class="mr-3 font-bold"
-            :label="header.examinerStatus"
-            :color="getBadgeColor(registration.status!)"
+            :label="activeHeader.examinerStatus"
+            :color="getBadgeColor(activeReg.status!)"
           />
           <strong>Registration Date:</strong>
-          {{ dateToString(registration.startDate, 'y-MM-dd t') }}
-          <strong>Expiry Date:</strong> {{ dateToString(registration.expiryDate, 'y-MM-dd t') }}
-          ({{ dayCountdown(registration.expiryDate.toString()) }} days left)
+          {{ dateToString(activeReg.startDate, 'y-MM-dd t') }}
+          <strong>Expiry Date:</strong> {{ dateToString(activeReg.expiryDate, 'y-MM-dd t') }}
+          ({{ dayCountdown(activeReg.expiryDate.toString()) }} days left)
         </div>
       </div>
       <div class="text-sm">
         <strong>Application Number:</strong>
-        {{ header.applicationNumber }} |
+        {{ activeHeader.applicationNumber }} |
         <strong>Type:</strong>
         {{ getRegistrationType() }} |
         <strong>Submitted:</strong>
-        {{ header.applicationDateTime }} |
-        <template v-if="header.reviewer?.username">
+        {{ activeHeader.applicationDateTime }} |
+        <template v-if="activeHeader.reviewer?.username">
           <strong>Approved By:</strong>
-          {{ header.reviewer.username }}
+          {{ activeHeader.reviewer.username }}
         </template>
       </div>
     </div>

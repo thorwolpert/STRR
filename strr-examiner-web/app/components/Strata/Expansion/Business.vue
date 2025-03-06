@@ -1,9 +1,8 @@
 <script setup lang="ts">
 const exStore = useExaminerStore()
 const { activeReg } = storeToRefs(exStore)
-const registration = activeReg.value
 
-const businessDetails = registration.businessDetails
+const businessDetails = activeReg.value.businessDetails
 const attorney = businessDetails.registeredOfficeOrAttorneyForServiceDetails
 const hasAttorneyAddress = Object.values(attorney.mailingAddress).some(Boolean)
 

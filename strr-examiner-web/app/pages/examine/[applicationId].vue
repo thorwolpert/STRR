@@ -52,7 +52,7 @@ const handleApplicationAction = (
 // update route and bottom buttons when new application
 watch(
   [application, error],
-  ([_, __]) => {
+  () => {
     // if watch triggered, this means initial page mount is complete, set flag to false
     initialMount.value = false
     updateRouteAndButtons(RoutesE.EXAMINE, {

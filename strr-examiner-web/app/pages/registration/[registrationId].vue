@@ -22,7 +22,7 @@ const { data: registration, status, error, refresh } = await useLazyAsyncData<
   'registration-details-view',
   async () => {
     // slug will be there, otherwise the route will not be rendered and redirected to dashboard
-    const slug = Number(route.params.registrationId)
+    const slug = route.params.registrationId as string
     return await getRegistrationById(slug)
   }
 )
@@ -47,7 +47,7 @@ const handleRegistrationAction = (
 
 watch(
   [registration, error],
-  ([_, __]) => {
+  () => {
     initialMount.value = false
 
     updateRouteAndButtons(RoutesE.REGISTRATION, {

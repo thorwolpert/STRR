@@ -2,9 +2,8 @@
 
 const exStore = useExaminerStore()
 const { activeReg, isApplication } = storeToRefs(exStore)
-const registration = activeReg.value
 
-const businessDetails = registration?.businessDetails
+const businessDetails = activeReg.value?.businessDetails
 const strataExpansion = useStrataExpansion()
 
 const attorney = businessDetails?.registeredOfficeOrAttorneyForServiceDetails || {}
@@ -25,10 +24,10 @@ const hasAttorneyAddress = attorney.mailingAddress ? Object.values(attorney.mail
         <b>{{ $t('strr.label.primaryBuilding').toUpperCase() }}</b>
         <ConnectInfoWithIcon
           icon="i-mdi-map-marker-outline"
-          :content="displayFullAddress(registration?.strataHotelDetails.location)"
+          :content="displayFullAddress(activeReg?.strataHotelDetails.location)"
         />
         <UButton
-          v-if="registration?.strataHotelDetails.buildings.length > 0"
+          v-if="activeReg?.strataHotelDetails.buildings.length > 0"
           :label="$t('strr.label.viewAllBuildings')"
           :padded="false"
           variant="link"
@@ -83,7 +82,7 @@ const hasAttorneyAddress = attorney.mailingAddress ? Object.values(attorney.mail
             class="whitespace-nowrap"
           >
             <UButton
-              :label="displayContactFullName(registration?.strataHotelRepresentatives[0])"
+              :label="displayContactFullName(activeReg?.strataHotelRepresentatives[0])"
               :padded="false"
               variant="link"
               @click="strataExpansion.openIndividuals()"
@@ -91,17 +90,17 @@ const hasAttorneyAddress = attorney.mailingAddress ? Object.values(attorney.mail
           </ConnectInfoWithIcon>
 
           <ConnectInfoWithIcon
-            v-if="registration?.strataHotelRepresentatives[0]?.phoneNumber"
+            v-if="activeReg?.strataHotelRepresentatives[0]?.phoneNumber"
             icon="i-mdi-phone"
-            :content="displayPhoneAndExt(registration?.strataHotelRepresentatives[0]?.phoneNumber)"
+            :content="displayPhoneAndExt(activeReg?.strataHotelRepresentatives[0]?.phoneNumber)"
           />
 
           <ConnectInfoWithIcon
             icon="i-mdi-at"
-            :content="registration?.strataHotelRepresentatives[0]?.emailAddress"
+            :content="activeReg?.strataHotelRepresentatives[0]?.emailAddress"
           />
         </div>
-        <div v-if="registration?.strataHotelRepresentatives[1]" class="space-y-2">
+        <div v-if="activeReg?.strataHotelRepresentatives[1]" class="space-y-2">
           <!-- Second Representative if available -->
           <b>{{ $t('strr.label.secondaryRepresentative').toUpperCase() }}</b>
           <ConnectInfoWithIcon
@@ -109,7 +108,7 @@ const hasAttorneyAddress = attorney.mailingAddress ? Object.values(attorney.mail
             class="whitespace-nowrap"
           >
             <UButton
-              :label="displayContactFullName(registration?.strataHotelRepresentatives[1])"
+              :label="displayContactFullName(activeReg?.strataHotelRepresentatives[1])"
               :padded="false"
               variant="link"
               @click="strataExpansion.openIndividuals()"
@@ -124,7 +123,7 @@ const hasAttorneyAddress = attorney.mailingAddress ? Object.values(attorney.mail
             class="whitespace-nowrap"
           >
             <UButton
-              :label="displayContactFullName(registration?.completingParty)"
+              :label="displayContactFullName(activeReg?.completingParty)"
               :padded="false"
               variant="link"
               @click="strataExpansion.openIndividuals()"
@@ -137,11 +136,11 @@ const hasAttorneyAddress = attorney.mailingAddress ? Object.values(attorney.mail
         <b>{{ $t('strr.label.additionalInformation').toUpperCase() }}</b>
         <div>
           <b>{{ $t('strr.label.numberOfRentalUnits') }}</b>
-          {{ registration.strataHotelDetails.numberOfUnits }}
+          {{ activeReg.strataHotelDetails.numberOfUnits }}
         </div>
         <div>
           <b>{{ $t('label.strataHotelCategory') }}:</b>
-          {{ $t(`strataHotelCategoryReview.${registration.strataHotelDetails.category}`) }}
+          {{ $t(`strataHotelCategoryReview.${activeReg.strataHotelDetails.category}`) }}
         </div>
       </div>
     </div>

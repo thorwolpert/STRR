@@ -7,7 +7,6 @@ defineEmits<{
 }>()
 const exStore = useExaminerStore()
 const { activeReg } = storeToRefs(exStore)
-const registration = activeReg.value
 
 const { t } = useI18n()
 
@@ -48,15 +47,15 @@ const getPhoneNumber = (phone: ConnectPhone) => {
 const hostOwners = computed<HostOwner[]>(() => {
   if (props.display === 'primaryContact') {
     return [formatOwnerHostUI(
-      registration.primaryContact!, // there will always be a primary contact
-      !registration.propertyManager?.initiatedByPropertyManager
+      activeReg.value.primaryContact!, // there will always be a primary contact
+      !activeReg.value.propertyManager?.initiatedByPropertyManager
     )]
   }
   if (props.display === 'secondaryContact') {
-    return [formatOwnerHostUI(registration.secondaryContact!, false, true)]
+    return [formatOwnerHostUI(activeReg.value.secondaryContact!, false, true)]
   }
   if (props.display === 'propertyManager') {
-    return [formatOwnerPropertyManagerUI(registration.propertyManager!)]
+    return [formatOwnerPropertyManagerUI(activeReg.value.propertyManager!)]
   }
   return []
 })

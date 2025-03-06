@@ -3,10 +3,8 @@ import { useFlags } from '~/composables/useFlags'
 
 const exStore = useExaminerStore()
 const { isApplication, activeReg, activeHeader } = storeToRefs(exStore)
-const registration = activeReg.value
-const header = activeHeader.value
 const existingHostRegistrations = isApplication.value
-  ? header.existingHostRegistrations
+  ? activeHeader.value.existingHostRegistrations
   : undefined
 const { t } = useI18n()
 const alertFlags = reactive(useFlags())
@@ -26,15 +24,15 @@ const hostExp = useHostExpansion()
         <strong>{{ t('strr.label.rentalUnit').toUpperCase() }}</strong>
         <div class="w-[150px]">
           <UIcon name="i-mdi-map-marker-outline" />
-          {{ displayFullUnitAddress(registration.unitAddress) }}
+          {{ displayFullUnitAddress(activeReg.unitAddress) }}
           <AlertFlag
             v-if="alertFlags.isUnitNumberMissing"
             data-testid="flag-unit-number-missing"
           />
         </div>
-        <div v-if="registration.strRequirements?.organizationNm">
+        <div v-if="activeReg.strRequirements?.organizationNm">
           <UIcon name="i-mdi-map-outline" />
-          {{ registration.strRequirements.organizationNm }}
+          {{ activeReg.strRequirements.organizationNm }}
         </div>
         <div
           v-if="alertFlags.isUnitNumberMissing"
@@ -51,12 +49,12 @@ const hostExp = useHostExpansion()
         <strong>{{ t('strr.label.host').toUpperCase() }}</strong>
         <div class="w-[150px]">
           <UIcon name="i-mdi-map-marker-outline" />
-          {{ displayFullAddress(registration.primaryContact?.mailingAddress) }}
+          {{ displayFullAddress(activeReg.primaryContact?.mailingAddress) }}
         </div>
         <div class="flex items-center gap-1">
           <UIcon name="i-mdi-account" class="size-5 shrink-0 text-gray-700" />
           <UButton
-            :label="displayContactFullName(registration.primaryContact!)"
+            :label="displayContactFullName(activeReg.primaryContact!)"
             :padded="false"
             variant="link"
             @click="hostExp.openHostOwners('primaryContact')"
@@ -64,11 +62,11 @@ const hostExp = useHostExpansion()
         </div>
         <div>
           <UIcon name="i-mdi-at" />
-          {{ registration.primaryContact?.emailAddress }}
+          {{ activeReg.primaryContact?.emailAddress }}
         </div>
-        <div v-if="registration.primaryContact?.contactType" class="flex gap-x-1">
+        <div v-if="activeReg.primaryContact?.contactType" class="flex gap-x-1">
           <strong>{{ t('strr.label.hostType') }}</strong>
-          {{ t(`ownerType.${registration.primaryContact?.contactType}`) }}
+          {{ t(`ownerType.${activeReg.primaryContact?.contactType}`) }}
           <AlertFlag
             v-if="alertFlags.isHostTypeBusiness"
             :tooltip-text="t('strr.alertFlags.hostIsBusiness')"
@@ -77,30 +75,30 @@ const hostExp = useHostExpansion()
         </div>
         <div>
           <strong>{{ t('strr.label.ownerRenter') }}</strong>
-          {{ t(`ownershipType.${registration.unitDetails?.ownershipType}`) }}
+          {{ t(`ownershipType.${activeReg.unitDetails?.ownershipType}`) }}
         </div>
       </div>
 
       <div class="space-y-2 pl-5">
         <div>
-          {{ t(`propertyType.${registration.unitDetails?.propertyType}`) }}
+          {{ t(`propertyType.${activeReg.unitDetails?.propertyType}`) }}
         </div>
-        <div v-if="registration.unitDetails?.numberOfRoomsForRent">
-          {{ t(`rentalUnitType.${registration.unitDetails?.rentalUnitSpaceType}`) }}
+        <div v-if="activeReg.unitDetails?.numberOfRoomsForRent">
+          {{ t(`rentalUnitType.${activeReg.unitDetails?.rentalUnitSpaceType}`) }}
           ({{
-            registration.unitDetails?.numberOfRoomsForRent + ' ' +
-              t('strr.label.room', registration.unitDetails?.numberOfRoomsForRent)
+            activeReg.unitDetails?.numberOfRoomsForRent + ' ' +
+              t('strr.label.room', activeReg.unitDetails?.numberOfRoomsForRent)
           }})
         </div>
         <div>
-          {{ t(`hostResidence.${registration.unitDetails?.hostResidence}`) }}
+          {{ t(`hostResidence.${activeReg.unitDetails?.hostResidence}`) }}
           <AlertFlag
             v-if="isApplication && alertFlags.isNotSameProperty"
             :tooltip-text="t('strr.alertFlags.hostAddressNotSame')"
             data-testid="flag-host-address-not-same"
           />
         </div>
-        <div><strong>{{ t('strr.label.pid') }}</strong> {{ registration.unitDetails?.parcelIdentifier }}</div>
+        <div><strong>{{ t('strr.label.pid') }}</strong> {{ activeReg.unitDetails?.parcelIdentifier }}</div>
         <div v-if="isApplication" class="flex gap-x-1">
           <strong>{{ t('strr.label.registeredRentals') }}</strong>
           {{ existingHostRegistrations }}
@@ -120,24 +118,24 @@ const hostExp = useHostExpansion()
         id="additional-details"
         class="space-y-2 pl-5"
       >
-        <div v-if="registration?.secondaryContact" class="flex items-center gap-1">
+        <div v-if="activeReg?.secondaryContact" class="flex items-center gap-1">
           <UIcon name="i-mdi-account-multiple-outline" class="size-5 shrink-0 text-gray-700" />
           <UButton
-            :label="registration?.secondaryContact?.contactType === OwnerType.BUSINESS
-              ? registration?.secondaryContact?.businessLegalName
-              : displayContactFullName(registration?.secondaryContact)"
+            :label="activeReg?.secondaryContact?.contactType === OwnerType.BUSINESS
+              ? activeReg?.secondaryContact?.businessLegalName
+              : displayContactFullName(activeReg?.secondaryContact)"
             :padded="false"
             variant="link"
             @click="hostExp.openHostOwners('secondaryContact')"
           />
         </div>
 
-        <div v-if="registration?.propertyManager?.propertyManagerType" class="flex items-center gap-1">
+        <div v-if="activeReg?.propertyManager?.propertyManagerType" class="flex items-center gap-1">
           <UIcon name="i-mdi-at" class="size-5 shrink-0 text-gray-700" />
           <UButton
-            :label="registration?.propertyManager?.propertyManagerType === OwnerType.INDIVIDUAL
-              ? displayContactFullName(registration?.propertyManager.contact)
-              : registration?.propertyManager?.business?.legalName"
+            :label="activeReg?.propertyManager?.propertyManagerType === OwnerType.INDIVIDUAL
+              ? displayContactFullName(activeReg?.propertyManager.contact)
+              : activeReg?.propertyManager?.business?.legalName"
             :padded="false"
             variant="link"
             @click="hostExp.openHostOwners('propertyManager')"

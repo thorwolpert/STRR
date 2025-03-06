@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const exStore = useExaminerStore()
 const { activeReg } = storeToRefs(exStore)
-const registration = activeReg.value
 </script>
 
 <template>
@@ -9,14 +8,14 @@ const registration = activeReg.value
     <div class="bg-white">
       <slot name="header" />
       <HostSubHeader
-        v-if="registration.registrationType === ApplicationType.HOST"
+        v-if="activeReg.registrationType === ApplicationType.HOST"
       />
       <StrataSubHeader
-        v-if="registration.registrationType === ApplicationType.STRATA_HOTEL"
+        v-if="activeReg.registrationType === ApplicationType.STRATA_HOTEL"
       />
       <!-- @open-expansion="manageExpansion" -->
       <PlatformSubHeader
-        v-if="registration.registrationType === ApplicationType.PLATFORM"
+        v-if="activeReg.registrationType === ApplicationType.PLATFORM"
       />
     </div>
 
@@ -24,16 +23,16 @@ const registration = activeReg.value
       <ConnectExpansionRoot />
 
       <HostSupportingInfo
-        v-if="registration.registrationType === ApplicationType.HOST"
+        v-if="activeReg.registrationType === ApplicationType.HOST"
       />
 
       <StrataSupportingInfo
-        v-if="registration.registrationType === ApplicationType.STRATA_HOTEL"
+        v-if="activeReg.registrationType === ApplicationType.STRATA_HOTEL"
       />
 
       <!--
         <PlatformDetailsView
-        v-if="registration.registrationType === ApplicationType.PLATFORM"
+        v-if="activeReg.registrationType === ApplicationType.PLATFORM"
       />-->
     </div>
   </main>

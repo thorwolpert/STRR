@@ -2,7 +2,6 @@ export const useFlags = () => {
   const exStore = useExaminerStore()
   const { activeReg, isApplication, activeHeader } = storeToRefs(exStore)
   const REGISTRATIONS_LIMIT = 2
-  const registration = activeReg.value
   const existingHostRegistrations = isApplication.value
     ? activeHeader.value.existingHostRegistrations
     : undefined
@@ -19,20 +18,20 @@ export const useFlags = () => {
       PropertyType.STRATA_HOTEL
     ]
     return (
-      unitNumberRequired.includes(registration.unitDetails.propertyType) &&
-      !registration.unitAddress?.unitNumber
+      unitNumberRequired.includes(activeReg.value.unitDetails.propertyType) &&
+      !activeReg.value.unitAddress?.unitNumber
     )
   })
 
-  const isProhibited = computed(() => registration.strRequirements?.isStrProhibited)
+  const isProhibited = computed(() => activeReg.value.strRequirements?.isStrProhibited)
 
   /**
    * @description Requirement: address in Principal Residence area without PR exemption,
    * when rental unit setup is "not on same property as host".
    */
   const isNotSameProperty = computed((): boolean => {
-    const { isPrincipalResidenceRequired } = registration?.strRequirements as PropertyRequirements
-    const { prExemptReason, hostResidence } = registration.unitDetails as ApiUnitDetails
+    const { isPrincipalResidenceRequired } = activeReg.value?.strRequirements as PropertyRequirements
+    const { prExemptReason, hostResidence } = activeReg.value.unitDetails as ApiUnitDetails
 
     return isPrincipalResidenceRequired && !prExemptReason && hostResidence === ResidenceType.ANOTHER_UNIT
   })
@@ -41,7 +40,7 @@ export const useFlags = () => {
    * @description Requirement: Host is a business
    */
   const isHostTypeBusiness = computed(
-    (): boolean => registration.primaryContact?.contactType === OwnerType.BUSINESS
+    (): boolean => activeReg.value.primaryContact?.contactType === OwnerType.BUSINESS
   )
 
   /**

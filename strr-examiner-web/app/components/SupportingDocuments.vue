@@ -9,10 +9,8 @@ const { t } = useI18n()
 const exStore = useExaminerStore()
 const { openDocInNewTab } = exStore
 const { activeReg, activeHeader } = storeToRefs(exStore)
-const header = activeHeader.value
-const registration = activeReg.value
-const { applicationNumber } = header
-const { documents } = registration as { documents: ApiDocument[] }
+const { applicationNumber } = activeHeader.value
+const { documents } = activeReg.value as { documents: ApiDocument[] }
 
 const filteredDocuments = props.excludeTypes
   ? documents.filter(doc => !props.excludeTypes?.includes(doc.documentType))

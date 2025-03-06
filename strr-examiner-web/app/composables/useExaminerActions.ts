@@ -2,6 +2,19 @@ export const useExaminerActions = () => {
   const strrModal = useStrrModals()
   const { handleButtonLoading } = useButtonControl()
 
+  /**
+   * A generic utility function to be called from application and registration pages for
+   * managing/calling actions on button click.
+   *
+   * @param {T} item - Has the identifier property (id) but can be any object
+   * @param {string} action - Name of the action being performed
+   * @param {Function} actionFn - Function that performs the actual action
+   * @param {'left' | 'right'} buttonPosition - The position of the button
+   * @param {number} buttonIndex - Index of the button in the group
+   * @param {Function} refresh - Function to call after the action completes
+   * @param {Args} additionalArgs - Optional additional arguments to pass to the action function
+   *
+   */
   const manageAction = async <T extends { id: string | number }, Args extends any[] = []>(
     item: T,
     action: string,

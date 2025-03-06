@@ -32,11 +32,10 @@ export const useExaminerRoute = () => {
 
     let id: string | number | undefined
     let examinerActions: string[] | undefined = []
-    const registration = activeReg.value
     if (isApplication.value) {
       id = activeHeader.value.applicationNumber
     } else {
-      id = registration.id
+      id = activeReg.value.id
     }
     examinerActions = activeHeader.value.examinerActions || []
 
@@ -54,7 +53,7 @@ export const useExaminerRoute = () => {
         examinerActions.forEach((action) => {
           if (action === 'APPROVE' && buttonConfig.approve) {
             rightButtons.push({
-              action: () => buttonConfig.approve!.action(id as string),
+              action: () => buttonConfig.approve.action(id as string),
               label: buttonConfig.approve.label,
               variant: 'outline',
               color: 'green',
@@ -62,7 +61,7 @@ export const useExaminerRoute = () => {
             })
           } else if (action === 'REJECT' && buttonConfig.reject) {
             rightButtons.push({
-              action: () => buttonConfig.reject!.action(id as string),
+              action: () => buttonConfig.reject.action(id as string),
               label: buttonConfig.reject.label,
               variant: 'outline',
               color: 'red',
@@ -70,7 +69,7 @@ export const useExaminerRoute = () => {
             })
           } else if (action === 'SUSPEND' && buttonConfig.suspend) {
             rightButtons.push({
-              action: () => buttonConfig.suspend!.action(id as number),
+              action: () => buttonConfig.suspend.action(id as number),
               label: buttonConfig.suspend.label,
               variant: 'outline',
               color: 'blue',
@@ -78,7 +77,7 @@ export const useExaminerRoute = () => {
             })
           } else if (action === 'CANCEL' && buttonConfig.cancel) {
             rightButtons.push({
-              action: () => buttonConfig.cancel!.action(id as number),
+              action: () => buttonConfig.cancel.action(id as number),
               label: buttonConfig.cancel.label,
               variant: 'outline',
               color: 'red',

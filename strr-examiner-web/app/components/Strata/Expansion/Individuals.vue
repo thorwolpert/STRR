@@ -1,10 +1,9 @@
 <script setup lang="ts">
 const exStore = useExaminerStore()
 const { isApplication, activeReg } = storeToRefs(exStore)
-const registration = activeReg.value
-const { strataHotelRepresentatives } = registration
+const { strataHotelRepresentatives } = activeReg.value
 const compParty = isApplication.value
-  ? registration.completingParty
+  ? activeReg.value.completingParty
   : undefined
 
 </script>
