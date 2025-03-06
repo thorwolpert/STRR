@@ -19,8 +19,10 @@ vi.mock('@/stores/examiner', () => ({
   useExaminerStore: () => ({
     updateRegistrationStatus: vi.fn().mockResolvedValue(undefined),
     getRegistrationById: vi.fn().mockImplementation(() => Promise.resolve(currentMockData)),
-    activeRecord: currentMockData,
-    isApplication: false
+    activeReg: ref(currentMockData),
+    activeHeader: ref(currentMockData.header),
+    activeRecord: ref(currentMockData),
+    isApplication: ref(false)
   })
 }))
 

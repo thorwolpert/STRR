@@ -1,8 +1,9 @@
 <script setup lang="ts">
 
-const { activeRecord } = useExaminerStore()
-const registration = activeRecord as HousRegistrationResponse
-const { header } = registration
+const exStore = useExaminerStore()
+const { activeReg, activeHeader } = storeToRefs(exStore)
+const registration = activeReg.value as HousRegistrationResponse
+const header = activeHeader.value
 
 const getBadgeColor = (status: RegistrationStatus): string => {
   switch (status) {

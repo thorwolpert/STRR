@@ -6,13 +6,13 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const { isApplication, activeRecord, openDocInNewTab } = useExaminerStore()
-const header = activeRecord.header
+const exStore = useExaminerStore()
+const { openDocInNewTab } = exStore
+const { activeReg, activeHeader } = storeToRefs(exStore)
+const header = activeHeader.value
+const registration = activeReg.value
 const { applicationNumber } = header
-const reg = isApplication
-  ? activeRecord.registration
-  : activeRecord
-const { documents } = reg as { documents: ApiDocument[] }
+const { documents } = registration as { documents: ApiDocument[] }
 
 const filteredDocuments = props.excludeTypes
   ? documents.filter(doc => !props.excludeTypes?.includes(doc.documentType))

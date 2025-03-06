@@ -1,8 +1,9 @@
 <script setup lang="ts">
 
-const { activeRecord } = useExaminerStore()
-const application = activeRecord as HousApplicationResponse
-const { header, registration } = application
+const exStore = useExaminerStore()
+const { activeHeader, activeReg } = storeToRefs(exStore)
+const header = activeHeader.value
+const registration = activeReg.value
 
 const getBadgeColor = (status: ApplicationStatus): string => {
   switch (status) {
@@ -44,7 +45,7 @@ const getApplicationName = (): string => {
           icon="mdi-web"
           :padded="false"
           variant="link"
-          :to="(application.registration as ApiBaseStrataApplication).strataHotelDetails.brand.website"
+          :to="(registration as ApiBaseStrataApplication).strataHotelDetails.brand.website"
           target="_blank"
           data-testid="strata-brand-website"
         />
@@ -56,7 +57,7 @@ const getApplicationName = (): string => {
           :color="getBadgeColor(header.status)"
         />
         <strong>Type:</strong>
-        {{ $t(`applicationType.${application.registration?.registrationType}`) }} |
+        {{ $t(`applicationType.${registration?.registrationType}`) }} |
         <strong>Submitted:</strong> {{ dateToString(header.applicationDateTime, 'y-MM-dd t') }}
         ({{ dayCountdown(header.applicationDateTime.toString(), true) }} days ago)
       </div>

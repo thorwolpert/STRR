@@ -1,6 +1,8 @@
 export const useExaminerRoute = () => {
   const localePath = useLocalePath()
   const { setButtonControl } = useButtonControl()
+  const exStore = useExaminerStore()
+  const { activeReg, isApplication, activeHeader } = storeToRefs(exStore)
 
   const updateRouteAndButtons = (
     routePrefix: string,
@@ -23,24 +25,20 @@ export const useExaminerRoute = () => {
       }
     }
   ) => {
-    const { isApplication, activeRecord } = useExaminerStore()
-    if (!activeRecord) {
+    if (!activeReg.value) {
       setButtonControl({ leftButtons: [], rightButtons: [] })
       return
     }
 
     let id: string | number | undefined
     let examinerActions: string[] | undefined = []
-
-    if (isApplication) {
-      const application = activeRecord as unknown as HousApplicationResponse
-      id = application.header.applicationNumber
-      examinerActions = application.header.examinerActions || []
+    const registration = activeReg.value
+    if (isApplication.value) {
+      id = activeHeader.value.applicationNumber
     } else {
-      const registration = activeRecord as unknown as HousRegistrationResponse
       id = registration.id
-      examinerActions = registration.header.examinerActions || []
     }
+    examinerActions = activeHeader.value.examinerActions || []
 
     if (id) {
       window.history.replaceState(

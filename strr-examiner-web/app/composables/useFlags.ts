@@ -1,12 +1,10 @@
 export const useFlags = () => {
-  const { isApplication, activeRecord } = useExaminerStore()
+  const exStore = useExaminerStore()
+  const { activeReg, isApplication, activeHeader } = storeToRefs(exStore)
   const REGISTRATIONS_LIMIT = 2
-
-  const registration = isApplication
-    ? activeRecord.registration
-    : activeRecord
-  const existingHostRegistrations = isApplication
-    ? activeRecord.header.existingHostRegistrations
+  const registration = activeReg.value
+  const existingHostRegistrations = isApplication.value
+    ? activeHeader.value.existingHostRegistrations
     : undefined
 
   /**

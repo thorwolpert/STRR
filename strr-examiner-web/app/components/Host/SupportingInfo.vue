@@ -4,17 +4,16 @@ import { ConnectPageSection } from '#components'
 import { useExaminerStore } from '~/stores/examiner'
 import { useFlags } from '~/composables/useFlags'
 
-const { isApplication, activeRecord } = useExaminerStore()
-const reg = isApplication
-  ? activeRecord.registration
-  : activeRecord
-const header = activeRecord.header
+const exStore = useExaminerStore()
+const { getDocument } = exStore
+const { activeReg, activeHeader, isApplication } = storeToRefs(exStore)
+const registration = activeReg.value
+const header = activeHeader.value
 const { t } = useI18n()
-const { getDocument } = useExaminerStore()
 const alertFlags = reactive(useFlags())
 
 const openDocInNewTab = async (supportingDocument: ApiDocument) => {
-  if (activeRecord !== undefined) {
+  if (activeReg.value !== undefined) {
     const file = await getDocument(header.applicationNumber!, supportingDocument.fileKey)
     const blob = new Blob([file], { type: 'application/pdf' })
     const url = URL.createObjectURL(blob)
@@ -23,53 +22,53 @@ const openDocInNewTab = async (supportingDocument: ApiDocument) => {
   }
 }
 
-const businessLicenceDoc = reg?.documents
-  ? reg.documents
+const businessLicenceDoc = registration?.documents
+  ? registration.documents
     .find(doc => doc.documentType === DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE)
   : undefined
 
 // Principal Residence Requirements:
 const getPrRequired = (): string => {
-  if (!isApplication) {
+  if (!isApplication.value) {
     return ''
   }
-  return reg?.strRequirements?.isPrincipalResidenceRequired
+  return registration?.strRequirements?.isPrincipalResidenceRequired
     ? t('pr.required')
     : t('pr.notRequired')
 }
 
 const getBlRequired = (): string => {
-  if (!isApplication) {
+  if (!isApplication.value) {
     return ''
   }
-  return reg?.strRequirements?.isBusinessLicenceRequired
+  return registration?.strRequirements?.isBusinessLicenceRequired
     ? t('pr.required')
     : t('pr.notRequired')
 }
 
-const blExemptReason = reg?.unitDetails?.blExemptReason
-const prExemptReason = reg?.unitDetails?.prExemptReason
+const blExemptReason = registration?.unitDetails?.blExemptReason
+const prExemptReason = registration?.unitDetails?.prExemptReason
 
 const getPrExemptReason = (label: string): string =>
   t(`prExemptReason.${label}`)
 
 const getPrExempt = (): string =>
-  reg?.unitDetails?.prExemptReason
+  registration?.unitDetails?.prExemptReason
     ? t('pr.exempt')
     : t('pr.notExempt')
 
 const getBlExempt = (): string =>
-  reg?.unitDetails?.blExemptReason
+  registration?.unitDetails?.blExemptReason
     ? t('pr.exempt')
     : t('pr.notExempt')
 
 const getStrataHotelCategory = (): string =>
-  reg?.unitDetails?.strataHotelCategory
-    ? t(`strataHotelCategoryReview.${reg.unitDetails.strataHotelCategory}`)
+  registration?.unitDetails?.strataHotelCategory
+    ? t(`strataHotelCategoryReview.${registration.unitDetails.strataHotelCategory}`)
     : ''
 
 const getOwnershipType = (): string =>
-  reg?.unitDetails?.ownershipType === OwnershipType.RENT ? `${t('ownershipType.RENT')}.` : ''
+  registration?.unitDetails?.ownershipType === OwnershipType.RENT ? `${t('ownershipType.RENT')}.` : ''
 
 const getPrSectionSubLabel = (): string =>
   `${getPrRequired()} ${getPrExempt()} ${getOwnershipType()}`
@@ -82,7 +81,7 @@ const getBlSectionSubLabel = (): string =>
   <ConnectPageSection>
     <div class="divide-y px-10 py-6">
       <ApplicationDetailsSection
-        v-if="reg?.strRequirements?.isStrProhibited"
+        v-if="registration?.strRequirements?.isStrProhibited"
         :label="t('strr.label.strProhibited')"
         data-testid="str-prohibited-section"
       >
@@ -93,7 +92,7 @@ const getBlSectionSubLabel = (): string =>
       </ApplicationDetailsSection>
 
       <ApplicationDetailsSection
-        v-if="reg?.strRequirements?.isBusinessLicenceRequired"
+        v-if="registration?.strRequirements?.isBusinessLicenceRequired"
         :label="t('strr.label.businessLicence')"
         :sub-label="getBlSectionSubLabel()"
         data-testid="business-lic-section"
@@ -113,12 +112,12 @@ const getBlSectionSubLabel = (): string =>
             >
               {{ t(`documentLabels.${DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE}`) }}
             </UButton>
-            <span v-if="reg.unitDetails?.businessLicense">
-              {{ t('strr.label.businessLicenceNumber') }} {{ reg.unitDetails.businessLicense }}
+            <span v-if="registration.unitDetails?.businessLicense">
+              {{ t('strr.label.businessLicenceNumber') }} {{ registration.unitDetails.businessLicense }}
             </span>
-            <span v-if="reg.unitDetails?.businessLicenseExpiryDate">
+            <span v-if="registration.unitDetails?.businessLicenseExpiryDate">
               {{ t('strr.label.businessLicenceExpiryDate') }}
-              {{ dateToString(reg.unitDetails.businessLicenseExpiryDate, 'MMM dd, yyyy') }}
+              {{ dateToString(registration.unitDetails.businessLicenseExpiryDate, 'MMM dd, yyyy') }}
             </span>
           </template>
         </div>
@@ -146,12 +145,12 @@ const getBlSectionSubLabel = (): string =>
               </span>
             </div>
             <div
-              v-if="reg.documents && !isEmpty(reg.documents)"
+              v-if="registration.documents && !isEmpty(registration.documents)"
               class="mt-2"
               data-testid="pr-req-documents"
             >
               <UButton
-                v-for="document in reg.documents.filter(
+                v-for="document in registration.documents.filter(
                   doc => doc.documentType !== DocumentUploadType.LOCAL_GOVT_BUSINESS_LICENSE
                 )"
                 :key="document.fileKey"

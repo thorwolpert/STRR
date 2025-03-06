@@ -5,8 +5,18 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
 
   const tableLimit = ref(50)
   const tablePage = ref(1)
-  const isApplication = ref<boolean>(true)
   const activeRecord = ref<HousApplicationResponse | HousRegistrationResponse | undefined>(undefined)
+  const isApplication = computed<boolean>(() => {
+    return !!activeRecord.value && 'registration' in activeRecord.value
+  })
+  const activeReg = computed(() => {
+    return isApplication.value
+      ? activeRecord.value?.registration
+      : activeRecord.value
+  })
+  const activeHeader = computed(() => {
+    return activeRecord.value?.header
+  })
   const tableFilters = reactive({
     searchText: '',
     registrationNumber: '',
@@ -54,7 +64,6 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     )
     const nextApplication = resp.applications[0]
     activeRecord.value = nextApplication
-    isApplication.value = true
     return nextApplication
   }
 
@@ -77,7 +86,6 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
       method: 'GET'
     })
     activeRecord.value = resp
-    isApplication.value = true
     return resp
   }
 
@@ -118,7 +126,6 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
       method: 'GET'
     })
     activeRecord.value = resp
-    isApplication.value = false
     return resp
   }
 
@@ -154,6 +161,8 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     tablePage,
     isApplication,
     activeRecord,
+    activeReg,
+    activeHeader,
     approveApplication,
     rejectApplication,
     fetchApplications,

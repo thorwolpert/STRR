@@ -192,10 +192,8 @@ const sort = ref<TableSort>({ column: 'submissionDate', direction: 'asc' as cons
 async function handleRowSelect (row: any) {
   status.value = 'pending'
   if (row.registrationNumber) {
-    exStore.isApplication = false
     await navigateTo(localePath(`${RoutesE.REGISTRATION}/${row.registrationId}`))
   } else {
-    exStore.isApplication = true
     await navigateTo(localePath(`${RoutesE.EXAMINE}/${row.applicationNumber}`))
   }
 }

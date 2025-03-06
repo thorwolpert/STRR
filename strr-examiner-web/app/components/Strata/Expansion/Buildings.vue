@@ -1,11 +1,10 @@
 <script setup lang="ts">
 const { t } = useI18n()
-const { isApplication, activeRecord } = useExaminerStore()
-const reg = isApplication
-  ? activeRecord.registration
-  : activeRecord
+const exStore = useExaminerStore()
+const { activeReg } = storeToRefs(exStore)
+const registration = activeReg.value
 
-const { buildings } = reg.strataHotelDetails
+const { buildings } = registration.strataHotelDetails
 
 const getBuildingLabel = (index: number) => {
   return index === 0

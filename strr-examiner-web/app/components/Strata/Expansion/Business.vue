@@ -1,11 +1,9 @@
 <script setup lang="ts">
-const { isApplication, activeRecord } = useExaminerStore()
-const reg = isApplication
-  ? activeRecord.registration
-  : activeRecord
+const exStore = useExaminerStore()
+const { activeReg } = storeToRefs(exStore)
+const registration = activeReg.value
 
-const businessDetails = reg.businessDetails
-
+const businessDetails = registration.businessDetails
 const attorney = businessDetails.registeredOfficeOrAttorneyForServiceDetails
 const hasAttorneyAddress = Object.values(attorney.mailingAddress).some(Boolean)
 

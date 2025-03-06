@@ -1,11 +1,9 @@
 <script setup lang="ts">
 
-const { isApplication, activeRecord } = useExaminerStore()
-const header = activeRecord.header
-
-const registration = isApplication
-  ? activeRecord.registration
-  : activeRecord
+const exStore = useExaminerStore()
+const { isApplication, activeHeader, activeReg } = storeToRefs(exStore)
+const header = activeHeader.value
+const registration = activeReg.value
 
 </script>
 

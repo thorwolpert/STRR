@@ -5,13 +5,12 @@ import {
   PlatformExpansionParties
 } from '#components'
 
-const { isApplication, activeRecord } = useExaminerStore()
-const reg = isApplication
-  ? activeRecord.registration
-  : activeRecord
+const exStore = useExaminerStore()
+const { activeReg, isApplication } = storeToRefs(exStore)
+const registration = activeReg.value
 
 // business data extra formatting
-const regOffice = reg.businessDetails!.registeredOfficeOrAttorneyForServiceDetails
+const regOffice = registration.businessDetails!.registeredOfficeOrAttorneyForServiceDetails
 const hasRegOffice = !!regOffice.attorneyName ||
   !!regOffice.mailingAddress.address ||
   !!regOffice.mailingAddress.addressLineTwo ||
@@ -22,16 +21,16 @@ const hasRegOffice = !!regOffice.attorneyName ||
   !!regOffice.mailingAddress.locationDescription
 
 // party data extra formatting
-const compParty = isApplication
-  ? formatPartyUI(reg.completingParty)
+const compParty = isApplication.value
+  ? formatPartyUI(registration.completingParty)
   : undefined
 
-const primaryRep = reg.platformRepresentatives!.length && reg.platformRepresentatives![0]
-  ? formatRepresentativeUI(reg.platformRepresentatives![0])
+const primaryRep = registration.platformRepresentatives!.length && registration.platformRepresentatives![0]
+  ? formatRepresentativeUI(registration.platformRepresentatives![0])
   : undefined
 
-const secondRep = reg.platformRepresentatives!.length > 1 && reg.platformRepresentatives![1]
-  ? formatRepresentativeUI(reg.platformRepresentatives![1])
+const secondRep = registration.platformRepresentatives!.length > 1 && registration.platformRepresentatives![1]
+  ? formatRepresentativeUI(registration.platformRepresentatives![1])
   : undefined
 
 const isCompPartyRep = !!compParty && !!primaryRep && (
@@ -49,13 +48,13 @@ const { open: expOpen } = useStrrExpansion()
 const expandBrands = () => {
   expOpen(
     PlatformExpansionBrands,
-    { brands: reg.platformDetails!.brands })
+    { brands: registration.platformDetails!.brands })
 }
 
 const expandBusiness = () => {
   expOpen(
     PlatformExpansionBusiness,
-    { business: reg.businessDetails, hasRegOffice })
+    { business: registration.businessDetails, hasRegOffice })
 }
 
 const expandParties = () => {
@@ -87,10 +86,10 @@ const expandParties = () => {
         <dt class="font-bold text-gray-900">
           {{ $t('strr.label.totalNumberOfListings') }}:
         </dt>
-        <dd>{{ $t(`strr.label.listingSize.${reg.platformDetails!.listingSize}`) }}</dd>
+        <dd>{{ $t(`strr.label.listingSize.${registration.platformDetails!.listingSize}`) }}</dd>
       </dl>
       <ConnectInfoWithIcon
-        v-for="brand in reg.platformDetails!.brands.slice(0, 3)"
+        v-for="brand in registration.platformDetails!.brands.slice(0, 3)"
         :key="brand.name"
         icon="i-mdi-web"
       >
@@ -106,7 +105,7 @@ const expandParties = () => {
         />
       </ConnectInfoWithIcon>
       <UButton
-        v-if="reg.platformDetails!.brands.length > 3"
+        v-if="registration.platformDetails!.brands.length > 3"
         :label="$t('btn.viewAllPlatforms')"
         :padded="false"
         variant="link"
@@ -116,14 +115,17 @@ const expandParties = () => {
     <template #col2-0>
       <ConnectInfoWithIcon icon="i-mdi-domain">
         <UButton
-          :label="reg.businessDetails!.legalName"
+          :label="registration.businessDetails!.legalName"
           :padded="false"
           variant="link"
           @click="expandBusiness"
         />
       </ConnectInfoWithIcon>
       <ConnectInfoWithIcon icon="i-mdi-email-outline">
-        <ConnectFormAddressDisplay :address="formatAddressUI(reg.businessDetails!.mailingAddress)" omit-country />
+        <ConnectFormAddressDisplay
+          :address="formatAddressUI(registration.businessDetails!.mailingAddress)"
+          omit-country
+        />
       </ConnectInfoWithIcon>
     </template>
     <template v-if="hasRegOffice" #col2-1>
@@ -169,19 +171,19 @@ const expandParties = () => {
       </ConnectInfoWithIcon>
     </template>
     <template #col4-0>
-      <ConnectInfoWithIcon icon="i-mdi-at" :content="reg.businessDetails!.noticeOfNonComplianceEmail" />
+      <ConnectInfoWithIcon icon="i-mdi-at" :content="registration.businessDetails!.noticeOfNonComplianceEmail" />
       <ConnectInfoWithIcon
-        v-if="reg.businessDetails!.noticeOfNonComplianceOptionalEmail"
+        v-if="registration.businessDetails!.noticeOfNonComplianceOptionalEmail"
         icon="i-mdi-at"
-        :content="reg.businessDetails!.noticeOfNonComplianceOptionalEmail"
+        :content="registration.businessDetails!.noticeOfNonComplianceOptionalEmail"
       />
     </template>
     <template #col4-1>
-      <ConnectInfoWithIcon icon="i-mdi-at" :content="reg.businessDetails!.takeDownRequestEmail" />
+      <ConnectInfoWithIcon icon="i-mdi-at" :content="registration.businessDetails!.takeDownRequestEmail" />
       <ConnectInfoWithIcon
-        v-if="reg.businessDetails!.takeDownRequestOptionalEmail"
+        v-if="registration.businessDetails!.takeDownRequestOptionalEmail"
         icon="i-mdi-at"
-        :content="reg.businessDetails!.takeDownRequestOptionalEmail"
+        :content="registration.businessDetails!.takeDownRequestOptionalEmail"
       />
     </template>
   </CommonSubHeaderTemplate>

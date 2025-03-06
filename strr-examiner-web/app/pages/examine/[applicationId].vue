@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const route = useRoute()
-const { approveApplication, rejectApplication, getNextApplication, getApplicationById } = useExaminerStore()
 const { manageAction } = useExaminerActions()
 const { updateRouteAndButtons } = useExaminerRoute()
+const { approveApplication, rejectApplication, getNextApplication, getApplicationById } = useExaminerStore()
 
 useHead({
   title: t('page.dashboardList.title')

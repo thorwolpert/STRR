@@ -1,11 +1,10 @@
 <script setup lang="ts">
-const { isApplication, activeRecord } = useExaminerStore()
-const reg = isApplication
-  ? activeRecord.registration
-  : activeRecord
-const { strataHotelRepresentatives } = reg
-const compParty = isApplication
-  ? reg.completingParty
+const exStore = useExaminerStore()
+const { isApplication, activeReg } = storeToRefs(exStore)
+const registration = activeReg.value
+const { strataHotelRepresentatives } = registration
+const compParty = isApplication.value
+  ? registration.completingParty
   : undefined
 
 </script>

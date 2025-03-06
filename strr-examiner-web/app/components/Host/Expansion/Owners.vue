@@ -5,11 +5,9 @@ const props = defineProps<{
 defineEmits<{
   close: [void]
 }>()
-const { isApplication, activeRecord } = useExaminerStore()
-
-const registration = isApplication
-  ? activeRecord.registration
-  : activeRecord
+const exStore = useExaminerStore()
+const { activeReg } = storeToRefs(exStore)
+const registration = activeReg.value
 
 const { t } = useI18n()
 
