@@ -3,7 +3,14 @@ const { t } = useI18n()
 const route = useRoute()
 const { manageAction } = useExaminerActions()
 const { updateRouteAndButtons } = useExaminerRoute()
-const { approveApplication, rejectApplication, getNextApplication, getApplicationById } = useExaminerStore()
+const {
+  approveApplication,
+  rejectApplication,
+  getNextApplication,
+  getApplicationById,
+  sendNoticeOfConsideration
+} = useExaminerStore()
+const { nocContent, nocFormRef } = storeToRefs(useExaminerStore())
 
 useHead({
   title: t('page.dashboardList.title')
@@ -33,19 +40,37 @@ const { data: application, status, error, refresh } = await useLazyAsyncData<
 
 const handleApplicationAction = (
   id: string,
-  action: 'APPROVE' | 'REJECT',
+  action: ApplicationActionsE,
   buttonPosition: 'left' | 'right',
   buttonIndex: number
 ) => {
-  const actionFn = action === 'APPROVE' ? approveApplication : rejectApplication
+  let actionFn
+  let validateFn
+  let refreshFn = refresh
+  let additionalArgs: any[] = []
+  if (action === ApplicationActionsE.SEND_NOC) {
+    actionFn = sendNoticeOfConsideration
+    refreshFn = () => {
+      nocContent.value.content = ''
+      refresh()
+    }
+    additionalArgs = [nocContent.value.content]
+    validateFn = async () => await validateForm(nocFormRef.value, true).then(errors => !errors)
+  } else if (action === ApplicationActionsE.APPROVE) {
+    actionFn = approveApplication
+  } else if (action === ApplicationActionsE.REJECT) {
+    actionFn = rejectApplication
+  }
+
   return manageAction(
     { id },
     action,
     actionFn,
     buttonPosition,
     buttonIndex,
-    refresh,
-    []
+    refreshFn,
+    additionalArgs,
+    validateFn
   )
 }
 
@@ -57,12 +82,16 @@ watch(
     initialMount.value = false
     updateRouteAndButtons(RoutesE.EXAMINE, {
       approve: {
-        action: (id: string) => handleApplicationAction(id, 'APPROVE', 'right', 0),
+        action: (id: string) => handleApplicationAction(id, ApplicationActionsE.APPROVE, 'right', 1),
         label: t('btn.approve')
       },
       reject: {
-        action: (id: string) => handleApplicationAction(id, 'REJECT', 'right', 1),
+        action: (id: string) => handleApplicationAction(id, ApplicationActionsE.REJECT, 'right', 0),
         label: t('btn.decline')
+      },
+      sendNotice: {
+        action: (id: string) => handleApplicationAction(id, ApplicationActionsE.SEND_NOC, 'right', 0),
+        label: t('btn.sendNotice')
       }
     })
   }
@@ -84,12 +113,13 @@ watch(
         refresh()
       }"
     />
-    <ApplicationDetailsView
-      v-else
-    >
-      <template #header>
-        <ApplicationInfoHeader />
-      </template>
-    </ApplicationDetailsView>
+    <template v-else>
+      <ApplicationDetailsView>
+        <template #header>
+          <ApplicationInfoHeader />
+        </template>
+      </ApplicationDetailsView>
+      <ComposeNoc />
+    </template>
   </div>
 </template>
