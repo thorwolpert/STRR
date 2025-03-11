@@ -245,7 +245,7 @@ class ApplicationSerializer:
 
     EXAMINER_ACTIONS = {
         Application.Status.FULL_REVIEW_APPROVED: [],
-        Application.Status.FULL_REVIEW: ["APPROVE", "REJECT", "SEND_NOC"],
+        Application.Status.FULL_REVIEW: ["APPROVE", "SEND_NOC"],
         Application.Status.NOC_PENDING: ["APPROVE", "REJECT"],
         Application.Status.NOC_EXPIRED: ["APPROVE", "REJECT"],
     }
