@@ -110,6 +110,13 @@ class _Config:  # pylint: disable=too-few-public-methods
     GEOCODER_SVC_URL = os.getenv("GEOCODER_API_URL", "")
     GEOCODER_SVC_AUTH_KEY = os.getenv("GEOCODER_API_AUTH_KEY", "")
 
+    # REDIS
+    REDIS_HOST = os.getenv("REDIS_HOST", "")
+    REDIS_PORT = os.getenv("REDIS_PORT", "")
+
+    # projects/<project_id-env>/topics/<topic_name>
+    GCP_EMAIL_TOPIC = os.getenv("GCP_EMAIL_TOPIC")
+
     TESTING = False
     DEBUG = False
 
