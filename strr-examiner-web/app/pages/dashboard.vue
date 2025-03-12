@@ -213,7 +213,7 @@ function handleColumnSort (column: string) {
 <template>
   <div
     id="dashboard-page"
-    class="flex grow flex-col space-y-6 py-8"
+    class="flex grow flex-col space-y-6 py-6"
     data-testid="examiner-dashboard-page"
   >
     <h1>{{ $t('label.search') }}</h1>
@@ -231,7 +231,7 @@ function handleColumnSort (column: string) {
               size="sm"
             >
               <template #trailing>
-                <UIcon name="i-mdi-search" class="size-5 shrink-0 text-bcGovColor-activeBlue" />
+                <UIcon name="i-mdi-search" class="size-5 shrink-0 pr-2 text-bcGovColor-activeBlue" />
               </template>
             </UInput>
             <ConnectI18nHelper
@@ -330,7 +330,7 @@ function handleColumnSort (column: string) {
           label: 'No matching applications or registrations found.'
         }"
         :ui="{
-          wrapper: 'relative overflow-x-auto h-[512px] bg-white',
+          wrapper: 'relative bg-white overflow-auto h-auto max-h-[calc(74svh)]',
           thead: 'sticky top-0 bg-white z-10 shadow-sm',
           th: {
             base: 'h-[72px]',
