@@ -137,3 +137,19 @@ def test_invalid_request_without_identifier(session, client, jwt):
     response_json = rv.json
     assert len(response_json.get("errors")) == 1
     assert response_json.get("errors")[0].get("message") == "'identifier' is a required property"
+
+
+def test_action_invalid(client, jwt):
+    "Test that an invalid action is not allowed."
+    headers = create_header(jwt, [PUBLIC_USER], "Account-Id")
+    headers["Account-Id"] = ACCOUNT_ID
+    
+    validate_permit_request = {
+            "identifier": "H1234567",
+            "address": {"streetNumber": "12166", "postalCode": "V2X 7N1"},
+        }
+
+    rv = client.post("/permits/:UnknownAction", json=validate_permit_request, headers=headers)
+    assert rv.status_code == HTTPStatus.BAD_REQUEST
+    response_json = rv.json
+    assert response_json == {"errors": "Invalid action requested."}
