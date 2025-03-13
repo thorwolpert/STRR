@@ -61,7 +61,7 @@ const nocCountdown = computed(() => {
       </div>
       <div class="text-sm">
         <UBadge
-          class="mr-3 font-bold"
+          class="mr-3 font-bold uppercase"
           :label="activeHeader.examinerStatus"
           :color="getBadgeColor(activeHeader.status)"
         />
