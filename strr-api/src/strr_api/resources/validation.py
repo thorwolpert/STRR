@@ -51,6 +51,31 @@ logger = logging.getLogger("api")
 bp = Blueprint("validation", __name__)
 
 
+@bp.route("/<path:action>", methods=("POST",))
+@cross_origin(origin="*")
+@jwt.requires_auth
+def validate_action(action):
+    """Choose the correct validation function to call."""
+    class PermitType:
+        single_permit = ":validatePermit"
+        batch_permit = ":batchValidate"
+
+    valid_actions = (PermitType.single_permit, PermitType.batch_permit)
+
+    if action not in valid_actions:
+        return jsonify(errors='Invalid action requested.'), HTTPStatus.BAD_REQUEST
+    
+    match action:
+        case PermitType.single_permit:
+            return validate_listing()
+        
+        case PermitType.batch_permit:
+            return validate_batch()
+        
+        case _:
+            return jsonify(errors='Action not implemented.'), HTTPStatus.BAD_REQUEST
+
+
 @bp.route("/validatePermit", methods=("POST",))
 @swag_from({"security": [{"Bearer": []}]})
 @cross_origin(origin="*")
