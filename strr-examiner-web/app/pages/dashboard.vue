@@ -429,6 +429,7 @@ function handleColumnSort (column: string) {
             :sort
             :default="[ApplicationStatus.FULL_REVIEW]"
             :options="[
+              { label: 'Application Status', value: undefined, disabled: true },
               { label: 'Full Review', value: ApplicationStatus.FULL_REVIEW },
               { label: 'Provisional Review', value: ApplicationStatus.PROVISIONAL_REVIEW },
               { label: 'Payment Due', value: ApplicationStatus.PAYMENT_DUE },
@@ -441,7 +442,12 @@ function handleColumnSort (column: string) {
               { label: 'Auto Approved', value: ApplicationStatus.AUTO_APPROVED },
               { label: 'Full Review Approved', value: ApplicationStatus.FULL_REVIEW_APPROVED },
               { label: 'Notice of Consideration - Pending', value: ApplicationStatus.NOC_PENDING },
-              { label: 'Notice of Consideration - Expired', value: ApplicationStatus.NOC_EXPIRED }
+              { label: 'Notice of Consideration - Expired', value: ApplicationStatus.NOC_EXPIRED },
+              { label: 'Registration Status', value: undefined, disabled: true },
+              { label: 'Active', value: RegistrationStatus.ACTIVE },
+              { label: 'Suspended', value: RegistrationStatus.SUSPENDED },
+              { label: 'Cancelled', value: RegistrationStatus.CANCELLED },
+              { label: 'Expired', value: RegistrationStatus.EXPIRED }
             ]"
             @sort="handleColumnSort(column.key)"
           />

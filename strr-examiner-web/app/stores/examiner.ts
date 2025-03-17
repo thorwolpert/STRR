@@ -42,15 +42,26 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
   })
 
   const fetchApplications = () => {
+    let statusValue = Array.isArray(tableFilters.status)
+      ? tableFilters.status[0]
+      : tableFilters.status
+    let regStatus
+    if (Object.values(RegistrationStatus).includes(statusValue as any)) {
+      regStatus = statusValue
+      statusValue = undefined
+    }
     if (tableFilters.registrationType.length) { // fetch applications by type if type provided
       return $strrApi('/applications', {
         query: {
           limit: tableLimit.value,
           page: tablePage.value,
           registrationType: tableFilters.registrationType[0], // api only allows 1 at a time
-          status: tableFilters.status[0], // api only allows 1 at a time
+          status: statusValue, // api only allows 1 at a time
+          registrationStatus: regStatus,
           sortBy: ApplicationSortBy.APPLICATION_DATE,
-          sortOrder: ApplicationSortOrder.ASC
+          sortOrder: ApplicationSortOrder.ASC,
+          address: tableFilters.propertyAddress,
+          recordNumber: tableFilters.registrationNumber
         }
       })
     } else { // else try to fetch by search
@@ -58,10 +69,13 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
         query: {
           limit: tableLimit.value,
           page: tablePage.value,
-          status: tableFilters.status[0], // api only allows 1 at a time
+          status: statusValue, // api only allows 1 at a time
+          registrationStatus: regStatus,
           text: tableFilters.searchText.length > 2 ? tableFilters.searchText : undefined, // min length 3 required
           sortBy: ApplicationSortBy.APPLICATION_DATE,
-          sortOrder: ApplicationSortOrder.ASC
+          sortOrder: ApplicationSortOrder.ASC,
+          address: tableFilters.propertyAddress,
+          recordNumber: tableFilters.registrationNumber
         }
       })
     }
