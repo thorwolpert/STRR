@@ -39,7 +39,7 @@ import copy
 from nanoid import generate
 from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import backref
+from sqlalchemy.orm import Query, backref
 from sqlalchemy_utils.types.ts_vector import TSVectorType
 
 from strr_api.common.enum import BaseEnum, auto
@@ -170,6 +170,10 @@ class Application(BaseModel):
             query = query.filter_by(status=filter_criteria.status.upper())
         if filter_criteria.registration_type:
             query = query.filter_by(registration_type=filter_criteria.registration_type.upper())
+        if filter_criteria.record_number:
+            query = cls._filter_by_application_registration_number(filter_criteria.record_number, query)
+        if filter_criteria.registration_status:
+            query = cls._filter_by_registration_status(filter_criteria.registration_status, query)
         sort_column = getattr(Application, filter_criteria.sort_by, Application.id)
         if filter_criteria.sort_order and filter_criteria.sort_order.lower() == "asc":
             query = query.order_by(sort_column.asc())
@@ -183,6 +187,35 @@ class Application(BaseModel):
     def get_by_registration_id(cls, registration_id: int) -> Application | None:
         """Return the application associated with a given registration_id."""
         return cls.query.filter_by(registration_id=registration_id).one_or_none()
+
+    @classmethod
+    def _filter_by_application_registration_number(cls, search_term: str, query: Query) -> Query:
+        """Filter query by application or registration number."""
+        if not search_term:
+            return query
+
+        search_term = search_term.strip()
+        return query.filter(
+            db.or_(
+                Application.application_number.ilike(f"%{search_term}%"),
+                db.exists().where(
+                    db.and_(
+                        Registration.id == Application.registration_id,
+                        Registration.registration_number.ilike(f"%{search_term}%"),
+                    )
+                ),
+            )
+        )
+
+    @classmethod
+    def _filter_by_registration_status(cls, search_term: str, query: Query) -> Query:
+        """Filter query by registration status."""
+        if not search_term:
+            return query
+
+        return query.filter(
+            db.exists().where((Registration.id == Application.registration_id) & (Registration.status == search_term))
+        )
 
     @classmethod
     def search_applications(cls, filter_criteria: ApplicationSearch):
@@ -201,6 +234,10 @@ class Application(BaseModel):
             query = query.filter_by(status=filter_criteria.status.upper())
         else:
             query = query.filter(Application.status != Application.Status.DRAFT)
+        if filter_criteria.record_number:
+            query = cls._filter_by_application_registration_number(filter_criteria.record_number, query)
+        if filter_criteria.registration_status:
+            query = cls._filter_by_registration_status(filter_criteria.registration_status, query)
         sort_column = getattr(Application, filter_criteria.sort_by, Application.id)
         if filter_criteria.sort_order and filter_criteria.sort_order.lower() == "asc":
             query = query.order_by(sort_column.asc())

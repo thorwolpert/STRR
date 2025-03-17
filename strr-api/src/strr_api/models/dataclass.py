@@ -45,3 +45,5 @@ class ApplicationSearch:
     sort_order: str = "desc"
     search_text: str = None
     registration_type: str = None
+    registration_status: str = None
+    record_number: str = None

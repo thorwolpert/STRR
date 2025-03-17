@@ -345,7 +345,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{api_url}}/applications?sortBy=application_date&sortOrder=asc",
+							"raw": "{{api_url}}/applications?sortBy=application_date&sortOrder=asc&recordNumber=123&registrationType=HOST&status=PAID",
 							"host": [
 								"{{api_url}}"
 							],
@@ -360,6 +360,18 @@
 								{
 									"key": "sortOrder",
 									"value": "asc"
+								},
+								{
+									"key": "recordNumber",
+									"value": "123"
+								},
+								{
+									"key": "registrationType",
+									"value": "HOST"
+								},
+								{
+									"key": "status",
+									"value": "PAID"
 								}
 							]
 						}
@@ -426,12 +438,26 @@
 							}
 						],
 						"url": {
-							"raw": "{{api_url}}/applications",
+							"raw": "{{api_url}}/applications?recordNumber=123&registrationType=HOST&status=PAID",
 							"host": [
 								"{{api_url}}"
 							],
 							"path": [
 								"applications"
+							],
+							"query": [
+								{
+									"key": "recordNumber",
+									"value": "123"
+								},
+								{
+									"key": "registrationType",
+									"value": "HOST"
+								},
+								{
+									"key": "status",
+									"value": "PAID"
+								}
 							]
 						}
 					},
@@ -698,7 +724,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{api_url}}/applications/search?text=018-851-570&limit=10&page=1&sortBy=application_date&sortOrder=asc",
+							"raw": "{{api_url}}/applications/search?text=018-851-570&limit=10&page=1&sortBy=application_date&sortOrder=asc&recordNumber=123&registrationType=HOST",
 							"host": [
 								"{{api_url}}"
 							],
@@ -726,6 +752,14 @@
 								{
 									"key": "sortOrder",
 									"value": "asc"
+								},
+								{
+									"key": "recordNumber",
+									"value": "123"
+								},
+								{
+									"key": "registrationType",
+									"value": "HOST"
 								}
 							]
 						}

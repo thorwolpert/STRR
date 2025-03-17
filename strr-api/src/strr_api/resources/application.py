@@ -180,6 +180,34 @@ def get_applications():
         enum: [asc, desc]
         default: desc
         description: Sort order (ascending or descending)
+      - in: query
+        name: recordNumber
+        type: string
+        description: Application or Registration Number filter
+      - in: query
+        name: registrationType
+        type: string
+        enum: [HOST, PLATFORM, STRATA_HOTEL]
+        description: Registration type filter
+      - in: query
+        name: registrationStatus
+        type: string
+        enum: [ACTIVE, EXPIRED, SUSPENDED, CANCELLED]
+        description: Registration status filter
+      - in: query
+        name: status
+        type: string
+        description: Application status filter
+      - in: query
+        name: page
+        type: integer
+        default: 1
+        description: Page number for pagination
+      - in: query
+        name: limit
+        type: integer
+        default: 50
+        description: Number of results per page
     responses:
       200:
         description:
@@ -195,6 +223,8 @@ def get_applications():
         page = request.args.get("page", 1)
         limit = request.args.get("limit", 50)
         registration_type = request.args.get("registrationType")
+        registration_status = request.args.get("registrationStatus")
+        record_number = request.args.get("recordNumber", None)
         sort_by = request.args.get("sortBy", "id")
         sort_order = request.args.get("sortOrder", "desc")
         if sort_by not in VALID_SORT_FIELDS:
@@ -206,6 +236,8 @@ def get_applications():
             page=int(page),
             limit=int(limit),
             registration_type=registration_type,
+            registration_status=registration_status,
+            record_number=record_number,
             sort_by=sort_by,
             sort_order=sort_order,
         )
@@ -817,6 +849,15 @@ def search_applications():
         type: integer
         default: 50
       - in: query
+        name: recordNumber
+        type: string
+        description: Application or Registration Number filter
+      - in: query
+        name: registrationStatus
+        type: string
+        enum: [ACTIVE, EXPIRED, SUSPENDED, CANCELLED]
+        description: Registration status filter
+      - in: query
         name: sortBy
         type: string
         default: id
@@ -840,6 +881,8 @@ def search_applications():
         status = request.args.get("status", None)
         page = request.args.get("page", 1)
         limit = request.args.get("limit", 50)
+        record_number = request.args.get("recordNumber", None)
+        registration_status = request.args.get("registrationStatus")
         sort_by = request.args.get("sortBy", "id")
         sort_order = request.args.get("sortOrder", "desc")
         if sort_by not in VALID_SORT_FIELDS:
@@ -854,6 +897,8 @@ def search_applications():
             page=int(page),
             limit=int(limit),
             search_text=search_text,
+            record_number=record_number,
+            registration_status=registration_status,
             sort_by=sort_by,
             sort_order=sort_order,
         )

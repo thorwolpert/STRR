@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
-from strr_api.enums.enum import PaymentStatus
+from strr_api.enums.enum import PaymentStatus, RegistrationStatus
 from strr_api.models import Application, Events
 from strr_api.models.application import ApplicationSerializer
 from tests.unit.utils.auth_helpers import PUBLIC_USER, STRR_EXAMINER, create_header
@@ -737,3 +737,56 @@ def test_examiner_send_notice_of_consideration(mock_noc, mock_invoice, session, 
         assert response_json.get("header").get("hostActions") == []
         assert response_json.get("header").get("nocStartDate") is not None
         assert response_json.get("header").get("nocEndDate") is not None
+
+
+@patch("strr_api.services.strr_pay.create_invoice", return_value=MOCK_INVOICE_RESPONSE)
+def test_examiner_filter_record_number_application(session, client, jwt):
+    with open(CREATE_HOST_REGISTRATION_REQUEST) as f:
+        headers = create_header(jwt, [PUBLIC_USER], "Account-Id")
+        headers["Account-Id"] = ACCOUNT_ID
+        json_data = json.load(f)
+
+        rv = client.post("/applications", json=json_data, headers=headers)
+        response_json = rv.json
+        application_number = response_json.get("header").get("applicationNumber")
+
+        application = Application.find_by_application_number(application_number=application_number)
+        application.payment_status = PaymentStatus.COMPLETED.value
+        application.save()
+
+        # Test filter by application number
+        rv = client.get(f"/applications?recordNumber={application_number}", headers=headers)
+        response_json = rv.json
+        assert rv.status_code == 200
+        assert len(response_json.get("applications")) == 1
+        assert response_json.get("applications")[0].get("header").get("applicationNumber") == application_number
+
+        staff_headers = create_header(jwt, [STRR_EXAMINER], "Account-Id")
+        status_update_request = {"status": Application.Status.FULL_REVIEW_APPROVED}
+        rv = client.put(f"/applications/{application_number}/status", json=status_update_request, headers=staff_headers)
+        assert HTTPStatus.OK == rv.status_code
+        response_json = rv.json
+        registration_number = response_json.get("header").get("registrationNumber")
+        assert response_json.get("header").get("status") == Application.Status.FULL_REVIEW_APPROVED
+
+        # Test filter by registration number
+        rv = client.get(f"/applications?recordNumber={registration_number}", headers=headers)
+        response_json = rv.json
+        assert rv.status_code == 200
+        assert len(response_json.get("applications")) == 1
+        assert response_json.get("applications")[0]["header"]["applicationNumber"] == application_number
+        assert response_json.get("applications")[0]["header"]["registrationNumber"] == registration_number
+
+        # Test filter by registration status
+        rv = client.get(f"/applications?registrationStatus={RegistrationStatus.ACTIVE.value}", headers=headers)
+        response_json = rv.json
+        assert rv.status_code == 200
+        applications = response_json.get("applications")
+        for application in applications:
+            assert application["header"]["registrationStatus"] == RegistrationStatus.ACTIVE.value
+
+        # Test filter by invalid record number
+        rv = client.get("/applications?recordNumber=321123", headers=headers)
+        response_json = rv.json
+        assert rv.status_code == 200
+        assert len(response_json.get("applications")) == 0
