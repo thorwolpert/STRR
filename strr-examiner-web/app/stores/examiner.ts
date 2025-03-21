@@ -23,7 +23,10 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
   const nocContent = reactive({
     content: ''
   })
-  const showNocModal = ref(true)
+  // TODO: Add assigned logic check later
+  const showNocModal = computed(() => {
+    return activeHeader.value?.status === ApplicationStatus.FULL_REVIEW
+  })
   const nocFormRef = ref<Form<any>>()
   const sendNocSchema = computed(() => z.object({
     content: z.string().min(1, { message: t('validation.nocContent') })
