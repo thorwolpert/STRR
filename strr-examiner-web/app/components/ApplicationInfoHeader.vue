@@ -66,7 +66,7 @@ const nocCountdown = computed(() => {
           :padded="false"
           variant="link"
           data-testid="view-receipt-button"
-          class="underline"
+          class="gap-1 underline"
           @click="exStore.viewReceipt(activeHeader?.applicationNumber)"
         >
           View Receipt

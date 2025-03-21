@@ -14,6 +14,7 @@ import {
   RegistrationInfoHeader
 } from '#components'
 
+const mockViewReceipt = vi.fn()
 let currentMockData = mockHostRegistration
 vi.mock('@/stores/examiner', () => ({
   useExaminerStore: () => ({
@@ -22,7 +23,8 @@ vi.mock('@/stores/examiner', () => ({
     activeReg: ref(currentMockData),
     activeHeader: ref(currentMockData.header),
     activeRecord: ref(currentMockData),
-    isApplication: ref(false)
+    isApplication: ref(false),
+    viewReceipt: mockViewReceipt
   })
 }))
 
@@ -138,8 +140,8 @@ describe('Examiner - Registration Details Page', () => {
       global: { plugins: [enI18n] }
     })
 
-    const typeElement = componentWrapper.findAll('.text-sm')[1]
-    expect(typeElement.text()).toContain('Type: Host')
+    const allText = componentWrapper.text()
+    expect(allText).toContain('Type: Host')
   })
 
   it('displays correct registration type for PLATFORM', async () => {
@@ -149,8 +151,8 @@ describe('Examiner - Registration Details Page', () => {
       global: { plugins: [enI18n] }
     })
 
-    const typeElement = componentWrapper.findAll('.text-sm')[1]
-    expect(typeElement.text()).toContain('Type: Platform')
+    const allText = componentWrapper.text()
+    expect(allText).toContain('Type: Platform')
   })
 
   it('displays correct registration type for STRATA_HOTEL', async () => {
@@ -170,7 +172,22 @@ describe('Examiner - Registration Details Page', () => {
       global: { plugins: [enI18n] }
     })
 
-    const reviewerElement = componentWrapper.findAll('.text-sm')[1]
-    expect(reviewerElement.text()).toContain('Approved By: examiner1')
+    const allText = componentWrapper.text()
+    expect(allText).toContain('Approved By: examiner1')
+  })
+
+  it('displays view receipt button and calls viewReceipt when clicked', async () => {
+    currentMockData = mockHostRegistration
+
+    const componentWrapper = await mountSuspended(RegistrationInfoHeader, {
+      global: { plugins: [enI18n] }
+    })
+
+    const receiptButton = componentWrapper.findTestId('view-receipt-button')
+    expect(receiptButton.exists()).toBe(true)
+    expect(receiptButton.text()).toContain('View Receipt')
+
+    await receiptButton.trigger('click')
+    expect(mockViewReceipt).toHaveBeenCalledWith(currentMockData.header.applicationNumber)
   })
 })

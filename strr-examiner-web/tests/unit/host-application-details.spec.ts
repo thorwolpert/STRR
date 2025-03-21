@@ -1,6 +1,7 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
+
 import {
   mockHostApplication,
   mockWithPrExemptAndStrataHotel,
@@ -17,6 +18,7 @@ import {
 } from '#components'
 
 let currentMockData = mockHostApplication
+const mockViewReceipt = vi.fn()
 vi.mock('@/stores/examiner', () => ({
   useExaminerStore: () => ({
     getNextApplication: vi.fn().mockImplementation(() => Promise.resolve(currentMockData)),
@@ -26,6 +28,7 @@ vi.mock('@/stores/examiner', () => ({
     activeHeader: ref(currentMockData.header),
     activeRecord: ref(currentMockData),
     isApplication: ref(true),
+    viewReceipt: mockViewReceipt,
     openDocInNewTab: vi.fn().mockImplementation(() => {
       const url = URL.createObjectURL(new Blob(['test']))
       window.open(url, '_blank')
@@ -151,5 +154,19 @@ describe('Examiner - Host Application Details Page', () => {
     expect(hostSupportingInfo.exists()).toBe(true)
     expect(hostSupportingInfo.findTestId('pr-req-documents').exists()).toBe(true)
     expect(hostSupportingInfo.findAll('[data-testid="supporting-doc-date-badge"]').length).toBe(mockDocumentsNOC.length)
+  })
+
+  it('displays view receipt button and calls viewReceipt when clicked', async () => {
+    await setupMockAndMount()
+
+    const appHeaderInfo = wrapper.findComponent(ApplicationInfoHeader)
+    expect(appHeaderInfo.exists()).toBe(true)
+
+    const receiptButton = appHeaderInfo.findTestId('view-receipt-button')
+    expect(receiptButton.exists()).toBe(true)
+    expect(receiptButton.text()).toContain('View Receipt')
+
+    await receiptButton.trigger('click')
+    expect(mockViewReceipt).toHaveBeenCalledWith(currentMockData.header.applicationNumber)
   })
 })
