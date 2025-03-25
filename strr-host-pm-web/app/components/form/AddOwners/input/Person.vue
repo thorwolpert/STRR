@@ -24,6 +24,23 @@ watch(isCompParty, (val) => {
   ownerStore.SetOwnerNameWithUserCreds(owner)
   ownerFormRef.value?.clear('firstName')
 })
+
+const { isCraNumberOptional } = storeToRefs(ownerStore)
+
+watch(
+  () => isCraNumberOptional.value,
+  (val) => {
+    if (val) { owner.value.taxNumber = '' }
+  }
+)
+
+watch(
+  () => owner.value.taxNumber,
+  (val) => {
+    if (val) { isCraNumberOptional.value = false }
+  }
+)
+
 </script>
 
 <template>
@@ -145,6 +162,13 @@ watch(isCompParty, (val) => {
           :help="$t('strr.hint.craTaxNumber')"
           mask="### ### ###"
         />
+        <UFormGroup name="optionalCraTaxNumber">
+          <UCheckbox
+            v-model="isCraNumberOptional"
+            label="This individual does not have a CRA Tax Number"
+            class="mt-6"
+          />
+        </UFormGroup>
       </ConnectFormSection>
       <ConnectFormSection
         v-if="owner.role !== OwnerRole.PROPERTY_MANAGER || owner.ownerType !== OwnerType.BUSINESS"
