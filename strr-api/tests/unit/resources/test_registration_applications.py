@@ -133,7 +133,8 @@ def test_get_applications_by_registration_type(session, client, jwt):
 
     assert HTTPStatus.OK == rv.status_code
     response_json = rv.json
-    assert len(response_json.get("applications")) == 4
+    # This will exclude Draft applications
+    assert len(response_json.get("applications")) == 3
 
     rv = client.get("/applications?registrationType=PLATFORM", headers=headers)
 
@@ -790,3 +791,55 @@ def test_examiner_filter_record_number_application(session, client, jwt):
         response_json = rv.json
         assert rv.status_code == 200
         assert len(response_json.get("applications")) == 0
+
+
+def test_examiner_multi_select_filters(session, client, jwt):
+    staff_headers = create_header(jwt, [STRR_EXAMINER], "Account-Id")
+
+    rv = client.get("/applications?registrationType=HOST&registrationType=PLATFORM", headers=staff_headers)
+    response_json = rv.json
+    assert rv.status_code == 200
+    applications = response_json.get("applications")
+    for application in applications:
+        assert application["registration"]["registrationType"] in ["HOST", "PLATFORM"]
+
+    rv = client.get(
+        f"/applications?registrationStatus={RegistrationStatus.ACTIVE.value}&"
+        + f"registrationStatus={RegistrationStatus.EXPIRED.value}",
+        headers=staff_headers,
+    )
+    response_json = rv.json
+    assert rv.status_code == 200
+    applications = response_json.get("applications")
+    for application in applications:
+        assert application["header"]["registrationStatus"] in [
+            RegistrationStatus.ACTIVE.value,
+            RegistrationStatus.EXPIRED.value,
+        ]
+
+    rv = client.get(
+        f"/applications?status={Application.Status.FULL_REVIEW_APPROVED},{Application.Status.DECLINED}",
+        headers=staff_headers,
+    )
+    response_json = rv.json
+    assert rv.status_code == 200
+    applications = response_json.get("applications")
+    for application in applications:
+        assert application["header"]["status"] in [Application.Status.FULL_REVIEW_APPROVED, Application.Status.DECLINED]
+
+    rv = client.get(
+        "/applications?registrationType=HOST&registrationType=PLATFORM&registrationType=STRATA_HOTEL&"
+        + f"status={Application.Status.FULL_REVIEW_APPROVED}&status={Application.Status.DECLINED}&"
+        + f"registrationStatus={RegistrationStatus.ACTIVE.value}&registrationStatus={RegistrationStatus.EXPIRED.value}",
+        headers=staff_headers,
+    )
+    response_json = rv.json
+    assert rv.status_code == 200
+    applications = response_json.get("applications")
+    for application in applications:
+        assert application["header"]["status"] in [Application.Status.FULL_REVIEW_APPROVED, Application.Status.DECLINED]
+        assert application["header"]["registrationStatus"] in [
+            RegistrationStatus.ACTIVE.value,
+            RegistrationStatus.EXPIRED.value,
+        ]
+        assert application["registration"]["registrationType"] in ["HOST", "PLATFORM"]
