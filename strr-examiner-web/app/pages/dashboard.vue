@@ -13,6 +13,26 @@ const enableTableFilters = computed<boolean>(() => {
   const flag = ldStore.getStoredFlag('enable-examiner-table-filters')
   return flag ?? false
 })
+const enablePropertyAddressFilter = computed<boolean>(() => {
+  const flag = ldStore.getStoredFlag('enable-examiner-address-filter')
+  return flag ?? false
+})
+const enableApplicantFilter = computed<boolean>(() => {
+  const flag = ldStore.getStoredFlag('enable-examiner-applicant-filter')
+  return flag ?? false
+})
+const enableRequirementFilter = computed<boolean>(() => {
+  const flag = ldStore.getStoredFlag('enable-examiner-requirement-filter')
+  return flag ?? false
+})
+const enableSubmissionDateFilter = computed<boolean>(() => {
+  const flag = ldStore.getStoredFlag('enable-examiner-submission-date-filter')
+  return flag ?? false
+})
+const enableLastModifiedFilter = computed<boolean>(() => {
+  const flag = ldStore.getStoredFlag('enable-examiner-last-modified-filter')
+  return flag ?? false
+})
 
 useHead({
   title: t('page.dashboardList.title')
@@ -94,17 +114,26 @@ const getPropertyAddressColumn = (app: HousApplicationResponse) => {
 }
 
 const getRequirementsColumn = (app: HousApplicationResponse) => {
+  let result = ''
+  let listingSize = ''
   switch (app.registration.registrationType) {
     case ApplicationType.HOST:
-      return isEmpty((app.registration as ApiHostApplication).strRequirements)
+      result = isEmpty((app.registration as ApiHostApplication).strRequirements)
         ? t('page.dashboardList.requirements.host.none')
         : getHostPrRequirements((app.registration as ApiHostApplication))
+      break
     case ApplicationType.STRATA_HOTEL:
-      return '-'
-    default: // platform t(`page.dashboardList.requirements.platform.${platformApplication.platformDetails.listingSize}`)
-      // eslint-disable-next-line max-len
-      return t(`page.dashboardList.requirements.platform.${(app.registration as ApiBasePlatformApplication).platformDetails.listingSize}`)
+      result = '-'
+      break
+    default:
+      listingSize = (app.registration as ApiBasePlatformApplication).platformDetails.listingSize
+      result = t(`page.dashboardList.requirements.platform.${listingSize}`)
   }
+  if (result.startsWith('page.dashboardList.requirements.platform.') ||
+    result.startsWith('page.dashboardList.requirements.host.')) {
+    result = t('page.dashboardList.requirements.invalid')
+  }
+  return result
 }
 
 // text currently matches anything, same as existing examiners app
@@ -338,7 +367,7 @@ function handleColumnSort (column: string) {
           label: 'No matching applications or registrations found.'
         }"
         :ui="{
-          wrapper: 'relative bg-white overflow-auto h-auto max-h-[calc(74svh)]',
+          wrapper: 'relative bg-white overflow-auto h-auto min-h-[calc(50svh)] max-h-[calc(74svh)]',
           thead: 'sticky top-0 bg-white z-10 shadow-sm',
           th: {
             base: 'h-[72px]',
@@ -346,7 +375,7 @@ function handleColumnSort (column: string) {
           },
           td: {
             base: 'whitespace-normal max-w-96 align-middle h-[72px]',
-            padding: 'p-2',
+            padding: 'py-2 pl-2 pr-4',
             color: 'text-bcGovColor-midGray',
             font: '',
             size: 'text-sm',
@@ -400,6 +429,7 @@ function handleColumnSort (column: string) {
               { label: 'PR (Strata)', value: 'pr-strata' },
               { label: 'None (Strata)', value: 'none-strata' },
             ]"
+            :disable="!enableRequirementFilter"
             @sort="handleColumnSort(column.key)"
           />
         </template>
@@ -409,6 +439,7 @@ function handleColumnSort (column: string) {
             v-model="exStore.tableFilters.applicantName"
             :column
             :sort
+            :disable="!enableApplicantFilter"
             @sort="handleColumnSort(column.key)"
           />
         </template>
@@ -418,6 +449,7 @@ function handleColumnSort (column: string) {
             v-model="exStore.tableFilters.propertyAddress"
             :column
             :sort
+            :disable="!enablePropertyAddressFilter"
             @sort="handleColumnSort(column.key)"
           />
         </template>
@@ -427,7 +459,7 @@ function handleColumnSort (column: string) {
             v-model="exStore.tableFilters.status"
             :column
             :sort
-            :default="[ApplicationStatus.FULL_REVIEW]"
+            :default="[]"
             :options="[
               { label: 'Application Status', value: undefined, disabled: true },
               { label: 'Full Review', value: ApplicationStatus.FULL_REVIEW },
@@ -437,7 +469,6 @@ function handleColumnSort (column: string) {
               { label: 'Paid', value: ApplicationStatus.PAID },
               { label: 'Additional Info Requested', value: ApplicationStatus.ADDITIONAL_INFO_REQUESTED },
               { label: 'Provisionally Approved', value: ApplicationStatus.PROVISIONALLY_APPROVED },
-              { label: 'Draft', value: ApplicationStatus.DRAFT },
               { label: 'Declined', value: ApplicationStatus.DECLINED },
               { label: 'Auto Approved', value: ApplicationStatus.AUTO_APPROVED },
               { label: 'Full Review Approved', value: ApplicationStatus.FULL_REVIEW_APPROVED },
@@ -467,6 +498,7 @@ function handleColumnSort (column: string) {
               { label: '2 years', duration: { years: 3 } },
               { label: '5 years', duration: { years: 5 } }
             ]"
+            :disable="!enableSubmissionDateFilter"
             @sort="handleColumnSort(column.key)"
           />
         </template>
@@ -486,6 +518,7 @@ function handleColumnSort (column: string) {
               { label: '7 days', duration: { days: 7 } },
               { label: '30 days', duration: { days: 30 } }
             ]"
+            :disable="!enableLastModifiedFilter"
             @sort="handleColumnSort(column.key)"
           />
         </template>

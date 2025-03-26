@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { TableColumn } from '#ui/types'
 import type { TableSort } from '~/types/table-sort'
+const { t } = useI18n()
 const props = defineProps<{
   column: TableColumn
   options: Array<{
@@ -11,6 +12,7 @@ const props = defineProps<{
   sort?: TableSort
   searchable?: boolean
   default?: Array<any>
+  disable?: boolean
 }>()
 
 defineEmits<{
@@ -20,16 +22,35 @@ defineEmits<{
 const filterModel = defineModel({ type: Array<any>, required: true, default: [] })
 
 const fullOptions = computed(() => {
-  const options = props.options
-  options.push({ label: 'Clear Filter', value: 'reset', disabled: !filterModel.value.length })
-  return options
+  return props.options
 })
 
-function onChange (e: string[]) {
-  if (e.includes('reset')) {
-    filterModel.value = props.default ?? []
+const displayLabel = computed(() => {
+  if (filterModel.value.length === 0) {
+    return props.column.label
   }
+  if (filterModel.value.length > 1) {
+    return t('label.multipleFilter')
+  }
+  const selectedOption = props.options.find(opt => opt.value === filterModel.value[0])
+  return selectedOption?.label ?? props.column.label
+})
+
+const clearFilter = () => {
+  filterModel.value = props.default ?? []
 }
+
+const filterColumnRef = ref<any>(null)
+const initialWidth = ref<string>('auto')
+
+onMounted(() => {
+  nextTick(() => {
+    if (filterColumnRef.value) {
+      const measuredWidth = Math.round(filterColumnRef.value.$el.getBoundingClientRect().width)
+      initialWidth.value = `${measuredWidth}px`
+    }
+  })
+})
 </script>
 <template>
   <div class="flex flex-col divide-y divide-gray-300">
@@ -39,7 +60,18 @@ function onChange (e: string[]) {
       @sort="$emit('sort')"
     />
     <div class="h-[58px] p-2 font-normal">
+      <template v-if="props.disable">
+        <UButton
+          variant="select_menu_trigger"
+          class="w-full flex-1 justify-between"
+          disabled
+          :label="displayLabel"
+          trailing-icon="i-mdi-lock"
+          :ui="{ label: 'text-center truncate flex-grow-0' }"
+        />
+      </template>
       <USelectMenu
+        v-else
         v-model="filterModel"
         :options="fullOptions"
         selected-icon=""
@@ -48,43 +80,51 @@ function onChange (e: string[]) {
         multiple
         :searchable
         clear-search-on-close
-        @change="onChange"
       >
         <template #default="{ open }">
           <!-- TODO: aria labels? -->
           <UButton
+            ref="filterColumnRef"
             variant="select_menu_trigger"
-            class="flex-1 justify-between text-gray-700"
+            class="flex-1 justify-between"
+            :class="{
+              'border-b-2 border-blue-500': open || filterModel.length > 0
+            }"
+            :style="{ width: initialWidth }"
+            :ui="{
+              trailing: {
+                wrapper: 'shrink-0 flex-grow-0 justify-end'
+              }
+            }"
           >
-            {{ column.label }}
-            <UIcon
-              name="i-mdi-caret-down"
-              class="size-5 shrink-0 text-gray-700 transition-transform"
-              :class="[open && 'rotate-180']"
-            />
+            <span class="truncate">{{ displayLabel }}</span>
+            <template #trailing>
+              <UIcon
+                name="i-mdi-caret-down"
+                class="size-5 shrink-0 text-gray-700 transition-transform"
+                :class="[open && 'rotate-180']"
+              />
+              <UButton
+                v-if="filterModel.length > 0"
+                variant="ghost"
+                size="sm"
+                icon="i-mdi-close"
+                class="-ml-5 text-blue-500 hover:text-blue-700"
+                @click="clearFilter"
+              />
+            </template>
           </UButton>
         </template>
         <template #option="{ option, selected }">
           <div
-            v-if="option.value === 'reset'"
-            class="inline-flex w-full items-center gap-2 border-t border-gray-300 px-4 py-2"
-            :class="filterModel.length ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'"
-          >
-            <UIcon
-              name="i-mdi-close"
-              class="size-4 shrink-0 text-blue-500"
-            />
-            <span class="text-blue-500">Clear Filter</span>
-          </div>
-          <div
-            v-else-if="option.value === undefined && option.disabled"
+            v-if="option.value === undefined && option.disabled"
             class="w-full border-t border-gray-300 px-4 py-2 opacity-100"
           >
             <span>{{ option.label }}</span>
           </div>
           <div
             v-else
-            class="flex cursor-pointer items-center gap-2 px-4 py-2"
+            class="flex cursor-pointer items-center gap-1 p-1"
           >
             <UCheckbox
               :model-value="selected"
