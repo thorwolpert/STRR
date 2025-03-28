@@ -155,6 +155,10 @@ export default {
       strProhibitedAction: 'Review Policy',
       businessLicence: 'Business Licence',
       businessLicenceNumber: 'Number:',
+      assignee: 'Assignee:',
+      applicationType: 'Type:',
+      submitted: 'Submitted:',
+      nocExpiry: 'NOC Expiry:',
       businessLicenceExpiryDate: 'Expiry:',
       primaryBuilding: 'Primary Building',
       building: 'Building',
@@ -254,6 +258,8 @@ export default {
     downloadReceipt: {
       description: 'We could not download the receipt at this time. If error persists, please contact us.'
     },
+    assignApplication: 'An error occurred assigning this application.',
+    unAssignApplication: 'An error occurred unassigning this application.',
     reqFetch: {
       unknown: {
         title: 'An unexpected error occurred.',
@@ -356,7 +362,8 @@ export default {
         propertyManager: 'Property Manager',
         propertyAddress: 'Address',
         status: 'Status',
-        submissionDate: 'Submitted'
+        submissionDate: 'Submitted',
+        adjudicator: 'Assignee'
       },
       requirements: {
         platform: {
