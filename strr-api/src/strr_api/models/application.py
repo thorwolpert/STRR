@@ -35,7 +35,7 @@
 from __future__ import annotations
 
 import copy
-from typing import List
+from typing import List, Optional
 
 from nanoid import generate
 from sqlalchemy import func
@@ -44,6 +44,7 @@ from sqlalchemy.orm import Query, backref
 from sqlalchemy_utils.types.ts_vector import TSVectorType
 
 from strr_api.common.enum import BaseEnum, auto
+from strr_api.enums.enum import StrrRequirement
 from strr_api.models.base_model import BaseModel
 from strr_api.models.dataclass import ApplicationSearch
 from strr_api.models.rental import Registration
@@ -109,6 +110,12 @@ class Application(BaseModel):
     __table_args__ = (
         # Indexing the application_tsv column
         db.Index("idx_application_tsv", application_tsv, postgresql_using="gin"),
+        db.Index(
+            "idx_gin_application_json_path_ops",
+            "application_json",
+            postgresql_using="gin",
+            postgresql_ops={"application_json": "jsonb_path_ops"},
+        ),
     )
 
     submitter = db.relationship(
@@ -168,16 +175,18 @@ class Application(BaseModel):
         query = cls.query
         if not is_examiner:
             query = query.filter_by(payment_account=account_id)
-        if filter_criteria.statuses:
-            query = cls._filter_by_statuses(filter_criteria.statuses, query)
         if filter_criteria.registration_types:
             query = cls._filter_by_registration_types(filter_criteria.registration_types, query)
         if filter_criteria.record_number:
             query = cls._filter_by_application_registration_number(filter_criteria.record_number, query)
-        if filter_criteria.registration_statuses:
-            query = cls._filter_by_registration_statuses(filter_criteria.registration_statuses, query)
+        if filter_criteria.statuses or filter_criteria.registration_statuses:
+            query = cls._filter_by_application_or_registration_status(
+                filter_criteria.statuses, filter_criteria.registration_statuses, query
+            )
         if filter_criteria.assignee:
             query = cls._filter_by_assignee(filter_criteria.assignee, query)
+        if filter_criteria.requirements:
+            query = cls._filter_by_application_requirement(filter_criteria.requirements, query)
         sort_column = getattr(Application, filter_criteria.sort_by, Application.id)
         if filter_criteria.sort_order and filter_criteria.sort_order.lower() == "asc":
             query = query.order_by(sort_column.asc())
@@ -213,20 +222,6 @@ class Application(BaseModel):
         return query.filter(Application.status != Application.Status.DRAFT)
 
     @classmethod
-    def _filter_by_registration_statuses(cls, registration_statuses: List[str], query: Query) -> Query:
-        """Filter query by registration statuses."""
-        if not registration_statuses:
-            return query
-
-        registration_statuses = [status.upper() for status in registration_statuses if status]
-        query = query.filter(
-            db.exists().where(
-                (Registration.id == Application.registration_id) & (Registration.status.in_(registration_statuses))
-            )
-        )
-        return query.filter(Application.status != Application.Status.DRAFT)
-
-    @classmethod
     def _filter_by_registration_types(cls, registration_types: List[str], query: Query) -> Query:
         """Filter query by registration types."""
         if not registration_types:
@@ -237,34 +232,141 @@ class Application(BaseModel):
         return query.filter(Application.status != Application.Status.DRAFT)
 
     @classmethod
-    def _filter_by_statuses(cls, statuses: List[str], query: Query) -> Query:
-        """Filter query by application statuses."""
-        if not statuses:
-            return query
-
-        statuses = [status.upper() for status in statuses if status]
-        return query.filter(Application.status.in_(statuses))
-
-    @classmethod
     def _filter_by_assignee(cls, assignee: str, query: Query) -> Query:
         """Filter query by assignee."""
         if not assignee:
             return query
 
-        return query.filter(db.exists().where(db.and_(User.id == Application.reviewer_id, User.username == assignee)))
+        return query.filter(
+            db.exists().where(db.and_(User.id == Application.reviewer_id, User.username.ilike(f"%{assignee.strip()}%")))
+        )
+
+    @classmethod
+    def _get_host_requirement_condition(cls, req: str):
+        """Get condition for host requirement."""
+        host_req_mapping = {
+            StrrRequirement.BL.value: {"registration": {"strRequirements": {"isBusinessLicenceRequired": True}}},
+            StrrRequirement.PR.value: {"registration": {"strRequirements": {"isPrincipalResidenceRequired": True}}},
+            StrrRequirement.PROHIBITED.value: {"registration": {"strRequirements": {"isStrProhibited": True}}},
+            StrrRequirement.NO_REQ.value: {"registration": {"strRequirements": {"isStraaExempt": True}}},
+        }
+        pr_exempt_mapping = {
+            StrrRequirement.PR_EXEMPT_STRATA_HOTEL.value: "STRATA_HOTEL",
+            StrrRequirement.PR_EXEMPT_FARM_LAND.value: "FARM_LAND",
+            StrrRequirement.PR_EXEMPT_FRACTIONAL_OWNERSHIP.value: "FRACTIONAL_OWNERSHIP",
+        }
+
+        if req in host_req_mapping:
+            return Application.application_json.contains(host_req_mapping[req])
+
+        if req in pr_exempt_mapping:
+            return Application.application_json.contains(
+                {"registration": {"unitDetails": {"prExemptReason": pr_exempt_mapping[req]}}}
+            )
+
+        return None
+
+    @classmethod
+    def _get_platform_requirement_condition(cls, req: str):
+        """Get condition for platform requirement."""
+        platform_req_mapping = {
+            StrrRequirement.PLATFORM_MAJOR.value: "THOUSAND_AND_ABOVE",
+            StrrRequirement.PLATFORM_MEDIUM.value: "BETWEEN_250_AND_999",
+            StrrRequirement.PLATFORM_MINOR.value: "LESS_THAN_250",
+        }
+
+        if req in platform_req_mapping:
+            return Application.application_json.contains(
+                {"registration": {"platformDetails": {"listingSize": platform_req_mapping[req]}}}
+            )
+
+        return None
+
+    @classmethod
+    def _get_strata_requirement_condition(cls, req: str):
+        """Get condition for strata requirement."""
+        if req == StrrRequirement.STRATA_NO_PR.value:
+            return Application.application_json.contains(
+                {"registration": {"strataHotelDetails": {"category": "MULTI_UNIT_NON_PR"}}}
+            )
+        elif req == StrrRequirement.STRATA_PR.value:
+            return db.or_(
+                Application.application_json.contains(
+                    {"registration": {"strataHotelDetails": {"category": "FULL_SERVICE"}}}
+                ),
+                Application.application_json.contains(
+                    {"registration": {"strataHotelDetails": {"category": "POST_DECEMBER_2023"}}}
+                ),
+            )
+
+        return None
+
+    @classmethod
+    def _filter_by_application_requirement(cls, requirement: list[str], query: Query) -> Query:
+        """Filter query by requirements."""
+        if not requirement:
+            return query
+
+        host_requirement_conditions = []
+        platform_requirement_conditions = []
+        strata_requirement_conditions = []
+
+        for req in requirement:
+            host_condition = cls._get_host_requirement_condition(req)
+            if host_condition is not None:
+                host_requirement_conditions.append(host_condition)
+                continue
+
+            platform_condition = cls._get_platform_requirement_condition(req)
+            if platform_condition is not None:
+                platform_requirement_conditions.append(platform_condition)
+                continue
+
+            strata_condition = cls._get_strata_requirement_condition(req)
+            if strata_condition is not None:
+                strata_requirement_conditions.append(strata_condition)
+
+        combined_conditions = []
+        if host_requirement_conditions:
+            combined_conditions.append(db.and_(*host_requirement_conditions))
+        if platform_requirement_conditions:
+            combined_conditions.append(db.and_(*platform_requirement_conditions))
+        if strata_requirement_conditions:
+            combined_conditions.append(db.and_(*strata_requirement_conditions))
+        if combined_conditions:
+            query = query.filter(db.or_(*combined_conditions))
+        return query
+
+    @classmethod
+    def _filter_by_application_or_registration_status(
+        cls, statuses: Optional[List[str]], registration_statuses: Optional[List[str]], query: Query
+    ) -> Query:
+        """Filter query by application statuses OR registration statuses."""
+        conditions = []
+        if statuses:
+            statuses = [status.upper() for status in statuses if status]
+            if statuses:
+                conditions.append(Application.status.in_(statuses))
+
+        if registration_statuses:
+            registration_statuses = [status.upper() for status in registration_statuses if status]
+            if registration_statuses:
+                conditions.append(
+                    db.exists().where(
+                        (Registration.id == Application.registration_id)
+                        & (Registration.status.in_(registration_statuses))
+                    )
+                )
+
+        if not conditions:
+            return query
+
+        return query.filter(db.or_(*conditions))
 
     @classmethod
     def search_applications(cls, filter_criteria: ApplicationSearch):
         """Returns the applications matching the search criteria."""
         query = cls.query
-        if filter_criteria.statuses:
-            statuses = [status.upper() for status in filter_criteria.statuses if status]
-            # Remove DRAFT if present
-            if Application.Status.DRAFT in statuses:
-                statuses.remove(Application.Status.DRAFT)
-            query = cls._filter_by_statuses(statuses, query)
-        else:
-            query = query.filter(Application.status != Application.Status.DRAFT)
         if filter_criteria.search_text:
             query = query.filter(
                 db.or_(
@@ -272,14 +374,24 @@ class Application(BaseModel):
                     Application.application_number.ilike(f"%{filter_criteria.search_text}%"),
                 )
             )
+        if filter_criteria.statuses or filter_criteria.registration_statuses:
+            statuses = [status.upper() for status in filter_criteria.statuses if status]
+            # Remove DRAFT if present
+            if Application.Status.DRAFT in statuses:
+                statuses.remove(Application.Status.DRAFT)
+            query = cls._filter_by_application_or_registration_status(
+                statuses, filter_criteria.registration_statuses, query
+            )
+        else:
+            query = query.filter(Application.status != Application.Status.DRAFT)
         if filter_criteria.registration_types:
             query = cls._filter_by_registration_types(filter_criteria.registration_types, query)
         if filter_criteria.record_number:
             query = cls._filter_by_application_registration_number(filter_criteria.record_number, query)
-        if filter_criteria.registration_statuses:
-            query = cls._filter_by_registration_statuses(filter_criteria.registration_statuses, query)
         if filter_criteria.assignee:
             query = cls._filter_by_assignee(filter_criteria.assignee, query)
+        if filter_criteria.requirements:
+            query = cls._filter_by_application_requirement(filter_criteria.requirements, query)
         sort_column = getattr(Application, filter_criteria.sort_by, Application.id)
         if filter_criteria.sort_order and filter_criteria.sort_order.lower() == "asc":
             query = query.order_by(sort_column.asc())
