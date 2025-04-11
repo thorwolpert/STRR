@@ -11,7 +11,8 @@ const {
   sendNoticeOfConsideration,
   assignApplication
 } = useExaminerStore()
-const { nocContent, nocFormRef, activeHeader } = storeToRefs(useExaminerStore())
+const { nocContent, nocFormRef, activeHeader, isAssignedToUser } = storeToRefs(useExaminerStore())
+const confirmErrorModal = ref<ConfirmModal | null>(null)
 
 useHead({
   title: t('page.dashboardList.title')
@@ -23,7 +24,6 @@ definePageMeta({
 })
 
 const initialMount = ref(true) // flag for whether to fetch next or specific application on mount - true until initial application is loaded
-
 const { data: application, status, error, refresh } = await useLazyAsyncData<
   HousApplicationResponse | undefined, ApplicationError
 >(
@@ -79,15 +79,33 @@ const handleApplicationAction = (
   )
 }
 
+const handleAssigneeAction = (
+  id: string,
+  action: ApplicationActionsE,
+  buttonPosition: 'left' | 'right',
+  buttonIndex: number
+) => {
+  if (isAssignedToUser.value) {
+    return handleApplicationAction(
+      id,
+      action,
+      buttonPosition,
+      buttonIndex
+    )
+  } else if (confirmErrorModal.value) {
+    confirmErrorModal.value.handleOpen(
+      () => { refresh() }
+    )
+    return Promise.resolve()
+  }
+}
+
 // update route and bottom buttons when new application
 watch(
-  [application, error],
+  [application, error, isAssignedToUser],
   () => {
     // During initial loading, auto assign application to current examiner if no reviewer exists
-    if (initialMount.value && activeHeader.value && !activeHeader.value.reviewer?.username && (
-      activeHeader.value.status === ApplicationStatus.FULL_REVIEW ||
-      activeHeader.value.status === ApplicationStatus.PROVISIONAL_REVIEW
-    )) {
+    if (initialMount.value && activeHeader.value && !activeHeader.value.reviewer?.username) {
       assignApplication(activeHeader.value.applicationNumber!).then(() => {
         refresh()
       })
@@ -96,16 +114,19 @@ watch(
     initialMount.value = false
     updateRouteAndButtons(RoutesE.EXAMINE, {
       approve: {
-        action: (id: string) => handleApplicationAction(id, ApplicationActionsE.APPROVE, 'right', 1),
-        label: t('btn.approve')
+        action: (id: string) => handleAssigneeAction(id, ApplicationActionsE.APPROVE, 'right', 1),
+        label: t('btn.approve'),
+        disabled: !isAssignedToUser.value
       },
       reject: {
-        action: (id: string) => handleApplicationAction(id, ApplicationActionsE.REJECT, 'right', 0),
-        label: t('btn.decline')
+        action: (id: string) => handleAssigneeAction(id, ApplicationActionsE.REJECT, 'right', 0),
+        label: t('btn.decline'),
+        disabled: !isAssignedToUser.value
       },
       sendNotice: {
-        action: (id: string) => handleApplicationAction(id, ApplicationActionsE.SEND_NOC, 'right', 0),
-        label: t('btn.sendNotice')
+        action: (id: string) => handleAssigneeAction(id, ApplicationActionsE.SEND_NOC, 'right', 0),
+        label: t('btn.sendNotice'),
+        disabled: !isAssignedToUser.value
       }
     })
   }
@@ -134,6 +155,15 @@ watch(
         </template>
       </ApplicationDetailsView>
       <ComposeNoc />
+      <AssignmentActions @refresh="refresh" />
+      <ConfirmationModal
+        ref="confirmErrorModal"
+        :is-open="false"
+        :title="t('modal.assignError.title')"
+        :message="t('modal.assignError.message')"
+        :confirm-text="t('strr.label.acknowlegeError')"
+        :disable-cancel="true"
+      />
     </template>
   </div>
 </template>

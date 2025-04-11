@@ -20,6 +20,23 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
   const activeHeader = computed(() => {
     return activeRecord.value?.header
   })
+  const _isAssignedToUser = ref(false)
+  watch(
+    () => [activeHeader.value?.applicationNumber, activeHeader.value?.reviewer?.username],
+    async ([applicationNumber, _]) => {
+      try {
+        if (applicationNumber) {
+          _isAssignedToUser.value = await isCurrentUserAssignee(applicationNumber)
+        } else {
+          _isAssignedToUser.value = false
+        }
+      } catch (e) {
+        _isAssignedToUser.value = false
+      }
+    },
+    { immediate: true }
+  )
+  const isAssignedToUser = computed(() => _isAssignedToUser.value)
   const nocContent = reactive({
     content: ''
   })
@@ -275,6 +292,23 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     return resp
   }
 
+  /**
+   * Check if the current user is the assignee by application number.
+   *
+   * @param {string} applicationNumber - The application number.
+   */
+  const isCurrentUserAssignee = async (applicationNumber: string): Promise<boolean> => {
+    try {
+      const response = await $strrApi<{ is_assignee: boolean }>(`/applications/${applicationNumber}/is-assignee`, {
+        method: 'GET'
+      })
+      return response.is_assignee
+    } catch (e) {
+      logFetchError(e, t('error.checkAssignee.description'))
+      return false
+    }
+  }
+
   const getApplicationFilingHistory = async (applicationNumber: string): Promise<FilingHistoryEvent[]> => {
     try {
       return await $strrApi<FilingHistoryEvent[]>(`/applications/${applicationNumber}/events`, {
@@ -331,6 +365,7 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     activeRecord,
     activeReg,
     activeHeader,
+    isAssignedToUser,
     sendNocSchema,
     nocContent,
     nocFormRef,
