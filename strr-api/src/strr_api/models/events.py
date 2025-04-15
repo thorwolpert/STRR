@@ -45,6 +45,8 @@ class Events(SimpleBaseModel):
         APPLICATION_REVIEWER_UNASSIGNED = auto()
         NOC_SENT = auto()
         NOC_EXPIRED = auto()
+        HOST_APPLICATION_UNIT_ADDRESS_UPDATED = auto()
+        HOST_REGISTRATION_UNIT_ADDRESS_UPDATED = auto()
 
     __tablename__ = "events"
 
