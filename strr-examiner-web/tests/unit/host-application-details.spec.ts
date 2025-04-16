@@ -56,6 +56,7 @@ vi.mock('@/stores/examiner', () => ({
     activeRecord: ref(currentMockData),
     isApplication: ref(true),
     isAssignedToUser,
+    resetEditRentalUnitAddress: vi.fn(),
     assignApplication: mockAssignApplication,
     viewReceipt: mockViewReceipt,
     openDocInNewTab: vi.fn().mockImplementation(() => {
@@ -64,6 +65,20 @@ vi.mock('@/stores/examiner', () => ({
       URL.revokeObjectURL(url)
       setTimeout(() => URL.revokeObjectURL(url), 100)
     })
+  })
+}))
+
+vi.mock('@/composables/useHostExpansion', () => ({
+  useHostExpansion: () => ({
+    toggleFilingHistory: () => {
+      isFilingHistoryOpen.value = !isFilingHistoryOpen.value
+    },
+    checkAndPerfomAction: (actionFn: Function) => {
+      actionFn()
+    },
+    openHostOwners: vi.fn(),
+    openEditRentalUnitForm: vi.fn(),
+    close: vi.fn()
   })
 }))
 

@@ -24,6 +24,7 @@ definePageMeta({
 })
 
 const initialMount = ref(true) // flag for whether to fetch next or specific application on mount - true until initial application is loaded
+
 const { data: application, status, error, refresh } = await useLazyAsyncData<
   HousApplicationResponse | undefined, ApplicationError
 >(

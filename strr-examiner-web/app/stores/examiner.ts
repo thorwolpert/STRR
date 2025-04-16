@@ -40,7 +40,51 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
   const nocContent = reactive({
     content: ''
   })
-  // TODO: Add assigned logic check later
+  const isEditingRentalUnit = ref(false)
+  const hasUnsavedRentalUnitChanges = ref(false)
+  const rentalUnitAddressToEdit = ref<Partial<EditStrAddress>>({})
+  const rentalUnitAddressSchema = computed(() => z.object({
+    addressLineTwo: z.string().optional().default(''),
+    city: z.string().min(1, t('validation.address.city')),
+    province: z.string().min(1, t('validation.address.region')),
+    postalCode: z.string().min(1, t('validation.address.postalCode')),
+    locationDescription: z.string().optional().default(''),
+    streetName: z.string().optional().default(''),
+    streetNumber: z.string().optional().default(''),
+    unitNumber: z.string().optional().default('')
+  }).superRefine((data, ctx) => {
+    if (data.addressLineTwo === '') {
+      if (!data.streetName) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['streetName'],
+          message: t('validation.address.streetName')
+        })
+      }
+      if (!data.streetNumber) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['streetNumber'],
+          message: t('validation.address.streetNumber')
+        })
+      }
+    }
+  }))
+  const startEditRentalUnitAddress = () => {
+    const addressData = JSON.parse(JSON.stringify(activeReg.value?.unitAddress || {}))
+    if (addressData.locationDescription === null) {
+      addressData.locationDescription = ''
+    }
+    rentalUnitAddressToEdit.value = addressData
+    isEditingRentalUnit.value = true
+    hasUnsavedRentalUnitChanges.value = false // Reset unsaved changes flag
+  }
+  const resetEditRentalUnitAddress = () => {
+    isEditingRentalUnit.value = false
+    rentalUnitAddressToEdit.value = {}
+    hasUnsavedRentalUnitChanges.value = false
+  }
+
   const showNocModal = computed(() => {
     return activeHeader.value?.status === ApplicationStatus.FULL_REVIEW
   })
@@ -309,6 +353,26 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     }
   }
 
+  /**
+   * Final validation check before executing examiner action.
+   *
+   * @param {string} applicationNumber - The application number to verify assignment for.
+   * @returns {Promise<boolean>} - True if user is still assignee, false otherwise.
+   */
+  const verifyAssigneeOnAction = async (applicationNumber: string): Promise<boolean> => {
+    const isCurrentAssignee = await isCurrentUserAssignee(applicationNumber)
+
+    if (!isCurrentAssignee) {
+      strrModal.openErrorModal(
+        t('modal.assignError.title'),
+        t('modal.assignError.message'),
+        false
+      )
+      return false
+    }
+    return true
+  }
+
   const getApplicationFilingHistory = async (applicationNumber: string): Promise<FilingHistoryEvent[]> => {
     try {
       return await $strrApi<FilingHistoryEvent[]>(`/applications/${applicationNumber}/events`, {
@@ -357,6 +421,37 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     )
   }
 
+  /**
+   * Saves the updated rental unit address for either an application or registration.
+   *
+   * @param {Partial<EditStrAddress>} updatedAddress - The new address data to save
+   * @param {string|number} identifier - The ID of the application or registration
+   * @param {boolean} isApplication - Flag indicating if this is an application (true) or registration (false)
+   * @returns {Promise<void>}
+   */
+  const saveRentalUnitAddress = async (
+    updatedAddress: Partial<EditStrAddress>,
+    identifier: string | number,
+    isApplication: boolean
+  ): Promise<void> => {
+    try {
+      const endpoint = isApplication
+        ? `/applications/${identifier}/str-address`
+        : `/registrations/${identifier}/str-address`
+      const resp = await $strrApi(endpoint, {
+        method: 'PATCH',
+        body: {
+          unitAddress: updatedAddress
+        }
+      })
+      activeRecord.value = resp
+      resetEditRentalUnitAddress()
+    } catch (e) {
+      logFetchError(e, t('error.saveAddress'))
+      strrModal.openErrorModal('Error', t('error.saveAddress'), false)
+    }
+  }
+
   return {
     tableFilters,
     tableLimit,
@@ -370,6 +465,10 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     nocContent,
     nocFormRef,
     showNocModal,
+    isFilingHistoryOpen,
+    isEditingRentalUnit,
+    rentalUnitAddressToEdit,
+    hasUnsavedRentalUnitChanges,
     viewReceipt,
     approveApplication,
     rejectApplication,
@@ -386,6 +485,10 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     unassignApplication,
     getApplicationFilingHistory,
     getRegistrationFilingHistory,
-    isFilingHistoryOpen
+    startEditRentalUnitAddress,
+    resetEditRentalUnitAddress,
+    saveRentalUnitAddress,
+    rentalUnitAddressSchema,
+    verifyAssigneeOnAction
   }
 }, { persist: true }) // will persist data in session storage

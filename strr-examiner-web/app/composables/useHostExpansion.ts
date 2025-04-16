@@ -1,15 +1,16 @@
 // https://ui.nuxt.com/components/modal#control-programmatically
 import {
   HostExpansionFilingHistory,
-  HostExpansionOwners
+  HostExpansionOwners,
+  HostExpansionEditRentalUnitForm
 } from '#components'
 
 export const useHostExpansion = () => {
   const exp = useStrrExpansion()
-
-  const { isFilingHistoryOpen } = storeToRefs(useExaminerStore())
+  const { startEditRentalUnitAddress, resetEditRentalUnitAddress } = useExaminerStore()
+  const { isFilingHistoryOpen, isEditingRentalUnit, hasUnsavedRentalUnitChanges } = storeToRefs(useExaminerStore())
   isFilingHistoryOpen.value = false // reset so it's starts hidden by default
-
+  resetEditRentalUnitAddress()
   function openHostOwners (
     display: 'primaryContact' | 'secondaryContact' | 'propertyManager'
   ) {
@@ -20,6 +21,31 @@ export const useHostExpansion = () => {
       }
     })
     isFilingHistoryOpen.value = false
+  }
+
+  function openEditRentalUnitForm () {
+    startEditRentalUnitAddress()
+    exp.open(HostExpansionEditRentalUnitForm, {
+      onClose () {
+        exp.close()
+      }
+    })
+  }
+
+  const checkAndPerfomAction = (actionFn: () => void, confirmUnsavedModal: ConfirmModal | null = null) => {
+    if (!isEditingRentalUnit.value || !hasUnsavedRentalUnitChanges.value) {
+      resetEditRentalUnitAddress()
+      actionFn()
+      return
+    }
+    if (confirmUnsavedModal) {
+      confirmUnsavedModal.handleOpen(() => {
+        resetEditRentalUnitAddress()
+        actionFn()
+      })
+      return
+    }
+    actionFn()
   }
 
   function close () {
@@ -41,6 +67,8 @@ export const useHostExpansion = () => {
 
   return {
     openHostOwners,
+    openEditRentalUnitForm,
+    checkAndPerfomAction,
     toggleFilingHistory,
     close
   }

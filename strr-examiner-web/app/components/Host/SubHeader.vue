@@ -1,12 +1,22 @@
 <script setup lang="ts">
 import { useFlags } from '~/composables/useFlags'
 
-const exStore = useExaminerStore()
-const { isApplication, activeReg, activeHeader } = storeToRefs(exStore)
+const {
+  isApplication,
+  activeReg,
+  activeHeader,
+  isEditingRentalUnit,
+  isAssignedToUser
+} = storeToRefs(useExaminerStore())
+const { openEditRentalUnitForm } = useHostExpansion()
 const { t } = useI18n()
 const alertFlags = reactive(useFlags())
+const { isFeatureEnabled } = useFeatureFlags()
+const canEditApplicationAddress = isFeatureEnabled('enable-examiner-edit-address-application')
+const confirmUnsavedModal = ref<ConfirmModal | null>(null)
 
 const hostExp = useHostExpansion()
+
 </script>
 <template>
   <div
@@ -18,7 +28,23 @@ const hostExp = useHostExpansion()
         id="rental-unit-details"
         class="space-y-2"
       >
-        <strong>{{ t('strr.label.rentalUnit').toUpperCase() }}</strong>
+        <div class="flex items-center justify-between gap-2">
+          <strong>{{ t('strr.label.rentalUnit').toUpperCase() }}</strong>
+          <UButton
+            v-if="!isApplication || canEditApplicationAddress"
+            variant="link"
+            size="xs"
+            color="blue"
+            :disabled="isEditingRentalUnit || !isAssignedToUser"
+            data-testid="edit-rental-unit-button"
+            :aria-label="t('strr.label.editRentalUnit')"
+            class="flex items-center gap-1"
+            @click="openEditRentalUnitForm"
+          >
+            <UIcon name="i-mdi-pencil-outline" class="size-4" />
+            {{ t('btn.edit') }}
+          </UButton>
+        </div>
         <div class="w-[150px]">
           <UIcon name="i-mdi-map-marker-outline" />
           {{ displayFullUnitAddress(activeReg.unitAddress) }}
@@ -55,7 +81,12 @@ const hostExp = useHostExpansion()
             :padded="false"
             class="w-full whitespace-normal text-left"
             variant="link"
-            @click="hostExp.openHostOwners('primaryContact')"
+            @click="
+              hostExp.checkAndPerfomAction(
+                () => hostExp.openHostOwners('primaryContact'),
+                confirmUnsavedModal
+              )
+            "
           />
         </div>
         <div>
@@ -130,7 +161,12 @@ const hostExp = useHostExpansion()
             :padded="false"
             class="w-full whitespace-normal text-left"
             variant="link"
-            @click="hostExp.openHostOwners('secondaryContact')"
+            @click="
+              hostExp.checkAndPerfomAction(
+                () => hostExp.openHostOwners('secondaryContact'),
+                confirmUnsavedModal
+              )
+            "
           />
         </div>
 
@@ -143,10 +179,23 @@ const hostExp = useHostExpansion()
             :padded="false"
             class="w-full whitespace-normal text-left"
             variant="link"
-            @click="hostExp.openHostOwners('propertyManager')"
+            @click="
+              hostExp.checkAndPerfomAction(
+                () => hostExp.openHostOwners('propertyManager'),
+                confirmUnsavedModal
+              )
+            "
           />
         </div>
       </div>
     </div>
   </div>
+  <ConfirmationModal
+    ref="confirmUnsavedModal"
+    :is-open="false"
+    :title="t('modal.unsavedChanges.title')"
+    :message="t('modal.unsavedChanges.message')"
+    :confirm-text="t('btn.discardChanges')"
+    :cancel-text="t('btn.keepEditing')"
+  />
 </template>
