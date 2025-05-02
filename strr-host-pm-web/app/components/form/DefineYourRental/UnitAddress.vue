@@ -4,6 +4,7 @@ import type { Form } from '#ui/types'
 const propStore = useHostPropertyStore()
 const reqStore = usePropertyReqStore()
 const hostModal = useHostPmModals()
+const { isRegistrationRenewal } = storeToRefs(useHostPermitStore())
 
 const props = defineProps<{ isComplete: boolean }>()
 
@@ -45,6 +46,11 @@ onMounted(async () => {
   // validate form if step marked as complete
   if (props.isComplete) {
     await validateForm(unitAddressFormRef.value, props.isComplete)
+  }
+
+  // trigger address requirements check when Registration Renewal is loaded
+  if (isRegistrationRenewal?.value) {
+    reqStore.getPropertyReqs()
   }
 })
 </script>
@@ -179,12 +185,16 @@ onMounted(async () => {
                   :use-location-desc-label="true"
                 />
               </div>
-              <div class="flex divide-x">
+              <div
+                v-if="!isRegistrationRenewal"
+                class="flex divide-x"
+              >
                 <UButton
                   :label="$t('word.Edit')"
                   color="primary"
                   icon="i-mdi-pencil"
                   variant="link"
+                  data-testid="edit-unit-address-btn"
                   @click="hostModal.openConfirmRestartApplicationModal(true)"
                 />
                 <UPopover :popper="{ placement: 'bottom-end' }">
