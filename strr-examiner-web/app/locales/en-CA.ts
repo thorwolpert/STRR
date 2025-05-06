@@ -201,7 +201,7 @@ export default {
       takedownRequest: 'Takedown Request',
       added: 'ADDED',
       unAssign: 'Yes, Unassign Them',
-      acknowlegeError: 'Close',
+      acknowledgeError: 'Close',
       editRentalUnit: 'Edit Rental Unit'
     },
     text: {
@@ -269,7 +269,9 @@ export default {
     unassign: 'Unassign',
     confirm: 'Confirm',
     keepEditing: 'Continue Editing',
-    discardChanges: 'Discard'
+    discardChanges: 'Discard',
+    approveApplication: 'Approve Application',
+    yesApprove: 'Yes, Approve'
   },
   error: {
     action: {
@@ -291,7 +293,7 @@ export default {
     assignApplication: 'An error occurred assigning this application.',
     unAssignApplication: 'An error occurred unassigning this application.',
     filingHistory: 'An error occurred while retrieving the filing history.',
-    saveAddress: 'An error occureed while updating the STR address',
+    saveAddress: 'An error occurred while updating the STR address',
     saveAddressConfig: 'Either application number or registration ID must be provided',
     reqFetch: {
       unknown: {
@@ -385,6 +387,10 @@ export default {
     unsavedChanges: {
       title: 'Unsaved Changes',
       message: 'Are you sure you want to discard your changes?'
+    },
+    approveApplication: {
+      title: 'Approve Application',
+      message: 'This action will fully register the short-term rental unit. Are you sure you want to continue?'
     }
   },
   table: {

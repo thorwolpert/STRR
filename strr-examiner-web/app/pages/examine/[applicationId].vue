@@ -11,6 +11,7 @@ const {
   sendNoticeOfConsideration,
   assignApplication
 } = useExaminerStore()
+const { openConfirmActionModal, close: closeConfirmActionModal } = useStrrModals()
 const { nocContent, nocFormRef, activeHeader, isAssignedToUser } = storeToRefs(useExaminerStore())
 const confirmErrorModal = ref<ConfirmModal | null>(null)
 
@@ -62,7 +63,7 @@ const handleApplicationAction = (
     }
     additionalArgs = [nocContent.value.content]
     validateFn = async () => await validateForm(nocFormRef.value, true).then(errors => !errors)
-  } else if (action === ApplicationActionsE.APPROVE) {
+  } else if (action === ApplicationActionsE.APPROVE || action === ApplicationActionsE.PROVISIONAL_APPROVE) {
     actionFn = approveApplication
   } else if (action === ApplicationActionsE.REJECT) {
     actionFn = rejectApplication
@@ -87,12 +88,19 @@ const handleAssigneeAction = (
   buttonIndex: number
 ) => {
   if (isAssignedToUser.value) {
-    return handleApplicationAction(
-      id,
-      action,
-      buttonPosition,
-      buttonIndex
-    )
+    if (action === ApplicationActionsE.APPROVE || action === ApplicationActionsE.PROVISIONAL_APPROVE) {
+      openConfirmActionModal(
+        t('modal.approveApplication.title'),
+        t('modal.approveApplication.message'),
+        t('btn.yesApprove'),
+        () => {
+          closeConfirmActionModal() // for smoother UX, close the modal before initiating the action
+          handleApplicationAction(id, action, buttonPosition, buttonIndex)
+        }
+      )
+    } else {
+      return handleApplicationAction(id, action, buttonPosition, buttonIndex)
+    }
   } else if (confirmErrorModal.value) {
     confirmErrorModal.value.handleOpen(
       () => { refresh() }
@@ -128,6 +136,11 @@ watch(
         action: (id: string) => handleAssigneeAction(id, ApplicationActionsE.SEND_NOC, 'right', 0),
         label: t('btn.sendNotice'),
         disabled: !isAssignedToUser.value
+      },
+      provisionalApprove: {
+        action: (id: string) => handleAssigneeAction(id, ApplicationActionsE.PROVISIONAL_APPROVE, 'right', 0),
+        label: t('btn.approveApplication'),
+        disabled: !isAssignedToUser.value
       }
     })
   }
@@ -162,7 +175,7 @@ watch(
         :is-open="false"
         :title="t('modal.assignError.title')"
         :message="t('modal.assignError.message')"
-        :confirm-text="t('strr.label.acknowlegeError')"
+        :confirm-text="t('strr.label.acknowledgeError')"
         :disable-cancel="true"
       />
     </template>
