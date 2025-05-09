@@ -222,6 +222,13 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     })
   }
 
+  const provisionallyApproveApplication = async (applicationNumber: string): Promise<void> => {
+    await $strrApi(`/applications/${applicationNumber}/status`, {
+      method: 'PUT',
+      body: { status: ApplicationStatus.PROVISIONALLY_APPROVED }
+    })
+  }
+
   const viewReceipt = async (applicationNumber: string) => {
     try {
       const resp = await $strrApi<Blob>(`/applications/${applicationNumber}/payment/receipt`, {
@@ -474,6 +481,7 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     hasUnsavedRentalUnitChanges,
     viewReceipt,
     approveApplication,
+    provisionallyApproveApplication,
     rejectApplication,
     sendNoticeOfConsideration,
     fetchApplications,
