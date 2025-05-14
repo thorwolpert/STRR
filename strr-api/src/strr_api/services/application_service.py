@@ -39,7 +39,7 @@ from typing import Optional
 import pytz
 from flask import current_app
 
-from strr_api.enums.enum import ApplicationType, PaymentStatus
+from strr_api.enums.enum import ApplicationType, PaymentStatus, RegistrationStatus
 from strr_api.models import Application, Events, NoticeOfConsideration, Registration, User
 from strr_api.models.application import ApplicationSerializer
 from strr_api.models.dataclass import ApplicationSearch
@@ -54,11 +54,13 @@ APPLICATION_TERMINAL_STATES = [
     Application.Status.PROVISIONALLY_APPROVED,
     Application.Status.AUTO_APPROVED,
     Application.Status.DECLINED,
+    Application.Status.PROVISIONALLY_DECLINED,
 ]
 APPLICATION_STATES_STAFF_ACTION = [
     Application.Status.FULL_REVIEW_APPROVED,
     Application.Status.PROVISIONALLY_APPROVED,
     Application.Status.DECLINED,
+    Application.Status.PROVISIONALLY_DECLINED,
     Application.Status.ADDITIONAL_INFO_REQUESTED,
 ]
 APPLICATION_UNPAID_STATES = [Application.Status.DRAFT, Application.Status.PAYMENT_DUE]
@@ -194,9 +196,9 @@ class ApplicationService:
         application: Application, application_status: Application.Status, reviewer: User
     ) -> Application:
         """Updates the application status. If the application status is approved, a new registration is created."""
+        original_status = application.status
         application.status = application_status
-
-        if application.status == Application.Status.FULL_REVIEW_APPROVED:
+        if application_status == Application.Status.FULL_REVIEW_APPROVED:
             registration = RegistrationService.create_registration(
                 application.submitter_id, application.payment_account, application.application_json
             )
@@ -209,6 +211,21 @@ class ApplicationService:
                 user_id=reviewer.id,
             )
             application.registration_id = registration.id
+
+        if application_status == Application.Status.PROVISIONALLY_DECLINED and original_status in [
+            Application.Status.PROVISIONAL_REVIEW_NOC_PENDING,
+            Application.Status.PROVISIONAL_REVIEW_NOC_EXPIRED,
+        ]:
+            registration = application.registration
+            if registration:
+                registration.status = RegistrationStatus.CANCELLED.value
+                registration.save()
+                EventsService.save_event(
+                    event_type=Events.EventType.REGISTRATION,
+                    event_name=Events.EventName.REGISTRATION_CANCELLED,
+                    registration_id=registration.id,
+                    user_id=reviewer.id,
+                )
 
         if application.status in APPLICATION_TERMINAL_STATES:
             application.decision_date = datetime.utcnow()
@@ -233,6 +250,8 @@ class ApplicationService:
         if application_status == Application.Status.FULL_REVIEW_APPROVED:
             event_name = Events.EventName.MANUALLY_APPROVED
         elif application_status == Application.Status.DECLINED:
+            event_name = Events.EventName.MANUALLY_DENIED
+        elif application_status == Application.Status.PROVISIONALLY_DECLINED:
             event_name = Events.EventName.MANUALLY_DENIED
         elif application_status == Application.Status.ADDITIONAL_INFO_REQUESTED:
             event_name = Events.EventName.MORE_INFORMATION_REQUESTED
