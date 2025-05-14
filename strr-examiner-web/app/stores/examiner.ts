@@ -107,7 +107,8 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     ApplicationStatus.NOC_PENDING,
     ApplicationStatus.NOC_EXPIRED,
     ApplicationStatus.PROVISIONAL_REVIEW_NOC_PENDING,
-    ApplicationStatus.PROVISIONAL_REVIEW_NOC_EXPIRED
+    ApplicationStatus.PROVISIONAL_REVIEW_NOC_EXPIRED,
+    ApplicationStatus.PROVISIONALLY_DECLINED
   ]
   const defaultRegistrationStatuses = [
     RegistrationStatus.ACTIVE,
@@ -245,10 +246,10 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
     }
   }
 
-  const rejectApplication = async (applicationNumber: string): Promise<void> => {
+  const rejectApplication = async (applicationNumber: string, isProvisional: boolean = false): Promise<void> => {
     await $strrApi(`/applications/${applicationNumber}/status`, {
       method: 'PUT',
-      body: { status: ApplicationStatus.DECLINED }
+      body: { status: isProvisional ? ApplicationStatus.PROVISIONALLY_DECLINED : ApplicationStatus.DECLINED }
     })
   }
 
