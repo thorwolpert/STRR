@@ -193,7 +193,10 @@ class ApplicationService:
 
     @staticmethod
     def update_application_status(
-        application: Application, application_status: Application.Status, reviewer: User
+        application: Application,
+        application_status: Application.Status,
+        reviewer: User,
+        custom_content: Optional[str] = None,
     ) -> Application:
         """Updates the application status. If the application status is approved, a new registration is created."""
         original_status = application.status
@@ -238,9 +241,10 @@ class ApplicationService:
             event_name=ApplicationService._get_event_name(application.status),
             application_id=application.id,
             user_id=reviewer.id,
+            details=f"Custom Email Content: {custom_content}" if custom_content else None,
         )
 
-        EmailService.send_application_status_update_email(application)
+        EmailService.send_application_status_update_email(application, custom_content)
 
         return application
 
