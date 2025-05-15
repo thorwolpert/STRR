@@ -200,6 +200,7 @@ class ApplicationService:
     ) -> Application:
         """Updates the application status. If the application status is approved, a new registration is created."""
         original_status = application.status
+        application.is_set_aside = False
         application.status = application_status
         if application_status == Application.Status.FULL_REVIEW_APPROVED:
             registration = RegistrationService.create_registration(
@@ -401,4 +402,21 @@ class ApplicationService:
             user_id=user.id,
             visible_to_applicant=True,
         )
+        return application
+
+    @staticmethod
+    def set_aside_decision(application: Application, set_aside_request: dict, user: User) -> Application:
+        """Sets aside the decision for a host application."""
+        application.is_set_aside = True
+        application.save()
+
+        EventsService.save_event(
+            event_type=Events.EventType.APPLICATION,
+            event_name=Events.EventName.APPLICATION_DECISION_SET_ASIDE,
+            details="Application decision set aside",
+            application_id=application.id,
+            user_id=user.id,
+            visible_to_applicant=True,
+        )
+        EmailService.send_set_aside_email(application=application, email_content=set_aside_request.get("content"))
         return application
