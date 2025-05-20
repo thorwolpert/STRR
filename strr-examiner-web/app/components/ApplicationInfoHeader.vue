@@ -62,12 +62,16 @@ const registrationCountdown = computed(() => {
     <div class="app-inner-container">
       <div class="mb-4 flex justify-between text-2xl leading-none">
         <div class="flex items-center space-x-3">
-          <span class="border-r-2 border-gray-700 pr-3 font-bold">
+          <span
+            class="border-r-2 border-gray-700 pr-3 font-bold"
+            data-testid="application-number"
+          >
             {{ activeHeader?.applicationNumber }}
           </span>
           <span
             v-if="getApplicationName()"
             class="border-r-2 border-gray-700 pr-3"
+            data-testid="application-name"
           >
             {{ getApplicationName() }}
           </span>
@@ -109,6 +113,14 @@ const registrationCountdown = computed(() => {
       </div>
       <div class="mb-2 text-sm">
         <UBadge
+          v-if="activeHeader.isSetAside"
+          class="mr-3 bg-bcGovColor-midGray font-bold uppercase"
+          :label="t('strr.label.setAside')"
+          variant="solid"
+          data-testid="application-set-aside-badge"
+        />
+        <UBadge
+          v-else
           class="mr-3 font-bold uppercase"
           :label="activeHeader.examinerStatus"
           :color="getBadgeColor(activeHeader.status)"
