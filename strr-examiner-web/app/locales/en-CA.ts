@@ -272,12 +272,12 @@ export default {
     keepEditing: 'Continue Editing',
     discardChanges: 'Discard',
     declineApplication: 'Refuse Application',
+    cancelRegistration: 'Cancel Registration',
     approveApplication: 'Approve Application',
     setAside: 'Set Aside',
     yesApprove: 'Yes, Approve',
     yesSend: 'Yes, Send',
-    yesReject: 'Yes, Reject',
-    cancelRegistration: 'Cancel Registration'
+    yesRefuse: 'Yes, Refuse'
   },
   error: {
     action: {
@@ -390,10 +390,6 @@ export default {
       title: 'Action Failed',
       message: 'This application is no longer assigned to you.'
     },
-    cancelRegistration: {
-      title: 'Cancel Registration',
-      message: 'This registration will be cancelled. Are you sure you want to continue?'
-    },
     unsavedChanges: {
       title: 'Unsaved Changes',
       message: 'Are you sure you want to discard your changes?'
@@ -407,8 +403,12 @@ export default {
       message: 'This action will notify the applicant to provide additional documents. Are you sure you want to continue?'
     },
     rejectApplication: {
-      title: 'Reject Application',
-      message: 'This action will reject the short-term rental unit application (and cancel provisional registration). Are you sure you want to continue?'
+      title: 'Refuse Application',
+      message: 'Are you sure you want to refuse the application? This will send an email to the host letting them know their application has been refused.'
+    },
+    cancelRegistration: {
+      title: 'Cancel Registration',
+      message: 'Are you sure you want to cancel the registration? This will send an email to the host letting them know their application has been refused.'
     }
   },
   table: {
