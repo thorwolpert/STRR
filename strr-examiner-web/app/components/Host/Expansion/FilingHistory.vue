@@ -31,6 +31,9 @@ const { data: filingHistory, status } = await useLazyAsyncData<FilingHistoryEven
       allFilingHistory = [...applicationHistory, ...registrationHistory]
     }
 
+    // sort history by date
+    allFilingHistory.sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
+
     // filter out events defined by the requirements
     return allFilingHistory.filter(event => !HIDDEN_EVENTS.includes(event.eventName)).reverse()
   }
