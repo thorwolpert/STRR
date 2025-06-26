@@ -47,6 +47,7 @@ class RegistrationSerializer:
             "expiryDate": registration.expiry_date.isoformat() if registration.expiry_date else None,
             "status": registration.status.name,
             "registrationNumber": registration.registration_number,
+            "nocStatus": registration.noc_status.name if registration.noc_status else None,
         }
 
         RegistrationSerializer._populate_header_data(registration_data, registration)
@@ -60,6 +61,7 @@ class RegistrationSerializer:
                         "fileName": doc.file_name,
                         "fileType": doc.file_type,
                         "documentType": doc.document_type,
+                        "addedOn": doc.added_on.isoformat() if doc.added_on else None,
                     }
                 )
         registration_data["documents"] = documents
