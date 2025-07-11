@@ -1,8 +1,9 @@
+import json
 
-from registration_expiry.job import update_status_for_registration_expired_applications
 from sqlalchemy import text
 from strr_api.models import db
-import json
+
+from registration_expiry.job import update_status_for_registration_expired_applications
 
 
 def test_update_status_for_registration_active_applications(app):
@@ -19,12 +20,14 @@ def test_update_status_for_registration_active_applications(app):
     for row in data["users"]:
         db.session.execute(
             text(
-                "INSERT INTO users (id, firstname, lastname) VALUES (:id, :firstname, :lastname)"),
-            row
+                "INSERT INTO users (id, firstname, lastname) VALUES (:id, :firstname, :lastname)"
+            ),
+            row,
         )
     for row in data["registrations"]:
         db.session.execute(
-            text("""
+            text(
+                """
                 INSERT INTO registrations (
                     id, registration_type, registration_number,
                     sbc_account_id, status, start_date, expiry_date,
@@ -34,7 +37,9 @@ def test_update_status_for_registration_active_applications(app):
                     :sbc_account_id, :status, :start_date, :expiry_date,
                     :updated_date, :user_id, :version
                 )
-            """), row
+            """
+            ),
+            row,
         )
     db.session.commit()
 
@@ -67,12 +72,14 @@ def test_cancelled_registrations_update_status(app):
     for row in data["users"]:
         db.session.execute(
             text(
-                "INSERT INTO users (id, firstname, lastname) VALUES (:id, :firstname, :lastname)"),
-            row
+                "INSERT INTO users (id, firstname, lastname) VALUES (:id, :firstname, :lastname)"
+            ),
+            row,
         )
     for row in data["registrations"]:
         db.session.execute(
-            text("""
+            text(
+                """
                 INSERT INTO registrations (
                     id, registration_type, registration_number,
                     sbc_account_id, status, start_date, expiry_date,
@@ -82,7 +89,9 @@ def test_cancelled_registrations_update_status(app):
                     :sbc_account_id, :status, :start_date, :expiry_date,
                     :updated_date, :user_id, :version
                 )
-            """), row
+            """
+            ),
+            row,
         )
     db.session.commit()
 
@@ -122,12 +131,14 @@ def test_suspended_registrations_update_status(app):
     for row in data["users"]:
         db.session.execute(
             text(
-                "INSERT INTO users (id, firstname, lastname) VALUES (:id, :firstname, :lastname)"),
-            row
+                "INSERT INTO users (id, firstname, lastname) VALUES (:id, :firstname, :lastname)"
+            ),
+            row,
         )
     for row in data["registrations"]:
         db.session.execute(
-            text("""
+            text(
+                """
                 INSERT INTO registrations (
                     id, registration_type, registration_number,
                     sbc_account_id, status, start_date, expiry_date,
@@ -137,7 +148,9 @@ def test_suspended_registrations_update_status(app):
                     :sbc_account_id, :status, :start_date, :expiry_date,
                     :updated_date, :user_id, :version
                 )
-            """), row
+            """
+            ),
+            row,
         )
     db.session.commit()
 
