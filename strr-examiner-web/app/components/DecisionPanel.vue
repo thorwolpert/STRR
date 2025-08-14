@@ -1,29 +1,39 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 
 const { t } = useI18n()
-const { showDecisionPanel } = useExaminerDecision()
+const { showDecisionPanel, decisionIntent } = useExaminerDecision()
 const {
   isApplication,
   isAssignedToUser,
   decisionEmailContent,
   activeReg,
-  activeHeader
+  activeHeader,
+  decisionEmailFormRef,
+  sendEmailSchema
 } = storeToRefs(useExaminerStore())
-
-// wip: conditions holder
-const conditions = ref('')
-
-// wip: email content to be sent to Completing Party
-useExaminerStore().decisionEmailContent = t('decision.emailBodyIntro') + '\n\n' + conditions.value
-
-// wip: selected action to track the examiner's current intent
-const decisionIntent = ref<ApplicationActionsE | RegistrationActionsE | null>(null)
 
 const setDecisionIntent = (action: ApplicationActionsE | RegistrationActionsE) => {
   decisionIntent.value = action
 }
 
 const isApproveDecisionSelected = computed((): boolean => decisionIntent.value === ApplicationActionsE.APPROVE)
+const isDecisionEmailDisabled = computed((): boolean => !!decisionIntent.value)
+
+const conditions = ref<string[]>([])
+
+const decisionEmailPlaceholder = computed((): string =>
+  decisionIntent.value === ApplicationActionsE.SEND_NOC || RegistrationActionsE.CANCEL
+    ? t('decision.emailBodyPlaceholder')
+    : t('decision.emailBodyIntro')
+)
+
+const enableApproveButton = computed(() =>
+  activeHeader.value.examinerActions.includes(ApplicationActionsE.APPROVE) ||
+  activeHeader.value.examinerActions.includes(ApplicationActionsE.PROVISIONAL_APPROVE) ||
+  activeHeader.value.isSetAside ||
+  activeReg.value.status === RegistrationActionsE.APPROVE
+)
 
 const decisionButtons = [
   {
@@ -32,7 +42,7 @@ const decisionButtons = [
     color: 'green',
     activeClass: 'bg-green-100',
     icon: 'i-mdi-check',
-    disabled: !isApplication.value && activeReg.value.status === RegistrationStatus.ACTIVE
+    disabled: !enableApproveButton.value
   },
   {
     action: ApplicationActionsE.SEND_NOC,
@@ -62,8 +72,8 @@ const decisionButtons = [
   }
 ]
 
-// always visible buttons (approve and prov approve is one button)
-const visibleActions = [
+// always visible buttons actions (approve and prov approve is one button)
+const mainActions = [
   ApplicationActionsE.APPROVE,
   ApplicationActionsE.PROVISIONAL_APPROVE,
   ApplicationActionsE.SEND_NOC,
@@ -72,15 +82,35 @@ const visibleActions = [
   RegistrationActionsE.CANCEL
 ]
 
-const moreActionItems = activeHeader.value.examinerActions
-  .filter((action: ApplicationActionsE) => !visibleActions.includes(action))
-  .map(
-    (action: ApplicationActionsE) => {
-      return [{
-        label: action.toString()
-      }]
-    }
-  )
+// additional actions in the dropdown menu
+const moreActionItems = computed(() =>
+  activeHeader.value.examinerActions
+    .filter((action: ApplicationActionsE) => !mainActions.includes(action))
+    .map(
+      (action: ApplicationActionsE) => {
+        return [{
+          label: t(`btn.${action}`),
+          disabled: !isAssignedToUser.value,
+          click: () => setDecisionIntent(action)
+        }]
+      }
+    )
+)
+
+// update email content when conditions change
+watch(conditions, (newConditions) => {
+  const plainTextConditions = newConditions
+    // get plain text for each condition from translations
+    .map(condition => `\u2022 ${t(`approvalConditionsExpanded.${condition}`)}`)
+    .join('\n')
+
+  decisionEmailContent.value = 'Approval Conditions\n\n' + plainTextConditions
+})
+
+onMounted(() => {
+  decisionEmailContent.value = ''
+})
+
 </script>
 
 <template>
@@ -94,16 +124,16 @@ const moreActionItems = activeHeader.value.examinerActions
         <div class="mb-4 font-bold">
           {{ t('decision.title') }}
         </div>
-        <div class="flex">
-          <div class="w-1/2">
-            <div class="flex justify-start gap-4">
+        <div class="grid grid-cols-2 gap-x-5">
+          <div class="">
+            <div class="mb-6 flex justify-start gap-4">
               <UButton
                 v-for="(button, i) in decisionButtons.filter(btn => !btn.hidden)"
                 :key="'button-' + i"
                 class="max-w-fit px-3 py-2"
                 :class="decisionIntent === button.action && button.activeClass"
                 :color="button.color || 'primary'"
-                :disabled="button.disabled || !isAssignedToUser || false"
+                :disabled="button.disabled || !isAssignedToUser"
                 :icon="button.icon || ''"
                 :label="button.label"
                 variant="outline"
@@ -125,25 +155,32 @@ const moreActionItems = activeHeader.value.examinerActions
               </UDropdown>
             </div>
 
-            <div
+            <ApprovalConditions
               v-if="isApproveDecisionSelected"
-              data-testid="approval-conditions"
-              class="mt-6"
-            >
-              [Approval Conditions Placeholder]
-            </div>
+              v-model="conditions"
+            />
           </div>
           <div class="flex-auto">
-            <UTextarea
-              v-model="decisionEmailContent"
-              :placeholder="t('decision.emailBodyPlaceholder')"
-              :aria-label="t('decision.emailBodyPlaceholder')"
-              data-testid="decision-email"
-              color="gray"
-              class="text-bcGovColor-midGray focus:ring-0"
-              auto-resize
-              :disabled="isApproveDecisionSelected"
-            />
+            <UForm
+              ref="decision"
+              :schema="sendEmailSchema"
+              :state="decisionEmailFormRef"
+              :validate-on="['submit']"
+            >
+              <UFormGroup name="content">
+                <UTextarea
+                  v-model="decisionEmailContent"
+                  :placeholder="decisionEmailPlaceholder"
+                  :aria-label="decisionEmailPlaceholder"
+                  data-testid="decision-email"
+                  color="gray"
+                  class="text-bcGovColor-midGray focus:ring-0"
+                  auto-resize
+                  :disabled="isDecisionEmailDisabled"
+                  :ui="{ base: 'h-[290px]' }"
+                />
+              </UFormGroup>
+            </UForm>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ const { isAuthenticated } = useKeycloak()
 const headerOptions = useAppConfig().connect.core.header.options
 provide(headerOptionsSymbol, headerOptions)
 const localePath = useLocalePath()
+const { isApplication } = storeToRefs(useExaminerStore())
 </script>
 <template>
   <div class="app-container">
@@ -44,7 +45,8 @@ const localePath = useLocalePath()
         </p>
       </template>
     </NuxtErrorBoundary>
-    <ConnectButtonControl />
+    <ConnectButtonControl v-if="isApplication" />
+    <ActionButtons v-else />
     <ConnectFooter />
   </div>
 </template>
