@@ -82,6 +82,8 @@ watch(isMinBookingDaysSelected, (selected) => {
   if (selected) {
     isMinimumBookingDaysOpen.value = true
     removeCustomCondition()
+  } else {
+    isMinimumBookingDaysOpen.value = false
   }
 })
 
@@ -214,6 +216,7 @@ watch(isMinBookingDaysSelected, (selected) => {
       >
         <UInput
           v-model="minBookingDaysNum"
+          class="h-[60px]"
           type="number"
         />
       </UFormGroup>
