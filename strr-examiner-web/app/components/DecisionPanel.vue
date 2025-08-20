@@ -18,6 +18,12 @@ const {
 
 const setDecisionIntent = (action: ApplicationActionsE | RegistrationActionsE) => {
   decisionIntent.value = action
+  // reset
+  localConditions.value = []
+  decisionEmailContent.value = ''
+  conditions.value = []
+  customConditions.value = []
+  minBookingDays.value = null
 }
 
 const isApproveDecisionSelected = computed((): boolean => decisionIntent.value === ApplicationActionsE.APPROVE)
@@ -135,7 +141,7 @@ watch([localConditions, minBookingDays],
       }
     }
 
-    decisionEmailContent.value = t('approvalConditions') + '\n\n' + items.join('\n')
+    decisionEmailContent.value = items.join('\n')
   }, { deep: true })
 
 watch(customCondition, (val) => {
