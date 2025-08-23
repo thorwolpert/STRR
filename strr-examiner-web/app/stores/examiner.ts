@@ -52,9 +52,9 @@ export const useExaminerStore = defineStore('strr/examiner-store', () => {
 
   // Examiner decisions
   const conditions = ref<string[]>([])
-  const customConditions = ref<string[]>([])
+  const customConditions = ref<string[] | null>(null)
   const minBookingDays = ref<number | null>(null)
-  const decisionEmailContent = ref<string>('')
+  const decisionEmailContent = reactive({ content: '' })
 
   const isEditingRentalUnit = ref(false)
   const hasUnsavedRentalUnitChanges = ref(false)

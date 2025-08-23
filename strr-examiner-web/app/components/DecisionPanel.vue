@@ -17,12 +17,14 @@ const {
 } = storeToRefs(useExaminerStore())
 
 const setDecisionIntent = (action: ApplicationActionsE | RegistrationActionsE) => {
+  // do not reset anything for same actions
+  if (decisionIntent.value === action) { return }
   decisionIntent.value = action
   // reset
   localConditions.value = []
-  decisionEmailContent.value = ''
+  decisionEmailContent.value.content = ''
   conditions.value = []
-  customConditions.value = []
+  customConditions.value = null
   minBookingDays.value = null
 }
 
@@ -39,7 +41,7 @@ const decisionEmailPlaceholder = computed((): string =>
     RegistrationActionsE.SUSPEND
   ].includes(decisionIntent.value)
     ? t('decision.emailBodyPlaceholder')
-    : t('decision.emailBodyIntro')
+    : t('decision.noConditionsPlaceholder')
 )
 
 const enableApproveButton = computed(() =>
@@ -111,12 +113,32 @@ const moreActionItems = computed(() =>
     )
 )
 
+const loadExistingConditions = () => {
+  localConditions.value = []
+
+  const { predefinedConditions, customConditions, minBookingDays: minDays } = activeReg.value.conditionsOfApproval || {}
+
+  // load pre-defined conditions
+  if (predefinedConditions?.length) {
+    localConditions.value.push(...predefinedConditions)
+  }
+
+  // load custom conditions conditions
+  if (customConditions?.length) {
+    localConditions.value.push(...customConditions)
+  }
+
+  if (minDays) {
+    minBookingDays.value = minDays
+  }
+}
+
 // update email content when conditions change
 watch([localConditions, minBookingDays],
   ([newConditions, newMinBookingDays]) => {
     // reset conditions
     conditions.value = []
-    customConditions.value = []
+    customConditions.value = null
 
     // condition items for email body
     const items: string[] = []
@@ -132,16 +154,21 @@ watch([localConditions, minBookingDays],
       }
 
       if (preDefinedConditions.includes(condition)) {
+        // for pre-defined conditions - add expanded expanded text to email
         const conditionText = t(`approvalConditionsExpanded.${condition}`)
         conditions.value.push(condition)
         items.push(`\u2022 ${conditionText}`)
       } else {
+        // for custom conditions - add conditions as is to email
+        if (!customConditions.value) {
+          customConditions.value = []
+        }
         customConditions.value.push(condition)
         items.push(`\u2022 ${condition}`)
       }
     }
 
-    decisionEmailContent.value = items.join('\n')
+    decisionEmailContent.value.content = items.join('\n')
   }, { deep: true })
 
 watch(customCondition, (val) => {
@@ -156,6 +183,7 @@ onMounted(() => {
   if (activeReg.value.status === RegistrationStatus.ACTIVE) {
     setDecisionIntent(ApplicationActionsE.APPROVE)
   }
+  loadExistingConditions()
 })
 
 </script>
@@ -168,12 +196,23 @@ onMounted(() => {
   >
     <ConnectPageSection>
       <div class="px-10 py-6">
-        <div class="mb-4 font-bold">
-          {{ t('decision.title') }}
-        </div>
         <div class="grid grid-cols-2 gap-x-5">
-          <div class="">
-            <div class="mb-6 flex justify-between gap-2">
+          <div>
+            <div class="font-bold">
+              {{ t('decision.title') }}
+            </div>
+            <UTooltip
+              text="Assign yourself to make changes"
+              :prevent="isAssignedToUser"
+              :popper="{
+                arrow: true,
+                placement: 'top',
+                offsetDistance: 16 }"
+              class="mb-6 mt-4 flex flex-wrap justify-between gap-2"
+              :ui="{
+                base: 'p-5'
+              }"
+            >
               <UButton
                 v-for="(button, i) in decisionButtons.filter(btn => !btn.hidden)"
                 :key="'button-' + i"
@@ -193,39 +232,49 @@ onMounted(() => {
               >
                 <UButton
                   :label="t('btn.moreActions')"
-                  class="px-5"
+                  class="h-[44px] px-5"
                   trailing-icon="i-mdi-chevron-down"
                   variant="outline"
                   data-testid="decision-button-more-actions"
+                  :disabled="!isAssignedToUser"
                 />
               </UDropdown>
-            </div>
+            </UTooltip>
 
             <ApprovalConditions
-              v-if="isApproveDecisionSelected"
+              v-if="isApproveDecisionSelected && isAssignedToUser"
               v-model:conditions="localConditions"
               v-model:custom-condition="customCondition"
               v-model:min-booking-days="minBookingDays"
             />
           </div>
-          <div class="flex-auto">
+          <div>
+            <div class="font-bold">
+              {{ t('decision.emailTitle') }}
+            </div>
             <UForm
-              ref="decision"
+              ref="decisionEmailFormRef"
               :schema="sendEmailSchema"
-              :state="decisionEmailFormRef"
+              :state="decisionEmailContent"
               :validate-on="['submit']"
+              class="mt-4"
             >
               <UFormGroup name="content">
                 <UTextarea
-                  v-model="decisionEmailContent"
+                  v-model="decisionEmailContent.content"
                   :placeholder="decisionEmailPlaceholder"
                   :aria-label="decisionEmailPlaceholder"
                   data-testid="decision-email"
                   color="gray"
-                  class="text-bcGovColor-midGray focus:ring-0"
+                  class="bg-[#F1F3F5] focus:ring-0"
                   auto-resize
                   :disabled="isDecisionEmailDisabled"
-                  :ui="{ base: 'h-[290px]' }"
+                  :ui="{
+                    base: 'h-[290px]',
+                    padding: {
+                      sm: 'p-4'
+                    }
+                  }"
                 />
               </UFormGroup>
             </UForm>

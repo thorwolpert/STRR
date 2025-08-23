@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { refreshNuxtData } from 'nuxt/app'
+import isEqual from 'lodash/isEqual'
 
 const { t } = useI18n()
-const { decisionIntent } = useExaminerDecision()
+const { decisionIntent, isMainActionDisabled } = useExaminerDecision()
 const {
   activeHeader, activeReg, isAssignedToUser,
   conditions,
@@ -27,11 +28,23 @@ const isRegApproved = computed((): boolean =>
 
 const isMainActionButtonVisible = computed((): boolean => {
   if (decisionIntent.value && decisionIntent.value === ApplicationActionsE.APPROVE) {
-    return (conditions.value.length > 0 || customConditions.value.length > 0)
+    return hasDecisionChanges.value
   } else {
-    return !!decisionIntent.value
+    return !!decisionIntent.value && hasDecisionChanges.value
   }
 })
+
+// track changes between original conditions and new conditions
+const hasDecisionChanges = computed(() =>
+  !isEqual(
+    activeReg.value.conditionsOfApproval,
+    {
+      customConditions: customConditions.value,
+      minBookingDays: minBookingDays.value,
+      predefinedConditions: conditions.value
+    }
+  )
+)
 
 const isApproveDecisionSelected = computed((): boolean => decisionIntent.value === ApplicationActionsE.APPROVE)
 
@@ -42,7 +55,16 @@ const approveRegistrationAction = () => {
     t('btn.yesApprove'),
     () => {
       closeConfirmActionModal()
-      updateRegistrationStatus(activeReg.value.id, RegistrationStatus.ACTIVE)
+      updateRegistrationStatus(
+        activeReg.value.id,
+        RegistrationStatus.ACTIVE,
+        decisionEmailContent.value.content,
+        {
+          predefinedConditions: conditions.value,
+          ...(customConditions.value && { customConditions: customConditions.value }),
+          ...(minBookingDays.value !== null && { minBookingDays: minBookingDays.value })
+        }
+      )
       refreshNuxtData()
     },
     t('btn.cancel')
@@ -59,10 +81,10 @@ const updateApprovalAction = () => {
       updateRegistrationStatus(
         activeReg.value.id,
         RegistrationStatus.ACTIVE,
-        decisionEmailContent.value,
+        decisionEmailContent.value.content,
         {
           predefinedConditions: conditions.value,
-          ...(customConditions.value.length > 0 && { customConditions: customConditions.value }),
+          ...(customConditions.value && { customConditions: customConditions.value }),
           ...(minBookingDays.value !== null && { minBookingDays: minBookingDays.value })
         }
       )
@@ -81,7 +103,8 @@ const cancelRegistrationAction = () => {
       closeConfirmActionModal()
       updateRegistrationStatus(
         activeReg.value.id,
-        RegistrationStatus.CANCELLED
+        RegistrationStatus.CANCELLED,
+        decisionEmailContent.value.content
       )
       refreshNuxtData()
     },
@@ -134,9 +157,9 @@ const sendNoticeAction = () => {
       closeConfirmActionModal()
       sendNoticeOfConsiderationForRegistration(
         activeReg.value.id,
-        decisionEmailContent.value
+        decisionEmailContent.value.content
       )
-      decisionEmailContent.value = ''
+      decisionEmailContent.value.content = ''
       refreshNuxtData()
     }
   )
@@ -258,6 +281,7 @@ const setAside = async () => {
                 ? t('btn.updateApproval') : t(`btn.${selectedAction?.label}`)"
               :color="selectedAction?.color || 'primary'"
               :icon="selectedAction?.icon"
+              :disabled="isMainActionDisabled"
               variant="outline"
               class="max-w-fit px-7 py-3"
               data-testid="main-action-button"
