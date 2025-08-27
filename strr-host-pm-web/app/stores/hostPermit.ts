@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import type { ApiHostApplication, HostApplicationResp, HostRegistrationResp } from '~/interfaces/host-api'
 import { formatHostUnitAddressUI, formatHostUnitDetailsUI } from '~/utils/host-formatting'
-import { needsBusinessLicenseUpload } from '~/utils/businessLicenseHelper'
 
 export const useHostPermitStore = defineStore('host/permit', () => {
   const ownerStore = useHostOwnerStore()
@@ -46,10 +45,7 @@ export const useHostPermitStore = defineStore('host/permit', () => {
     const jurisdiction = registration.value.unitDetails?.jurisdiction
 
     const needsBusinessLicense = registration.value.status === RegistrationStatus.ACTIVE &&
-      needsBusinessLicenseUpload(
-        jurisdiction,
-        isBusinessLicenseDocumentUploadEnabled.value
-      )
+      needsBusinessLicenseUpload(jurisdiction)
     return needsBusinessLicense
   })
 
@@ -66,7 +62,7 @@ export const useHostPermitStore = defineStore('host/permit', () => {
 
     const jurisdiction = applicationData.registration.strRequirements?.organizationNm
 
-    return needsBusinessLicenseUpload(jurisdiction, isBusinessLicenseDocumentUploadEnabled.value)
+    return needsBusinessLicenseUpload(jurisdiction)
   }
 
   // load Registration into application form (e.g. used for Renewals)
