@@ -157,7 +157,14 @@ const businessLicenseRegistrationConfig: SupportingDocumentsConfig = {
         {{ t('strr.label.strProhibitedAction') }}
       </ApplicationDetailsSection>
       <div class="grid grid-cols-12 items-start gap-4">
-        <div class="col-span-11 divide-y">
+        <div
+          :class="!isApplication &&
+            (activeReg?.status === RegistrationStatus.ACTIVE ||
+              activeReg?.status === RegistrationStatus.SUSPENDED)
+            ? 'col-span-11'
+            : 'col-span-12'"
+          class="divide-y"
+        >
           <ApplicationDetailsSection
             v-if="hasBlSection"
             :label="t('strr.label.businessLicence')"
@@ -261,9 +268,13 @@ const businessLicenseRegistrationConfig: SupportingDocumentsConfig = {
             </div>
           </ApplicationDetailsSection>
         </div>
-        <div class="col-span-1 flex justify-end">
+        <div
+          v-if="!isApplication &&
+            (activeReg?.status === RegistrationStatus.ACTIVE ||
+              activeReg?.status === RegistrationStatus.SUSPENDED)"
+          class="col-span-1 flex justify-end"
+        >
           <UButton
-            v-if="!isApplication"
             label="Add Document"
             variant="outline"
             size="sm"
