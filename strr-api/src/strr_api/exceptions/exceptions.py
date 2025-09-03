@@ -84,3 +84,17 @@ class ExternalServiceException(BaseExceptionE):
         self.error = f"{repr(self.error)}, {self.status_code}"
         if not self.status_code:
             self.status_code = HTTPStatus.BAD_GATEWAY
+
+
+@dataclass
+class JurisdictionUpdateException(BaseExceptionE):
+    """Jurisdiction update exception."""
+
+    def __post_init__(self):
+        """Return a valid JurisdictionUpdateException."""
+        if not self.error:
+            self.error = "Jurisdiction update error while processing request."
+        else:
+            self.error = f"{repr(self.error)}, {self.status_code}"
+        if not self.status_code:
+            self.status_code = HTTPStatus.UNPROCESSABLE_ENTITY
