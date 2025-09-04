@@ -9,7 +9,7 @@ const {
   activeReg,
   activeHeader,
   decisionEmailFormRef,
-  sendEmailSchema,
+  sendNocSchema,
   conditions,
   customConditions,
   minBookingDays,
@@ -26,6 +26,7 @@ const setDecisionIntent = (action: ApplicationActionsE | RegistrationActionsE) =
   conditions.value = []
   customConditions.value = null
   minBookingDays.value = null
+  decisionEmailFormRef.value.clear()
 }
 
 const isApproveDecisionSelected = computed((): boolean => decisionIntent.value === ApplicationActionsE.APPROVE)
@@ -56,7 +57,7 @@ const decisionButtons = [
     action: ApplicationActionsE.APPROVE,
     label: t('btn.approve'),
     color: 'green',
-    activeStyle: 'bg-str-bgGreen text-str-textGray hover:bg-white',
+    activeStyle: 'bg-str-bgGreen text-str-textGray hover:bg-str-bgGreen',
     icon: 'i-mdi-check',
     disabled: !enableApproveButton.value
   },
@@ -64,7 +65,7 @@ const decisionButtons = [
     action: ApplicationActionsE.SEND_NOC,
     label: t('btn.sendNotice'),
     color: 'blue',
-    activeStyle: 'bg-str-bgBlue text-str-textGray hover:bg-white',
+    activeStyle: 'bg-str-bgBlue text-str-textGray hover:bg-str-bgBlue',
     icon: 'i-mdi-send',
     disabled: !activeHeader.value.examinerActions.includes(ApplicationActionsE.SEND_NOC)
   },
@@ -72,7 +73,7 @@ const decisionButtons = [
     action: ApplicationActionsE.REJECT,
     label: t('btn.decline'),
     color: 'red',
-    activeStyle: 'bg-str-bgRed text-str-textGray hover:bg-white',
+    activeStyle: 'bg-str-bgRed text-str-textGray hover:bg-str-bgRed',
     icon: 'i-mdi-close',
     disabled: !activeHeader.value.examinerActions.includes(ApplicationActionsE.REJECT),
     hidden: !isApplication.value
@@ -81,7 +82,7 @@ const decisionButtons = [
     action: RegistrationActionsE.CANCEL,
     label: t('btn.cancel'),
     color: 'red',
-    activeStyle: 'bg-str-bgRed text-str-textGray hover:bg-white',
+    activeStyle: 'bg-str-bgRed text-str-textGray hover:bg-str-bgRed',
     icon: 'i-mdi-close',
     disabled: !activeHeader.value.examinerActions.includes(RegistrationActionsE.CANCEL),
     hidden: isApplication.value
@@ -216,7 +217,7 @@ onMounted(() => {
               <UButton
                 v-for="(button, i) in decisionButtons.filter(btn => !btn.hidden)"
                 :key="'button-' + i"
-                class="h-[44px] grow justify-center text-base"
+                class="h-[44px] grow justify-center"
                 :class="decisionIntent === button.action && button.activeStyle"
                 :color="button.color || 'primary'"
                 :disabled="button.disabled || !isAssignedToUser"
@@ -225,13 +226,6 @@ onMounted(() => {
                 variant="outline"
                 :data-testid="`decision-button-${button.action.toLocaleLowerCase()}`"
                 size="md"
-                :ui="{
-                  icon: {
-                    size: {
-                      md: 'h-6 w-6'
-                    }
-                  }
-                }"
                 @click="setDecisionIntent(button.action)"
               />
               <UDropdown
@@ -240,7 +234,7 @@ onMounted(() => {
               >
                 <UButton
                   :label="t('btn.moreActions')"
-                  class="h-[44px] px-5 text-base"
+                  class="h-[44px] px-5"
                   color="blue"
                   trailing-icon="i-mdi-chevron-down"
                   variant="outline"
@@ -263,7 +257,7 @@ onMounted(() => {
             </div>
             <UForm
               ref="decisionEmailFormRef"
-              :schema="sendEmailSchema"
+              :schema="sendNocSchema"
               :state="decisionEmailContent"
               :validate-on="['submit']"
               class="mt-4"
@@ -275,15 +269,15 @@ onMounted(() => {
                   :aria-label="decisionEmailPlaceholder"
                   data-testid="decision-email"
                   color="gray"
-                  class="bg-[#F1F3F5] focus:ring-0"
                   auto-resize
                   :disabled="isDecisionEmailDisabled"
                   :ui="{
-                    base: 'h-[290px]',
+                    base: 'h-[290px] !bg-str-bgGray focus:ring-0',
                     padding: {
                       sm: 'p-4'
                     }
                   }"
+                  @update:model-value="decisionEmailFormRef.clear()"
                 />
               </UFormGroup>
             </UForm>

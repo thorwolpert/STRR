@@ -3,7 +3,7 @@ import { refreshNuxtData } from 'nuxt/app'
 import isEqual from 'lodash/isEqual'
 
 const { t } = useI18n()
-const { decisionIntent, isMainActionDisabled } = useExaminerDecision()
+const { decisionIntent, isMainActionDisabled, isDecisionEmailValid } = useExaminerDecision()
 const {
   activeHeader, activeReg, isAssignedToUser,
   conditions,
@@ -94,7 +94,10 @@ const updateApprovalAction = () => {
   )
 }
 
-const cancelRegistrationAction = () => {
+const cancelRegistrationAction = async () => {
+  // validate email form
+  if (!await isDecisionEmailValid()) { return }
+
   openConfirmActionModal(
     t('modal.cancelRegistration.title'),
     t('modal.cancelRegistration.message'),
@@ -136,18 +139,25 @@ const reinstateRegistration = () => {
     t('btn.yesReinstate'),
     () => {
       closeConfirmActionModal()
-      updateRegistrationStatus(activeReg.value.id, RegistrationStatus.ACTIVE)
+      updateRegistrationStatus(
+        activeReg.value.id,
+        RegistrationStatus.ACTIVE,
+        decisionEmailContent.value.content,
+        {
+          predefinedConditions: conditions.value,
+          ...(customConditions.value && { customConditions: customConditions.value }),
+          ...(minBookingDays.value !== null && { minBookingDays: minBookingDays.value })
+        }
+      )
       refreshNuxtData()
     },
     t('btn.cancel')
   )
 }
 
-const sendNoticeAction = () => {
-  // TODO: validate email form
-  //   if (!(await validateForm(decisionEmailFormRef.value, true).then(errors => !errors))) {
-  //     return
-  //   }
+const sendNoticeAction = async () => {
+  // validate email form
+  if (!await isDecisionEmailValid()) { return }
 
   openConfirmActionModal(
     t('modal.sendNotice.title'),
