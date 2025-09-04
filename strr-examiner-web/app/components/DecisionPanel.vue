@@ -262,7 +262,13 @@ onMounted(() => {
               :validate-on="['submit']"
               class="mt-4"
             >
-              <UFormGroup name="content">
+              <UFormGroup
+                name="content"
+                :ui="{
+                  wrapper: 'mb-4',
+                  error: 'text-xs/5 mt-1 absolute'
+                }"
+              >
                 <UTextarea
                   v-model="decisionEmailContent.content"
                   :placeholder="decisionEmailPlaceholder"
