@@ -1,4 +1,4 @@
-# Copyright © 2024 Province of British Columbia
+# Copyright © 2025 Province of British Columbia
 #
 # Licensed under the BSD 3 Clause License, (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,21 +31,26 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-"""This module wraps helper services used by the API."""
-from .user_service import UserService  # isort: skip
-from .account_service import AccountService
-from .application_service import ApplicationService
-from .auth_service import AuthService
-from .document_service import DocumentService
-from .events_service import EventsService
-from .gcp_storage_service import GCPStorageService
-from .geocoder_service import GeoCoderService
-from .payment_service import PayService
-from .registration_service import RegistrationService
-from .rest_service import RestService
-from .snapshot_service import SnapshotService
 
-from .ltsa_service import LtsaService  # isort: skip
-from .approval_service import ApprovalService  # isort: skip
 
-strr_pay = PayService()
+"""Snapshot service that helps take registration snapshots when required."""
+from datetime import datetime
+
+from strr_api.models import Registration, RegistrationSnapshot
+from strr_api.services.registration_service import RegistrationService
+
+
+class SnapshotService:
+    """Service to create registration snapshots"""
+
+    @staticmethod
+    def snapshot_registration(registration: Registration) -> RegistrationSnapshot:
+        """Creates registration snapshots."""
+        registration_snapshot = RegistrationSnapshot()
+        registration_snapshot.registration_id = registration.id
+        registration_snapshot.snapshot_datetime = datetime.utcnow()
+        registration_snapshot.snapshot_data = RegistrationService.serialize(registration=registration)
+        latest_snapshot = RegistrationSnapshot.find_latest_snapshot(registration.id)
+        registration_snapshot.version = (latest_snapshot.version + 1) if latest_snapshot else 1
+        registration_snapshot.save()
+        return registration_snapshot
