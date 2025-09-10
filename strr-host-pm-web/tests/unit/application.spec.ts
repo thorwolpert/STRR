@@ -168,4 +168,20 @@ describe('Application Page', () => {
       expect(visibleForms.length).toBe(1)
     })
   })
+
+  describe('Help Component', () => {
+    it('contains FormUnitAddressHelp when help is expanded', async () => {
+      await wrapper.findComponent(ConnectStepper).vm.$emit('update:activeStepIndex', 0)
+
+      const defineRentalForm = wrapper.findComponent({ name: 'FormDefineYourRental' })
+      expect(defineRentalForm.exists()).toBe(true)
+    })
+
+    it('help component is hidden when help state is collapsed', async () => {
+      await wrapper.findComponent(ConnectStepper).vm.$emit('update:activeStepIndex', 0)
+
+      const defineRentalForm = wrapper.findComponent({ name: 'FormDefineYourRental' })
+      expect(defineRentalForm.exists()).toBe(true)
+    })
+  })
 })

@@ -3,7 +3,6 @@ import { z } from 'zod'
 export const useHostApplicationStore = defineStore('host/application', () => {
   const { t } = useI18n()
   const { postApplication } = useStrrApi()
-
   const propertyStore = useHostPropertyStore()
   const reqStore = usePropertyReqStore()
   const ownerStore = useHostOwnerStore()

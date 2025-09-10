@@ -38,9 +38,10 @@ watch(postalCode, () => {
 </script>
 <template>
   <div class="space-y-4">
-    <div class="font-bold">
-      {{ $t('label.address') }}
-    </div>
+    <FormUnitAddressHelp
+      :help-title="$t('help.address.title')"
+      :label="$t('label.address')"
+    />
     <UCheckbox
       v-model="hasNoStreetAddress"
       label="I do not have a street address"
