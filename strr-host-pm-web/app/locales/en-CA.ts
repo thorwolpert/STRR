@@ -25,7 +25,8 @@ export default {
       title: 'Important: Business licence – Required.',
       description: 'Your local government requires a business licence to operate a short-term rental at this address.'
     },
-    platformMatchRequired: '{boldStart}Important: Platform Address Match Required.{boldEnd} If you’re hosting on a Platform (e.g., Airbnb, Vrbo), make sure the address listed there matches this STR Registry address exactly. If it doesn’t, please contact the Platform directly to update it.'
+    platformMatchRequired: '{boldStart}Important: Platform Address Match Required.{boldEnd} If you’re hosting on a Platform (e.g., Airbnb, Vrbo), make sure the address listed there matches this STR Registry address exactly. If it doesn’t, please contact the Platform directly to update it.',
+    strataHotelUnit: '{boldStart}Important:{boldEnd} Strata Hotel Unit applications must be connected to a Strata Hotel platform registration. If your Strata Hotel platform is not registered, this application {boldStart}may be declined{boldEnd}.'
   },
   certify: {
     1: '{terms} I agree to comply with the {link} of registration.',
@@ -155,7 +156,12 @@ export default {
       nicknameOpt: 'Nickname (Optional)',
       parcelIdentifier: 'Parcel Identifier (Required if one exists)',
       parcelIdentifierOpt: 'Parcel Identifier (Optional)',
+      strataRegNum: 'Enter your strata hotel platform registration number',
+      hostType: 'Property Host Type',
+      strRentalType: 'Short-term Rental Property/Unit Type',
       propertyType: 'Rental Unit Type',
+      selectPropertyType: 'Select your property type',
+      rentalUnitSetupNote: '{boldStart}Note:{boldEnd} Some options may not be available due to local government restrictions according to your address above.',
       role: {
         CO_HOST: 'Co-host',
         HOST: 'Property Host',
@@ -216,7 +222,8 @@ export default {
       craTaxNumber: '9-digit Social Insurance Number (SIN), Individual Tax Number (ITN), Temporary Tax Number (TTN)',
       listingLink: 'e.g., http://www.airbnb.ca/your_listing123',
       nickname: 'e.g., My Guest Suite',
-      parcelIdentifier: 'This is a nine-digit number that identifies the parcel in the land title of your property.'
+      parcelIdentifier: 'This is a nine-digit number that identifies the parcel in the land title of your property.',
+      strataRegNumHint: 'This is a unique code for each registered strata hotel. Ask the strata hotel management for this code.'
     },
     review: {
       brand: {
@@ -342,7 +349,8 @@ export default {
     learnMore: 'Learn More',
     viewRequiredDocs: 'View required documents',
     viewFeeSchedule: 'View fee schedule',
-    selectStrataHotelCategory: 'Learn more about strata hotel categories'
+    selectStrataHotelCategory: 'Learn more about strata hotel categories',
+    strataPlatformRegNum: 'Where do I find the Strata Hotel Platform Registration Number?'
   },
   modal: {
     info: {
@@ -369,6 +377,14 @@ export default {
       title: 'Remove Rental Unit Address?',
       content: 'Removing the rental unit address will reset this application. Any information you have entered will be lost. Are you sure you want to continue?',
       confirmBtn: 'Yes, Remove Address'
+    },
+    strataPlatformNumHelp: {
+      title: 'Help with Strata Hotel Platform Registration Number',
+      link: 'https://www2.gov.bc.ca/gov/content/housing-tenancy/short-term-rentals/registry/platform-registration/platform-requirements#rep',
+      linkTitle: 'Strata Platform Representative',
+      p1: 'Contact your {link} to find the Strata Hotel Platform registration number for your the Strata Hotel.',
+      p2: 'This is a unique identifier for every strata hotel and starts with the letters "ST" followed by 9 digits (i.e: ST123456789). We need this number before we can issue an individual registration number for you to use on hosting platforms.',
+      closeBtn: 'Close'
     }
   },
   table: {
@@ -384,6 +400,7 @@ export default {
     followingDocsMayBeRequired: 'The following documentation may be required for this registration:',
     rentalUnitSetupLegend: 'Required: Select the set-up of the property, host principal residence, and rental unit.',
     typeOfSpaceLegend: 'Required: Select the type of space of the rental unit.',
+    hostTypeLegend: 'Required',
     thisPropIsInLocWithReqs: 'This property is in a location where the following requirements apply:',
     thisPropCouldBeInLocWithReqs: 'This property could be in a location where the following requirements apply:',
     giveUnitNickname: 'Give your rental unit a nickname to help you identify it, especially if you manage multiple units.',
@@ -489,6 +506,7 @@ export default {
     },
     businessLicense: 'Please enter a valid business licence number',
     strataHotelCategory: 'Please select a category',
+    strataPlatformRegNum: 'This number should always begin with ST and be followed by 9 digits',
     businessLicenseExpiryDate: 'Please select the expiry date for the business licence',
     dateOfBirth: 'Please enter the birthdate of this individual',
     numberOfRooms: {
@@ -500,6 +518,7 @@ export default {
     propertyType: 'Please select the rental unit type of this rental unit',
     onlineListings: 'Please enter a valid URL (i.e. https://www.bcregistry.gov.bc.ca)',
     rentalUnitSetupType: 'Please select the setup type of the rental unit',
+    rentalUnitSetupOption: 'Please select the rental unit setup option',
     typeOfSpace: 'Please select the type of space of the unit',
     ownerRole: 'Please select the role',
     missingReqDocs: 'Missing required documents. Please see above for details.',
@@ -548,10 +567,10 @@ export default {
     }
   },
   propertyType: {
-    SECONDARY_SUITE: 'Secondary Suite',
-    ACCESSORY_DWELLING: 'Accessory Dwelling Unit',
+    SECONDARY_SUITE: 'Secondary Suite (basement suite)',
+    ACCESSORY_DWELLING: 'Accessory Dwelling Unit (e.g., Laneway home, garden suite, etc.)',
     TOWN_HOME: 'Townhome',
-    MULTI_UNIT_HOUSING: 'Multi-unit Housing (e.g., Duplex, triplex)',
+    MULTI_UNIT_HOUSING: 'Multi-unit Housing (e.g., Condo, Apartment, Townhome, Duplex, triplex)',
     CONDO_OR_APT: 'Condo or Apartment',
     STRATA_HOTEL: 'Strata Hotel',
     SINGLE_FAMILY_HOME: 'Single Family Home',
@@ -565,11 +584,37 @@ export default {
     SHARED_ACCOMMODATION: 'Room in a Home (guest rent only a portion of a residence (e.g. a bedroom) and may share common spaces with the host or other guests. If you select this option, you will be charged a fee per room.',
     undefined: 'Not Selected'
   },
+  propertyHostType: {
+    OWNER: 'The owner of this unit',
+    FRIEND_RELATIVE: 'A friend or relative of the owner',
+    LONG_TERM_TENANT: 'The long-term tenant of this unit'
+  },
   rentalUnitSetupType: {
     WHOLE_PRINCIPAL_RESIDENCE: "This unit is the host's principal residence or a room within the host's principal residence", // TODO: update enum to not be whole pr ???
     UNIT_ON_PR_PROPERTY: "This unit is not the host's principal residence but it's on the same property",
     UNIT_NOT_ON_PR_PROPERTY: "This unit is not on same property as host's principal residence",
     undefined: 'Not Selected'
+  },
+  rentalUnitSetupOption: {
+    OPTION_1: {
+      label: "Option 1: You are short-term renting a unit on a property you don't live at",
+      desc: "This option is for renting out a unit on a property that is {boldStart}different from where you live{boldEnd}. This is only available in certain locations, confirm with local government if this applies. This is typically an investment property, a vacation home you don't live in, or any other property you own but do not occupy."
+    },
+    OPTION_2: {
+      label: 'Option 2: You are short-term renting a separate unit on the property where you live',
+      desc: "This option applies if you live at a property and are short term renting out a separate, self-contained unit (secondary or basement suite, laneway house or garden suite) on that same property. You live in the main unit on the property and you are renting out the space you don't physically live in.",
+      scenarioA: '{boldStart}Scenario A:{boldEnd} You live in the main part of a house and rent out the basement suite.',
+      scenarioB: '{boldStart}Scenario B:{boldEnd} You live in the main house and rent out a separate laneway house or garden suite in the backyard.',
+      scenarioC: '{boldStart}Scenario C:{boldEnd} You live in the basement suite, laneway house or garden suite in the backyard and rent out the main house.',
+      alert: "{boldStart}Common point of confusion:{boldEnd} Even though a basement suite is part of the same building, it's considered a separate unit. If the guest does not have access to all of your amenities, this is your option. Therefore, if you live upstairs and rent the basement, you must select {boldStart}Option 2{boldEnd}."
+    },
+    OPTION_3: {
+      label: 'Option 3: You are short-term renting or sharing the space you live in',
+      desc: 'This option applies if you are short-term renting out a part of, or the entirety of, the unit you live in.',
+      scenarioA: "{boldStart}Scenario A:{boldEnd} You short-term rent out your entire unit while you're away on vacation.",
+      scenarioB: '{boldStart}Scenario B:{boldEnd} You short-term rent out a spare bedroom(s) in the unit where you live and the guest has access to your common amenities.',
+      scenarioC: '{boldStart}Scenario C:{boldEnd} If you are a tenant renting a unit (secondary or basement suite, laneway house or garden suite), you can short-term rent only that unit in which you live in while you are away on vacation.'
+    }
   },
   ownershipType: {
     RENT: 'Renter',

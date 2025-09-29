@@ -43,6 +43,9 @@ export interface ApiUnitDetails {
   prExemptReason?: PrExemptionReason
   blExemptReason?: string
   strataHotelCategory?: StrataHotelCategory
+  strataHotelRegistrationNumber?: string
+  hostType?: PropertyHostType
+  rentalUnitSetupOptions?: RentalUnitSetupOption
 }
 
 export interface ApiUnitAddress extends ApiBaseAddress {

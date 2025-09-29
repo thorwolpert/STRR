@@ -7,6 +7,8 @@ const config = useRuntimeConfig().public
 
 const { t } = useI18n()
 const reqStore = usePropertyReqStore()
+const { isNewRentalUnitSetupEnabled } = useHostFeatureFlags()
+const hostPmModal = useHostPmModals()
 
 const strataHotelCategoryOptions = [
   {
@@ -42,20 +44,17 @@ onMounted(async () => {
   >
     <ConnectFormSection
       :title="$t('label.strataHotelCategory')"
-      class="-mx-4 md:-mx-10"
-      :error="isComplete && hasFormErrors(strataHotelCategoryFormRef, ['category'])"
+      class="-mx-4 mt-4 md:-mx-10"
+      :error="props.isComplete && hasFormErrors(strataHotelCategoryFormRef, ['category', 'strataPlatformRegNum'])"
       data-testid="strata-hotel-category-section"
     >
       <UFormGroup name="category">
         <URadioGroup
           v-model="reqStore.strataHotelCategory.category"
           :options="strataHotelCategoryOptions"
-          aria-label="$t('label.strataHotelCategory')"
-          aria-invalid="error !== undefined"
-          :class="isComplete && reqStore.strataHotelCategory.category === undefined
-            ? 'border-red-600 border-2 pt-4'
-            : 'pt-4'
-          "
+          :aria-label="$t('label.strataHotelCategory')"
+          :aria-invalid="error !== undefined"
+          class="max-w-full pt-4"
           data-testid="strata-hotel-category-radio-group"
         >
           <template #legend>
@@ -73,6 +72,51 @@ onMounted(async () => {
           </template>
         </URadioGroup>
       </UFormGroup>
+      <div
+        v-if="isNewRentalUnitSetupEnabled"
+        class="mt-8"
+      >
+        <ConnectFormFieldGroup
+          id="strata-platform-reg-number"
+          v-model="reqStore.strataHotelCategory.strataPlatformRegNum"
+          class="max-w-full"
+          name="strataPlatformRegNum"
+          :help="$t('strr.hint.strataRegNumHint')"
+          :placeholder="t('strr.label.strataRegNum')"
+          :class="props.isComplete && hasFormErrors(strataHotelCategoryFormRef, ['strataPlatformRegNum'])"
+        />
+
+        <UButton
+          :label="$t('link.strataPlatformRegNum')"
+          leading-icon="i-mdi-info-outline"
+          variant="link"
+          class="mt-6 text-base"
+          :padded="false"
+          :ui="{ gap: { sm: 'gap-x-1.5' } }"
+          data-testid="strata-platform-reg-num-help"
+          @click="hostPmModal.openStrataRegNumberHelpModal"
+        />
+
+        <UAlert
+          color="yellow"
+          class="mt-8 w-auto"
+          icon="i-mdi-alert"
+          :close-button="null"
+          variant="subtle"
+          :ui="{
+            inner: 'pt-0',
+            padding: 'p-6',
+            icon: {
+              base: 'w-5 h-5 self-start'
+            }
+          }"
+          data-testid="alert-strata-hotel-unit"
+        >
+          <template #title>
+            <ConnectI18nHelper translation-path="alert.strataHotelUnit" />
+          </template>
+        </UAlert>
+      </div>
     </ConnectFormSection>
   </UForm>
 </template>
