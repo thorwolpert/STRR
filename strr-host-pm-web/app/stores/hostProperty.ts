@@ -232,19 +232,19 @@ export const useHostPropertyStore = defineStore('host/property', () => {
       PropertyType.FLOAT_HOME,
       PropertyType.STRATA_HOTEL
     ], {
-      errorMap: () => ({ message: t('validation.propertyType') })
+      errorMap: () => ({ message: t('validation.strPropertyType') })
     }),
     hostType: z.enum([
       PropertyHostType.OWNER,
       PropertyHostType.FRIEND_RELATIVE,
       PropertyHostType.LONG_TERM_TENANT
     ], {
-      errorMap: () => ({ message: t('validation.propertyType') })
+      errorMap: () => ({ message: t('validation.hostType') })
     }),
     rentalUnitSetupOption: z.enum([
-      RentalUnitSetupOption.OPTION_1,
-      RentalUnitSetupOption.OPTION_2,
-      RentalUnitSetupOption.OPTION_3
+      RentalUnitSetupOption.DIFFERENT_PROPERTY,
+      RentalUnitSetupOption.SEPARATE_UNIT_SAME_PROPERTY,
+      RentalUnitSetupOption.PRIMARY_RESIDENCE_OR_SHARED_SPACE
     ], {
       errorMap: () => ({ message: t('validation.rentalUnitSetupOption') })
     })
@@ -259,7 +259,7 @@ export const useHostPropertyStore = defineStore('host/property', () => {
     numberOfRoomsForRent: 0,
     // fields for new form
     hostType: undefined,
-    rentalUnitSetupOption: null
+    rentalUnitSetupOption: undefined
   })
 
   const unitDetails = ref<UiUnitDetails>(getEmptyUnitDetails())

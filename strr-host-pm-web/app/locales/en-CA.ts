@@ -157,6 +157,7 @@ export default {
       parcelIdentifier: 'Parcel Identifier (Required if one exists)',
       parcelIdentifierOpt: 'Parcel Identifier (Optional)',
       strataRegNum: 'Enter your strata hotel platform registration number',
+      strataPlatformRegistrationNumber: 'Strata Hotel Platform Registration Number',
       hostType: 'Property Host Type',
       strRentalType: 'Short-term Rental Property/Unit Type',
       propertyType: 'Rental Unit Type',
@@ -172,7 +173,7 @@ export default {
       shortTermRental: 'Short-Term Rental',
       supportingDocs: 'Supporting Documents',
       rentalUnit: 'Rental Unit',
-      rentalUnitSetup: 'Rental Unit Set-up',
+      rentalUnitSetup: 'Rental Unit Setup',
       rentalUnitName: 'Rental Unit Name',
       rentalUnitNameOpt: 'Rental Unit Name (Optional)',
       parcelId: 'Parcel Identifier (PID)',
@@ -350,7 +351,7 @@ export default {
     viewRequiredDocs: 'View required documents',
     viewFeeSchedule: 'View fee schedule',
     selectStrataHotelCategory: 'Learn more about strata hotel categories',
-    strataPlatformRegNum: 'Where do I find the Strata Hotel Platform Registration Number?'
+    strataHotelRegistrationNumber: 'Where do I find the Strata Hotel Platform Registration Number?'
   },
   modal: {
     info: {
@@ -506,7 +507,7 @@ export default {
     },
     businessLicense: 'Please enter a valid business licence number',
     strataHotelCategory: 'Please select a category',
-    strataPlatformRegNum: 'This number should always begin with ST and be followed by 9 digits',
+    strataHotelRegistrationNumber: 'This number should always begin with ST and be followed by 9 digits',
     businessLicenseExpiryDate: 'Please select the expiry date for the business licence',
     dateOfBirth: 'Please enter the birthdate of this individual',
     numberOfRooms: {
@@ -516,9 +517,11 @@ export default {
     ownershipType: 'Please select the ownership type of this rental unit',
     parcelIdentifier: 'The parcel identifier must be a nine-digit number',
     propertyType: 'Please select the rental unit type of this rental unit',
+    strPropertyType: 'Please select a short-term rental property/unit type',
     onlineListings: 'Please enter a valid URL (i.e. https://www.bcregistry.gov.bc.ca)',
     rentalUnitSetupType: 'Please select the setup type of the rental unit',
-    rentalUnitSetupOption: 'Please select the rental unit setup option',
+    rentalUnitSetupOption: 'Please select a rental unit setup',
+    hostType: 'Please select a property host type',
     typeOfSpace: 'Please select the type of space of the unit',
     ownerRole: 'Please select the role',
     missingReqDocs: 'Missing required documents. Please see above for details.',
@@ -587,7 +590,8 @@ export default {
   propertyHostType: {
     OWNER: 'The owner of this unit',
     FRIEND_RELATIVE: 'A friend or relative of the owner',
-    LONG_TERM_TENANT: 'The long-term tenant of this unit'
+    LONG_TERM_TENANT: 'The long-term tenant of this unit',
+    undefined: 'Not Selected'
   },
   rentalUnitSetupType: {
     WHOLE_PRINCIPAL_RESIDENCE: "This unit is the host's principal residence or a room within the host's principal residence", // TODO: update enum to not be whole pr ???
@@ -596,11 +600,11 @@ export default {
     undefined: 'Not Selected'
   },
   rentalUnitSetupOption: {
-    OPTION_1: {
+    DIFFERENT_PROPERTY: {
       label: "Option 1: You are short-term renting a unit on a property you don't live at",
       desc: "This option is for renting out a unit on a property that is {boldStart}different from where you live{boldEnd}. This is only available in certain locations, confirm with local government if this applies. This is typically an investment property, a vacation home you don't live in, or any other property you own but do not occupy."
     },
-    OPTION_2: {
+    SEPARATE_UNIT_SAME_PROPERTY: {
       label: 'Option 2: You are short-term renting a separate unit on the property where you live',
       desc: "This option applies if you live at a property and are short term renting out a separate, self-contained unit (secondary or basement suite, laneway house or garden suite) on that same property. You live in the main unit on the property and you are renting out the space you don't physically live in.",
       scenarioA: '{boldStart}Scenario A:{boldEnd} You live in the main part of a house and rent out the basement suite.',
@@ -608,12 +612,15 @@ export default {
       scenarioC: '{boldStart}Scenario C:{boldEnd} You live in the basement suite, laneway house or garden suite in the backyard and rent out the main house.',
       alert: "{boldStart}Common point of confusion:{boldEnd} Even though a basement suite is part of the same building, it's considered a separate unit. If the guest does not have access to all of your amenities, this is your option. Therefore, if you live upstairs and rent the basement, you must select {boldStart}Option 2{boldEnd}."
     },
-    OPTION_3: {
+    PRIMARY_RESIDENCE_OR_SHARED_SPACE: {
       label: 'Option 3: You are short-term renting or sharing the space you live in',
       desc: 'This option applies if you are short-term renting out a part of, or the entirety of, the unit you live in.',
       scenarioA: "{boldStart}Scenario A:{boldEnd} You short-term rent out your entire unit while you're away on vacation.",
       scenarioB: '{boldStart}Scenario B:{boldEnd} You short-term rent out a spare bedroom(s) in the unit where you live and the guest has access to your common amenities.',
       scenarioC: '{boldStart}Scenario C:{boldEnd} If you are a tenant renting a unit (secondary or basement suite, laneway house or garden suite), you can short-term rent only that unit in which you live in while you are away on vacation.'
+    },
+    undefined: {
+      label: 'Not Selected'
     }
   },
   ownershipType: {
