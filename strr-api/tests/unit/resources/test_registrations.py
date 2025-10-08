@@ -8,7 +8,7 @@ from unittest.mock import patch
 import pytest
 from dateutil.relativedelta import relativedelta
 
-from strr_api.enums.enum import PaymentStatus, RegistrationNocStatus, RegistrationStatus
+from strr_api.enums.enum import ApplicationType, PaymentStatus, RegistrationNocStatus, RegistrationStatus
 from strr_api.exceptions import ExternalServiceException
 from strr_api.models import Application, Events, Registration, User
 from tests.unit.utils.auth_helpers import PUBLIC_USER, STRR_EXAMINER, create_header
@@ -536,6 +536,79 @@ def test_get_active_registration_todos_outside_renewal_window(session, client, j
     rv = client.get(f"/registrations/{registration.id}/todos", headers=headers)
     response_json = rv.json
     assert response_json.get("todos") == []
+
+
+def test_get_todos_with_renewal_states(session, client, jwt):
+    """Test renewal todos with draft, payment due status and default."""
+    headers = create_header(jwt, [PUBLIC_USER], "Account-Id")
+    headers["Account-Id"] = ACCOUNT_ID
+
+    registration_end_date = datetime.utcnow() + timedelta(days=24)
+    user = User(
+        username="testUser",
+        firstname="Test",
+        lastname="User",
+        iss="test",
+        sub=f"sub{random.randint(0, 99999)}",
+        idp_userid="testUserID",
+        login_source="testLogin",
+    )
+    user.save()
+
+    registration = Registration(
+        start_date=registration_end_date - timedelta(days=340),
+        expiry_date=registration_end_date,
+        status=RegistrationStatus.ACTIVE,
+        registration_type="HOST",
+        sbc_account_id=ACCOUNT_ID,
+        registration_number="H1234567",
+        user_id=user.id,
+    )
+    registration.save()
+
+    # default
+    rv = client.get(f"/registrations/{registration.id}/todos", headers=headers)
+    response_json = rv.json
+    todos = response_json.get("todos")
+    assert len(todos) == 1
+    assert todos[0].get("task").get("type") == "REGISTRATION_RENEWAL"
+    assert todos[0].get("task").get("detail") is None
+
+    # Draft renewal application
+    draft_application = Application(
+        type=ApplicationType.RENEWAL.value,
+        status=Application.Status.DRAFT,
+        payment_account=str(ACCOUNT_ID),
+        registration_id=registration.id,
+        application_json={},
+        application_number=Application.generate_unique_application_number(),
+    )
+    draft_application.save()
+
+    rv = client.get(f"/registrations/{registration.id}/todos", headers=headers)
+    response_json = rv.json
+    todos = response_json.get("todos")
+    assert len(todos) == 1
+    assert todos[0].get("task").get("type") == "REGISTRATION_RENEWAL_DRAFT"
+    assert todos[0].get("task").get("detail") == draft_application.application_number
+
+    # Payment due renewal application
+    payment_due_application = Application(
+        type=ApplicationType.RENEWAL.value,
+        status=Application.Status.PAYMENT_DUE,
+        payment_account=str(ACCOUNT_ID),
+        registration_id=registration.id,
+        application_json={},
+        application_number=Application.generate_unique_application_number(),
+    )
+    payment_due_application.save()
+
+    rv = client.get(f"/registrations/{registration.id}/todos", headers=headers)
+    response_json = rv.json
+    todos = response_json.get("todos")
+    assert len(todos) == 1
+    assert todos[0].get("task").get("type") == "REGISTRATION_RENEWAL_PAYMENT_PENDING"
+    assert todos[0].get("task").get("detail") == payment_due_application.application_number
 
 
 @patch("strr_api.services.strr_pay.create_invoice", return_value=MOCK_INVOICE_RESPONSE)
