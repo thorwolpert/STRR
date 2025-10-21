@@ -23,6 +23,8 @@ const { unitAddress } = storeToRefs(useHostPropertyStore())
 
 const {
   isEligibleForRenewal,
+  hasRegistrationRenewalDraft,
+  renewalDraftId,
   renewalDueDate,
   renewalDateCounter,
   isRenewalPeriodClosed
@@ -146,7 +148,11 @@ definePageMeta({
 })
 
 // watch for Registration Renewals props and update related ToDos
-watch([isRenewalsEnabled, isRenewalPeriodClosed, registration, isEligibleForRenewal], () => {
+watch([isRenewalsEnabled,
+  isRenewalPeriodClosed,
+  registration,
+  isEligibleForRenewal,
+  hasRegistrationRenewalDraft], () => {
   const translationProps = {
     newLine: '<br/>',
     boldStart: '<strong>',
@@ -176,9 +182,26 @@ watch([isRenewalsEnabled, isRenewalPeriodClosed, registration, isEligibleForRene
       button: {
         label: t('btn.renew'),
         action: async () => {
+          useState('renewalRegId', () => registration.value?.id)
           await navigateTo({
             path: localePath('/application'),
-            query: { renew: 'true', registrationId: registration.value?.id }
+            query: { renew: 'true' }
+          })
+        }
+      }
+    })
+  } else if (isRenewalsEnabled && registration.value && hasRegistrationRenewalDraft.value) {
+    // todo for existing renewal draft
+    todos.value.push({
+      id: 'todo-renewal-draft',
+      title: 'Application to Renew Registration',
+      subtitle: 'DRAFT',
+      button: {
+        label: 'Resume',
+        action: async () => {
+          await navigateTo({
+            path: localePath('/application'),
+            query: { renew: 'true', applicationId: renewalDraftId.value }
           })
         }
       }

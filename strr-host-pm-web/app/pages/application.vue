@@ -12,6 +12,7 @@ const { unitDetails, propertyTypeFeeTriggers } = storeToRefs(propertyStore)
 const { showUnitDetailsForm, prRequirements } = storeToRefs(propertyReqStore)
 const { validateOwners } = useHostOwnerStore()
 const documentsStore = useDocumentStore()
+const { openConfirmUnsavedChanges } = useHostPmModals()
 const {
   submitApplication,
   validateUserConfirmation,
@@ -19,7 +20,7 @@ const {
 } = useHostApplicationStore()
 const permitStore = useHostPermitStore()
 
-const { applicationId, registrationId, isRenewal } = useRouterParams()
+const { applicationId, isRenewal } = useRouterParams()
 const { isSaveDraftEnabled, isNewRentalUnitSetupEnabled } = useHostFeatureFlags()
 const { fetchStrrFees, getApplicationFee } = useHostApplicationFee()
 const loading = ref(false)
@@ -40,17 +41,47 @@ const hostFee2 = ref<ConnectFeeItem | undefined>(undefined)
 const hostFee3 = ref<ConnectFeeItem | undefined>(undefined)
 const hostFee4 = ref<ConnectFeeItem | undefined>(undefined)
 
+const isRegRenewalFlow = computed(() => isRenewal.value && useState('renewalRegId').value)
+
+// show default confirm modal when closing or refreshing the tab while in renewal flow
+useEventListener(globalThis, 'beforeunload', (event: BeforeUnloadEvent) => {
+  if (isRegRenewalFlow.value) {
+    event.preventDefault()
+    event.returnValue = ''
+  }
+})
+
+// show custom confirm modal when navigating away within the app while in renewal flow
+onBeforeRouteLeave(async () => {
+  if (isRegRenewalFlow.value) {
+    return await openConfirmUnsavedChanges()
+  }
+  return true
+})
+
 onMounted(async () => {
   loading.value = true
   await initAlternatePaymentMethod()
   applicationReset()
   permitStore.$reset()
 
-  if (isRenewal.value && registrationId.value) {
-    await permitStore.loadHostRegistrationData(registrationId.value)
+  if (isRegRenewalFlow.value) {
+    const renewalRegId = useState('renewalRegId')
+    if (!renewalRegId.value) {
+      navigateTo(localePath('/dashboard'))
+      return
+    }
+    await permitStore.loadHostRegistrationData(renewalRegId.value as string)
+    permitStore.isRegistrationRenewal = true
+  } else if (isRenewal.value && applicationId.value) {
+    await permitStore.loadHostData(applicationId.value, true)
     permitStore.isRegistrationRenewal = true
   } else if (applicationId.value) {
     await permitStore.loadHostData(applicationId.value, true)
+    // for renewals draft keep the flag on
+    if (permitStore?.application.header.applicationType === 'renewal') {
+      permitStore.isRegistrationRenewal = true
+    }
   }
 
   const { fee1, fee2, fee3 } = await fetchStrrFees()
@@ -276,13 +307,10 @@ watch([activeStepIndex, () => permitStore.isRegistrationRenewal], () => {
     { action: () => navigateTo(localePath('/dashboard')), label: t('btn.cancel'), variant: 'outline' }
   ]
 
-  // do not show Save Draft buttons for registration renewals, show for eveything else
-  if (!permitStore.isRegistrationRenewal) {
-    leftActionButtons.push(
-      { action: () => saveApplication(true), label: t('btn.saveExit'), variant: 'outline' },
-      { action: saveApplication, label: t('btn.save'), variant: 'outline' }
-    )
-  }
+  leftActionButtons.push(
+    { action: () => saveApplication(true), label: t('btn.saveExit'), variant: 'outline' },
+    { action: saveApplication, label: t('btn.save'), variant: 'outline' }
+  )
 
   setButtonControl({
     leftButtons: isSaveDraftEnabled ? leftActionButtons : [],
