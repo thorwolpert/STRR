@@ -324,7 +324,7 @@ watch([activeStepIndex, () => permitStore.isRegistrationRenewal], () => {
   )
 
   setButtonControl({
-    leftButtons: isSaveDraftEnabled ? leftActionButtons : [],
+    leftButtons: isSaveDraftEnabled.value ? leftActionButtons : [],
     rightButtons: buttons
   })
 }, { immediate: true })
@@ -427,6 +427,7 @@ setOnBeforeSessionExpired(() => {
     <div v-if="activeStepIndex === 2" key="add-documents">
       <FormAddDocuments
         :is-complete="activeStep.complete"
+        :doc-upload-step="isRenewal ? DocumentUploadStep.RENEWAL : DocumentUploadStep.APPLICATION"
         @return-to-start="stepperRef?.setActiveStep(0)"
       />
     </div>

@@ -9,7 +9,10 @@ const strrModal = useStrrModals()
 const { openSupportingDocumentsHelpModal } = useHostPmModals()
 const { isNewPrDocumentsListEnabled } = useHostFeatureFlags()
 
-const props = defineProps<{ isComplete: boolean }>()
+const props = defineProps<{
+  docUploadStep: DocumentUploadStep,
+  isComplete: boolean
+}>()
 
 defineEmits<{
   returnToStart: [void]
@@ -131,7 +134,7 @@ onMounted(async () => {
                       :is-required="docStore.requiredDocs.length > 0"
                       :help-id="docUploadHelpId"
                       accept="application/pdf,image/jpeg"
-                      @change="docStore.addStoredDocument"
+                      @change="docStore.addStoredDocument($event, docUploadStep)"
                       @cancel="docStore.selectedDocType = undefined"
                       @error="e => strrModal.openErrorModal(
                         $t(`error.docUpload.${e}.title`), $t(`error.docUpload.${e}.description`), false
