@@ -173,21 +173,31 @@ onMounted(async () => {
                 :excluded-fields="['streetName', 'streetNumber', 'unitNumber']"
                 :use-location-desc-label="true"
               />
-              <UButton
-                v-if="!strataDetails.buildings.length"
-                :label="$t('strr.label.addBuilding')"
-                class="px-5 py-3"
-                color="primary"
-                icon="i-mdi-home-plus"
-                variant="outline"
-                @click="addNewEmptyBuilding()"
-              />
             </div>
           </ConnectFormSection>
+          <ConnectFormSection
+            :title="$t('strr.units.title')"
+          >
+            <FormStrataUnitList
+              v-model="strataDetails.unitListings.primary"
+              name="unitListings.primary"
+            />
+          </ConnectFormSection>
+          <div v-if="strataDetails.buildings.length === 0" class="ml-[220px] mt-10">
+            <UButton
+              :label="$t('strr.label.addBuilding')"
+              class="px-5 py-3"
+              color="primary"
+              icon="i-mdi-home-plus"
+              variant="outline"
+              @click="addNewEmptyBuilding()"
+            />
+          </div>
           <div v-if="strataDetails.buildings.length" class="h-px w-full border-b border-gray-100" />
           <div
             v-for="building, i in strataDetails.buildings"
             :key="'building' + i"
+            class="space-y-10"
           >
             <ConnectFormSection
               :title="`${$t('strr.section.subTitle.strataBuilding')} ${ i + 2 }`"
@@ -227,17 +237,26 @@ onMounted(async () => {
                     />
                   </div>
                 </div>
-                <UButton
-                  v-if="i === strataDetails.buildings.length - 1"
-                  :label="$t('strr.label.addBuilding')"
-                  class="px-5 py-3"
-                  color="primary"
-                  icon="i-mdi-home-plus"
-                  variant="outline"
-                  @click="addNewEmptyBuilding()"
-                />
               </div>
             </ConnectFormSection>
+            <ConnectFormSection
+              :title="$t('strr.units.title')"
+            >
+              <FormStrataUnitList
+                v-model="strataDetails.unitListings.additional[i]"
+                :name="`unitListings.additional.${i}`"
+              />
+            </ConnectFormSection>
+            <div v-if="i === strataDetails.buildings.length - 1" class="ml-[220px] mt-10">
+              <UButton
+                :label="$t('strr.label.addBuilding')"
+                class="px-5 py-3"
+                color="primary"
+                icon="i-mdi-home-plus"
+                variant="outline"
+                @click="addNewEmptyBuilding()"
+              />
+            </div>
           </div>
         </div>
       </ConnectPageSection>

@@ -38,7 +38,11 @@ export const useStrrStrataDetailsStore = defineStore('strr/strataDetails', () =>
         StrataHotelCategory.POST_DECEMBER_2023
       ], {
         errorMap: () => ({ message: t('validation.category') })
-      })
+      }),
+    unitListings: z.object({
+      primary: z.string().optional(),
+      additional: z.array(z.string().optional())
+    })
   })
 
   const getEmptyStrataDetails = () => ({
@@ -54,7 +58,11 @@ export const useStrrStrataDetailsStore = defineStore('strr/strataDetails', () =>
       locationDescription: ''
     },
     numberOfUnits: undefined,
-    category: undefined
+    category: undefined,
+    unitListings: {
+      primary: '',
+      additional: []
+    }
   })
 
   const strataDetails = ref<StrataDetails>(getEmptyStrataDetails())
@@ -69,19 +77,25 @@ export const useStrrStrataDetailsStore = defineStore('strr/strataDetails', () =>
       postalCode: '',
       locationDescription: ''
     })
+    strataDetails.value.unitListings.additional.push('')
   }
 
   const removeBuildingAtIndex = (index: number) => {
     strataDetails.value.buildings.splice(index, 1)
+    strataDetails.value.unitListings.additional.splice(index, 1)
   }
 
-  const validateStrataDetails = (returnBool = false): MultiFormValidationResult | boolean => {
-    const result = validateSchemaAgainstState(strataDetailsSchema, strataDetails.value, 'strata-details-form')
+  const validateStrataDetails = (
+    returnBool = false
+  ): MultiFormValidationResult | boolean => {
+    const results: MultiFormValidationResult = [
+      validateSchemaAgainstState(strataDetailsSchema, strataDetails.value, 'strata-details-form')
+    ]
 
     if (returnBool) {
-      return result.success === true
+      return results.every(result => result.success === true)
     } else {
-      return [result]
+      return results
     }
   }
 
