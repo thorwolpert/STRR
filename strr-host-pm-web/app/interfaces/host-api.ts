@@ -80,3 +80,11 @@ export interface HostApplicationResp extends HostApplicationPayload {
 
 export interface HostRegistrationResp extends ApiHostApplication, ApiExtraRegistrationDetails {
 }
+
+// Inteterface for Submitted Applications List in Registration Details Page
+export interface RegistrationApplication {
+  applicationNumber: string
+  applicationDateTime: string
+  applicationType: string
+  applicationStatus: string
+}
