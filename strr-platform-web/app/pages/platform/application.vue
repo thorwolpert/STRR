@@ -26,9 +26,10 @@ const {
 const { platformDetails } = storeToRefs(useStrrPlatformDetails())
 const { platformBusiness } = storeToRefs(useStrrPlatformBusiness())
 
-const applicationId = ref(route.query.applicationId as string)
-const isRenewal = ref(Boolean(route.query.renew))
-const isRegRenewalFlow = computed(() => isRenewal.value && renewalRegId.value)
+const applicationId = ref((route.query.applicationId as string) || undefined)
+
+const isRenewal = computed(() => route.query.renew === 'true')
+const isRegRenewalFlow = computed(() => isRenewal.value && !!renewalRegId.value)
 const loading = ref(false)
 
 // fee stuff

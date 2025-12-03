@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRouteQuery } from '@vueuse/router'
 import { ConnectStepper, FormReviewConfirm } from '#components'
 
 const { t } = useI18n()
@@ -8,7 +7,7 @@ const localePath = useLocalePath()
 const strrModal = useStrrModals()
 const { handlePaymentRedirect } = useConnectNav()
 const { handleButtonLoading, setButtonControl } = useButtonControl()
-const ldStore = useConnectLaunchdarklyStore()
+const { isSaveDraftEnabled } = useStrataFeatureFlags()
 
 const { validateContact } = useStrrContactStore()
 const { validateStrataBusiness } = useStrrStrataBusinessStore()
@@ -20,7 +19,7 @@ const {
   $reset: applicationReset
 } = useStrrStrataApplicationStore()
 const permitStore = useStrrStrataStore()
-const { renewalRegId, isRegistrationRenewal } = storeToRefs(permitStore)
+const { renewalRegId, isRegistrationRenewal, application } = storeToRefs(permitStore)
 
 const applicationId = ref(route.query.applicationId as string)
 const loading = ref(false)
@@ -35,8 +34,8 @@ const {
 
 const strataFee = ref<ConnectFeeItem | undefined>(undefined)
 
-const isRenewal = useRouteQuery('renew')
-const isRegRenewalFlow = computed(() => isRenewal.value && renewalRegId.value)
+const isRenewal = computed(() => route.query.renew === 'true')
+const isRegRenewalFlow = computed((): boolean => isRenewal.value && !!renewalRegId.value)
 
 onMounted(async () => {
   loading.value = true
@@ -48,6 +47,10 @@ onMounted(async () => {
     isRegistrationRenewal.value = true
   } else if (applicationId.value) {
     await permitStore.loadStrata(applicationId.value, true)
+    // for renewals draft keep the flag on
+    if (application.value?.header.applicationType === 'renewal') {
+      isRegistrationRenewal.value = true
+    }
   }
   strataFee.value = await getFee(StrrFeeEntityType.STRR, StrrFeeCode.STR_STRATA)
   if (strataFee.value) {
@@ -57,6 +60,22 @@ onMounted(async () => {
     // TODO: set fee to a static value or set an error in the fee summary?
     setPlaceholderFilingTypeCode(StrrFeeCode.STR_STRATA)
   }
+
+  setBreadcrumbs([
+    {
+      label: t('label.bcregDash'),
+      to: useRuntimeConfig().public.registryHomeURL + 'dashboard',
+      appendAccountId: true,
+      external: true
+    },
+    { label: t('strr.title.dashboard'), to: localePath('/strata-hotel/dashboard') },
+    {
+      label: isRegistrationRenewal.value
+        ? t('breadcrumb.str.strataApplicationRenewal')
+        : t('breadcrumb.str.strataApplication')
+    }
+  ])
+
   loading.value = false
 })
 
@@ -82,10 +101,11 @@ const steps = ref<Step[]>([
     icon: 'i-mdi-map-marker-plus-outline',
     complete: false,
     isValid: false,
-    validationFn: () => (
-      validateStrataDetails(true) as boolean &&
-      validateDocuments(true) as boolean
-    )
+    validationFn: () => {
+      const detailsValid = validateStrataDetails(true) as boolean
+      const docsValid = validateDocuments(true) as boolean
+      return detailsValid && docsValid
+    }
   },
   {
     i18nPrefix: 'strr.step',
@@ -122,7 +142,7 @@ const saveApplication = async (resumeLater = false) => {
       setOnBeforeSessionExpired(() => submitStrataApplication(true, filingId))
     }
   } catch (e) {
-    logFetchError(e, 'Error saving host application')
+    logFetchError(e, 'Error saving strata application')
     strrModal.openAppSubmitError(e)
   } finally {
     handleButtonLoading(true)
@@ -194,7 +214,7 @@ watch(activeStepIndex, (val) => {
   })
 
   setButtonControl({
-    leftButtons: ldStore.getStoredFlag('enable-save-draft')
+    leftButtons: isSaveDraftEnabled.value
       ? [
           {
             action: () => navigateTo(localePath('/strata-hotel/dashboard')),
@@ -211,7 +231,8 @@ watch(activeStepIndex, (val) => {
 
 // page stuff
 useHead({
-  title: isRegistrationRenewal.value ? t('strr.title.applicationRenewal') : t('strr.title.application')
+  // needs to be computed because of renewals flag
+  title: computed(() => isRegistrationRenewal.value ? t('strr.title.applicationRenewal') : t('strr.title.application'))
 })
 
 definePageMeta({
@@ -229,20 +250,6 @@ definePageMeta({
 // save application before session expires
 setOnBeforeSessionExpired(() => submitStrataApplication(true, applicationId.value))
 
-setBreadcrumbs([
-  {
-    label: t('label.bcregDash'),
-    to: useRuntimeConfig().public.registryHomeURL + 'dashboard',
-    appendAccountId: true,
-    external: true
-  },
-  { label: t('strr.title.dashboard'), to: localePath('/strata-hotel/dashboard') },
-  {
-    label: isRegistrationRenewal.value
-      ? t('breadcrumb.str.strataApplicationRenewal')
-      : t('breadcrumb.str.strataApplication')
-  }
-])
 </script>
 <template>
   <ConnectSpinner v-if="loading" overlay />
