@@ -9,6 +9,8 @@ export const useHostFeatureFlags = () => {
     isNewPrDocumentsListEnabled: isFeatureEnabled('enable-host-new-pr-documents'),
     isDashboardTableSortingEnabled: isFeatureEnabled('enable-host-dashboard-table-sorting'),
     isNewDashboardEnabled: isFeatureEnabled('enable-new-host-dashboard'),
+    isBusinessLicenseDocumentUploadEnabled: isFeatureEnabled('enable-business-license-document-upload'),
+    isEnhancedDocumentUploadEnabled: isFeatureEnabled('enable-host-enhanced-document-upload'),
     isHostSearchTextFieldsEnabled: isFeatureEnabled('enable-host-search-text-fields')
   }
 }
