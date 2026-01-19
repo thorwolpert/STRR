@@ -111,7 +111,6 @@ def send_fourteen_days_reminder(app, registration_type):
                     event_type=Events.EventType.APPLICATION,
                     event_name=Events.EventName.RENEWAL_REMINDER_SENT,
                     application_id=reg.id,
-                    user_id=None,
                 )
         app.logger.info("Finished sending 14 days renewal notifications")
 
@@ -137,7 +136,6 @@ def send_sixty_days_reminder_for_strata_hotels(app):
                 event_type=Events.EventType.APPLICATION,
                 event_name=Events.EventName.RENEWAL_REMINDER_SENT,
                 application_id=reg.id,
-                user_id=None,
             )
         app.logger.info("Finished sending 60 days renewal notifications")
 
@@ -175,7 +173,6 @@ def send_thirty_days_reminder_for_strata_hotels(app):
                     event_type=Events.EventType.APPLICATION,
                     event_name=Events.EventName.RENEWAL_REMINDER_SENT,
                     application_id=reg.id,
-                    user_id=None,
                 )
         app.logger.info("Finished sending 30 days renewal notifications")
 
