@@ -25,8 +25,7 @@ from strr_api.models import db
 from strr_api.models.application import Application
 from strr_api.models.rental import Registration
 from strr_api.services.email_service import EmailService
-from strr_api.services.events_service import Events
-from strr_api.services.events_service import EventsService
+from strr_api.services.events_service import Events, EventsService
 
 from renewal_reminders.config import CONFIGURATION
 from renewal_reminders.utils.logging import setup_logging

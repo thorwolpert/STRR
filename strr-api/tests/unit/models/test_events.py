@@ -5,6 +5,7 @@ from strr_api.models.user import User
 
 from .test_user import sample_user
 
+
 def test_renewal_reminder_event(client, session, sample_user):
     """Simple test to check event type.
     
