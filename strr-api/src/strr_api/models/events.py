@@ -56,6 +56,7 @@ class Events(SimpleBaseModel):
         REGISTRATION_DECISION_SET_ASIDE = auto()
         REGISTRATION_DOCUMENT_UPLOADED = auto()
         CONDITIONS_OF_APPROVAL_UPDATED = auto()
+        RENEWAL_REMINDER_SENT = auto()
 
     __tablename__ = "events"
 

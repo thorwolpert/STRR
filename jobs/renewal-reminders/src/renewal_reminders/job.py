@@ -25,6 +25,8 @@ from strr_api.models import db
 from strr_api.models.application import Application
 from strr_api.models.rental import Registration
 from strr_api.services.email_service import EmailService
+from strr_api.services.events_service import Events
+from strr_api.services.events_service import EventsService
 
 from renewal_reminders.config import CONFIGURATION
 from renewal_reminders.utils.logging import setup_logging
@@ -69,6 +71,12 @@ def send_forty_days_reminder(app, registration_type):
         for reg in registrations:
             app.logger.info(f"Sending reminder for registration ID: {reg.id}")
             EmailService.send_renewal_reminder_for_registration(registration=reg)
+            EventsService.save_event(
+                event_type=Events.EventType.APPLICATION,
+                event_name=Events.EventName.RENEWAL_REMINDER_SENT,
+                application_id=reg.id,
+                user_id=None,
+            )
         app.logger.info("Finished sending 40 days renewal notifications")
 
 
@@ -100,6 +108,12 @@ def send_fourteen_days_reminder(app, registration_type):
             ]:
                 app.logger.info(f"Sending reminder for registration ID: {reg.id}")
                 EmailService.send_renewal_reminder_for_registration(registration=reg)
+                EventsService.save_event(
+                    event_type=Events.EventType.APPLICATION,
+                    event_name=Events.EventName.RENEWAL_REMINDER_SENT,
+                    application_id=reg.id,
+                    user_id=None,
+                )
         app.logger.info("Finished sending 14 days renewal notifications")
 
 
@@ -120,6 +134,12 @@ def send_sixty_days_reminder_for_strata_hotels(app):
         for reg in registrations:
             app.logger.info(f"Sending reminder for registration ID: {reg.id}")
             EmailService.send_renewal_reminder_for_registration(registration=reg)
+            EventsService.save_event(
+                event_type=Events.EventType.APPLICATION,
+                event_name=Events.EventName.RENEWAL_REMINDER_SENT,
+                application_id=reg.id,
+                user_id=None,
+            )
         app.logger.info("Finished sending 60 days renewal notifications")
 
 
@@ -152,6 +172,12 @@ def send_thirty_days_reminder_for_strata_hotels(app):
             ]:
                 app.logger.info(f"Sending reminder for registration ID: {reg.id}")
                 EmailService.send_renewal_reminder_for_registration(registration=reg)
+                EventsService.save_event(
+                    event_type=Events.EventType.APPLICATION,
+                    event_name=Events.EventName.RENEWAL_REMINDER_SENT,
+                    application_id=reg.id,
+                    user_id=None,
+                )
         app.logger.info("Finished sending 30 days renewal notifications")
 
 
