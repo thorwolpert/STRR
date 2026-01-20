@@ -15,7 +15,7 @@
 import logging
 import os
 import traceback
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from flask import Flask
 from sentry_sdk.integrations.logging import LoggingIntegration
@@ -77,6 +77,42 @@ def send_forty_days_reminder(app, registration_type):
                 user_id=None,
             )
         app.logger.info("Finished sending 40 days renewal notifications")
+
+
+def send_final_day_reminder(app, registration_type):
+    """Send the reminder on the last day of the permit before expiry."""
+    with app.app_context():
+        app.logger.info("Starting final day renewal notifications")
+        target_date = (datetime.now(timezone.utc) + timedelta(days=1)).date()
+        registrations = Registration.query.filter(
+            Registration.registration_type == registration_type,
+            Registration.status == RegistrationStatus.ACTIVE,
+            func.date(Registration.expiry_date) == target_date,
+        ).all()
+        app.logger.info(
+            f"Found {len(registrations)} active registrations expiring in 1 day."
+        )
+        for reg in registrations:
+            renewal_application = (
+                Application.query.filter(
+                    Application.registration_id == reg.id,
+                    Application.type == ApplicationType.RENEWAL.value,
+                )
+                .order_by(Application.id.desc())
+                .first()
+            )
+            if not renewal_application or renewal_application.status in [
+                Application.Status.DRAFT,
+                Application.Status.PAYMENT_DUE,
+            ]:
+                app.logger.info(f"Sending reminder for registration ID: {reg.id}")
+                EmailService.send_renewal_reminder_for_registration(registration=reg)
+                EventsService.save_event(
+                    event_type=Events.EventType.APPLICATION,
+                    event_name=Events.EventName.RENEWAL_REMINDER_SENT,
+                    application_id=reg.id,
+                )
+        app.logger.info("Finished sending final day renewal notifications.")
 
 
 def send_fourteen_days_reminder(app, registration_type):
