@@ -225,6 +225,9 @@ def run():
             send_fourteen_days_reminder(
                 app, registration_type=Registration.RegistrationType.HOST
             )
+            send_final_day_reminder(
+                app, registration_type=Registration.RegistrationType.HOST
+            )
             send_forty_days_reminder(
                 app, registration_type=Registration.RegistrationType.PLATFORM
             )
