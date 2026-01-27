@@ -423,6 +423,9 @@ class RegistrationSerializer:
         ]
 
         if property_manager := registration.rental_property.property_manager:
+            primary_contact = property_manager.primary_contact
+            contact_dict = cls._build_primary_contact_dict(primary_contact)
+
             if property_manager.property_manager_type == PropertyManager.PropertyManagerType.BUSINESS:
                 registration_data["propertyManager"] = {
                     "business": {
@@ -435,34 +438,12 @@ class RegistrationSerializer:
                             "province": property_manager.business_mailing_address.province,
                             "country": property_manager.business_mailing_address.country,
                         },
-                        "primaryContact": {
-                            "firstName": property_manager.primary_contact.firstname,
-                            "lastName": property_manager.primary_contact.lastname,
-                            "middleName": property_manager.primary_contact.middlename,
-                            "preferredName": property_manager.primary_contact.preferredname,
-                            "phoneNumber": property_manager.primary_contact.phone_number,
-                            "phoneCountryCode": property_manager.primary_contact.phone_country_code,
-                            "extension": property_manager.primary_contact.phone_extension,
-                            "faxNumber": property_manager.primary_contact.fax_number,
-                            "emailAddress": property_manager.primary_contact.email,
-                        },
+                        "primaryContact": contact_dict,
                     }
                 }
             else:
-                registration_data["propertyManager"] = {
-                    "contact": {
-                        "firstName": property_manager.primary_contact.firstname,
-                        "lastName": property_manager.primary_contact.lastname,
-                        "middleName": property_manager.primary_contact.middlename,
-                        "preferredName": property_manager.primary_contact.preferredname,
-                        "phoneNumber": property_manager.primary_contact.phone_number,
-                        "phoneCountryCode": property_manager.primary_contact.phone_country_code,
-                        "extension": property_manager.primary_contact.phone_extension,
-                        "faxNumber": property_manager.primary_contact.fax_number,
-                        "emailAddress": property_manager.primary_contact.email,
-                    }
-                }
-                if contact_mailing_address := property_manager.primary_contact.address:
+                registration_data["propertyManager"] = {"contact": contact_dict}
+                if primary_contact and (contact_mailing_address := primary_contact.address):
                     registration_data["propertyManager"]["contact"]["mailingAddress"] = {
                         "address": contact_mailing_address.street_address,
                         "city": contact_mailing_address.city,
@@ -472,6 +453,33 @@ class RegistrationSerializer:
                     }
 
             registration_data["propertyManager"]["propertyManagerType"] = property_manager.property_manager_type
+
+    @classmethod
+    def _build_primary_contact_dict(cls, primary_contact) -> dict:
+        """Build a dictionary of primary contact information, handling None safely."""
+        if not primary_contact:
+            return {
+                "firstName": None,
+                "lastName": None,
+                "middleName": None,
+                "preferredName": None,
+                "phoneNumber": None,
+                "phoneCountryCode": None,
+                "extension": None,
+                "faxNumber": None,
+                "emailAddress": None,
+            }
+        return {
+            "firstName": primary_contact.firstname,
+            "lastName": primary_contact.lastname,
+            "middleName": primary_contact.middlename,
+            "preferredName": primary_contact.preferredname,
+            "phoneNumber": primary_contact.phone_number,
+            "phoneCountryCode": primary_contact.phone_country_code,
+            "extension": primary_contact.phone_extension,
+            "faxNumber": primary_contact.fax_number,
+            "emailAddress": primary_contact.email,
+        }
 
     @classmethod
     def get_jurisdiction_from_application(cls, registration: Registration) -> Optional[str]:
