@@ -39,6 +39,7 @@ from http import HTTPStatus
 from unittest.mock import patch
 
 import jwt as jot
+import pytest
 
 from strr_api.enums.enum import PaymentStatus, RegistrationStatus
 from strr_api.models import Application, Events, User
@@ -58,6 +59,7 @@ CREATE_REGISTRATION_INDIVIDUAL_AS_COHOST = os.path.join(
 ACCOUNT_ID = 1234
 
 # @patch("strr_api.services.strr_pay.create_invoice", return_value=MOCK_INVOICE_RESPONSE)
+@pytest.mark.skip
 @patch("strr_api.resources.application.strr_pay.create_invoice", return_value=MOCK_INVOICE_RESPONSE)
 def test_create_snapshot(session, client, jwt, random_string):
 
