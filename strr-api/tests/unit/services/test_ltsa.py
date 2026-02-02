@@ -53,9 +53,11 @@ def test_build_ltsa_response(app, session, random_string):
     )
     session.add(apl)
     session.commit()
+    apl_id = apl.id
 
     with open(MOCK_LTSA_RESPONSE) as f:
         data = json.load(f)
 
-    response = LtsaService.build_ltsa_response(1, data)
+    # response = LtsaService.build_ltsa_response(1, data)
+    response = LtsaService.build_ltsa_response(apl_id, data)
     assert response.titleStatus == "REGISTERED"

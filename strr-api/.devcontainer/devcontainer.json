@@ -32,7 +32,7 @@
     }
   },
 
-  "postCreateCommand": "poetry install",
+	"postCreateCommand": ".devcontainer/commands/post-create-command.sh",
 
   "remoteUser": "vscode"
 }

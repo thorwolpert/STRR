@@ -61,7 +61,11 @@ ACCOUNT_ID = 1234
 def test_create_snapshot(session, client, jwt, random_string):
 
      with open(CREATE_HOST_REGISTRATION_REQUEST) as f:
-        headers = create_header(jwt, [PUBLIC_USER], "Account-Id", idp_userid=random_string())
+        headers = create_header(jwt,
+                                [PUBLIC_USER],
+                                "Account-Id",
+                                idp_userid=random_string(),
+                                sub=random_string(36))
         headers["Account-Id"] = ACCOUNT_ID
         # headers["isDraft"] = True        
         json_data = json.load(f)
