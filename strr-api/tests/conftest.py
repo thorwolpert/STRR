@@ -40,18 +40,16 @@ from contextlib import contextmanager
 import psycopg2
 import pytest
 import sqlalchemy
-from flask_migrate import Migrate
-from flask_migrate import upgrade
+from flask_migrate import Migrate, upgrade
 from ldclient.integrations.test_data import TestData
 from sqlalchemy import event, text
+from sqlalchemy.orm import Session as AppSession
+from testcontainers.postgres import PostgresContainer
 
-from strr_api import create_app, db as _db
+from strr_api import create_app
+from strr_api import db as _db
 from strr_api import jwt as _jwt
 from strr_api.config import Testing
-
-from testcontainers.postgres import PostgresContainer
-from sqlalchemy.orm import Session as AppSession
-
 
 postgres_image = "postgres:16-alpine"
 

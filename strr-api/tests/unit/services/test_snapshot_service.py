@@ -35,9 +35,10 @@
 
 import json
 import os
-import jwt as jot
 from http import HTTPStatus
 from unittest.mock import patch
+
+import jwt as jot
 
 from strr_api.enums.enum import PaymentStatus, RegistrationStatus
 from strr_api.models import Application, Events, User
