@@ -1,18 +1,40 @@
-# Copyright © 2019 Province of British Columbia
+# Copyright © 2023 Province of British Columbia
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the BSD 3 Clause License, (the "License");
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# The template for the license can be found here
+#    https://opensource.org/license/bsd-3-clause/
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# Redistribution and use in source and binary forms,
+# with or without modification, are permitted provided that the
+# following conditions are met:
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its contributors
+#    may be used to endorse or promote products derived from this software
+#    without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS”
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 """Common setup and fixtures for the pytest suite used by this service."""
 import contextlib
+import random
+import string
 from contextlib import contextmanager
 
 import psycopg2
@@ -21,87 +43,26 @@ import sqlalchemy
 from flask_migrate import Migrate, upgrade
 from ldclient.integrations.test_data import TestData
 from sqlalchemy import event, text
+from sqlalchemy.orm import Session as AppSession
+from testcontainers.postgres import PostgresContainer
 
 from strr_api import create_app
+from strr_api import db as _db
 from strr_api import jwt as _jwt
 from strr_api.config import Testing
-from strr_api.models import db as _db
+
+postgres_image = "postgres:16-alpine"
 
 
-def create_test_db(
-    user: str = None,
-    password: str = None,
-    database: str = None,
-    host: str = "localhost",
-    port: int = 1521,
-    database_uri: str = None,
-) -> bool:
-    """Create the database in our .devcontainer launched postgres DB.
+@pytest.fixture(scope="function")
+def random_string():
+    """Returns a random string, defult length is 10."""
 
-    Parameters
-    ------------
-        user: str
-            A datbase user that has create database privledges
-        password: str
-            The users password
-        database: str
-            The name of the database to create
-        host: str, Optional
-            The network name of the server
-        port: int, Optional
-            The numeric port number
-    Return
-    -----------
-        : bool
-            If the create database succeeded.
-    """
-    if database_uri:
-        DATABASE_URI = database_uri
-    else:
-        DATABASE_URI = f"postgresql://{user}:{password}@{host}:{port}/{user}"
+    def _generate(length=10):
+        characters = string.ascii_letters + string.digits
+        return "".join(random.choices(characters, k=length))
 
-    DATABASE_URI = DATABASE_URI[: DATABASE_URI.rfind("/")] + "/postgres"
-
-    try:
-        with sqlalchemy.create_engine(DATABASE_URI, isolation_level="AUTOCOMMIT").connect() as conn:
-            conn.execute(text(f"CREATE DATABASE {database}"))
-
-        new_db_uri = DATABASE_URI[: DATABASE_URI.rfind("/")] + f"/{database}"
-        with sqlalchemy.create_engine(new_db_uri, isolation_level="AUTOCOMMIT").connect() as conn:
-            conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
-
-        return True
-    except sqlalchemy.exc.ProgrammingError as err:
-        print(err)  # used in the test suite, so on failure print something
-        return False
-
-
-def drop_test_db(
-    user: str = None,
-    password: str = None,
-    database: str = None,
-    host: str = "localhost",
-    port: int = 1521,
-    database_uri: str = None,
-) -> bool:
-    """Delete the database in our .devcontainer launched postgres DB."""
-    if database_uri:
-        DATABASE_URI = database_uri
-    else:
-        DATABASE_URI = f"postgresql://{user}:{password}@{host}:{port}/{user}"
-
-    DATABASE_URI = DATABASE_URI[: DATABASE_URI.rfind("/")] + "/postgres"
-
-    close_all = f"""
-        SELECT pg_terminate_backend(pg_stat_activity.pid)
-        FROM pg_stat_activity
-        WHERE pg_stat_activity.datname = '{database}'
-        AND pid <> pg_backend_pid();
-    """
-    with contextlib.suppress(sqlalchemy.exc.ProgrammingError, psycopg2.OperationalError, Exception):
-        with sqlalchemy.create_engine(DATABASE_URI, isolation_level="AUTOCOMMIT").connect() as conn:
-            conn.execute(text(close_all))
-            conn.execute(text(f"DROP DATABASE {database}"))
+    return _generate
 
 
 @contextmanager
@@ -124,14 +85,6 @@ def ld():
 
 
 @pytest.fixture(scope="session")
-def app(ld):
-    """Return a session-wide application configured in TEST mode."""
-    _app = create_app(Testing, **{"ld_test_data": ld})
-
-    return _app
-
-
-@pytest.fixture(scope="session")
 def client(app):  # pylint: disable=redefined-outer-name
     """Return a session-wide Flask test client."""
     return app.test_client()
@@ -151,66 +104,84 @@ def client_ctx(app):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture(scope="session")
-def db(app):  # pylint: disable=redefined-outer-name, invalid-name
-    """Return a session-wide initialised database.
-
-    Drops all existing tables - Meta follows Postgres FKs
+def postgres_container():
     """
+    Spins up a Postgres container.
+    """
+    with PostgresContainer(postgres_image) as postgres:
+        yield postgres
+
+
+@pytest.fixture(scope="session")
+def app(ld, postgres_container):
+    """
+    Creates the Flask application using the container's credentials.
+    """
+    db_url = postgres_container.get_connection_url()
+    Testing.SQLALCHEMY_DATABASE_URI = db_url
+    # This makes sure that the app is configured and doesn't skip setup steps
+    Testing.POD_NAMESPACE = "Testing"
+
+    app = create_app(Testing, **{"ld_test_data": ld})
+
     with app.app_context():
-        drop_test_db(
-            database=app.config.get("DATABASE_TEST_NAME"), database_uri=app.config.get("SQLALCHEMY_DATABASE_URI")
-        )
+        yield app
 
-        create_test_db(
-            database=app.config.get("DATABASE_TEST_NAME"), database_uri=app.config.get("SQLALCHEMY_DATABASE_URI")
-        )
 
-        sess = _db.session()
-        sess.execute(text("SET TIME ZONE 'UTC';"))
+@pytest.fixture(scope="session")
+def setup_database(app):
+    """
+    Applies database migrations to the test container.
+    Replaces db.create_all() with flask_migrate.upgrade()
+    """
+    # This applies all migrations up to 'head'
+    # It assumes your 'migrations' folder is in the project root
+    upgrade()
 
-        Migrate(app, _db, **{"dialect_name": "postgres"})
-
-        upgrade()
-
-        yield _db
+    yield
 
 
 @pytest.fixture(scope="function")
-def session(app, db):  # pylint: disable=redefined-outer-name, invalid-name
-    """Return a function-scoped session."""
-    with app.app_context():
-        conn = db.engine.connect()
-        txn = conn.begin()
+def session(app, setup_database):
+    """
+    Creates a test session that behaves like a scoped_session but
+    is bound to an external transaction for easy rollback.
+    """
+    # 1. Start the external transaction on the connection
+    connection = _db.engine.connect()
+    transaction = connection.begin()
 
-        try:
-            options = dict(bind=conn, binds={})
-            # sess = db.create_scoped_session(options=options)
-            sess = db._make_scoped_session(options=options)
-        except Exception as err:
-            print(err)
-            print("done")
+    # 2. Create the Session
+    # join_transaction_mode="create_savepoint":
+    # This ensures that when your app calls session.commit(), it creates a
+    # nested SAVEPOINT (which we can rollback) instead of committing the real transaction.
+    session = AppSession(bind=connection, join_transaction_mode="create_savepoint")
 
-        # establish  a SAVEPOINT just before beginning the test
-        # (http://docs.sqlalchemy.org/en/latest/orm/session_transaction.html#using-savepoint)
-        sess.begin_nested()
+    # 3. Create a Proxy to mimic Flask-SQLAlchemy's db.session
+    # This class ensures that both `db.session.add()` and `db.session()` work.
+    class TestScopedSession:
+        def __call__(self):
+            # Allows calling db.session() to get the current session
+            return session
 
-        @event.listens_for(sess(), "after_transaction_end")
-        def restart_savepoint(sess2, trans):  # pylint: disable=unused-variable
-            # Detecting whether this is indeed the nested transaction of the test
-            if trans.nested and not trans._parent.nested:  # pylint: disable=protected-access
-                # Handle where test DOESN'T session.commit(),
-                sess2.expire_all()
-                sess.begin_nested()
+        def __getattr__(self, name):
+            # Proxies attributes like .add, .query, .commit to the session
+            return getattr(session, name)
 
-        db.session = sess
+        def remove(self):
+            # Safe no-op or close
+            session.close()
 
-        sql = text("select 1")
-        sess.execute(sql)
+    # 4. Patch global db.session
+    original_session_lookup = _db.session
+    _db.session = TestScopedSession()
 
-        yield sess
+    yield session
 
-        # Cleanup
-        sess.remove()
-        # This instruction rollsback any commit that were executed in the tests.
-        txn.rollback()
-        conn.close()
+    # 5. Cleanup
+    _db.session = original_session_lookup  # Restore global registry
+    session.close()
+
+    # Force rollback of the external transaction (wiping all test data)
+    transaction.rollback()
+    connection.close()

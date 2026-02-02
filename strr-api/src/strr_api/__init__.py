@@ -69,15 +69,8 @@ def create_app(environment: Config = Production, **kwargs) -> Flask:
         logger.info("Running in migration mode")
         Migrate(app, db)
     else:
-        # Configure Sentry
-        if dsn := app.config.get("SENTRY_DSN", None):
-            sentry_sdk.init(
-                dsn=dsn,
-                integrations=[FlaskIntegration()],
-                release=f"strr-api@{get_run_version()}",
-                send_default_pii=False,
-                environment=app.config.get("POD_NAMESPACE", "unknown"),
-            )
+        if app.config.get("POD_NAMESPACE", "production") == "Testing":
+            Migrate(app, db)
 
         strr_pay.init_app(app)
         babel.init_app(app)
