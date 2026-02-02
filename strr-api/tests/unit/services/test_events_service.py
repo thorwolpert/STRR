@@ -33,19 +33,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 """Tests to ensure the events service works as expected."""
 
-from strr_api.models import Events
+from strr_api.models import Events, User
 from strr_api.services import EventsService
 
 
-def test_event_record(app):
+def test_event_record(app, session):
     """Ensure that the event records are saved as expected."""
+    user = User()
+    session.add(user)
+    session.commit()
 
-    user_id = 1
     event = EventsService.save_event(
         event_type=Events.EventType.APPLICATION,
         event_name=Events.EventName.PAYMENT_COMPLETE,
         details="Test",
-        user_id=user_id,
+        user_id=user.id,
     )
 
     assert event.id

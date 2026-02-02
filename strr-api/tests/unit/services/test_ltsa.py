@@ -36,14 +36,23 @@ import json
 
 import pytest
 
+from strr_api.models import Application
 from strr_api.services import LtsaService
 from tests.unit.utils.mocks import mock_json_file
 
 MOCK_LTSA_RESPONSE = mock_json_file("ltsa_title_order")
 
 
-def test_build_ltsa_response():
+def test_build_ltsa_response(app, session, random_string):
     """Assure the lat and log are extracted as expected."""
+
+    apl = Application(
+        application_json={},
+        application_number=random_string(12),
+        type='registration',
+    )
+    session.add(apl)
+    session.commit()
 
     with open(MOCK_LTSA_RESPONSE) as f:
         data = json.load(f)

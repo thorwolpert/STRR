@@ -1,3 +1,4 @@
+
 import pytest
 
 from strr_api.models.user import User
@@ -58,12 +59,18 @@ def test_find_by_id(client, session, sample_user):
     assert result == sample_user
 
 
-def test_find_by_username(sample_user):
+def test_find_by_username(session, sample_user):
+    session.add(sample_user)
+    session.commit()
+
     result = User.find_by_username(sample_user.username)
     assert result.username == sample_user.username
 
 
-def test_find_by_sub(sample_user):
+def test_find_by_sub(session, sample_user):
+    session.add(sample_user)
+    session.commit()
+
     result = User.find_by_sub(sample_user.sub)
     assert result.sub == sample_user.sub
 
@@ -116,9 +123,10 @@ def test_get_or_create_user_by_jwt_exception():
         User.get_or_create_user_by_jwt(sample_token)
 
 
-def test_save(session, sample_user):
+def test_save(session, sample_user, random_string):
     u1 = User.find_by_username(sample_user.username)
     if not u1:
+        sample_user.sub = random_string(10)
         session.add(sample_user)
         session.commit()
         u1 = User.find_by_username(sample_user.username)
