@@ -49,7 +49,7 @@ def test_build_ltsa_response(app, session, random_string):
     apl = Application(
         application_json={},
         application_number=random_string(12),
-        type='registration',
+        type="registration",
     )
     session.add(apl)
     session.commit()

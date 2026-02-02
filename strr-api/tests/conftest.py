@@ -57,10 +57,11 @@ postgres_image = "postgres:16-alpine"
 @pytest.fixture(scope="function")
 def random_string():
     """Returns a random string, defult length is 10."""
+
     def _generate(length=10):
         characters = string.ascii_letters + string.digits
-        return ''.join(random.choices(characters, k=length))
-    
+        return "".join(random.choices(characters, k=length))
+
     return _generate
 
 
@@ -110,20 +111,22 @@ def postgres_container():
     with PostgresContainer(postgres_image) as postgres:
         yield postgres
 
+
 @pytest.fixture(scope="session")
 def app(ld, postgres_container):
     """
     Creates the Flask application using the container's credentials.
     """
     db_url = postgres_container.get_connection_url()
-    Testing.SQLALCHEMY_DATABASE_URI= db_url
+    Testing.SQLALCHEMY_DATABASE_URI = db_url
     # This makes sure that the app is configured and doesn't skip setup steps
-    Testing.POD_NAMESPACE = 'Testing'
-    
+    Testing.POD_NAMESPACE = "Testing"
+
     app = create_app(Testing, **{"ld_test_data": ld})
-    
+
     with app.app_context():
         yield app
+
 
 @pytest.fixture(scope="session")
 def setup_database(app):
@@ -134,9 +137,9 @@ def setup_database(app):
     # This applies all migrations up to 'head'
     # It assumes your 'migrations' folder is in the project root
     upgrade()
-    
+
     yield
-    
+
 
 @pytest.fixture(scope="function")
 def session(app, setup_database):
@@ -150,7 +153,7 @@ def session(app, setup_database):
 
     # 2. Create the Session
     # join_transaction_mode="create_savepoint":
-    # This ensures that when your app calls session.commit(), it creates a 
+    # This ensures that when your app calls session.commit(), it creates a
     # nested SAVEPOINT (which we can rollback) instead of committing the real transaction.
     session = AppSession(bind=connection, join_transaction_mode="create_savepoint")
 
@@ -160,11 +163,11 @@ def session(app, setup_database):
         def __call__(self):
             # Allows calling db.session() to get the current session
             return session
-        
+
         def __getattr__(self, name):
             # Proxies attributes like .add, .query, .commit to the session
             return getattr(session, name)
-            
+
         def remove(self):
             # Safe no-op or close
             session.close()
@@ -178,7 +181,7 @@ def session(app, setup_database):
     # 5. Cleanup
     _db.session = original_session_lookup  # Restore global registry
     session.close()
-    
+
     # Force rollback of the external transaction (wiping all test data)
     transaction.rollback()
     connection.close()

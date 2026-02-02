@@ -1,4 +1,3 @@
-
 import pytest
 
 from strr_api.models.user import User
