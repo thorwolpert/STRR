@@ -9,62 +9,84 @@ const { getUnitDetailsSchema } = useHostPropertyStore()
 
 const unitDetailsFormRef = ref<Form<any>>()
 
+const isStrataHotelExemption = computed((): boolean =>
+  reqStore.prRequirements.prExemptionReason === PrExemptionReason.STRATA_HOTEL)
+
+const isPrRequired = computed((): boolean =>
+  reqStore.propertyReqs.isPrincipalResidenceRequired)
+
+const isPrExempt = computed((): boolean =>
+  reqStore.prRequirements.isPropertyPrExempt)
+
+const isHostTypeTenant = computed((): boolean =>
+  propStore.unitDetails.hostType === PropertyHostType.LONG_TERM_TENANT)
+
 const propertyTypes = [
   { name: t(`propertyType.${PropertyType.SINGLE_FAMILY_HOME}`), value: PropertyType.SINGLE_FAMILY_HOME },
   { name: t(`propertyType.${PropertyType.SECONDARY_SUITE}`), value: PropertyType.SECONDARY_SUITE },
   { name: t(`propertyType.${PropertyType.ACCESSORY_DWELLING}`), value: PropertyType.ACCESSORY_DWELLING },
-  { name: t(`propertyType.${PropertyType.TOWN_HOME}`), value: PropertyType.TOWN_HOME },
   { name: t(`propertyType.${PropertyType.MULTI_UNIT_HOUSING}`), value: PropertyType.MULTI_UNIT_HOUSING },
-  { name: t(`propertyType.${PropertyType.CONDO_OR_APT}`), value: PropertyType.CONDO_OR_APT },
-  { name: t(`propertyType.${PropertyType.RECREATIONAL}`), value: PropertyType.RECREATIONAL },
   { name: t(`propertyType.${PropertyType.BED_AND_BREAKFAST}`), value: PropertyType.BED_AND_BREAKFAST },
-  { name: t(`propertyType.${PropertyType.STRATA_HOTEL}`), value: PropertyType.STRATA_HOTEL },
   { name: t(`propertyType.${PropertyType.FLOAT_HOME}`), value: PropertyType.FLOAT_HOME }
 ]
-const rentalTypeOptions = [
-  { value: RentalUnitType.ENTIRE_HOME, label: t(`rentalUnitType.${RentalUnitType.ENTIRE_HOME}`) },
-  { value: RentalUnitType.SHARED_ACCOMMODATION, label: t(`rentalUnitType.${RentalUnitType.SHARED_ACCOMMODATION}`) }
-]
-const ownershipTypes = [
-  { label: t(`ownershipType.${OwnershipType.OWN}`), value: OwnershipType.OWN },
-  { label: t(`ownershipType.${OwnershipType.CO_OWN}`), value: OwnershipType.CO_OWN },
-  { label: t(`ownershipType.${OwnershipType.RENT}`), value: OwnershipType.RENT },
-  { label: t(`ownershipType.${OwnershipType.OTHER}`), value: OwnershipType.OTHER }
+
+const strataHotelPropertyType = [
+  { name: t(`propertyType.${PropertyType.STRATA_HOTEL}`), value: PropertyType.STRATA_HOTEL }
 ]
 
-const rentalUnitSetupTypes = [
-  {
-    label: t(`rentalUnitSetupType.${RentalUnitSetupType.WHOLE_PRINCIPAL_RESIDENCE}`),
-    value: RentalUnitSetupType.WHOLE_PRINCIPAL_RESIDENCE
-  },
-  {
-    label: t(`rentalUnitSetupType.${RentalUnitSetupType.UNIT_ON_PR_PROPERTY}`),
-    value: RentalUnitSetupType.UNIT_ON_PR_PROPERTY
-  },
-  {
-    label: t(`rentalUnitSetupType.${RentalUnitSetupType.UNIT_NOT_ON_PR_PROPERTY}`),
-    value: RentalUnitSetupType.UNIT_NOT_ON_PR_PROPERTY
-  }
+const propertyHostTypeOptions = [
+  { value: PropertyHostType.OWNER, label: t(`propertyHostType.${PropertyHostType.OWNER}`) },
+  { value: PropertyHostType.FRIEND_RELATIVE, label: t(`propertyHostType.${PropertyHostType.FRIEND_RELATIVE}`) },
+  { value: PropertyHostType.LONG_TERM_TENANT, label: t(`propertyHostType.${PropertyHostType.LONG_TERM_TENANT}`) }
 ]
 
-// revalidate parcelIdentifer when user changes ownsership types
-watch(
-  () => propStore.unitDetails.ownershipType,
-  (newVal) => {
-    if (newVal &&
-        [OwnershipType.OWN, OwnershipType.CO_OWN].includes(newVal) &&
-        propStore.unitDetails.parcelIdentifier !== ''
-    ) {
-      unitDetailsFormRef.value?.validate('parcelIdentifier', { silent: true })
-    }
-    if (newVal &&
-        [OwnershipType.RENT, OwnershipType.OTHER].includes(newVal) &&
-        propStore.unitDetails.parcelIdentifier === ''
-    ) {
-      unitDetailsFormRef.value?.validate('parcelIdentifier', { silent: true })
-    }
+const rentalUnitSetupOptions = computed(() => [
+  {
+    label: t(`rentalUnitSetupOption.${RentalUnitSetupOption.DIFFERENT_PROPERTY}.label`),
+    value: RentalUnitSetupOption.DIFFERENT_PROPERTY,
+    disabled: (isPrRequired.value && !isPrExempt.value) || isHostTypeTenant.value
+  },
+  {
+    label: t(`rentalUnitSetupOption.${RentalUnitSetupOption.SEPARATE_UNIT_SAME_PROPERTY}.label`),
+    value: RentalUnitSetupOption.SEPARATE_UNIT_SAME_PROPERTY,
+    disabled: isHostTypeTenant.value
+  },
+  {
+    label: t(`rentalUnitSetupOption.${RentalUnitSetupOption.PRIMARY_RESIDENCE_OR_SHARED_SPACE}.label`),
+    value: RentalUnitSetupOption.PRIMARY_RESIDENCE_OR_SHARED_SPACE
   }
-)
+])
+
+// watch and set Property Host Type as strata if PR Exemption reason is Strata Hotel
+watch(() => reqStore.prRequirements.prExemptionReason, async (val) => {
+  if (val === PrExemptionReason.STRATA_HOTEL) {
+    propStore.unitDetails.propertyType = PropertyType.STRATA_HOTEL
+    await validateForm(unitDetailsFormRef.value, props.isComplete) // validate the form to clear the unit type errors
+  }
+})
+
+// watch and clear unit setup radio if one of the disabled options selected
+watch(() => propStore.unitDetails.hostType, (val) => {
+  const isLongTermTenant = val === PropertyHostType.LONG_TERM_TENANT
+  const isDisabledOptionSelected =
+    [RentalUnitSetupOption.DIFFERENT_PROPERTY, RentalUnitSetupOption.SEPARATE_UNIT_SAME_PROPERTY]
+      .includes(propStore.unitDetails.rentalUnitSetupOption as RentalUnitSetupOption)
+
+  if (isLongTermTenant && isDisabledOptionSelected) {
+    propStore.unitDetails.rentalUnitSetupOption = undefined
+  }
+})
+
+// watch and clear unit setup radio option 1 if PR is not exempt
+watch(() => reqStore.prRequirements.isPropertyPrExempt, (val) => {
+  const isNotExempt = !val
+  const isDisabledOptionSelected = [RentalUnitSetupOption.DIFFERENT_PROPERTY]
+    .includes(propStore.unitDetails.rentalUnitSetupOption as RentalUnitSetupOption)
+
+  if (isNotExempt && isDisabledOptionSelected) {
+    propStore.unitDetails.rentalUnitSetupOption = undefined
+  }
+})
 
 onMounted(async () => {
   // validate form if step marked as complete
@@ -86,37 +108,40 @@ onMounted(async () => {
       <div class="space-y-10 py-10">
         <!-- property type section -->
         <ConnectFormSection
-          :title="$t('strr.label.propertyType')"
+          :title="$t('strr.label.strRentalType')"
           :error="isComplete && hasFormErrors(unitDetailsFormRef, ['propertyType'])"
         >
           <UFormGroup id="property-type" v-slot="{ error }" name="propertyType">
             <USelectMenu
               v-model="propStore.unitDetails.propertyType"
               value-attribute="value"
-              class="max-w-bcGovInput"
               size="lg"
               :color="propStore.unitDetails.propertyType ? 'primary' : 'gray'"
-              :placeholder="$t('strr.label.propertyType')"
-              :options="propertyTypes"
+              :placeholder="$t('strr.label.selectPropertyType')"
+              :options="isStrataHotelExemption ? strataHotelPropertyType : propertyTypes"
               option-attribute="name"
-              :aria-label="$t('strr.label.propertyType')"
+              :disabled="isStrataHotelExemption"
+              :aria-label="$t('strr.label.selectPropertyType')"
               :aria-required="true"
               :aria-invalid="error !== undefined"
+              :ui="{ base: 'disabled:opacity-50' }"
               :ui-menu="{
                 label: propStore.unitDetails.propertyType ? 'text-gray-900' : !!error? 'text-red-600': 'text-gray-700'
               }"
+              data-testid="property-type-select"
             />
           </UFormGroup>
 
           <UAlert
             v-if="propStore.isUnitNumberRequired"
-            class="mt-6 max-w-bcGovInput"
+            class="mt-6"
             color="yellow"
             icon="i-mdi-alert"
             :close-button="null"
             variant="subtle"
             :ui="{
               inner: 'pt-0',
+              padding: 'p-6',
               icon: {
                 base: 'flex-shrink-0 w-5 h-5 self-start'
               }
@@ -137,22 +162,20 @@ onMounted(async () => {
           </UAlert>
         </ConnectFormSection>
 
-        <!-- type of space section -->
+        <!-- Property Host Type -->
         <ConnectFormSection
-          :title="$t('label.typeOfSpace')"
-          :error="isComplete && hasFormErrors(unitDetailsFormRef, ['typeOfSpace'])"
+          :title="$t('strr.label.hostType')"
+          :error="isComplete && hasFormErrors(unitDetailsFormRef, ['hostType'])"
         >
-          <UFormGroup name="typeOfSpace">
+          <UFormGroup name="hostType">
             <URadioGroup
-              id="rental-type-radio-group"
-              v-model="propStore.unitDetails.typeOfSpace"
-              :legend="$t('text.typeOfSpaceLegend')"
-              :class="isComplete && hasFormErrors(unitDetailsFormRef, ['typeOfSpace'])
-                ? 'border-red-600 border-2 p-2'
-                : 'p-2'"
-              :options="rentalTypeOptions"
+              id="host-type-radio-group"
+              v-model="propStore.unitDetails.hostType"
+              :legend="$t('text.hostTypeLegend')"
+              :options="propertyHostTypeOptions"
               :ui="{ legend: 'sr-only' }"
               :ui-radio="{ inner: 'space-y-2' }"
+              data-testid="property-host-type"
             />
           </UFormGroup>
         </ConnectFormSection>
@@ -160,91 +183,39 @@ onMounted(async () => {
         <!-- rental unit setup section -->
         <ConnectFormSection
           :title="$t('strr.label.rentalUnitSetup')"
-          :error="isComplete && hasFormErrors(unitDetailsFormRef, ['rentalUnitSetupType'])"
+          :error="isComplete && hasFormErrors(unitDetailsFormRef, ['rentalUnitSetupOption'])"
         >
-          <UFormGroup id="rental-unit-setup" name="rentalUnitSetupType">
+          <UFormGroup
+            id="rental-unit-setup"
+            name="rentalUnitSetupOption"
+            class="w-full"
+          >
+            <ConnectI18nHelper
+              translation-path="strr.label.rentalUnitSetupNote"
+              class="mb-8 block border-y py-4 text-sm italic"
+            />
             <URadioGroup
               id="rental-unit-setup-radio-group"
-              v-model="propStore.unitDetails.rentalUnitSetupType"
-              :class="isComplete && hasFormErrors(unitDetailsFormRef, ['rentalUnitSetupType'])
-                ? 'border-red-600 border-2 p-2'
-                : 'p-2'"
-              :options="rentalUnitSetupTypes"
+              v-model="propStore.unitDetails.rentalUnitSetupOption"
+              class="max-w-full"
+              :options="rentalUnitSetupOptions"
               :legend="$t('text.rentalUnitSetupLegend')"
               :ui="{ legend: 'sr-only' }"
-              :ui-radio="{ inner: 'space-y-2' }"
-            />
-          </UFormGroup>
-        </ConnectFormSection>
-
-        <!-- number of rooms for rent section -->
-        <ConnectFormSection
-          :title="$t('strr.label.numberOfRooms')"
-          :error="isComplete && hasFormErrors(unitDetailsFormRef, ['numberOfRoomsForRent'])"
-        >
-          <ConnectFormFieldGroup
-            id="property-rooms"
-            v-model="propStore.unitDetails.numberOfRoomsForRent"
-            :aria-label="$t('strr.label.numberOfRooms')"
-            name="numberOfRoomsForRent"
-            :placeholder="$t('strr.label.numberOfRooms')"
-            :is-required="true"
-            type="number"
-            :min="0"
-            :max="5000"
-          />
-        </ConnectFormSection>
-
-        <div class="h-px w-full border-b border-gray-100" />
-
-        <!-- ownership type section -->
-        <ConnectFormSection
-          :title="$t('strr.label.ownershipType')"
-          :error="isComplete && hasFormErrors(unitDetailsFormRef, ['ownershipType'])"
-        >
-          <UFormGroup id="ownership-type" name="ownershipType">
-            <URadioGroup
-              id="ownership-type-radio-group"
-              v-model="propStore.unitDetails.ownershipType"
-              :class="isComplete && hasFormErrors(unitDetailsFormRef, ['ownershipType'])
-                ? 'border-red-600 border-2 p-2'
-                : 'p-2'"
-              :options="ownershipTypes"
-              :legend="$t('strr.text.ownershipTypeLegend')"
-              :ui="{ legend: 'sr-only' }"
-              :ui-radio="{ inner: 'space-y-2' }"
-            />
-          </UFormGroup>
-        </ConnectFormSection>
-
-        <!-- parcel identifier (PID) section -->
-        <ConnectFormSection
-          :title="$t('strr.label.parcelId')"
-          :error="isComplete && hasFormErrors(unitDetailsFormRef, ['parcelIdentifier'])"
-        >
-          <ConnectFormFieldGroup
-            id="property-parcel-id"
-            v-model="propStore.unitDetails.parcelIdentifier"
-            mask="###-###-###"
-            name="parcelIdentifier"
-            :aria-label="(!propStore.unitDetails.ownershipType || propStore.isOwnerOrCoOwner)
-              ? $t('strr.label.parcelIdentifier')
-              : $t('strr.label.parcelIdentifierOpt')"
-            :placeholder="(!propStore.unitDetails.ownershipType || propStore.isOwnerOrCoOwner)
-              ? $t('strr.label.parcelIdentifier')
-              : $t('strr.label.parcelIdentifierOpt')"
-          >
-            <template #help>
-              <span>
-                {{ $t('strr.hint.parcelIdentifier') }}
-                <span class="inline-flex align-text-top">
-                  <ConnectTooltip :text="$t('tooltip.pid')" :popper="{ placement: 'right' }">
-                    <UIcon name="i-mdi-info-outline" class="ml-0.5 size-4 shrink-0 text-blue-500" />
-                  </ConnectTooltip>
+              :ui-radio="{ inner: 'space-y-2', label: 'font-bold' }"
+              data-testid="unit-setup-option"
+            >
+              <template #label="{ option }">
+                <span :class="{ 'opacity-50': option.disabled }">
+                  {{ option.label }}
                 </span>
-              </span>
-            </template>
-          </ConnectFormFieldGroup>
+              </template>
+              <template #help="{ option }">
+                <span :class="{ 'opacity-50': option.disabled }">
+                  <FormDefineYourRentalUnitSetupOptions :option="option" />
+                </span>
+              </template>
+            </URadioGroup>
+          </UFormGroup>
         </ConnectFormSection>
       </div>
     </ConnectPageSection>

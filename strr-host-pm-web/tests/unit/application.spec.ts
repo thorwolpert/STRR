@@ -10,7 +10,6 @@ import {
   FormAddOwners,
   FormDefineYourRentalUnitAddress,
   FormDefineYourRentalUnitDetails,
-  FormDefineYourRentalUnitDetails2,
   FormReview,
   FormUnitAddressAutoComplete,
   FormUnitAddressManual,
@@ -35,9 +34,8 @@ vi.mock('@/stores/hostProperty', () => ({
     validateUnitAddress: () => true,
     validateUnitDetails: () => true,
     validateBusinessLicense: () => true,
-    propertyTypeFeeTriggers: ref([]),
     getUnitAddressSchema: () => ({ address: mockApplication.registration.unitAddress }),
-    getUnitDetailsSchema2: () => vi.fn(),
+    getUnitDetailsSchema: () => vi.fn(),
     getUnitAddressSchema2: () => vi.fn(),
     resetUnitAddress: vi.fn(),
     resetUnitDetails: vi.fn(),
@@ -158,7 +156,6 @@ const isEnhancedDocumentUploadEnabled = ref(false)
 vi.mock('@/composables/useHostFeatureFlags', () => ({
   useHostFeatureFlags: () => ({
     isSaveDraftEnabled: ref(true),
-    isNewRentalUnitSetupEnabled: ref(true),
     isNewDashboardEnabled: ref(false),
     isEnhancedDocumentUploadEnabled
   })
@@ -279,8 +276,7 @@ describe('Rental Application - Step 1', () => {
     expect(wrapper.findComponent(ConnectStepper).vm.activeStepIndex).toBe(0)
 
     expect(wrapper.findComponent(FormDefineYourRentalUnitAddress).exists()).toBe(true)
-    expect(wrapper.findComponent(FormDefineYourRentalUnitDetails).exists()).toBe(false)
-    expect(wrapper.findComponent(FormDefineYourRentalUnitDetails2).exists()).toBe(true)
+    expect(wrapper.findComponent(FormDefineYourRentalUnitDetails).exists()).toBe(true)
 
     expect(wrapper.find('[data-testid="rental-unit-address-nickname"]').exists()).toBe(true)
     expect(wrapper.find('[data-testid="alert-renewal-address-change"]').exists()).toBe(true)
@@ -288,7 +284,7 @@ describe('Rental Application - Step 1', () => {
     expect(wrapper.findComponent(FormUnitAddressAutoComplete).exists()).toBe(true)
     expect(wrapper.findComponent(FormUnitAddressManual).exists()).toBe(true)
 
-    const rentalUnitDetails = wrapper.findComponent(FormDefineYourRentalUnitDetails2)
+    const rentalUnitDetails = wrapper.findComponent(FormDefineYourRentalUnitDetails)
 
     expect(rentalUnitDetails.find('[data-testid="property-type-select"]').exists()).toBe(true)
     expect(rentalUnitDetails.find('[data-testid="property-host-type"]').exists()).toBe(true)
