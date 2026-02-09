@@ -65,6 +65,53 @@ def random_string():
     return _generate
 
 
+@pytest.fixture(scope="function")
+def random_integer():
+    """Returns a random integer, defult max is 1000."""
+
+    def _generate(max=1000):
+        return random.randint(1, max)
+
+    return _generate
+
+
+@pytest.fixture
+def inject_config(app, request):
+    """
+    Safely injects config variables for a single test and reverts them afterwards.
+    Usage: @pytest.mark.conf(KEY="value")
+    """
+    # 1. Get the marker
+    marker = request.node.get_closest_marker("conf")
+
+    # If no marker, do nothing
+    if not marker:
+        yield
+        return
+
+    # 2. SNAPSHOT: Save original values of the keys we are about to change
+    new_config = marker.kwargs
+    original_values = {}
+
+    for key in new_config:
+        # Save the old value (if it existed) so we can restore it
+        original_values[key] = app.config.get(key)
+
+    # 3. APPLY: Update the config
+    app.config.update(new_config)
+
+    yield
+
+    # 4. RESTORE: Revert to original values
+    for key, old_value in original_values.items():
+        if old_value is None:
+            # If it wasn't there before, remove it
+            app.config.pop(key, None)
+        else:
+            # Restore the old value
+            app.config[key] = old_value
+
+
 @contextmanager
 def not_raises(exception):
     """Corallary to the pytest raises builtin.

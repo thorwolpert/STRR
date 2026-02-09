@@ -20,6 +20,12 @@ clean-pyc: ## Clean cache files
 #################################################################################
 # COMMANDS - CI                                                                 #
 #################################################################################
+pisort:
+	poetry run isort . --check -v
+
+pblack:
+	poetry run black . --check
+
 pylint: ## Linting with pylint
 	pylint --rcfile=setup.cfg src/$(PROJECT_NAME)
 

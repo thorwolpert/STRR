@@ -41,6 +41,7 @@ from .certificate import Certificate
 from .conditions_of_approval import ConditionsOfApproval
 from .db import db  # noqa: I001
 from .events import Events
+from .interactions import CustomerInteraction
 from .ltsa import LTSARecord
 from .notice_of_consideration import NoticeOfConsideration
 from .platforms import Platform, PlatformBrand, PlatformRegistration, PlatformRepresentative
@@ -56,31 +57,29 @@ __all__ = (
     "AccountRoles",
     "Address",
     "Application",
+    "AutoApprovalRecord",
     "BulkValidation",
-    "User",
-    "RentalProperty",
-    "Address",
-    "PropertyContact",
-    "PropertyListing",
-    "PropertyManager",
-    "Registration",
+    "Certificate",
     "Contact",
     "ConditionsOfApproval",
-    "Document",
+    "CustomerInteraction" "Document",
     "Events",
-    "AutoApprovalRecord",
     "LTSARecord",
-    "Certificate",
     "NoticeOfConsideration",
-    "RegistrationNoticeOfConsideration",
-    "Platform",
     "PlatformBrand",
     "PlatformRegistration",
     "PlatformRepresentative",
+    "PropertyContact",
+    "PropertyListing",
+    "PropertyManager",
     "RealTimeValidation",
+    "Registration",
+    "RegistrationNoticeOfConsideration",
     "RegistrationSnapshot",
+    "RentalProperty",
     "StrataHotel",
-    "StrataHotelRegistration",
     "StrataHotelBuilding",
+    "StrataHotelRegistration",
     "StrataHotelRepresentative",
+    "User",
 )
