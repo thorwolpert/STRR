@@ -116,7 +116,7 @@ class InteractionService:
                 timeout=current_app.config["NOTIFY_API_TIMEOUT"],
             )
         except Exception as err:
-            current_app.logger.error(f"Email error {resp}, err")
+            current_app.logger.error(f"Email error, {err}")
             return {"id": -1}
 
         if resp.status_code not in [HTTPStatus.OK, HTTPStatus.ACCEPTED, HTTPStatus.CREATED]:
