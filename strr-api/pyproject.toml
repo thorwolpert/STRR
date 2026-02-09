@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "strr-api"
-version = "0.2.1"
+version = "0.3.1"
 description = ""
 authors = ["thorwolpert <thor@wolpert.ca>"]
 license = "BSD 3-Clause"
@@ -131,6 +131,7 @@ filterwarnings = [
 markers = [
    "slow",
    "serial",
+   "conf: Inject flask config values into the app fixture",
 ]
 
 [tool.coverage.run]
