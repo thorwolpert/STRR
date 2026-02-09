@@ -17,10 +17,10 @@ from strr_api.utils.validate_calls import validate_mutex
 class EmailInfo:
     """Email Info class"""
 
-    application_number: str = None
-    email_type: str = None
-    custom_content: str = None
-    registration_number: str = None
+    application_number: str | None = None
+    email_type: str | None = None
+    custom_content: str | None = None
+    registration_number: str | None = None
 
 
 class InteractionService:
@@ -62,9 +62,6 @@ class InteractionService:
 
             case _:
                 raise ExternalServiceException(error="Unsupported channel type", status_code=HTTPStatus.BAD_REQUEST)
-
-        what = isinstance(notify_reference, dict)
-        isit = type(notify_reference)
 
         if (
             not notify_reference
