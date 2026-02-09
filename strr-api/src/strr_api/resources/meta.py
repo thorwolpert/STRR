@@ -35,9 +35,9 @@
 """Meta information about the service.
 Currently this only provides API versioning information
 """
-from flask import Blueprint
-from flask import __version__ as framework_version
-from flask import jsonify
+from importlib.metadata import version as meta_version
+
+from flask import Blueprint, jsonify
 
 from strr_api.common.run_version import get_run_version
 
@@ -56,5 +56,6 @@ def info():
       200:
         description:
     """
+    framework_version = meta_version("flask")
     version = get_run_version()
     return jsonify(API=f"{__name__[: __name__.find('.')]}/{version}", FrameWork=f"{framework_version}")
