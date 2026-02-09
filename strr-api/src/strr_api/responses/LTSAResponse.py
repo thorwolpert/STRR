@@ -3,7 +3,7 @@ LTSA response objects.
 """
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class TitleSummary(BaseModel):
@@ -100,6 +100,7 @@ class DescriptionOfLand(BaseModel):
     parcelStatus: str
 
 
+# @dataclass(config=ConfigDict(extra="ignore"))
 class LtsaResponse(BaseModel):
     """LTSA Reference endpoint response object."""
 
@@ -110,7 +111,4 @@ class LtsaResponse(BaseModel):
     ownershipGroups: List[OwnershipGroup]
     descriptionsOfLand: List[DescriptionOfLand]
 
-    class Config:
-        """Pydantic configuration"""
-
-        extra = "ignore"
+    __pydantic_config__ = ConfigDict(extra="ignore")
