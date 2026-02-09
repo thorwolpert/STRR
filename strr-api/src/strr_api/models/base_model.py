@@ -34,7 +34,7 @@
 """Base Model."""
 import datetime
 
-from sqlalchemy import Column, DateTime, ForeignKey
+from sqlalchemy import Column, DateTime, ForeignKey, MetaData
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship
 
@@ -42,9 +42,19 @@ from strr_api.models.user import User
 
 from .db import db
 
+convention = {
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s",
+}
+
 
 class SimpleBaseModel(db.Model):
     """Base class that defines all the common methods."""
+
+    metadata = MetaData(naming_convention=convention)
 
     __abstract__ = True
 

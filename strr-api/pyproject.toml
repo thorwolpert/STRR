@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "strr-api"
-version = "0.1.17"
+version = "0.2.1"
 description = ""
 authors = ["thorwolpert <thor@wolpert.ca>"]
 license = "BSD 3-Clause"
@@ -39,7 +39,6 @@ testcontainers = "^4.14.0"
 [tool.poetry.group.test.dependencies]
 freezegun = "^1.2.2"
 hypothesis = "^6.75.6"
-lovely-pytest-docker = "^0.3.1"
 pexpect = "^4.8.0"
 pytest = "^7.2.2"
 pytest-cov = "^4.0.0"
@@ -55,6 +54,7 @@ pylint = "^3.0.3"
 bandit = "^1.7.6"
 isort = "^5.13.2"
 testcontainers = "^4.14.0"
+pytest-check = "^2.6.2"
 
 [tool.bandit]
 exclude_dirs = [".venv","tests"]
