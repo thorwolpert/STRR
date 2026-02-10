@@ -12,17 +12,15 @@ const props = withDefaults(defineProps<{
   applicationsLimit: 6
 })
 
-// Pagination state - persisted in URL for navigation preservation
-const { page: applicationsPage, resetPage: resetApplicationsPage } = useDashboardTablePagination('appPage')
-
-// Search state - persisted in URL for navigation preservation
+// Pagination and search state from composable
+const { page: applicationsPage } = useDashboardTablePagination('appPage')
 const { searchText } = useDashboardTableSearch('appSearch')
 const isSearching = computed(() => searchText.value.length >= 3)
 
 // When starting a new search (or clearing), always return to page 1
 watch(searchText, () => {
   if (applicationsPage.value !== 1) {
-    resetApplicationsPage()
+    applicationsPage.value = 1
   }
 })
 

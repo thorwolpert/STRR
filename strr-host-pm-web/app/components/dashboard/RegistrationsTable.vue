@@ -12,17 +12,15 @@ const props = withDefaults(defineProps<{
   registrationsLimit: 6
 })
 
-// Pagination state - persisted in URL for navigation preservation
-const { page: registrationsPage, resetPage: resetRegistrationsPage } = useDashboardTablePagination('regPage')
-
-// Search state - persisted in URL for navigation preservation
+// Pagination and search state from composable
+const { page: registrationsPage } = useDashboardTablePagination('regPage')
 const { searchText } = useDashboardTableSearch('regSearch')
 const isSearching = computed(() => searchText.value.length >= 3)
 
 // When starting a new search (or clearing), always return to page 1
 watch(searchText, () => {
   if (registrationsPage.value !== 1) {
-    resetRegistrationsPage()
+    registrationsPage.value = 1
   }
 })
 
