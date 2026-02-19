@@ -150,6 +150,250 @@ class Registration(Versioned, BaseModel):
         return paginated_result
 
     @classmethod
+    def _host_condition_bl_or_pr(cls, application_model):
+        """BL+PR selected: records with BL true or PR true."""
+        bl_true = (
+            application_model.application_json["registration"]["strRequirements"]["isBusinessLicenceRequired"].astext
+            == "true"
+        )
+        pr_true = (
+            application_model.application_json["registration"]["strRequirements"]["isPrincipalResidenceRequired"].astext
+            == "true"
+        )
+        return db.exists().where(
+            db.and_(
+                application_model.registration_id == Registration.id,
+                db.or_(bl_true, pr_true),
+            )
+        )
+
+    @classmethod
+    def _host_condition_no_req(cls):
+        """No requirements - STRAA exempt or both BL and PR not required."""
+        # pylint: disable=import-outside-toplevel
+        from strr_api.models.application import Application
+
+        return db.or_(
+            db.exists().where(
+                db.and_(
+                    RentalProperty.registration_id == Registration.id,
+                    RentalProperty.strr_exempt == True,  # noqa: E712
+                )
+            ),
+            db.exists().where(
+                db.and_(
+                    Application.registration_id == Registration.id,
+                    db.or_(
+                        Application.application_json["registration"]["strRequirements"]["isStraaExempt"].astext
+                        == "true",
+                        db.and_(
+                            Application.application_json["registration"]["strRequirements"][
+                                "isBusinessLicenceRequired"
+                            ].astext
+                            == "false",
+                            Application.application_json["registration"]["strRequirements"][
+                                "isPrincipalResidenceRequired"
+                            ].astext
+                            == "false",
+                        ),
+                    ),
+                )
+            ),
+        )
+
+    @classmethod
+    def _strata_condition_no_pr(cls, application_model, strata_hotel_model, strata_hotel_registration_model):
+        """Strata Hotel MULTI_UNIT_NON_PR category."""
+        return db.or_(
+            db.exists().where(
+                db.and_(
+                    strata_hotel_registration_model.registration_id == Registration.id,
+                    strata_hotel_registration_model.strata_hotel_id == strata_hotel_model.id,
+                    strata_hotel_model.category == StrataHotelCategory.MULTI_UNIT_NON_PR,
+                )
+            ),
+            db.exists().where(
+                db.and_(
+                    application_model.registration_id == Registration.id,
+                    application_model.application_json["registration"]["strataHotelDetails"]["category"].astext
+                    == "MULTI_UNIT_NON_PR",
+                )
+            ),
+        )
+
+    @classmethod
+    def _strata_condition_pr(cls, application_model, strata_hotel_model, strata_hotel_registration_model):
+        """Strata Hotel FULL_SERVICE or POST_DECEMBER_2023 category."""
+        return db.or_(
+            db.exists().where(
+                db.and_(
+                    strata_hotel_registration_model.registration_id == Registration.id,
+                    strata_hotel_registration_model.strata_hotel_id == strata_hotel_model.id,
+                    db.or_(
+                        strata_hotel_model.category == StrataHotelCategory.FULL_SERVICE,
+                        strata_hotel_model.category == StrataHotelCategory.POST_DECEMBER_2023,
+                    ),
+                )
+            ),
+            db.exists().where(
+                db.and_(
+                    application_model.registration_id == Registration.id,
+                    db.or_(
+                        application_model.application_json["registration"]["strataHotelDetails"]["category"].astext
+                        == "FULL_SERVICE",
+                        application_model.application_json["registration"]["strataHotelDetails"]["category"].astext
+                        == "POST_DECEMBER_2023",
+                    ),
+                )
+            ),
+        )
+
+    @classmethod
+    def _handle_bl_pr_requirement(cls, req: str, requirement: list[str], host_conditions: list):
+        """If req is BL+PR or PR (when both selected), handle and return True; else False."""
+        if req == StrrRequirement.BL.value and StrrRequirement.PR.value in requirement:
+            # pylint: disable=import-outside-toplevel
+            from strr_api.models.application import Application
+
+            host_conditions.append(cls._host_condition_bl_or_pr(Application))
+            return True
+        if req == StrrRequirement.PR.value and StrrRequirement.BL.value in requirement:
+            return True
+        return False
+
+    @classmethod
+    def _condition_for_requirement(
+        cls,
+        req: str,
+        pr_exempt_mapping: dict,
+        platform_req_mapping: dict,
+        application_model,
+        platform_registration_model,
+        platform_model,
+        strata_hotel_model,
+        strata_hotel_registration_model,
+    ):
+        """Return (condition, 'host'|'platform'|'strata') for req, or (None, None) if not handled."""
+        if req == StrrRequirement.BL.value:
+            return (
+                db.exists().where(
+                    db.and_(
+                        application_model.registration_id == Registration.id,
+                        application_model.application_json["registration"]["strRequirements"][
+                            "isBusinessLicenceRequired"
+                        ].astext
+                        == "true",
+                    )
+                ),
+                "host",
+            )
+        if req == StrrRequirement.PR.value:
+            return (
+                db.exists().where(
+                    db.and_(
+                        application_model.registration_id == Registration.id,
+                        application_model.application_json["registration"]["strRequirements"][
+                            "isPrincipalResidenceRequired"
+                        ].astext
+                        == "true",
+                    )
+                ),
+                "host",
+            )
+        if req == StrrRequirement.PROHIBITED.value:
+            return (
+                db.exists().where(
+                    db.and_(
+                        application_model.registration_id == Registration.id,
+                        application_model.application_json["registration"]["strRequirements"]["isStrProhibited"].astext
+                        == "true",
+                    )
+                ),
+                "host",
+            )
+        if req == StrrRequirement.NO_REQ.value:
+            return (cls._host_condition_no_req(), "host")
+        if req in pr_exempt_mapping:
+            return (
+                db.exists().where(
+                    db.and_(
+                        RentalProperty.registration_id == Registration.id,
+                        RentalProperty.pr_exempt_reason == pr_exempt_mapping[req],
+                    )
+                ),
+                "host",
+            )
+        if req in platform_req_mapping:
+            return (
+                db.exists().where(
+                    db.and_(
+                        platform_registration_model.registration_id == Registration.id,
+                        platform_registration_model.platform_id == platform_model.id,
+                        platform_model.listing_size == platform_req_mapping[req],
+                    )
+                ),
+                "platform",
+            )
+        if req == StrrRequirement.STRATA_NO_PR.value:
+            return (
+                cls._strata_condition_no_pr(application_model, strata_hotel_model, strata_hotel_registration_model),
+                "strata",
+            )
+        if req == StrrRequirement.STRATA_PR.value:
+            return (
+                cls._strata_condition_pr(application_model, strata_hotel_model, strata_hotel_registration_model),
+                "strata",
+            )
+        return (None, None)
+
+    @classmethod
+    def _collect_registration_requirement_conditions(cls, requirement: list[str]):
+        """Build host, platform, and strata condition lists from requirement filters."""
+        # pylint: disable=import-outside-toplevel
+        from strr_api.models.application import Application
+        from strr_api.models.platforms import Platform, PlatformRegistration
+        from strr_api.models.strata_hotels import StrataHotel, StrataHotelRegistration
+
+        pr_exempt_mapping = {
+            StrrRequirement.PR_EXEMPT_STRATA_HOTEL.value: "STRATA_HOTEL",
+            StrrRequirement.PR_EXEMPT_FARM_LAND.value: "FARM_LAND",
+            StrrRequirement.PR_EXEMPT_FRACTIONAL_OWNERSHIP.value: "FRACTIONAL_OWNERSHIP",
+        }
+        platform_req_mapping = {
+            StrrRequirement.PLATFORM_MAJOR.value: "THOUSAND_AND_ABOVE",
+            StrrRequirement.PLATFORM_MEDIUM.value: "BETWEEN_250_AND_999",
+            StrrRequirement.PLATFORM_MINOR.value: "LESS_THAN_250",
+        }
+
+        host_conditions = []
+        platform_conditions = []
+        strata_conditions = []
+
+        for req in requirement:
+            if cls._handle_bl_pr_requirement(req, requirement, host_conditions):
+                continue
+            cond, kind = cls._condition_for_requirement(
+                req,
+                pr_exempt_mapping,
+                platform_req_mapping,
+                Application,
+                PlatformRegistration,
+                Platform,
+                StrataHotel,
+                StrataHotelRegistration,
+            )
+            if cond is None:
+                continue
+            if kind == "host":
+                host_conditions.append(cond)
+            elif kind == "platform":
+                platform_conditions.append(cond)
+            else:
+                strata_conditions.append(cond)
+
+        return host_conditions, platform_conditions, strata_conditions
+
+    @classmethod
     def _filter_by_registration_requirement(cls, requirement: list[str], query):
         """Filter query by requirements.
 
@@ -164,193 +408,19 @@ class Registration(Versioned, BaseModel):
         - Strata conditions are ANDed together
         - Then the groups are ORed together
         """
-        # pylint: disable=import-outside-toplevel
-        from strr_api.models.application import Application
-        from strr_api.models.platforms import Platform, PlatformRegistration
-        from strr_api.models.strata_hotels import StrataHotel, StrataHotelRegistration
-
         if not requirement:
             return query
 
-        pr_exempt_mapping = {
-            StrrRequirement.PR_EXEMPT_STRATA_HOTEL.value: "STRATA_HOTEL",
-            StrrRequirement.PR_EXEMPT_FARM_LAND.value: "FARM_LAND",
-            StrrRequirement.PR_EXEMPT_FRACTIONAL_OWNERSHIP.value: "FRACTIONAL_OWNERSHIP",
-        }
-
-        platform_req_mapping = {
-            StrrRequirement.PLATFORM_MAJOR.value: "THOUSAND_AND_ABOVE",
-            StrrRequirement.PLATFORM_MEDIUM.value: "BETWEEN_250_AND_999",
-            StrrRequirement.PLATFORM_MINOR.value: "LESS_THAN_250",
-        }
-
-        host_conditions = []
-        platform_conditions = []
-        strata_conditions = []
-
-        for req in requirement:
-            # HOST requirements that need Application.application_json (strRequirements)
-            if req == StrrRequirement.BL.value:
-                # BL required - check via Application's application_json
-                host_conditions.append(
-                    db.exists().where(
-                        db.and_(
-                            Application.registration_id == Registration.id,
-                            Application.application_json["registration"]["strRequirements"][
-                                "isBusinessLicenceRequired"
-                            ].astext
-                            == "true",
-                        )
-                    )
-                )
-            elif req == StrrRequirement.PR.value:
-                # The actual data access happens when the query executes, not during building
-                # PR required - check via Application's application_json
-                host_conditions.append(
-                    db.exists().where(
-                        db.and_(
-                            Application.registration_id == Registration.id,
-                            Application.application_json["registration"]["strRequirements"][
-                                "isPrincipalResidenceRequired"
-                            ].astext
-                            == "true",
-                        )
-                    )
-                )
-            elif req == StrrRequirement.PROHIBITED.value:
-                # STR Prohibited - check via Application's application_json
-                host_conditions.append(
-                    db.exists().where(
-                        db.and_(
-                            Application.registration_id == Registration.id,
-                            Application.application_json["registration"]["strRequirements"]["isStrProhibited"].astext
-                            == "true",
-                        )
-                    )
-                )
-            elif req == StrrRequirement.NO_REQ.value:
-                # No requirements - STRAA exempt or both BL and PR not required
-                host_conditions.append(
-                    db.or_(
-                        # Check strr_exempt on RentalProperty
-                        db.exists().where(
-                            db.and_(
-                                RentalProperty.registration_id == Registration.id,
-                                RentalProperty.strr_exempt == True,  # noqa: E712
-                            )
-                        ),
-                        # Or check via Application's application_json
-                        db.exists().where(
-                            db.and_(
-                                Application.registration_id == Registration.id,
-                                db.or_(
-                                    Application.application_json["registration"]["strRequirements"][
-                                        "isStraaExempt"
-                                    ].astext
-                                    == "true",
-                                    db.and_(
-                                        Application.application_json["registration"]["strRequirements"][
-                                            "isBusinessLicenceRequired"
-                                        ].astext
-                                        == "false",
-                                        Application.application_json["registration"]["strRequirements"][
-                                            "isPrincipalResidenceRequired"
-                                        ].astext
-                                        == "false",
-                                    ),
-                                ),
-                            )
-                        ),
-                    )
-                )
-            # PR Exempt reasons - check RentalProperty.pr_exempt_reason directly
-            elif req in pr_exempt_mapping:
-                host_conditions.append(
-                    db.exists().where(
-                        db.and_(
-                            RentalProperty.registration_id == Registration.id,
-                            RentalProperty.pr_exempt_reason == pr_exempt_mapping[req],
-                        )
-                    )
-                )
-            # Platform requirements - check Platform.listing_size via PlatformRegistration
-            elif req in platform_req_mapping:
-                platform_conditions.append(
-                    db.exists().where(
-                        db.and_(
-                            PlatformRegistration.registration_id == Registration.id,
-                            PlatformRegistration.platform_id == Platform.id,
-                            Platform.listing_size == platform_req_mapping[req],
-                        )
-                    )
-                )
-            # Strata Hotel requirements - check both StrataHotel.category and application JSON
-            elif req == StrrRequirement.STRATA_NO_PR.value:
-                strata_conditions.append(
-                    db.or_(
-                        # Check denormalized field
-                        db.exists().where(
-                            db.and_(
-                                StrataHotelRegistration.registration_id == Registration.id,
-                                StrataHotelRegistration.strata_hotel_id == StrataHotel.id,
-                                StrataHotel.category == StrataHotelCategory.MULTI_UNIT_NON_PR,
-                            )
-                        ),
-                        # Fallback to application JSON (source of truth)
-                        db.exists().where(
-                            db.and_(
-                                Application.registration_id == Registration.id,
-                                Application.application_json["registration"]["strataHotelDetails"]["category"].astext
-                                == "MULTI_UNIT_NON_PR",
-                            )
-                        ),
-                    )
-                )
-            elif req == StrrRequirement.STRATA_PR.value:
-                strata_conditions.append(
-                    db.or_(
-                        # Check denormalized field
-                        db.exists().where(
-                            db.and_(
-                                StrataHotelRegistration.registration_id == Registration.id,
-                                StrataHotelRegistration.strata_hotel_id == StrataHotel.id,
-                                db.or_(
-                                    StrataHotel.category == StrataHotelCategory.FULL_SERVICE,
-                                    StrataHotel.category == StrataHotelCategory.POST_DECEMBER_2023,
-                                ),
-                            )
-                        ),
-                        # Fallback to application JSON (source of truth)
-                        db.exists().where(
-                            db.and_(
-                                Application.registration_id == Registration.id,
-                                db.or_(
-                                    Application.application_json["registration"]["strataHotelDetails"][
-                                        "category"
-                                    ].astext
-                                    == "FULL_SERVICE",
-                                    Application.application_json["registration"]["strataHotelDetails"][
-                                        "category"
-                                    ].astext
-                                    == "POST_DECEMBER_2023",
-                                ),
-                            )
-                        ),
-                    )
-                )
-
-        # Combine conditions: AND within groups, OR between groups
+        host_list, platform_list, strata_list = cls._collect_registration_requirement_conditions(requirement)
         combined_conditions = []
-        if host_conditions:
-            combined_conditions.append(db.and_(*host_conditions))
-        if platform_conditions:
-            combined_conditions.append(db.and_(*platform_conditions))
-        if strata_conditions:
-            combined_conditions.append(db.and_(*strata_conditions))
-
+        if host_list:
+            combined_conditions.append(db.and_(*host_list))
+        if platform_list:
+            combined_conditions.append(db.and_(*platform_list))
+        if strata_list:
+            combined_conditions.append(db.and_(*strata_list))
         if combined_conditions:
             query = query.filter(db.or_(*combined_conditions))
-
         return query
 
 
