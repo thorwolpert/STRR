@@ -67,13 +67,16 @@ class InteractionService:
     }
 
     @overload
-    def dispatch(*, application_id: int) -> None: ...
+    def dispatch(*, application_id: int) -> None:
+        ...
 
     @overload
-    def dispatch(*, registration_id: int) -> None: ...
+    def dispatch(*, registration_id: int) -> None:
+        ...
 
     @overload
-    def dispatch(*, customer_id: int) -> None: ...
+    def dispatch(*, customer_id: int) -> None:
+        ...
 
     @staticmethod
     @validate_mutex("application_id", "registration_id", "customer_id", min_count=1, max_count=1)
@@ -119,7 +122,9 @@ class InteractionService:
         event_type = (
             Events.EventType.REGISTRATION
             if registration_id
-            else Events.EventType.APPLICATION if application_id else Events.EventType.USER
+            else Events.EventType.APPLICATION
+            if application_id
+            else Events.EventType.USER
         )
         event_name = InteractionService.email_event_mapper[payload.email_type]
 
