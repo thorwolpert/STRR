@@ -247,3 +247,4 @@ def test_email_mocked_notify(
     )
 
     assert stored.notify_reference
+    assert stored.registration_id == registration.id
