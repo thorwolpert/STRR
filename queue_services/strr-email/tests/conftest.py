@@ -46,6 +46,7 @@ import sqlalchemy
 from sqlalchemy import event
 from sqlalchemy import text
 from sqlalchemy.orm import Session as AppSession
+
 # from strr_api import create_app
 # from strr_api import db as _db
 from strr_api import jwt as _jwt
@@ -180,8 +181,7 @@ def setup_database(app):
     """
     # This applies all migrations up to 'head'
     # It assumes you're running in thne devcontainer
-    directory = os.getenv("MIGRATION_DIRECTORY",
-                          "/workspaces/STRR/strr-api/migrations")
+    directory = os.getenv("MIGRATION_DIRECTORY", "/workspaces/STRR/strr-api/migrations")
     upgrade(directory=directory)
 
     yield
