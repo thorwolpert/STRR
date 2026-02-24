@@ -126,12 +126,54 @@ class RegistrationService:
         return cls._process_renewal_request(registration_details, registration_request, registration_type)
 
     @classmethod
+    def is_registration_expired(cls, registration: Registration) -> bool:
+        """True if registration expiry date (calendar day) is before today. Date-only comparison."""
+        now = datetime.now(timezone.utc)
+        expiry = registration.expiry_date
+        if expiry.tzinfo is None:
+            expiry_utc = expiry.replace(tzinfo=timezone.utc)
+        else:
+            expiry_utc = expiry.astimezone(timezone.utc)
+        return expiry_utc.date() < now.date()
+
+    @classmethod
+    def compute_renewal_expiry_date(cls, registration: Registration):
+        """
+        Return the new expiry date for a renewal: TODAY + 365 days if registration is already
+        expired (expiry date in the past), otherwise current expiry + 365 days.
+        Uses date-only comparison so 'expired' is unambiguous across timezones.
+        """
+        now = datetime.now(timezone.utc)
+        expiry = registration.expiry_date
+        if expiry.tzinfo is None:
+            expiry_utc = expiry.replace(tzinfo=timezone.utc)
+        else:
+            expiry_utc = expiry.astimezone(timezone.utc)
+        today_utc = now.date()
+        expiry_date_only = expiry_utc.date()
+        if expiry_date_only < today_utc:
+            # Expired: new expiry = TODAY + 365 days (end of day), so "days left" shows 365
+            new_expiry = (now + timedelta(days=365)).replace(hour=23, minute=59, second=59, microsecond=0)
+        else:
+            # Not expired: extend from current expiry
+            new_expiry = registration.expiry_date + relativedelta(years=1)
+        if expiry.tzinfo is None:
+            return new_expiry.replace(tzinfo=None) if new_expiry.tzinfo else new_expiry
+        return new_expiry.astimezone(expiry.tzinfo) if new_expiry.tzinfo else new_expiry.replace(tzinfo=expiry.tzinfo)
+
+    @classmethod
+    def apply_renewal_expiry(cls, registration: Registration) -> None:
+        """Set registration expiry and status for a renewal (when only updating existing record)."""
+        registration.expiry_date = cls.compute_renewal_expiry_date(registration)
+        registration.status = RegistrationStatus.ACTIVE
+
+    @classmethod
     def _process_renewal_request(cls, registration_details, registration_request, registration_type):
         registration = RegistrationService.get_registration_by_id(
             registration_request.get("header", {}).get("registrationId")
         )
         SnapshotService.snapshot_registration(registration)
-        registration.expiry_date = registration.expiry_date + relativedelta(years=1)
+        registration.expiry_date = cls.compute_renewal_expiry_date(registration)
         registration.status = RegistrationStatus.ACTIVE
         for doc in registration_details.get("documents", []):
             document = Document(
