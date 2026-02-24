@@ -50,12 +50,15 @@ import requests
 from simple_cloudevent import SimpleCloudEvent
 from strr_api.enums.enum import RegistrationNocStatus
 from strr_api.models import Application
+from strr_api.models import CustomerInteraction
 from strr_api.models import Platform
 from strr_api.models import Registration
 from strr_api.models import StrataHotel
 from strr_api.models.application import ApplicationSerializer
 from strr_api.services import AuthService
+from strr_api.services import InteractionService
 from strr_api.services import RegistrationService
+from strr_api.services.interaction import EmailInfo
 from structured_logging import StructuredLogging
 
 from strr_email.services import gcp_queue
@@ -113,6 +116,8 @@ def worker():
     filled_template = substitute_template_parts(template)
     jinja_template = Template(filled_template, autoescape=True)
     email = None
+    application = None
+    registration = None
 
     # 3. Build email template for application updates
     if email_info.application_number:
@@ -167,17 +172,35 @@ def worker():
         else:
             return {}, HTTPStatus.OK
 
-    # 4. Send email via notify-api
-    token = AuthService.get_service_client_token()
-    resp = requests.post(
-        current_app.config["NOTIFY_SVC_URL"],
-        json=email,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}",
-        },
-        timeout=current_app.config["NOTIFY_API_TIMEOUT"],
-    )
+    # 4. Send email via InteractionService or notify-api
+    # Manage RENEWALS first, others still be the legacy method
+    if "RENEWAL_REMINDER" in email_info.email_type:
+        try:
+            email_info.email = email
+            resp = InteractionService.dispatch(
+                channel_type=CustomerInteraction.ChannelType.EMAIL,
+                payload=email_info,
+                application_id=application.id if application else None,
+                registration_id=registration.id if registration else None,
+            )
+            logger.info(f"completed ce: {str(ce)}")
+            return jsonify({"interaction": resp.interaction_uuid}), HTTPStatus.OK
+
+        except Exception as err:
+            logger.error(f"Error posting email to notify-api for: {str(ce)}")
+            return jsonify({"message": "Error posting email to notify-api."}), 400
+
+    else:
+        token = AuthService.get_service_client_token()
+        resp = requests.post(
+            current_app.config["NOTIFY_SVC_URL"],
+            json=email,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {token}",
+            },
+            timeout=current_app.config["NOTIFY_API_TIMEOUT"],
+        )
 
     if resp.status_code not in [HTTPStatus.OK, HTTPStatus.ACCEPTED, HTTPStatus.CREATED]:
         logger.info(f"Error {resp.status_code} - {str(resp.json())}")
@@ -474,16 +497,6 @@ def _get_registration_tac_url(registration: Registration) -> str:
     if registration.registration_type == Registration.RegistrationType.PLATFORM:
         return current_app.config["TAC_URL_PLATFORM"]
     return ""
-
-
-@dataclass
-class EmailInfo:
-    """Email Info class"""
-
-    application_number: str = None
-    email_type: str = None
-    custom_content: str = None
-    registration_number: str = None
 
 
 def get_email_info(ce: SimpleCloudEvent) -> EmailInfo | None:

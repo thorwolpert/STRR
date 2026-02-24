@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "strr-email"
-version = "1.0.10"
+version = "1.1.10"
 description = "BC Registries - strr-email"
 authors = []
 license = "BSD-3-Clause"
@@ -27,6 +27,7 @@ gcp-queue = { git = "https://github.com/bcgov/sbc-connect-common.git", subdirect
 structured-logging = { git = "https://github.com/bcgov/sbc-connect-common.git", subdirectory = "python/structured-logging", branch = "main" }
 strr-api = {git = "https://github.com/bcgov/STRR.git", rev = "main", subdirectory = "strr-api"}
 nanoid = "^2.0.0"
+# strr-api = {path = "/workspaces/STRR/strr-api", develop = true}
 
 
 [tool.poetry.group.dev.dependencies]
@@ -34,8 +35,20 @@ pytest = "^8.2.0"
 pytest-mock = "^3.14.0"
 black = "^24.4.2"
 zimports = "^0.6.1"
-lovely-pytest-docker = "^0.3.1"
 isort = "^5.13.2"
+testcontainers = "^4.14.0"
+responses = "^0.26.0"
+
+[tool.poetry.group.test.dependencies]
+freezegun = "^1.2.2"
+hypothesis = "^6.75.6"
+pexpect = "^4.8.0"
+pytest = "^8.2.0"
+pytest-mock = "^3.14.0"
+pytest-cov = "^4.0.0"
+requests-mock = "^1.11.0"
+nanoid = "^2.0.0"
+testcontainers = "^4.14.0"
 
 [tool.black]
 line-length = 100
@@ -61,3 +74,27 @@ known_first_party = ["strr_email"]
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.pytest.ini_options]
+minversion = "2.0"
+testpaths = [
+   "tests",
+]
+addopts = "--verbose --strict -p no:warnings --cov=src --cov-report html:htmlcov --cov-report xml:coverage.xml"
+python_files = [
+   "test*.py"
+]
+norecursedirs = [
+   ".git", ".tox", "venv*", "requirements*", "build",
+]
+log_cli = true
+log_cli_level = "1"
+filterwarnings = [
+   "ignore::UserWarning"
+]
+markers = [
+   "slow",
+   "serial",
+   "conf: Inject flask config values into the app fixture",
+]
