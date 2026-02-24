@@ -136,7 +136,7 @@ def test_dispatch_email_interaction_success(mock_requests_post, mock_get_token, 
     mock_requests_post.return_value.status_code = HTTPStatus.OK
     mock_requests_post.return_value.json.return_value = {"id": 123}
 
-    email_info = EmailInfo(application_number="123", email_type="RENEWAL_REMINDER", custom_content="some content")
+    email_info = EmailInfo(application_number="123", email_type="HOST_RENEWAL_REMINDER", custom_content="some content")
     application_id = setup_parents["application_id"]
     registration_id = None
     customer_id = None

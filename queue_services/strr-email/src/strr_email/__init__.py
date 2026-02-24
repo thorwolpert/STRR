@@ -35,6 +35,7 @@
 from __future__ import annotations
 
 from flask import Flask
+from flask_migrate import Migrate
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from strr_api import db
@@ -59,6 +60,9 @@ def create_app(environment: Config = ProdConfig, **_kwargs) -> Flask:
         )
 
     db.init_app(app)
+    if app.config.get("POD_NAMESPACE", None) == "Testing":
+        Migrate(app, db)
+
     gcp_queue.init_app(app)
     register_endpoints(app)
 
