@@ -178,7 +178,7 @@ def setup_database(app):
     """
     # This applies all migrations up to 'head'
     # It assumes you're running in thne devcontainer
-    directory = os.getenv("MIGRATION_DIRECTORY", "/workspaces/STRR/strr-api/migrations")
+    directory = os.getenv("MIGRATION_DIRECTORY", "../../strr-api/migrations")
     upgrade(directory=directory)
 
     yield
