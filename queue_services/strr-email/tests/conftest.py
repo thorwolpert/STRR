@@ -46,9 +46,6 @@ import sqlalchemy
 from sqlalchemy import event
 from sqlalchemy import text
 from sqlalchemy.orm import Session as AppSession
-
-# from strr_api import create_app
-# from strr_api import db as _db
 from strr_api import jwt as _jwt
 from testcontainers.postgres import PostgresContainer
 
