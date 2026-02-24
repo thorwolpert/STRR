@@ -95,15 +95,15 @@ class InteractionService:
             case CustomerInteraction.ChannelType.EMAIL:
                 if not isinstance(payload, EmailInfo):
                     raise ValidationException(error="Invalid EmailInfo", status_code=HTTPStatus.BAD_REQUEST)
-                notify_reference = InteractionService._send_email_to_notify_service(payload)
+                notify_json = InteractionService._send_email_to_notify_service(payload)
 
             case _:
                 raise ExternalServiceException(error="Unsupported channel type", status_code=HTTPStatus.BAD_REQUEST)
 
         if (
-            not notify_reference
-            or not isinstance(notify_reference, dict)
-            or not (notify_id := notify_reference.get("id"))
+            not notify_json
+            or not isinstance(notify_json, dict)
+            or not (notify_id := notify_json.get("id"))
             or (notify_id < 1)
         ):
             raise ExternalServiceException(error="Email not sent", status_code=HTTPStatus.BAD_REQUEST)
