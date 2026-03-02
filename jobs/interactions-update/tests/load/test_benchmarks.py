@@ -21,12 +21,13 @@ def test_benchmark_job_performance(
     # 1. Setup Environment Mocks
     notify_url = "http://my-notify-mock"
     notify_ver = "/api/v1"
+    notify_svc = notify_url + notify_ver
     auth_url = "http://my-auth-url"
     strr_sa_id = "strr-sa-client-id"
     strr_sa_secret = "strr-sa-secret"
     monkeypatch.setenv("NOTIFY_API_URL", notify_url)
     monkeypatch.setenv("NOTIFY_API_VERSION", notify_ver)
-    monkeypatch.setenv("NOTIFY_SVC_URL", notify_url + notify_ver)
+    monkeypatch.setenv("NOTIFY_SVC_URL", notify_svc)
     monkeypatch.setenv("KEYCLOAK_AUTH_TOKEN_URL", auth_url)
     monkeypatch.setenv("NOTIFY_API_TIMEOUT", "30")
     monkeypatch.setenv("AUTH_SVC_TIMEOUT", "30")
@@ -47,7 +48,7 @@ def test_benchmark_job_performance(
 
     responses.add_callback(
         responses.GET,
-        url=re.compile(f"{notify_url}/notify/.*"),
+        url=re.compile(f"{notify_svc}/notify/.*"),
         callback=delayed_callback,
         content_type="application/json",
     )
