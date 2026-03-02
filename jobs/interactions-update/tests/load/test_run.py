@@ -93,14 +93,20 @@ def test_run(db_session, setup_bulk_interactions, monkeypatch):
 @pytest.mark.parametrize("setup_bulk_interactions", [{"records": 1}], indirect=True)
 def test_run_failure_502(db_session, setup_bulk_interactions, monkeypatch):
     """Test that 502 errors from Notify are handled gracefully."""
-    auth_url = "http://my-auth-url"
     notify_url = "http://my-notify-mock"
     notify_ver = "/api/v1"
     notify_svc = notify_url + notify_ver
+    auth_url = "http://my-auth-url"
+    strr_sa_id = "strr-sa-client-id"
+    strr_sa_secret = "strr-sa-secret"
     monkeypatch.setenv("NOTIFY_API_URL", notify_url)
     monkeypatch.setenv("NOTIFY_API_VERSION", notify_ver)
-    monkeypatch.setenv("NOTIFY_SVC_URL", notify_url + notify_ver)
+    monkeypatch.setenv("NOTIFY_SVC_URL", notify_svc)
     monkeypatch.setenv("KEYCLOAK_AUTH_TOKEN_URL", auth_url)
+    monkeypatch.setenv("NOTIFY_API_TIMEOUT", "30")
+    monkeypatch.setenv("AUTH_SVC_TIMEOUT", "30")
+    monkeypatch.setenv("STRR_SERVICE_ACCOUNT_CLIENT_ID", strr_sa_id)
+    monkeypatch.setenv("STRR_SERVICE_ACCOUNT_SECRET", strr_sa_secret)
 
     # Setup Mock for 502 error
     responses.add(responses.GET, f"{notify_svc}/notify/.*", status=502)
@@ -140,9 +146,17 @@ def test_run_bulk_statuses(db_session, setup_bulk_interactions, monkeypatch):
     notify_url = "http://my-notify-mock"
     notify_ver = "/api/v1"
     notify_svc = notify_url + notify_ver
+    auth_url = "http://my-auth-url"
+    strr_sa_id = "strr-sa-client-id"
+    strr_sa_secret = "strr-sa-secret"
     monkeypatch.setenv("NOTIFY_API_URL", notify_url)
     monkeypatch.setenv("NOTIFY_API_VERSION", notify_ver)
     monkeypatch.setenv("NOTIFY_SVC_URL", notify_svc)
+    monkeypatch.setenv("KEYCLOAK_AUTH_TOKEN_URL", auth_url)
+    monkeypatch.setenv("NOTIFY_API_TIMEOUT", "30")
+    monkeypatch.setenv("AUTH_SVC_TIMEOUT", "30")
+    monkeypatch.setenv("STRR_SERVICE_ACCOUNT_CLIENT_ID", strr_sa_id)
+    monkeypatch.setenv("STRR_SERVICE_ACCOUNT_SECRET", strr_sa_secret)
 
     # List of possible statuses from Notify
     statuses = ["PENDING", "QUEUED", "SENT", "DELIVERED", "FAILURE", "FORWARDED"]
