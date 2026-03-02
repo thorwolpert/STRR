@@ -1,0 +1,99 @@
+name: CI Gauntlet
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - "jobs/interactions-update/**"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "jobs/interactions-update/**"
+
+# Set the default directory for all shell commands
+defaults:
+  run:
+    working-directory: jobs/interactions-update
+
+jobs:
+  # --- STAGE 0: LINT & FORMAT ---
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Poetry
+        run: pipx install poetry
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: 'poetry'
+          # We need to point the cache to the specific lock file in the subdir
+          cache-dependency-path: jobs/interactions-update/poetry.lock
+      - name: Install dependencies
+        run: poetry install
+      - name: Run Linting
+        run: make lint
+
+  # --- STAGE 1: FAST FUNCTIONAL TESTS ---
+  functional-tests:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Poetry
+        run: pipx install poetry
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: 'poetry'
+          cache-dependency-path: jobs/interactions-update/poetry.lock
+      - name: Install dependencies
+        run: poetry install
+      - name: Run Functional Tests
+        run: poetry run pytest -m "not load"
+
+  # --- STAGE 2: HEAVY LOAD TESTS ---
+  load-tests:
+    needs: functional-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Poetry
+        run: pipx install poetry
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: 'poetry'
+          cache-dependency-path: jobs/interactions-update/poetry.lock
+      - name: Install dependencies
+        run: poetry install
+      - name: Run Load Tests
+        run: poetry run pytest -m "load"
+
+  # --- STAGE 3: PERFORMANCE BENCHMARK ---
+  performance-benchmark:
+    needs: load-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Poetry
+        run: pipx install poetry
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: 'poetry'
+          cache-dependency-path: jobs/interactions-update/poetry.lock
+      - name: Install dependencies
+        run: poetry install
+      - name: Run Benchmark
+        # Generating JSON for the artifact
+        run: poetry run pytest tests/load/test_benchmarks.py --benchmark-json benchmark_results.json
+      - name: Upload Benchmark Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-benchmark-results
+          path: STRR/jobs/interactions-update/benchmark_results.json

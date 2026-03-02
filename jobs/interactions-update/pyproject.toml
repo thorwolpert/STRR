@@ -1,0 +1,65 @@
+[project]
+name = "interactions-update"
+version = "0.1.0"
+description = "updates the status of interactions from downstream services (currently only email)"
+authors = [
+    {name = "Thor", email = "thor@daxiom.com"}
+]
+license = {text = "BSD 3-Clause"}
+requires-python = ">=3.11,<3.15"
+
+# Leaving the local working api here as an example
+dependencies = [
+    "cloud-sql-python-connector[pg8000] (>=1.20.0,<2.0.0)",
+    "google-auth (>=2.48.0,<3.0.0)",
+    "sqlalchemy (>=2.0.47,<3.0.0)",
+    "requests (>=2.32.5,<3.0.0)",
+    # "strr-api @ file:///workspaces/STRR/strr-api",
+    "strr-api @ git+https://github.com/bcgov/STRR.git@main#subdirectory=strr-api",
+    "nanoid (>=2.0.0,<3.0.0)",
+    "python-dotenv (>=1.2.1,<2.0.0)"
+]
+
+# Poetry-specific configuration lives here
+[tool.poetry]
+packages = [{include = "interactions_update", from = "src"}]
+
+# [tool.poetry.dependencies]
+# strr-api = {develop = true}
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.2,<10.0.0)",
+    "pytest-mock (>=3.15.1,<4.0.0)",
+    "black (>=26.1.0,<27.0.0)",
+    "isort (>=8.0.0,<9.0.0)",
+    "testcontainers (>=4.14.1,<5.0.0)",
+    "responses (>=0.26.0,<0.27.0)",
+    "pytest-benchmark (>=5.2.3,<6.0.0)",
+    "flake8 (>=7.3.0,<8.0.0)"
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+python_files = ["test*.py"]
+norecursedirs = [".git", ".tox", "venv*", "requirements*", "build"]
+markers = [
+    "slow",
+    "serial",
+    "conf: Inject flask config values into the app fixture",
+    "load: marks tests as heavy load/integration tests (skipped in fast CI)",
+    "benchmark: marks performance benchmarking tests",
+]
+filterwarnings = [
+    "ignore:autoincrement and existing_autoincrement only make sense for MySQL:UserWarning",
+]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+force_single_line = true
+known_first_party = ["interactions_update", "strr_api"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
