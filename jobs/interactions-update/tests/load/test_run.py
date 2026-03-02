@@ -93,12 +93,14 @@ def test_run(db_session, setup_bulk_interactions, monkeypatch):
 @pytest.mark.parametrize("setup_bulk_interactions", [{"records": 1}], indirect=True)
 def test_run_failure_502(db_session, setup_bulk_interactions, monkeypatch):
     """Test that 502 errors from Notify are handled gracefully."""
+    auth_url = "http://my-auth-url"
     notify_url = "http://my-notify-mock"
     notify_ver = "/api/v1"
     notify_svc = notify_url + notify_ver
     monkeypatch.setenv("NOTIFY_API_URL", notify_url)
     monkeypatch.setenv("NOTIFY_API_VERSION", notify_ver)
     monkeypatch.setenv("NOTIFY_SVC_URL", notify_url + notify_ver)
+    monkeypatch.setenv("KEYCLOAK_AUTH_TOKEN_URL", auth_url)
 
     # Setup Mock for 502 error
     responses.add(responses.GET, f"{notify_svc}/notify/.*", status=502)
