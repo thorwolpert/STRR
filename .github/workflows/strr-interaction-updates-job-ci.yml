@@ -91,7 +91,7 @@ jobs:
         run: poetry install
       - name: Run Benchmark
         # Generating JSON for the artifact
-        run: poetry run pytest tests/test_benchmarks.py --benchmark-json benchmark_results.json
+        run: poetry run pytest tests/load/test_benchmarks.py --benchmark-json benchmark_results.json
       - name: Upload Benchmark Results
         uses: actions/upload-artifact@v4
         with:
