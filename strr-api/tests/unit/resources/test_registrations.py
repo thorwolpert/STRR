@@ -2416,7 +2416,7 @@ def test_search_registrations_requirement_with_sorting(app, session, client, jwt
 
 
 @patch("strr_api.services.strr_pay.create_invoice", return_value=MOCK_INVOICE_RESPONSE)
-def test_search_registrations_with_approval_method_noc_status_set_aside_filters(session, client, jwt):
+def test_search_registrations_with_approval_method_noc_status_set_aside_filters(app, session, client, jwt):
     """Test search registrations with approvalMethod, nocStatus, and isSetAside filters."""
     with open(CREATE_HOST_REGISTRATION_REQUEST) as f:
         json_data = json.load(f)
