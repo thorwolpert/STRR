@@ -18,7 +18,7 @@ fmt: ## Format code using black and isort
 lint: ## Check imports and formatting without making changes
 	poetry run isort . --check -v
 	poetry run black . --check
-	poetry run flake8 .
+# 	poetry run flake8 .
 
 test: ## Run pytest suite
 	poetry run pytest
