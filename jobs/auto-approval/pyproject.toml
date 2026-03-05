@@ -8,7 +8,8 @@ license = "BSD 3-Clause"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12.2"
+# Cap at 3.13: 3.14 lacks wheels for Pillow, rpds-py, etc.
+python = ">=3.12.2,<3.14"
 flask = "^3.0.3"
 flask-sqlalchemy = "^3.0.3"
 flask-migrate = "^4.0.4"
@@ -22,6 +23,10 @@ gcp-queue = { git = "https://github.com/bcgov/sbc-connect-common.git", subdirect
 structured-logging = { git = "https://github.com/bcgov/sbc-connect-common.git", subdirectory = "python/structured-logging", branch = "main" }
 strr-api = {git = "https://github.com/bcgov/STRR.git", rev = "main", subdirectory = "strr-api"}
 nanoid = "^2.0.0"
+# Force zopfli >=0.4.0: 0.2.3 has no py3.13 wheel and fails to build (needs gcc)
+zopfli = ">=0.4.0"
+# Force psycopg2-binary >=2.9.10: 2.9.9 has no py3.13 wheel and fails to build (needs gcc)
+psycopg2-binary = ">=2.9.10"
 
 [tool.poetry.group.test.dependencies]
 freezegun = "^1.4.0"
