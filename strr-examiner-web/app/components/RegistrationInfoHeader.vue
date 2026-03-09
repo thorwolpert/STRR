@@ -135,6 +135,8 @@ const nocCountdown = computed(() => {
           />
           <strong>{{ t('strr.label.registrationDate') }}</strong>
           {{ dateToString(activeReg.startDate, 'y-MM-dd', true) }} |
+          <strong>{{ t('strr.label.submittedDate') }}</strong>
+          {{ dateToString(activeHeader?.applicationDateTime, 'y-MM-dd', true) }} |
           <span
             v-if="activeReg.status === RegistrationStatus.CANCELLED"
             data-testid="reg-cancel-date"
@@ -156,21 +158,17 @@ const nocCountdown = computed(() => {
             <span v-if="nocCountdown && !nocCountdown.isExpired">{{ `(${nocCountdown.days} days left)` }}</span>
             <span v-else-if="nocCountdown && nocCountdown.isExpired" class="font-bold text-red-500"> (EXPIRED)</span>
           </template>
-          | <strong>{{ t('strr.label.assignee') }}</strong>
-          {{ activeHeader?.assignee?.username || '-' }}
-          <template v-if="activeHeader?.decider?.username">
-            | <strong>{{ t('strr.label.decider') }}</strong>
-            {{ activeHeader?.decider.username }}
-          </template>
         </div>
       </div>
       <div class="text-sm">
-        <strong>Application Number:</strong>
-        {{ activeHeader?.applicationNumber }} |
         <strong>Type:</strong>
         {{ getRegistrationType() }} |
-        <strong>{{ t('strr.label.submitted') }}</strong>
-        {{ dateToString(activeHeader?.applicationDateTime, 'y-MM-dd', true) }}
+        <strong>{{ t('strr.label.assignee') }}</strong>
+        {{ activeHeader?.assignee?.username || '-' }}
+        <template v-if="activeHeader?.decider?.username">
+          | <strong>{{ t('strr.label.decider') }}</strong>
+          {{ activeHeader?.decider.username }}
+        </template>
       </div>
     </div>
   </div>

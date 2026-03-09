@@ -133,6 +133,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+.pnpm-store/**
 
 
 # Distribution / packaging
@@ -153,6 +154,7 @@ htmlcov/
 # IDEs
 .idea
 .history
+.vscode/tasks.json
 
 # bods csvs
 **/bods_csvs/*
@@ -169,3 +171,5 @@ unit-tests.sh
 **/results/**
 **/downloads/**
 **/mochawesome-report/**
+
+strr-api/poetry.toml
