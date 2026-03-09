@@ -533,7 +533,7 @@ const columns = computed(() => {
       },
       { key: 'status', label: t('page.dashboardList.columns.status'), sortable },
       { key: 'registrationType', label: t('page.dashboardList.columns.registrationType'), sortable },
-      { key: 'requirements', label: t('page.dashboardList.columns.conditions'), sortable },
+      { key: 'requirements', label: t('page.dashboardList.columns.requirements'), sortable },
       { key: 'applicantName', label: t('page.dashboardList.columns.hostName'), sortable },
       { key: 'propertyAddress', label: t('page.dashboardList.columns.propertyAddress'), sortable },
       { key: 'localGov', label: 'Local Government', sortable },
@@ -684,7 +684,7 @@ const updateTabQuery = (isApp: boolean) => {
   router.replace({ query })
 }
 
-function clearAllFilters () {
+function resetToDefaultFilters () {
   if (isSplitDashboardTableEnabled.value) {
     if (isApplicationTab.value) {
       exStore.resetFiltersToApplicationsDefault()
@@ -767,12 +767,12 @@ const tabLinks = computed(() => [
               :count="applicationOrRegistrationList?.total || 0"
             />
             <UButton
-              :label="$t('label.clearAllFilters')"
+              :label="$t('label.resetToDefaultFilters')"
               icon="i-mdi-close"
               variant="link"
               :padded="false"
               :ui="{ gap: { sm: 'gap-x-1' } }"
-              @click="clearAllFilters"
+              @click="resetToDefaultFilters"
             />
           </div>
           <div class="flex flex-wrap items-center gap-3 text-gray-900">
