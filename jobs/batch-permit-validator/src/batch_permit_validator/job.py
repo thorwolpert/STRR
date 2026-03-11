@@ -17,16 +17,19 @@
 
 import concurrent.futures
 import copy
+from datetime import datetime, timezone
+from functools import partial
 import json
 import os
 import sys
 import traceback
-from datetime import datetime
-from functools import partial
 
-from flask import Flask, current_app
+from flask import current_app
+from flask import Flask
+from flask_migrate import Migrate
 from strr_api.enums.enum import ErrorMessage
-from strr_api.models import BulkValidation, db
+from strr_api.models import BulkValidation
+from strr_api.models import db
 from strr_api.schemas.utils import validate
 from strr_api.services import gcp_queue_publisher
 from strr_api.services.approval_service import ApprovalService
@@ -35,6 +38,7 @@ from strr_api.services.registration_service import RegistrationService
 from strr_api.services.validation_service import ValidationService
 from structured_logging import StructuredLogging
 
+from batch_permit_validator.config import _Config
 from batch_permit_validator.config import CONFIGURATION
 from batch_permit_validator.validation_cache import ValidationCache
 
@@ -45,11 +49,20 @@ CHUNK_SIZE = 5000
 EXPIRATION_PERIOD = 24 * 60 * 7
 
 
-def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
+def create_app(run: str | _Config = "production", **kwargs):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
-    app.config.from_object(CONFIGURATION[run_mode])
+
+    if issubclass(run, _Config):
+        config = run
+    else:
+        config = CONFIGURATION[run]
+
+    app.config.from_object(config)
     db.init_app(app)
+    if app.config.get("POD_NAMESPACE", None) == "Testing":
+        Migrate(app, db)
+
     register_shellcontext(app)
     return app
 
@@ -76,21 +89,25 @@ def _process_file(file_name):
 
 def run():
     """Run the batch permit validator job."""
+    logger.info("Starting batch permit validator job")
+
     try:
+        args = sys.argv[1:]
+        file_name = args[0] if args else None
+        if not file_name:
+            logger.error("Empty file name.")
+            return
+
         app = create_app()
+
         with app.app_context():
-            logger.info("Starting batch permit validator job")
-            file_name = sys.argv[1:][
-                0
-            ]  # sys.argv[0] is the script name, so we take everything after that
             logger.info(f"Processing file {file_name}")
-            if file_name:
-                _process_file(file_name=file_name)
-            else:
-                logger.error("Empty file name.")
+            _process_file(file_name=file_name)
+
     except Exception as err:  # pylint: disable=broad-except
-        logger.error(err, logger.error(err, stack_info=True, exc_info=True))
-        logger.error(f"Unexpected error: {str(err)}")
+        logger.error(
+            "Unexpected error occurred during job execution", error=str(err), exc_info=True
+        )
 
 
 def process_record(record: dict, validation_cache: ValidationCache, app):
@@ -105,14 +122,10 @@ def process_record(record: dict, validation_cache: ValidationCache, app):
                 return response
 
             if identifier := record.get("identifier"):
-                registration = RegistrationService.find_by_registration_number(
-                    identifier
-                )
+                registration = RegistrationService.find_by_registration_number(identifier)
 
                 if registration:
-                    response, _ = ValidationService.check_permit_details(
-                        record, registration
-                    )
+                    response, _ = ValidationService.check_permit_details(record, registration)
                 else:
                     response["errors"] = [
                         {
@@ -121,9 +134,7 @@ def process_record(record: dict, validation_cache: ValidationCache, app):
                         }
                     ]
             else:
-                str_requirements = get_strr_requirements(
-                    record.get("address"), validation_cache
-                )
+                str_requirements = get_strr_requirements(record.get("address"), validation_cache)
                 response.update(str_requirements)
                 logger.info("STR requirements updated for record: %s", response)
 
@@ -154,10 +165,10 @@ def get_strr_requirements(unit_address: dict, validation_cache):
     address_line_1 = ""
     if unit_number := unit_address.get("unitNumber"):
         address_line_1 = f"{unit_number}-"
-    address_line_1 = f"{address_line_1}{unit_address.get('streetNumber')} {unit_address.get('streetName')}"
-    address = (
-        f"{address_line_1}, {unit_address.get('city')}, {unit_address.get('province')}"
+    address_line_1 = (
+        f"{address_line_1}{unit_address.get('streetNumber')} {unit_address.get('streetName')}"
     )
+    address = f"{address_line_1}, {unit_address.get('city')}, {unit_address.get('province')}"
     cached_data = validation_cache.cache.get(address)
 
     if cached_data:
@@ -199,9 +210,7 @@ def process_records_in_parallel(request_json, request_file_key, chunk_size=CHUNK
 
         for idx in range(0, total_records, chunk_size):
             chunk = permits[idx : idx + chunk_size]
-            logger.info(
-                f"Processing chunk {idx // chunk_size + 1} ({len(chunk)} records)..."
-            )
+            logger.info(f"Processing chunk {idx // chunk_size + 1} ({len(chunk)} records)...")
 
             result = process_chunk(chunk, validation_cache)
             results.extend(result)
@@ -263,6 +272,6 @@ def _update_bulk_validation_record(request_file_key, status, response_file_key=N
         bulk_validation.status = status
         if response_file_key:
             bulk_validation.response_file_id = response_file_key
-            bulk_validation.response_timestamp = datetime.utcnow()
+            bulk_validation.response_timestamp = datetime.now(timezone.utc)
 
         bulk_validation.save()
