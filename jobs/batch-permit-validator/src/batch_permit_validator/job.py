@@ -17,7 +17,8 @@
 
 import concurrent.futures
 import copy
-from datetime import datetime, timezone
+from datetime import datetime
+from datetime import timezone
 from functools import partial
 import json
 import os
