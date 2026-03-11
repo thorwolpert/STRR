@@ -16,7 +16,8 @@
 import os
 import sys
 
-from dotenv import find_dotenv, load_dotenv
+from dotenv import find_dotenv
+from dotenv import load_dotenv
 
 load_dotenv(find_dotenv())
 
@@ -56,9 +57,7 @@ class _Config:  # pylint: disable=too-few-public-methods
 
     ENVIRONMENT = os.getenv("ENVIRONMENT", "prod")
 
-    AUDIENCE = os.getenv(
-        "AUDIENCE", "https://pubsub.googleapis.com/google.pubsub.v1.Subscriber"
-    )
+    AUDIENCE = os.getenv("AUDIENCE", "https://pubsub.googleapis.com/google.pubsub.v1.Subscriber")
     PUBLISHER_AUDIENCE = os.getenv(
         "PUBLISHER_AUDIENCE", "https://pubsub.googleapis.com/google.pubsub.v1.Publisher"
     )

@@ -15,8 +15,8 @@
 
 """Validation Cache."""
 
-import redis
 from flask import current_app
+import redis
 
 
 class ValidationCache:
