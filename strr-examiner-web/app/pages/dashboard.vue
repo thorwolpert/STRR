@@ -267,6 +267,10 @@ const getRegistrationNocStatusDisplay = (nocStatus: RegistrationNocStatus | unde
   return t(`registrationNocStatus.${nocStatus}`)
 }
 
+const getLatestRegistrationApplicationStatus = (reg: HousRegistrationResponse): ApplicationStatus | undefined => {
+  return reg.header?.applications?.[0]?.applicationStatus as ApplicationStatus | undefined
+}
+
 const getRequirementsColumn = (app: HousApplicationResponse) => {
   let result = ''
   let listingSize = ''
@@ -298,6 +302,12 @@ const RENEWAL_APPROVED_STATUSES = new Set<ApplicationStatus>([
   ApplicationStatus.AUTO_APPROVED
 ])
 
+const REVIEW_RENEW_STATUSES = new Set<ApplicationStatus>([
+  ApplicationStatus.FULL_REVIEW,
+  ApplicationStatus.PROVISIONALLY_APPROVED,
+  ApplicationStatus.PROVISIONAL_REVIEW
+])
+
 /** Check if a registration has been renewed. Draft renewals are ignored (Renewals in progress). */
 const hasBeenRenewed = (reg: HousRegistrationResponse): boolean => {
   const applications = reg.header?.applications ?? []
@@ -307,6 +317,46 @@ const hasBeenRenewed = (reg: HousRegistrationResponse): boolean => {
       app.applicationStatus &&
       RENEWAL_APPROVED_STATUSES.has(app.applicationStatus as ApplicationStatus)
   )
+}
+
+const isReviewRenew = (reg: HousRegistrationResponse): boolean => {
+  const applications = reg.header?.applications ?? []
+  return applications.some(
+    app =>
+      app.applicationType === 'renewal' &&
+      app.applicationStatus &&
+      REVIEW_RENEW_STATUSES.has(app.applicationStatus as ApplicationStatus)
+  )
+}
+
+const getRegistrationSubStatus = (reg: HousRegistrationResponse): string => {
+  if (reg.header?.isSetAside) {
+    return 'Set-Aside'
+  }
+  if (reg.nocStatus === RegistrationNocStatus.NOC_PENDING) {
+    return 'NOC - Pending'
+  }
+  if (reg.nocStatus === RegistrationNocStatus.NOC_EXPIRED) {
+    return 'NOC - Expired'
+  }
+  if (isReviewRenew(reg)) {
+    return 'Review Renew'
+  }
+
+  const latestAppStatus = getLatestRegistrationApplicationStatus(reg)
+  if (
+    latestAppStatus === ApplicationStatus.PROVISIONALLY_APPROVED ||
+    latestAppStatus === ApplicationStatus.PROVISIONAL_REVIEW
+  ) {
+    return 'Review'
+  }
+  if (
+    latestAppStatus === ApplicationStatus.AUTO_APPROVED ||
+    latestAppStatus === ApplicationStatus.FULL_REVIEW_APPROVED
+  ) {
+    return 'Approved'
+  }
+  return '-'
 }
 
 const getConditionsColumnForRegistration = (reg: HousRegistrationResponse) => {
@@ -387,10 +437,13 @@ watch(
       !isApp &&
       isEnabled &&
       !hasSavedRegState() &&
-      (!exStore.tableFilters.status || exStore.tableFilters.status.length === 0)
+      (!exStore.tableFilters.status || exStore.tableFilters.status.length === 0) &&
+      (!exStore.tableFilters.subStatus || exStore.tableFilters.subStatus.length === 0)
     ) {
-      (exStore.tableFilters.status as any[]).splice(
-        0, exStore.tableFilters.status.length, ...exStore.registrationsOnlyStatuses)
+      const statusFilters = exStore.tableFilters.status as any[]
+      const subStatusFilters = exStore.tableFilters.subStatus as any[]
+      statusFilters.splice(0, statusFilters.length, ...exStore.registrationsOnlyStatuses)
+      subStatusFilters.splice(0, subStatusFilters.length, ...exStore.registrationsOnlySubStatuses)
       hasAppliedRegistrationsStatusDefault.value = true
     }
   },
@@ -421,6 +474,7 @@ const { data: registrationListResp, status: regStatus } = await useAsyncData(
       () => exStore.tableLimit,
       () => exStore.tableFilters.registrationType,
       () => exStore.tableFilters.status,
+      () => exStore.tableFilters.subStatus,
       () => exStore.tableFilters.requirements,
       () => exStore.tableFilters.registrationNumber,
       () => exStore.tableFilters.searchText,
@@ -436,6 +490,7 @@ const { data: registrationListResp, status: regStatus } = await useAsyncData(
         id: reg.id,
         registrationNumber: reg.registrationNumber,
         status: reg.status,
+        subStatus: getRegistrationSubStatus(reg),
         registrationType: t(`registrationType.${reg.registrationType}`),
         requirements: getConditionsColumnForRegistration(reg),
         applicantName: getApplicantNameColumnForRegistration(reg),
@@ -526,7 +581,7 @@ const columns = computed(() => {
   const sortable = enableTableFilters.value
 
   if (isSplitDashboardTableEnabled.value) {
-    return [
+    const splitColumns = [
       {
         key: 'registrationNumber',
         label: t(isApplicationTab.value
@@ -542,6 +597,12 @@ const columns = computed(() => {
       { key: 'localGov', label: 'Local Government', sortable },
       { key: 'adjudicator', label: t('page.dashboardList.columns.adjudicator'), sortable }
     ]
+    if (isApplicationTab.value) {
+      return splitColumns
+    }
+    // add sub-status column to registrations tab
+    splitColumns.splice(2, 0, { key: 'subStatus', label: 'Sub-status', sortable })
+    return splitColumns
   } else {
     return [
       { key: 'registrationNumber', label: t('page.dashboardList.columns.registrationNumber'), sortable },
@@ -651,19 +712,11 @@ const applicationStatusOptions: {
   : legacyApplicationStatusFilters
 
 const registrationStatusOptions: { label: string; value: any; disabled?: boolean }[] = [
-  { label: 'Status', value: undefined, disabled: true },
+  { label: 'Registration Status', value: undefined, disabled: true },
   { label: 'Active', value: RegistrationStatus.ACTIVE },
   { label: 'Expired', value: RegistrationStatus.EXPIRED },
   { label: 'Suspended', value: RegistrationStatus.SUSPENDED },
-  { label: 'Cancelled', value: RegistrationStatus.CANCELLED },
-  { label: 'Approval Method', value: undefined, disabled: true },
-  { label: 'Provisionally Approved', value: ApplicationStatus.PROVISIONALLY_APPROVED },
-  { label: 'Fully Approved', value: ApplicationStatus.FULL_REVIEW_APPROVED },
-  { label: 'Auto Approved', value: ApplicationStatus.AUTO_APPROVED },
-  { label: 'Attributes', value: undefined, disabled: true },
-  { label: 'NOC Expired', value: 'NOC_EXPIRED' },
-  { label: 'NOC Pending', value: 'NOC_PENDING' },
-  { label: 'Set Aside', value: 'SET_ASIDE' }
+  { label: 'Cancelled', value: RegistrationStatus.CANCELLED }
 ]
 
 const statusFilterOptions = computed((): { label: string; value: any; disabled?: boolean }[] => {
@@ -675,6 +728,16 @@ const statusFilterOptions = computed((): { label: string; value: any; disabled?:
   // New dashboard: show application statuses on application tab, registration statuses otherwise
   return isApplicationTab.value ? applicationStatusOptions : registrationStatusOptions
 })
+
+const registrationSubStatusOptions: { label: string; value: any; disabled?: boolean }[] = [
+  { label: 'Registration Sub-status', value: undefined, disabled: true },
+  { label: 'Review', value: 'REVIEW' },
+  { label: 'Review Renew', value: 'REVIEW_RENEW' },
+  { label: 'NOC - Pending', value: 'NOC_PENDING' },
+  { label: 'NOC - Expired', value: 'NOC_EXPIRED' },
+  { label: 'Approved', value: 'APPROVED' },
+  { label: 'Set-Aside', value: 'SET_ASIDE' }
+]
 
 // Update query parameter when tab changes to persist state
 const updateTabQuery = (isApp: boolean) => {
@@ -942,6 +1005,18 @@ const tabLinks = computed(() => [
           />
         </template>
 
+        <template v-if="enableTableFilters && !isApplicationTab" #subStatus-header="{ column }">
+          <TableHeaderSelect
+            v-model="exStore.tableFilters.subStatus"
+            :column
+            :sort
+            :default="[]"
+            class="break-words"
+            :options="registrationSubStatusOptions"
+            @sort="handleColumnSort(column.key)"
+          />
+        </template>
+
         <template v-if="enableTableFilters" #submissionDate-header="{ column }">
           <TableHeaderDateRange
             v-model="exStore.tableFilters.submissionDate"
@@ -1108,6 +1183,10 @@ const tabLinks = computed(() => [
               {{ getRegistrationStatusDisplay(row.registrationStatus) }}
             </UButton>
           </div>
+        </template>
+
+        <template #subStatus-data="{ row }">
+          <span>{{ row.subStatus || '-' }}</span>
         </template>
       </UTable>
     </ConnectPageSection>

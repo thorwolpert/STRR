@@ -118,6 +118,27 @@ class Registration(Versioned, BaseModel):
     def search_registrations(cls, filter_criteria: RegistrationSearch):
         """Returns the registrations matching the search criteria."""
         query = cls.query
+        query = cls._apply_base_search_filters(query, filter_criteria)
+        if filter_criteria.requirements:
+            query = cls._filter_by_registration_requirement(filter_criteria.requirements, query)
+        if filter_criteria.local_gov:
+            query = query.join(RentalProperty).filter(
+                RentalProperty.jurisdiction.ilike(f"%{filter_criteria.local_gov}%")
+            )
+        sub_status_conditions = cls._collect_sub_status_conditions(filter_criteria)
+        if sub_status_conditions:
+            query = query.filter(db.or_(*sub_status_conditions))
+        sort_column = getattr(Registration, filter_criteria.sort_by, Registration.id)
+        if filter_criteria.sort_order and filter_criteria.sort_order.lower() == "asc":
+            query = query.order_by(sort_column.asc())
+        else:
+            query = query.order_by(sort_column.desc())
+        paginated_result = query.paginate(per_page=filter_criteria.limit, page=filter_criteria.page)
+        return paginated_result
+
+    @classmethod
+    def _apply_base_search_filters(cls, query, filter_criteria: RegistrationSearch):
+        """Apply common registration filters before specialized filters."""
         if filter_criteria.account_id:
             query = query.filter(Registration.sbc_account_id == filter_criteria.account_id)
         if filter_criteria.search_text:
@@ -139,27 +160,21 @@ class Registration(Versioned, BaseModel):
             query = query.join(User, Registration.reviewer_id == User.id).filter(
                 User.username.ilike(f"%{filter_criteria.assignee}%")
             )
-        if filter_criteria.requirements:
-            query = cls._filter_by_registration_requirement(filter_criteria.requirements, query)
+        return query
+
+    @classmethod
+    def _collect_sub_status_conditions(cls, filter_criteria: RegistrationSearch):
+        """Collect OR conditions for registration sub-status filters."""
+        sub_status_conditions = []
         if filter_criteria.approval_methods:
-            query = cls._filter_by_approval_method(filter_criteria.approval_methods, query)
+            sub_status_conditions.append(cls._approval_method_condition(filter_criteria.approval_methods))
         if filter_criteria.noc_statuses:
-            query = query.filter(Registration.noc_status.in_(filter_criteria.noc_statuses))
+            sub_status_conditions.append(Registration.noc_status.in_(filter_criteria.noc_statuses))
         if filter_criteria.is_set_aside is True:
-            query = query.filter(Registration.is_set_aside == True)  # noqa: E712
-        if filter_criteria.local_gov:
-            query = query.join(RentalProperty).filter(
-                RentalProperty.jurisdiction.ilike(f"%{filter_criteria.local_gov}%")
-            )
-        if filter_criteria.renewals_only is True:
-            query = cls._filter_by_renewals_only(query)
-        sort_column = getattr(Registration, filter_criteria.sort_by, Registration.id)
-        if filter_criteria.sort_order and filter_criteria.sort_order.lower() == "asc":
-            query = query.order_by(sort_column.asc())
-        else:
-            query = query.order_by(sort_column.desc())
-        paginated_result = query.paginate(per_page=filter_criteria.limit, page=filter_criteria.page)
-        return paginated_result
+            sub_status_conditions.append(Registration.is_set_aside == True)  # noqa: E712
+        if filter_criteria.review_renew is True:
+            sub_status_conditions.append(cls._review_renew_condition())
+        return sub_status_conditions
 
     @classmethod
     def _host_condition_bl_or_pr(cls, application_model):
@@ -436,15 +451,8 @@ class Registration(Versioned, BaseModel):
         return query
 
     @classmethod
-    def _filter_by_approval_method(cls, approval_methods: list[str], query):
-        """Filter registrations by application approval method.
-
-        Only considers the most recent application (index 0 when sorted by
-        application_date desc) for each registration. Returns registrations
-        where that most recent application's status is in the given approval methods.
-        """
-        if not approval_methods:
-            return query
+    def _approval_method_condition(cls, approval_methods: list[str]):
+        """Build SQL condition for filtering by latest application status."""
         # pylint: disable=import-outside-toplevel
         from sqlalchemy import select
 
@@ -458,29 +466,28 @@ class Registration(Versioned, BaseModel):
             .limit(1)
             .scalar_subquery()
         )
-        return query.filter(latest_app_status_subq.in_(approval_methods))
+        return latest_app_status_subq.in_(approval_methods)
 
     @classmethod
-    def _filter_by_renewals_only(cls, query):
-        """Filter to registrations that have at least one renewal application in an approved/provisional status."""
+    def _review_renew_condition(cls):
+        """Build SQL condition for registrations requiring renewal review."""
         # pylint: disable=import-outside-toplevel
         from strr_api.enums.enum import ApplicationType
         from strr_api.models.application import Application
 
-        renewal_approved_statuses = [
-            Application.Status.FULL_REVIEW_APPROVED.value,
+        renewal_not_fully_approved_statuses = [
+            Application.Status.FULL_REVIEW.value,
             Application.Status.PROVISIONALLY_APPROVED.value,
             Application.Status.PROVISIONAL_REVIEW.value,
-            Application.Status.AUTO_APPROVED.value,
         ]
         renewal_exists = db.exists().where(
             db.and_(
                 Application.registration_id == Registration.id,
                 Application.type == ApplicationType.RENEWAL.value,
-                Application.status.in_(renewal_approved_statuses),
+                Application.status.in_(renewal_not_fully_approved_statuses),
             )
         )
-        return query.filter(renewal_exists)
+        return renewal_exists
 
 
 class RentalProperty(Versioned, BaseModel):
