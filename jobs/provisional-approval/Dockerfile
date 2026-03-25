@@ -61,4 +61,4 @@ COPY --chown=web:web . /code
 # Switch to non-root user
 USER web
 
-CMD [ "python", "-m", "auto_approval" ]
+CMD [ "python", "-m", "provisional_approval" ]
