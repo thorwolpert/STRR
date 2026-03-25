@@ -1,4 +1,3 @@
-
 pytest_plugins = [
     "strr_test_utils.utils_fixtures",
     "strr_test_utils.db_fixtures",

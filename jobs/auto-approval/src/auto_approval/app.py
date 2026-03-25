@@ -33,6 +33,7 @@ setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), "logging.
 
 SENTRY_LOGGING = LoggingIntegration(event_level=logging.ERROR)  # send errors as events
 
+
 def create_app(run: str | _Config = "production", **kwargs):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
@@ -56,4 +57,3 @@ def register_shellcontext(app):
         return {"app": app}
 
     app.shell_context_processor(shell_context)
-

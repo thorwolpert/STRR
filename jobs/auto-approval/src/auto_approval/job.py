@@ -33,31 +33,8 @@ setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), "logging.
 
 SENTRY_LOGGING = LoggingIntegration(event_level=logging.ERROR)  # send errors as events
 
-# def create_app(run: str | _Config = "production", **kwargs):
-#     """Return a configured Flask App using the Factory method."""
-#     app = Flask(__name__)
-
-#     if issubclass(run, _Config):
-#         config = run
-#     else:
-#         config = CONFIGURATION[run]
-
-#     app.config.from_object(config)
-#     db.init_app(app)
-#     register_shellcontext(app)
-#     return app
-
-
-# def register_shellcontext(app):
-#     """Register shell context objects."""
-
-#     def shell_context():
-#         """Shell context objects."""
-#         return {"app": app}
-
-#     app.shell_context_processor(shell_context)
-
 from .app import create_app
+
 
 def get_submitted_applications(app):
     """Retrieve submitted applications for processing."""
