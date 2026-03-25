@@ -52,7 +52,8 @@ COPY --chown=web:web ./poetry.lock ./pyproject.toml /code/
 # Install production dependencies only
 # In Poetry 2.x, '--only main' remains the standard for production
 RUN --mount=type=cache,target="$POETRY_CACHE_DIR" \
-    poetry install --only main --no-interaction --no-ansi
+    poetry config virtualenvs.create false \
+    && poetry install --only main --no-interaction --no-ansi --no-root
 
 # Copy project source
 COPY --chown=web:web . /code
