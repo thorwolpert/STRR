@@ -38,7 +38,7 @@ def create_app(run: str | _Config = "production", **kwargs):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
 
-    if issubclass(run, _Config):
+    if not isinstance(run, str) and issubclass(run, _Config):
         config = run
     else:
         config = CONFIGURATION[run]
