@@ -31,8 +31,23 @@ def package_info(request):
 
 
 @pytest.fixture(scope="session")
-def postgres_container():
-    """Starts a Postgres Container."""
+def postgres_container(request):
+    """
+    Starts a Postgres Container.
+    Only starts the Docker container if a test in the current run 
+    actually has 'session', 'db', or 'app' in its arguments.
+    """
+    needed_by_test = False
+    db_fixtures = {"session", "db", "app", "setup_database", "postgres_container"}
+    for item in request.session.items:
+        # Check if the test or any of its fixtures depend on our DB fixtures
+        if any(fixture in item.fixturenames for fixture in db_fixtures):
+            needed_by_test = True
+            break
+    # postgres container not needed, so don't start it.
+    if not needed_by_test:
+        return None
+
     with PostgresContainer("postgres:16-alpine") as postgres:
         os.environ["DATABASE_URL"] = postgres.get_connection_url()
         yield postgres
@@ -87,10 +102,8 @@ def app(db_engine, package_info):
     """
     pkg = package_info["package"]
     try:
-        job_mod = importlib.import_module(f"{pkg}.job")
         cfg_mod = importlib.import_module(f"{pkg}.config")
         
-        # if hasattr(job_mod, "create_app"):
         if hasattr(pkg, "create_app"):
             TestConfig = getattr(cfg_mod, "TestConfig")
             # Update the config with our container URL
