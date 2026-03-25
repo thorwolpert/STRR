@@ -12,8 +12,17 @@ structlog = "*"
 testcontainers = {extras = ["postgres", "redis"], version = "^4.0.0"}
 sqlalchemy = "*"
 flask-sqlalchemy = "*"
-flask-migrate = "*"
+
+[tool.poetry.group.dev.dependencies]
+strr-api = { path = "../../strr-api", develop = true }
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning:testcontainers.*:",
+    "ignore::DeprecationWarning:docker.*:",
+    "ignore::ResourceWarning:testcontainers.*:"
+]
