@@ -13,8 +13,8 @@
 # limitations under the License.
 """Centralized setup of logging for the service."""
 import logging.config
-import sys
 from os import path
+import sys
 
 
 def setup_logging(conf):
