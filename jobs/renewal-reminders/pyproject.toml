@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "renewal-reminders"
-version = "1.0.3"
+version = "1.1.0"
 description = ""
 authors = []
 packages = [{include = "renewal_reminders", from = "src"}]
@@ -8,7 +8,7 @@ license = "BSD 3-Clause"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12.2"
+python = ">=3.12.2,<3.15"
 flask = "^3.0.3"
 flask-sqlalchemy = "^3.0.3"
 flask-migrate = "^4.0.4"
@@ -20,32 +20,78 @@ gunicorn = "^21.2.0"
 pg8000 = "^1.31.2"
 gcp-queue = { git = "https://github.com/bcgov/sbc-connect-common.git", subdirectory = "python/gcp-queue", branch = "main" }
 structured-logging = { git = "https://github.com/bcgov/sbc-connect-common.git", subdirectory = "python/structured-logging", branch = "main" }
-strr-api = {git = "https://github.com/bcgov/STRR.git", rev = "main", subdirectory = "strr-api"}
+strr-api = {path = "../../strr-api", develop = true}
+# strr-api = {git = "https://github.com/bcgov/STRR.git", rev = "main", subdirectory = "strr-api"}
 nanoid = "^2.0.0"
 
-[tool.poetry.group.test.dependencies]
-freezegun = "^1.4.0"
-hypothesis = "^6.100.0"
-pexpect = "^4.9.0"
-pytest = "^7.4.4"
-pytest-cov = "^5.0.0"
-pytest-mock = "^3.14.0"
-requests-mock = "^1.12.1"
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.7.0"
-faker = "^24.4.0"
-lovely-pytest-docker = "^0.3.1"
+pytest-cov = "^7.1.0"
+pytest = "^8.2.0"
+pytest-mock = "^3.14.0"
+black = "^24.4.2"
+zimports = "^0.6.1"
 isort = "^5.13.2"
-black = "^24.10.0"
-pylint = "^3.0.3"
+testcontainers = "^4.14.0"
+responses = "^0.26.0"
+strr-test-utils = {path = "../../tests/python-test-utils", develop = true}
+
+[tool.poetry.group.test.dependencies]
+freezegun = "^1.2.2"
+hypothesis = "^6.75.6"
+pexpect = "^4.8.0"
+pytest = "^8.2.0"
+pytest-mock = "^3.14.0"
+requests-mock = "^1.11.0"
+nanoid = "^2.0.0"
+testcontainers = "^4.14.0"
+
+[tool.black]
+line-length = 100
+target-version = ['py312']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.mypy_cache
+  | \.pytest_cache
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "google"
+line_length = 120
+known_first_party = ["strr_email"]
+
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.isort]
-profile = "black"
 
-[tool.pylint]
-max-line-length = 132
+[tool.pytest.ini_options]
+minversion = "2.0"
+testpaths = [
+   "tests",
+]
+addopts = "--verbose --strict -p no:warnings --cov=src --cov-report html:htmlcov --cov-report xml:coverage.xml"
+python_files = [
+   "test*.py"
+]
+norecursedirs = [
+   ".git", ".tox", "venv*", "requirements*", "build",
+]
+log_cli = true
+log_cli_level = "1"
+filterwarnings = [
+   "ignore::UserWarning"
+]
+markers = [
+   "slow",
+   "serial",
+   "conf: Inject flask config values into the app fixture",
+   "load: mark test as a heavy load test to exclude from standard CI runs",
+]
