@@ -45,21 +45,6 @@ class InteractionStatus(BaseEnum):
     FAILED = auto()
     OPENED = auto()
 
-class ChannelType(BaseEnum):
-    EMAIL = auto()
-    SMS = auto()
-    PHONE = auto()
-    SYSTEM = auto()
-
-
-class InteractionStatus(BaseEnum):
-    QUEUED = auto()
-    SENT = auto()
-    DELIVERED = auto()
-    FAILED = auto()
-    OPENED = auto()
-
-
 class LoginSource(Enum):
     """Login source values."""
 
