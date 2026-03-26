@@ -3531,7 +3531,7 @@ optional = false
 python-versions = "^3.11"
 groups = ["main"]
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 coloredlogs = "^15.0.1"
@@ -3562,8 +3562,11 @@ testcontainers = "^4.14.0"
 weasyprint = "^62.3"
 
 [package.source]
-type = "directory"
-url = "../../strr-api"
+type = "git"
+url = "https://github.com/bcgov/STRR.git"
+reference = "main"
+resolved_reference = "e967cca0dea6771e843bcd76c164cbb3513cc84d"
+subdirectory = "strr-api"
 
 [[package]]
 name = "strr-test-utils"
@@ -4065,4 +4068,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12.2,<3.15"
-content-hash = "a66fb4a5f9bdd02b39046bf145eae93cab60babd6ba4ab87a3a52dc4d473cbe2"
+content-hash = "d6965e77d11a9773d92bd3b3fa88f5b3add7c3bc37d481368cebcb54bad715bd"
