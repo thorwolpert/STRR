@@ -79,3 +79,14 @@ def test_math():
     # No fixtures = No Docker = Instant execution
     assert 1 + 1 == 2
 ```
+
+### Role-Based Testing
+Use the `authed_g` factory to simulate different user permissions:
+
+```python
+def test_admin_access(client, authed_g):
+    # Seed the 'g' object with specific roles
+    authed_g(roles=['STRR_ADMIN'])
+    response = client.get('/admin/settings')
+    assert response.status_code == 200
+```
