@@ -24,15 +24,13 @@ def find_repo_root(start_path: Path) -> Optional[Path]:
 def package_info(request):
     """Discovers the package name of the job currently being tested."""
     root_path = Path(request.config.rootpath)
-    return {
-        "package": root_path.name.replace("-", "_"),
-        "root_path": root_path
-    }
+    return {"package": root_path.name.replace("-", "_"), "root_path": root_path}
+
 
 @pytest.fixture(scope="session")
 def app_modules(package_info):
     """
-    Dynamically imports the core modules. 
+    Dynamically imports the core modules.
     Returns None values if it doesn't follow the Connect Python App pattern.
     """
     pkg = package_info["package"]
@@ -50,11 +48,12 @@ def app_modules(package_info):
 
     return modules
 
+
 @pytest.fixture(scope="session")
 def postgres_container(request):
     """
     Starts a Postgres Container.
-    Only starts the Docker container if a test in the current run 
+    Only starts the Docker container if a test in the current run
     actually has 'session', 'db', or 'app' in its arguments.
     """
     needed_by_test = False
@@ -96,7 +95,7 @@ def setup_database(postgres_container, request):
         sys.path.insert(0, str(api_root))
 
     db_url = postgres_container.get_connection_url()
-    
+
     # Configure Alembic programmatically
     alembic_cfg = Config(str(ini_path))
     alembic_cfg.set_main_option("script_location", str(migrations_path))
@@ -117,7 +116,7 @@ def db_engine(setup_database):
 @pytest.fixture(scope="session")
 def app(db_engine, package_info):
     """
-    Optional Flask app fixture. 
+    Optional Flask app fixture.
     If the job has a create_app, it instantiates it using the test DB.
     """
     pkg = package_info["package"]
@@ -129,7 +128,7 @@ def app(db_engine, package_info):
             TestConfig = getattr(cfg_mod, "TestConfig")
             # Update the config with our container URL
             TestConfig.SQLALCHEMY_DATABASE_URI = str(db_engine.url)
-            
+
             # _app = job_mod.create_app(TestConfig)
             _app = app_mod.create_app(TestConfig)
             with _app.app_context():
@@ -137,7 +136,7 @@ def app(db_engine, package_info):
             return
     except ImportError:
         pass
-    
+
     yield None
 
 

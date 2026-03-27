@@ -1,6 +1,8 @@
+import importlib
+
 import pytest
 from flask import g
-import importlib
+
 
 @pytest.fixture(scope="session")
 def jwt(package_info):
@@ -15,6 +17,7 @@ def jwt(package_info):
     except (ImportError, AttributeError):
         return None
 
+
 @pytest.fixture(scope="function")
 def client(app):
     """Returns a Flask test client if app exists, otherwise skips."""
@@ -22,6 +25,7 @@ def client(app):
         pytest.skip("Test requires 'client' but this is a Lite job (no Flask app).")
     with app.test_client() as client:
         yield client
+
 
 @pytest.fixture
 def authed_g(app):
@@ -38,14 +42,14 @@ def authed_g(app):
     def _auth(roles=None, sub="test-user", username="test-user-id"):
         if roles is None:
             roles = []
-        
+
         # Ensure we are inside an app context so 'g' is valid
         # Note: 'app' fixture already provides a context, but we ensure it here
-        setattr(g, "jwt_oidc_token_info", {
-            "sub": sub,
-            "username": username,
-            "realm_access": {"roles": roles}
-        })
+        setattr(
+            g,
+            "jwt_oidc_token_info",
+            {"sub": sub, "username": username, "realm_access": {"roles": roles}},
+        )
         return g
 
     return _auth
