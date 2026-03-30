@@ -39,6 +39,7 @@ from typing import overload
 import requests
 from flask import current_app, jsonify
 
+from strr_api.enums.enum import ChannelType, InteractionStatus
 from strr_api.exceptions import ExternalServiceException, ValidationException
 from strr_api.models import CustomerInteraction, Events
 from strr_api.services import AuthService
@@ -55,6 +56,8 @@ class EmailInfo:
     custom_content: str | None = None
     registration_number: str | None = None
     email: dict | None = None
+    interaction: str | None = None
+    interaction_uuid: str | None = None
 
 
 class InteractionService:
@@ -81,9 +84,10 @@ class InteractionService:
     @staticmethod
     @validate_mutex("application_id", "registration_id", "customer_id", min_count=1, max_count=1)
     def dispatch(
-        channel_type: CustomerInteraction.ChannelType,
+        channel_type: ChannelType,
         payload: dict | str | EmailInfo,
         idempotency_key: str | None = None,
+        interaction_uuid: str | None = None,
         user_id: int | None = None,
         application_id: int | None = None,
         registration_id: int | None = None,
@@ -92,7 +96,7 @@ class InteractionService:
         """Dispatch interaction."""
         the_type = type(payload)
         match channel_type:
-            case CustomerInteraction.ChannelType.EMAIL:
+            case ChannelType.EMAIL:
                 if not isinstance(payload, EmailInfo):
                     raise ValidationException(error="Invalid EmailInfo", status_code=HTTPStatus.BAD_REQUEST)
                 notify_json = InteractionService._send_email_to_notify_service(payload)
@@ -108,15 +112,16 @@ class InteractionService:
         ):
             raise ExternalServiceException(error="Email not sent", status_code=HTTPStatus.BAD_REQUEST)
 
-        interaction = CustomerInteraction(
-            channel=channel_type,
-            application_id=application_id,
-            registration_id=registration_id,
-            customer_id=customer_id,
-            user_id=user_id,
-            notify_reference=notify_id,
-            interaction_uuid=str(uuid.uuid4()),
-        )
+        if not (interaction := CustomerInteraction.find_by_uuid(interaction_uuid)):
+            interaction = CustomerInteraction()
+        interaction.channel = channel_type
+        interaction.status = InteractionStatus.SENT
+        interaction.application_id = application_id
+        interaction.registration_id = registration_id
+        interaction.customer_id = customer_id
+        interaction.user_id = user_id
+        interaction.notify_reference = notify_id
+        interaction.idempotency_key = idempotency_key
         interaction.save()
 
         event_type = (
@@ -138,6 +143,29 @@ class InteractionService:
         )
 
         return interaction
+
+    @staticmethod
+    @validate_mutex("application_id", "registration_id", "customer_id", min_count=1, max_count=1)
+    def queued(
+        channel_type: ChannelType,
+        payload: dict | str | EmailInfo,
+        idempotency_key: str | None = None,
+        user_id: int | None = None,
+        application_id: int | None = None,
+        registration_id: int | None = None,
+        customer_id: int | None = None,
+    ):
+        interaction = CustomerInteraction(
+            channel=channel_type,
+            status=InteractionStatus.QUEUED,
+            application_id=application_id,
+            registration_id=registration_id,
+            customer_id=customer_id,
+            user_id=user_id,
+            idempotency_key=idempotency_key,
+        )
+        interaction.save()
+        return interaction.interaction_uuid
 
     @staticmethod
     def _send_email_to_notify_service(email_info):

@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from strr_api.enums.enum import ChannelType, InteractionStatus
 from strr_api.models import Application, Registration, User
 from strr_api.models.interactions import CustomerInteraction
 
@@ -53,7 +54,7 @@ def generate_interaction_data(**kwargs):
     """Helper to generate valid interaction payloads"""
     defaults = {
         "interaction_uuid": str(uuid.uuid4()),
-        "channel": CustomerInteraction.ChannelType.EMAIL,
+        "channel": ChannelType.EMAIL,
         "body_content": "Test content",
     }
     defaults.update(kwargs)
@@ -79,7 +80,7 @@ def test_create_interaction_with_customer(session, setup_parents):
     assert stored.customer_id == setup_parents["customer_id"]
     assert stored.application_id is None
     assert stored.registration_id is None
-    assert stored.status == CustomerInteraction.InteractionStatus.SENT
+    assert stored.status == InteractionStatus.SENT
     assert stored.created_at is not None  # Verify server default func.now()
 
 
@@ -157,21 +158,6 @@ def test_unique_interaction_uuid(session, setup_parents):
 
     # Second one with same UUID
     i2 = generate_interaction_data(interaction_uuid=uid, customer_id=setup_parents["customer_id"])
-    session.add(i2)
-
-    with pytest.raises(IntegrityError):
-        session.commit()
-
-
-def test_unique_idempotency_key(session, setup_parents):
-    """Test that idempotency_key must be unique."""
-    key = "unique-key-123"
-
-    i1 = generate_interaction_data(idempotency_key=key, customer_id=setup_parents["customer_id"])
-    session.add(i1)
-    session.commit()
-
-    i2 = generate_interaction_data(idempotency_key=key, customer_id=setup_parents["customer_id"])
     session.add(i2)
 
     with pytest.raises(IntegrityError):

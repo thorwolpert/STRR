@@ -172,4 +172,6 @@ unit-tests.sh
 **/downloads/**
 **/mochawesome-report/**
 
-strr-api/poetry.toml
+# Poetry.toml
+**/poetry.toml
+
