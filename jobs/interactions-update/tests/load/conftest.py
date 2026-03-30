@@ -10,6 +10,8 @@ import pytest
 from sqlalchemy import insert
 from sqlalchemy.orm import Session
 
+from strr_api.enums.enum import ChannelType
+from strr_api.enums.enum import InteractionStatus
 from strr_api.models import Application
 from strr_api.models import CustomerInteraction
 from strr_api.models import Registration
@@ -181,8 +183,8 @@ def setup_bulk_interactions(
             {
                 "interaction_uuid": str(uuid.uuid4()),
                 "idempotency_key": f"{job_date}:{notification_type}:{reg_id}",
-                "channel": CustomerInteraction.ChannelType.EMAIL,
-                "status": CustomerInteraction.InteractionStatus.SENT,
+                "channel": ChannelType.EMAIL,
+                "status": InteractionStatus.SENT,
                 "body_content": f"Bulk test email for reg {reg_id}",
                 "registration_id": reg_id,
                 "user_id": user.id,

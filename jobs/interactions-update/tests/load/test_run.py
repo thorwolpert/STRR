@@ -11,6 +11,8 @@ import responses
 from sqlalchemy import select
 
 from interactions_update.job import run
+from strr_api.enums.enum import ChannelType
+from strr_api.enums.enum import InteractionStatus
 from strr_api.models import CustomerInteraction
 
 scenario_uno_day = {
@@ -61,7 +63,7 @@ def test_run(db_session, setup_bulk_interactions, monkeypatch):
             "recipients": ["test@example.com"],
             "requestDate": datetime.now(timezone.utc).isoformat(),
             "sentDate": datetime.now(timezone.utc).isoformat(),
-            "notifyStatus": "DELIVERED",
+            "notifyStatus": InteractionStatus.DELIVERED,
             "notifyProvider": "HOUSING",
         }
         return (200, {}, json.dumps(response))
@@ -83,7 +85,7 @@ def test_run(db_session, setup_bulk_interactions, monkeypatch):
     db_session.expire_all()  # Ensure we fetch fresh data
     updated_interaction = db_session.get(CustomerInteraction, interaction.id)
 
-    assert updated_interaction.status == CustomerInteraction.InteractionStatus.DELIVERED
+    assert updated_interaction.status == InteractionStatus.DELIVERED
     assert updated_interaction.provider_reference == "provider-mock-notify-123"
     assert updated_interaction.meta_data["notifyStatus"] == "DELIVERED"
 
@@ -128,7 +130,7 @@ def test_run_failure_502(db_session, setup_bulk_interactions, monkeypatch):
     )
     interactions = db_session.scalars(stmt).all()
     for interaction in interactions:
-        assert interaction.status == CustomerInteraction.InteractionStatus.SENT
+        assert interaction.status == InteractionStatus.SENT
 
 
 scenario_bulk = {
@@ -196,21 +198,9 @@ def test_run_bulk_statuses(db_session, setup_bulk_interactions, monkeypatch):
     my_interactions = db_session.scalars(stmt).all()
 
     # Ensure those marked DELIVERED or FAILURE were updated correctly
-    delivered = [
-        i
-        for i in my_interactions
-        if i.status == CustomerInteraction.InteractionStatus.DELIVERED
-    ]
-    failed = [
-        i
-        for i in my_interactions
-        if i.status == CustomerInteraction.InteractionStatus.FAILED
-    ]
-    sent = [
-        i
-        for i in my_interactions
-        if i.status == CustomerInteraction.InteractionStatus.SENT
-    ]
+    delivered = [i for i in my_interactions if i.status == InteractionStatus.DELIVERED]
+    failed = [i for i in my_interactions if i.status == InteractionStatus.FAILED]
+    sent = [i for i in my_interactions if i.status == InteractionStatus.SENT]
 
     # Logical check: At 1000 records, statistically all three lists should have members
     assert (
