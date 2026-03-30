@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from sqlalchemy import select
 
 from interactions_update.database import get_session
+from strr_api.enums.enum import InteractionStatus
 from strr_api.models import CustomerInteraction
 from strr_api.services import AuthService
 
@@ -33,10 +34,10 @@ def fetch_and_update(interaction_id, notify_url, headers, timeout):
         if resp.status_code == 200:
             data = resp.json()
             status_mapping = {
-                "DELIVERED": CustomerInteraction.InteractionStatus.DELIVERED,
-                "FAILURE": CustomerInteraction.InteractionStatus.FAILED,
-                "TECHNICAL_FAILURE": CustomerInteraction.InteractionStatus.FAILED,
-                "PERMANENT_FAILURE": CustomerInteraction.InteractionStatus.FAILED,
+                "DELIVERED": InteractionStatus.DELIVERED,
+                "FAILURE": InteractionStatus.FAILED,
+                "TECHNICAL_FAILURE": InteractionStatus.FAILED,
+                "PERMANENT_FAILURE": InteractionStatus.FAILED,
             }
             new_status = status_mapping.get(data.get("notifyStatus"))
 
@@ -79,7 +80,7 @@ def run(max_workers=None):
 
     try:
         stmt = select(CustomerInteraction.id).where(
-            CustomerInteraction.status == CustomerInteraction.InteractionStatus.SENT
+            CustomerInteraction.status == InteractionStatus.SENT
         )
         interaction_ids = session.scalars(stmt).all()
 

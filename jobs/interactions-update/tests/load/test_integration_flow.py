@@ -6,6 +6,7 @@ from sqlalchemy import select
 
 from interactions_update.database import get_session
 from interactions_update.job import run
+from strr_api.enums.enum import InteractionStatus
 from strr_api.models import CustomerInteraction
 
 
@@ -22,6 +23,10 @@ def test_full_job_roundtrip_pooled(db_session, setup_bulk_interactions, monkeypa
     notify_ver = "/api/v1"
     notify_svc = notify_url + notify_ver
     auth_url = "http://my-auth-url"
+    client_id = "123"
+    account_secret = "secret"
+    monkeypatch.setenv("STRR_SERVICE_ACCOUNT_CLIENT_ID", client_id)
+    monkeypatch.setenv("STRR_SERVICE_ACCOUNT_SECRET", account_secret)
     monkeypatch.setenv("NOTIFY_API_URL", notify_url)
     monkeypatch.setenv("NOTIFY_API_VERSION", notify_ver)
     monkeypatch.setenv("NOTIFY_SVC_URL", notify_svc)
@@ -82,7 +87,7 @@ def test_full_job_roundtrip_pooled(db_session, setup_bulk_interactions, monkeypa
 
         assert len(updated_records) == 20
         for record in updated_records:
-            assert record.status == CustomerInteraction.InteractionStatus.DELIVERED
+            assert record.status == InteractionStatus.DELIVERED
             assert record.provider_reference == "provider-id-123"
             assert record.meta_data["notifyStatus"] == "DELIVERED"
 
