@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "strr-email"
-version = "1.1.10"
+version = "1.2.0"
 description = "BC Registries - strr-email"
 authors = []
 license = "BSD-3-Clause"
@@ -38,6 +38,7 @@ zimports = "^0.6.1"
 isort = "^5.13.2"
 testcontainers = "^4.14.0"
 responses = "^0.26.0"
+strr-test-utils = {path = "../../tests/python-test-utils", develop = true}
 
 [tool.poetry.group.test.dependencies]
 freezegun = "^1.2.2"

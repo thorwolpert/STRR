@@ -48,6 +48,7 @@ from flask import request
 from jinja2 import Template
 import requests
 from simple_cloudevent import SimpleCloudEvent
+from strr_api.enums.enum import ChannelType
 from strr_api.enums.enum import RegistrationNocStatus
 from strr_api.models import Application
 from strr_api.models import CustomerInteraction
@@ -178,8 +179,10 @@ def worker():
         try:
             email_info.email = email
             resp = InteractionService.dispatch(
-                channel_type=CustomerInteraction.ChannelType.EMAIL,
+                channel_type=ChannelType.EMAIL,
                 payload=email_info,
+                idempotency_key=email_info.interaction,
+                interaction_uuid=email_info.interaction_uuid,
                 application_id=application.id if application else None,
                 registration_id=registration.id if registration else None,
             )

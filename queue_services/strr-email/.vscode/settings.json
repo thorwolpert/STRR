@@ -2,7 +2,11 @@
     "python.testing.pytestArgs": [
         "tests"
     ],
+    "python.analysis.extraPaths": [
+        "../../tests/python-test-utils/src"
+    ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python."
+    "python-envs.defaultEnvManager": "ms-python.python:poetry",
+    "python-envs.defaultPackageManager": "ms-python.python:poetry"
 }
