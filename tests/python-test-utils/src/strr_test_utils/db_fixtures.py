@@ -129,7 +129,6 @@ def app(db_engine, package_info):
             # Update the config with our container URL
             TestConfig.SQLALCHEMY_DATABASE_URI = str(db_engine.url)
 
-            # _app = job_mod.create_app(TestConfig)
             _app = app_mod.create_app(TestConfig)
             with _app.app_context():
                 yield _app
@@ -157,7 +156,11 @@ def session(db_engine, app, app_modules):
         db = getattr(app_modules["models"], "db")
 
     if db:
-        session_factory = sessionmaker(bind=connection)
+        # Note: expire_on_commit=False is used in this test setup so that 
+        # objects persist across commit boundaries. This is useful when an 
+        # object is captured and returned in the mock objects.
+        # It took me a bit to find this, so this note is for future reference.
+        session_factory = sessionmaker(bind=connection, expire_on_commit=False)
         test_session = scoped_session(session_factory)
 
         old_session = db.session

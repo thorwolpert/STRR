@@ -33,7 +33,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 import functools
 import inspect
-from typing import Any, Optional
 
 
 def validate_mutex(*mutex_args: str, min_count: int = 0, max_count: int = 1):

@@ -48,7 +48,7 @@ from sqlalchemy import event, text
 from sqlalchemy.orm import Session as AppSession
 from testcontainers.postgres import PostgresContainer
 
-from strr_api import create_app
+# from strr_api import create_app
 from strr_api import db as _db
 from strr_api import jwt as _jwt
 from strr_api.config import Testing
@@ -184,6 +184,8 @@ def postgres_container():
 
 @pytest.fixture(scope="session")
 def app(ld, postgres_container):
+    from strr_api import create_app
+
     db_url = postgres_container.get_connection_url()
     Testing.SQLALCHEMY_DATABASE_URI = db_url
     Testing.POD_NAMESPACE = "Testing"

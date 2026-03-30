@@ -31,17 +31,23 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from __future__ import annotations
+
+import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, String, Text
+from sql_versioning import Versioned
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, String, Text, or_
 from sqlalchemy.dialects.postgresql import ENUM as SQLEnum
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
-from ..common.enum import BaseEnum, auto
+from strr_api.enums.enum import ChannelType, InteractionStatus
+
 from .base_model import SimpleBaseModel
+from .db import db
 
 if TYPE_CHECKING:
     from .application import Application
@@ -49,26 +55,19 @@ if TYPE_CHECKING:
     from .user import User
 
 
-class CustomerInteraction(SimpleBaseModel):
+class CustomerInteraction(Versioned, SimpleBaseModel):
+    """Manage interactions between customers, staff and systems."""
+
     __tablename__ = "interactions"
 
-    class ChannelType(BaseEnum):
-        EMAIL = auto()
-        SMS = auto()
-        PHONE = auto()
-        SYSTEM = auto()
-
-    class InteractionStatus(BaseEnum):
-        SENT = auto()
-        DELIVERED = auto()
-        FAILED = auto()
-        OPENED = auto()
-
     id: Mapped[int] = mapped_column(primary_key=True)
-    interaction_uuid: Mapped[str] = mapped_column(String(36), unique=True, index=True)
+
+    interaction_uuid: Mapped[str] = mapped_column(
+        String(36), unique=True, index=True, default=lambda: str(uuid.uuid4())
+    )
 
     # tracking this was successfully sent, and the run that covered it
-    idempotency_key: Mapped[Optional[str]] = mapped_column(String(255), unique=True, index=True)
+    idempotency_key: Mapped[Optional[str]] = mapped_column(String(255), unique=False, index=True)
 
     # Enum-based fixed fields
     channel: Mapped[ChannelType] = mapped_column(SQLEnum(ChannelType))
@@ -102,3 +101,29 @@ class CustomerInteraction(SimpleBaseModel):
             name="check_exclusive_owner_interaction",
         ),
     )
+
+    def save(self):
+        """Store the Interaction."""
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def find_by_id_idempotency_key(
+        cls,
+        idempotency_key: str,
+        registration_id: int = None,
+        application_id: int = None,
+    ) -> CustomerInteraction | None:
+        """Return an Interation if it exists."""
+        return cls.query.filter(
+            idempotency_key == idempotency_key,
+            or_(cls.registration_id == registration_id, cls.application_id == application_id),
+        ).one_or_none()
+
+    @classmethod
+    def find_by_uuid(
+        cls,
+        interaction_uuid: str,
+    ):
+        """Return an Interation if it exists."""
+        return cls.query.filter(interaction_uuid == interaction_uuid).one_or_none()

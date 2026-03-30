@@ -33,13 +33,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 """This module provides Email type services."""
 import logging
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from flask import current_app
 
-from strr_api.enums.enum import RegistrationStatus
+from strr_api.enums.enum import ChannelType, RegistrationStatus
 from strr_api.models import Application, Registration
 from strr_api.services import gcp_queue_publisher
+
+# from strr_api.services import InteractionService
+
 
 logger = logging.getLogger("api")
 
@@ -133,7 +136,11 @@ class EmailService:
             logger.error("Failed to publish email notification: %s", err.with_traceback(None))
 
     @staticmethod
-    def send_registration_status_update_email(registration: Registration, email_content=None):
+    def send_registration_status_update_email(
+        registration: Registration,
+        email_content=None,
+        interaction: str | None = None,
+    ):
         """Send status update email for a registration."""
         if registration.status in [RegistrationStatus.CANCELLED, RegistrationStatus.ACTIVE]:
             try:
@@ -145,6 +152,7 @@ class EmailService:
                             "registrationNumber": registration.registration_number,
                             "emailType": f"{registration.registration_type}_REGISTRATION_{registration.status.name}",
                             "customContent": email_content,
+                            "interaction": interaction,
                         },
                         topic=current_app.config.get("GCP_EMAIL_TOPIC"),
                     )
@@ -170,14 +178,22 @@ class EmailService:
     @staticmethod
     def send_renewal_reminder_for_registration(registration: Registration):
         """Send renewal reminder for the registration."""
+        # TODO: fix circular import issue
+        from strr_api.services import InteractionService
+
         email_type = "RENEWAL_REMINDER"
         email_type = f"{registration.registration_type}_{email_type}"
+        interaction_uuid = InteractionService.queued(channel_type=ChannelType.EMAIL, registration_id=registration.id)
         try:
             gcp_queue_publisher.publish_to_queue(
                 gcp_queue_publisher.QueueMessage(
                     source=EMAIL_SOURCE,
                     message_type=EMAIL_TYPE,
-                    payload={"registrationNumber": registration.registration_number, "emailType": email_type},
+                    payload={
+                        "registrationNumber": registration.registration_number,
+                        "emailType": email_type,
+                        "interaction_uuid": interaction_uuid,
+                    },
                     topic=current_app.config.get("GCP_EMAIL_TOPIC"),
                 )
             )
