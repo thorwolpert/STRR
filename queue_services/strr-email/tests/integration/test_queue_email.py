@@ -9,6 +9,8 @@ import responses
 from simple_cloudevent import SimpleCloudEvent
 from simple_cloudevent import to_queue_message
 from sqlalchemy import select
+from strr_api.enums.enum import ChannelType
+from strr_api.enums.enum import InteractionStatus
 from strr_api.enums.enum import PropertyType
 from strr_api.enums.enum import RegistrationNocStatus
 from strr_api.enums.enum import RegistrationStatus
@@ -19,12 +21,14 @@ from strr_api.models import Contact
 from strr_api.models import CustomerInteraction
 from strr_api.models import PropertyContact
 from strr_api.models import RentalProperty
+from strr_api.services import InteractionService
+from strr_api.services.interaction import EmailInfo
 
 CLOUD_EVENT = SimpleCloudEvent(
     id="fake-id",
     source="fake-for-tests",
     subject="fake-subject",
-    type="payment",
+    type="email",
     data={
         "application_number": None,
         "email_type": "HOST_RENEWAL_REMINDER",
@@ -222,12 +226,24 @@ def test_email_mocked_notify(
     # Create a registration with enough info to email out.
     registration = create_registration(session, setup_parents)
 
+    # Create a CustomerInteraction
+    email_info = EmailInfo(
+        email_type="HOST_RENEWAL_REMINDER",
+        registration_number=registration.registration_number,
+    )
+    interaction_uuid = InteractionService.queued(
+        channel_type=ChannelType.EMAIL,
+        payload=email_info,
+        registration_id=registration.id,
+    )
+
     # Create the CE to send to the worker endpoint.
     data = {
         "application_number": None,
         "email_type": "HOST_RENEWAL_REMINDER",
         "custom_content": None,
         "registration_number": registration.registration_number,
+        "interaction_uuid": interaction_uuid,
     }
     ce = simple_cloud_event(data=data)
     envelope = queue_envelope(cloud_event=ce)
@@ -248,3 +264,4 @@ def test_email_mocked_notify(
 
     assert stored.notify_reference
     assert stored.registration_id == registration.id
+    assert stored.status == InteractionStatus.SENT
